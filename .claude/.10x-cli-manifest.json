@@ -2,8 +2,8 @@
   "package": "@przeprogramowani/10x-cli",
   "version": "1.30.0",
   "manifestVersion": 3,
-  "lastApplied": "2026-10-13T16:02:54.551Z",
-  "lessonId": "m1l3",
+  "lastApplied": "2026-10-13T17:52:28.249Z",
+  "lessonId": "m1l5",
   "course": "10xdevs4",
   "tool": "claude-code",
   "files": {
@@ -121,14 +121,56 @@
           "SKILL.md": "65398d44f05d373fb82cb270ca1e200dcf922da7afa9533ec32698fc3c656c33",
           "references/health-check-schema.md": "6c7115da83ef2a4a396a9b703d94395a0904748bb586a6e182f2018fcbfedfe6"
         }
+      },
+      "10x-agents-md": {
+        "files": [
+          "SKILL.md"
+        ],
+        "contentHashes": {
+          "SKILL.md": "743462d6d5da30121756aa2c5ef003e454ba9c414bfc07b05bed2438327afd4f"
+        }
+      },
+      "10x-rule-review": {
+        "files": [
+          "SKILL.md"
+        ],
+        "contentHashes": {
+          "SKILL.md": "9243236dfd6cf2bafd052f6affc01a63083c3481ee078f3678a3988047a434df"
+        }
+      },
+      "10x-lesson": {
+        "files": [
+          "SKILL.md"
+        ],
+        "contentHashes": {
+          "SKILL.md": "55b51f0b8aaaa1ff6b6789ca2f7d7f1210dd05e4e1590a8b5930a547c99d95c3"
+        }
+      },
+      "10x-infra-research": {
+        "files": [
+          "SKILL.md",
+          "references/agent-friendly-criteria.md"
+        ],
+        "contentHashes": {
+          "SKILL.md": "b505fda2246e52071021600b37fa700f7de9e7d92b1ab95518dec88a9fe0604f",
+          "references/agent-friendly-criteria.md": "888b4b712107bf8d8600061e1d907bb1bc14081cb2c3a74be8c7da641a35ab72"
+        }
       }
     },
     "prompts": [
-      "skill-explainer.md"
+      "skill-explainer.md",
+      "m1l5-1-plan-integration.md",
+      "m1l5-2-constrain-approach.md",
+      "m1l5-3-extend-prerequisites.md",
+      "m1l5-4-store-plan.md"
     ],
     "configs": [],
     "promptHashes": {
-      "skill-explainer.md": "dcd173047eb4a5fcd071fa7db7ec0133bcb033e1c8f0a6fdb64d1b122225c2e5"
+      "skill-explainer.md": "dcd173047eb4a5fcd071fa7db7ec0133bcb033e1c8f0a6fdb64d1b122225c2e5",
+      "m1l5-1-plan-integration.md": "15c3e8d2cc51e94495db9b2b39cf9f0bccdd9e78d5c70b87b43852b7d777a619",
+      "m1l5-2-constrain-approach.md": "e28e5fb64781c7278ed4f20bd1e97b8bc6fe074e0e75c9423c31208b492a65a9",
+      "m1l5-3-extend-prerequisites.md": "90eaf318eade9962d118b67707cc8426c70567a9951105c4a1964623858ab8a7",
+      "m1l5-4-store-plan.md": "1f5db15fadaa9a5c3acd9a47f3a97db060f5093005ad696e182be7d4bedd8d7d"
     },
     "configHashes": {}
   },
@@ -318,6 +360,61 @@
       },
       "installedReleaseId": "r-3c7ee87933e406aeb3d5653ab025f28ce761b37fa2c4272b8313cc0e3b747401",
       "installedManifestHash": "e18985ac71d02105dd949919eb12c1f3580dcfa91510e19ab6f3d86c6f57cd39"
+    },
+    "m1l4": {
+      "appliedAt": "2026-10-13T17:20:57.805Z",
+      "skills": {
+        "10x-agents-md": {
+          "files": [
+            "SKILL.md"
+          ]
+        },
+        "10x-rule-review": {
+          "files": [
+            "SKILL.md"
+          ]
+        },
+        "10x-lesson": {
+          "files": [
+            "SKILL.md"
+          ]
+        }
+      },
+      "prompts": [],
+      "configs": []
+    },
+    "m1l5": {
+      "appliedAt": "2026-10-13T17:52:28.249Z",
+      "skills": {
+        "10x-agents-md": {
+          "files": [
+            "SKILL.md"
+          ]
+        },
+        "10x-rule-review": {
+          "files": [
+            "SKILL.md"
+          ]
+        },
+        "10x-lesson": {
+          "files": [
+            "SKILL.md"
+          ]
+        },
+        "10x-infra-research": {
+          "files": [
+            "SKILL.md",
+            "references/agent-friendly-criteria.md"
+          ]
+        }
+      },
+      "prompts": [
+        "m1l5-1-plan-integration.md",
+        "m1l5-2-constrain-approach.md",
+        "m1l5-3-extend-prerequisites.md",
+        "m1l5-4-store-plan.md"
+      ],
+      "configs": []
     }
   },
   "managedRules": {
@@ -327,7 +424,7 @@
     "upstreamHash": "613fa21b67eec4e5c3840b3adb9f66fd3e73986423f56c21ac29a4f0ad3b5b67"
   },
   "toolkit": {
-    "version": "v2.60.1",
-    "recordedAt": "2026-10-13T16:02:54.627Z"
+    "version": "v2.60.2",
+    "recordedAt": "2026-10-13T17:52:28.348Z"
   }
 }
