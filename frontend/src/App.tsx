@@ -1,14 +1,30 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import heroImg from './assets/hero.png'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import './App.css'
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080'
+
 function App() {
   const [count, setCount] = useState(0)
+  const [backendStatus, setBackendStatus] = useState<'checking' | 'ok' | 'unreachable'>('checking')
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/health`)
+      .then((res) => (res.ok ? res.json() : Promise.reject(res.status)))
+      .then(() => setBackendStatus('ok'))
+      .catch(() => setBackendStatus('unreachable'))
+  }, [])
 
   return (
     <>
+      <p style={{ textAlign: 'center', fontSize: '0.9rem' }}>
+        Backend ({API_BASE_URL}):{' '}
+        {backendStatus === 'checking' && 'checking…'}
+        {backendStatus === 'ok' && '✅ connected'}
+        {backendStatus === 'unreachable' && '❌ unreachable — is the Spring Boot app running?'}
+      </p>
       <section id="center">
         <div className="hero">
           <img src={heroImg} className="base" width="170" height="179" alt="" />

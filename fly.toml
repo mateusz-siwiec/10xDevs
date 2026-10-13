@@ -1,0 +1,21 @@
+# fly.io config for gym-track.
+# Secrets expected at deploy time (set with `fly secrets set KEY=value`):
+#   DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
+# See src/main/resources/application.properties for the defaults these override.
+
+app = "gym-track"
+primary_region = "iad"
+
+[build]
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 1024
