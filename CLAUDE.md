@@ -1,3 +1,63 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Hard rules
+
+- Skills operating under the 10xDevs chain must never write to `context/archive/`. Archived changes are immutable; if a resolved target path starts with `context/archive/`, stop with: "This change is archived. Open a new change with `/10x-new` instead."
+- When the bootstrapper merges scaffold output into the working tree, the existing file always wins for `package.json`, `README.md`, `CLAUDE.md`, `AGENTS.md`, and root-level `*.md` — the scaffold's copy is set aside as a `<filename>.scaffold` sibling instead of overwriting.
+
+## Project overview
+
+GymTrack: a workout-tracking MVP. Spring Boot (Java) REST API backend at the
+repo root, paired with a React + TypeScript SPA frontend in `frontend/`. Product
+background (Polish) is in `idea-notes.md`; the derived PRD/shaping docs live in
+`context/foundation/` (see the 10xDevs skill-chain section below).
+
+## Commands
+
+### Backend (repo root, Maven wrapper)
+- Run the API: `./mvnw spring-boot:run` (listens on port 8080)
+- Run all tests: `./mvnw test`
+- Run a single test class: `./mvnw test -Dtest=ApplicationTests`
+- Build the jar: `./mvnw package`
+- Dependency vulnerability scan (on-demand; see the `org.owasp:dependency-check-maven` plugin comment in `pom.xml` for the exact Maven goal)
+
+### Frontend (run from `frontend/`)
+- Dev server: `npm run dev` (Vite, port 5173 — must match the CORS origin in `WebConfig.java`)
+- Build: `npm run build` (`tsc -b && vite build`)
+- Lint: `npm run lint` (oxlint)
+- Preview built output: `npm run preview`
+
+### Local database
+`podman-compose up -d` starts a local Postgres container with connection
+settings matching the backend's defaults — see `podman-compose.yml` for the
+exact db name/user/password/port. `docker-compose` works identically if
+preferred.
+
+## Architecture
+
+- Backend package root is `com.example.gymtrack`. Currently minimal:
+  `Application.java` (entrypoint), `HealthController.java` (`GET /api/health`),
+  and `config/WebConfig.java` (CORS, scoped to `/api/**`, allowing only the Vite
+  dev origin `http://localhost:5173`).
+- Persistence: Spring Data JPA + PostgreSQL, with `spring.jpa.hibernate.ddl-auto=update`
+  (`src/main/resources/application.properties`) — schema is derived from entities
+  directly; no migration tool (e.g. Flyway/Liquibase) is configured yet.
+  DB connection is overridable via `DB_HOST`/`DB_PORT`/`DB_NAME`/`DB_USER`/`DB_PASSWORD`
+  env vars, defaulting to the `podman-compose.yml` values above.
+- Frontend and backend are decoupled: the SPA under `frontend/` talks to the
+  backend only via `/api/**` REST calls. There is no server-side templating.
+- Deployment: multi-stage `Dockerfile` (builds with `eclipse-temurin:21-jdk`,
+  runs on `eclipse-temurin:21-jre`, exposes 8080) deployed to Fly.io per
+  `fly.toml` (app `gym-track`); secrets are set with `fly secrets set KEY=value`,
+  not committed.
+- `context/foundation/` holds the course-generated planning chain for this
+  project — `shape-notes.md`, `prd.md`, `tech-stack.md` — produced by the
+  10xDevs skills referenced below; treat these as the source of truth for
+  product scope and architecture decisions over `idea-notes.md`, which is the
+  original raw idea draft they were derived from.
+
 <!-- BEGIN @przeprogramowani/10x-cli -->
 
 ## Zestaw narzędzi AI 10xDevs — Moduł 1, Lekcja 3
@@ -37,7 +97,7 @@ Gdy skill przenosi pliki z tymczasowego katalogu szkieletu do bieżącego katalo
 
 - **`context/**`** — wszystko, co szkielet próbował zapisać w `context/`, jest **odrzucane**. Twoje `context/` jest źródłem prawdy dla łańcucha bootstrap (PRD, przekazanie tech-stack, plany, ramy) i nigdy nie jest nadpisywane.
 - **`.gitignore`** — scalanie przez dopisanie: istniejące linie pozostają w kolejności, a następnie linie ze szkieletu są odduplikowywane względem Twojego zestawu i dopisywane z komentarzem-separatorem. Semantyka ignorowania Git jest addytywna, więc łączenie jest bezpieczne.
-- **`package.json`, `README.md`, `CLAUDE.md`, `AGENTS.md`, root-level `*.md`** — wygrywa istniejący plik; kopia ze szkieletu trafia jako rodzeństwo `<filename>.scaffold`. Możesz użyć `diff README.md README.md.scaffold`, aby zobaczyć, co dostarczył starter, a co już było.
+- **`package.json`, `README.md`, `CLAUDE.md`, `AGENTS.md`, root-level `*.md`** — zobacz „Hard rules" na początku tego pliku. Możesz użyć `diff README.md README.md.scaffold`, aby zobaczyć, co dostarczył starter, a co już było.
 - **Wszystko inne** — jest przenoszone bez komunikatu, jeśli nie ma konfliktu, albo odkładane jako `<filename>.scaffold`, jeśli konflikt występuje. Macierz nigdy nie usuwa plików użytkownika.
 
 Dla strategii `git-clone` (10x-astro-starter i podobne): sklonowane `.git/` jest usuwane przed przeniesieniem wyżej, dzięki czemu historia upstreamowego startera nie przedostaje się do Twojego repozytorium. Następnie inicjalizujesz własną historię (`git init`).
@@ -66,6 +126,6 @@ Folder (`context/changes/bootstrap-verification/`) celowo nie zawiera `change.md
 
 Dostarczony skill nie zawiera odniesień do 10xDevs / kohort / certyfikacji. Audyt po utworzeniu szkieletu jest wybierany według `language_family` na podstawie niewielkiej tabeli wyszukiwania; kohorty, których stos trafia do `java`, `php`, `dart` lub kombinacji wielu języków, zobaczą w dzienniku linię „no built-in audit tool for this ecosystem” oraz rekomendowane narzędzie zewnętrzne, a nie fałszywy wpis „0 findings”.
 
-Skille nie mogą zapisywać do `context/archive/`. Zarchiwizowane zmiany są niezmienne; jeśli rozstrzygnięta ścieżka docelowa zaczyna się od `context/archive/`, przerwij z komunikatem: „This change is archived. Open a new change with `/10x-new` instead.”
+Zobacz „Hard rules” na początku tego pliku: skille nie mogą zapisywać do `context/archive/`.
 
 <!-- END @przeprogramowani/10x-cli -->
