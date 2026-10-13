@@ -43,3 +43,11 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+# from spring
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+### STS ###
+.idea
