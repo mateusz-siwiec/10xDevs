@@ -511,12 +511,12 @@ convention.
 
 #### Automated
 
-- [x] 3.1 Frontend builds: `npm run build`
-- [x] 3.2 Lint passes: `npm run lint`
+- [x] 3.1 Frontend builds: `npm run build` — f112951
+- [x] 3.2 Lint passes: `npm run lint` — f112951
 
 #### Manual
 
-- [x] 3.3 Register via UI logs in and shows the dashboard with the user's email
-- [x] 3.4 Logout returns to `/login`; visiting `/` while logged out redirects to `/login`
-- [x] 3.5 Hard refresh on `/` while logged in stays logged in (no login-page flash)
-- [x] 3.6 Login/register forms are comfortably tappable at a 375px viewport
+- [x] 3.3 Register via UI logs in and shows the dashboard with the user's email — f112951
+- [x] 3.4 Logout returns to `/login`; visiting `/` while logged out redirects to `/login` — f112951
+- [x] 3.5 Hard refresh on `/` while logged in stays logged in (no login-page flash) — f112951
+- [x] 3.6 Login/register forms are comfortably tappable at a 375px viewport — f112951
