@@ -485,38 +485,38 @@ convention.
 
 #### Automated
 
-- [ ] 1.1 Backend builds: `./mvnw compile`
-- [ ] 1.2 Integration tests pass: `./mvnw test -Dtest=AuthControllerRegisterTest`
+- [x] 1.1 Backend builds: `./mvnw compile` — f377cad
+- [x] 1.2 Integration tests pass: `./mvnw test -Dtest=AuthControllerRegisterTest` — f377cad
 
 #### Manual
 
-- [ ] 1.3 curl register returns 201 and a bcrypt-hashed row exists
-- [ ] 1.4 Repeating the same curl register returns 409
+- [x] 1.3 curl register returns 201 and a bcrypt-hashed row exists — f377cad
+- [x] 1.4 Repeating the same curl register returns 409 — f377cad
 
 ### Phase 2: Backend — login + JWT + protected endpoint
 
 #### Automated
 
-- [ ] 2.1 Integration tests pass: `./mvnw test -Dtest=AuthControllerLoginTest`
-- [ ] 2.2 Integration tests pass: `./mvnw test -Dtest=UserControllerMeTest`
-- [ ] 2.3 Unit tests pass: `./mvnw test -Dtest=JwtServiceTest`
+- [x] 2.1 Integration tests pass: `./mvnw test -Dtest=AuthControllerLoginTest` — e3096b2
+- [x] 2.2 Integration tests pass: `./mvnw test -Dtest=UserControllerMeTest` — e3096b2
+- [x] 2.3 Unit tests pass: `./mvnw test -Dtest=JwtServiceTest` — e3096b2
 
 #### Manual
 
-- [ ] 2.4 curl login returns a token
-- [ ] 2.5 curl `/me` with the token returns the correct id/email
-- [ ] 2.6 curl `/me` with no header or a garbage token returns 401
+- [x] 2.4 curl login returns a token — e3096b2
+- [x] 2.5 curl `/me` with the token returns the correct id/email — e3096b2
+- [x] 2.6 curl `/me` with no header or a garbage token returns 401 — e3096b2
 
 ### Phase 3: Frontend — routing + auth UI
 
 #### Automated
 
-- [ ] 3.1 Frontend builds: `npm run build`
-- [ ] 3.2 Lint passes: `npm run lint`
+- [x] 3.1 Frontend builds: `npm run build` — f112951
+- [x] 3.2 Lint passes: `npm run lint` — f112951
 
 #### Manual
 
-- [ ] 3.3 Register via UI logs in and shows the dashboard with the user's email
-- [ ] 3.4 Logout returns to `/login`; visiting `/` while logged out redirects to `/login`
-- [ ] 3.5 Hard refresh on `/` while logged in stays logged in (no login-page flash)
-- [ ] 3.6 Login/register forms are comfortably tappable at a 375px viewport
+- [x] 3.3 Register via UI logs in and shows the dashboard with the user's email — f112951
+- [x] 3.4 Logout returns to `/login`; visiting `/` while logged out redirects to `/login` — f112951
+- [x] 3.5 Hard refresh on `/` while logged in stays logged in (no login-page flash) — f112951
+- [x] 3.6 Login/register forms are comfortably tappable at a 375px viewport — f112951
