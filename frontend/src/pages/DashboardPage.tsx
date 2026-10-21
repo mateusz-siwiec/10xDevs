@@ -1,26 +1,14 @@
-import { useNavigate } from 'react-router'
-import { useAuth } from '../auth/AuthContext'
+import '../styles/page.css'
 
 export default function DashboardPage() {
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
-
-  function handleLogout() {
-    logout()
-    navigate('/login')
-  }
-
   return (
-    <main style={{ maxWidth: '400px', margin: '2rem auto', padding: '1rem', textAlign: 'left' }}>
-      <h1>Dashboard</h1>
-      <p>Logged in as {user?.email}</p>
-      <button
-        type="button"
-        onClick={handleLogout}
-        style={{ minHeight: '44px', padding: '0.75rem 1.5rem', fontSize: '1rem', cursor: 'pointer' }}
-      >
-        Log out
-      </button>
-    </main>
+    <div className="page-shell">
+      <main className="page-card">
+        <h1>Dashboard</h1>
+        <p className="page-subtext">
+          This is a placeholder — the real workout-logging UI lands in a later roadmap slice.
+        </p>
+      </main>
+    </div>
   )
 }

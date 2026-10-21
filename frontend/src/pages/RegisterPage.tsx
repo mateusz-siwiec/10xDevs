@@ -2,24 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { useAuth } from '../auth/AuthContext'
-
-const inputStyle = {
-  display: 'block',
-  width: '100%',
-  minHeight: '44px',
-  padding: '0.75rem',
-  marginBottom: '0.75rem',
-  fontSize: '1rem',
-  boxSizing: 'border-box' as const,
-}
-
-const buttonStyle = {
-  width: '100%',
-  minHeight: '44px',
-  padding: '0.75rem',
-  fontSize: '1rem',
-  cursor: 'pointer',
-}
+import '../styles/page.css'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -44,38 +27,42 @@ export default function RegisterPage() {
   }
 
   return (
-    <main style={{ maxWidth: '400px', margin: '2rem auto', padding: '1rem', textAlign: 'left' }}>
-      <h1>Register</h1>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="register-email">Email</label>
-        <input
-          id="register-email"
-          type="email"
-          autoComplete="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          required
-          style={inputStyle}
-        />
-        <label htmlFor="register-password">Password</label>
-        <input
-          id="register-password"
-          type="password"
-          autoComplete="new-password"
-          minLength={8}
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          required
-          style={inputStyle}
-        />
-        {error && <p style={{ color: 'crimson' }}>{error}</p>}
-        <button type="submit" disabled={submitting} style={buttonStyle}>
-          {submitting ? 'Registering…' : 'Register'}
-        </button>
-      </form>
-      <p>
-        Already have an account? <Link to="/login">Log in</Link>
-      </p>
-    </main>
+    <div className="page-shell">
+      <main className="page-card">
+        <h1>Register</h1>
+        <form onSubmit={handleSubmit}>
+          <div className="field">
+            <label htmlFor="register-email">Email</label>
+            <input
+              id="register-email"
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              required
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="register-password">Password</label>
+            <input
+              id="register-password"
+              type="password"
+              autoComplete="new-password"
+              minLength={8}
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+            />
+          </div>
+          {error && <p className="error-text">{error}</p>}
+          <button type="submit" disabled={submitting} className="btn-primary">
+            {submitting ? 'Registering…' : 'Register'}
+          </button>
+        </form>
+        <p className="page-switch">
+          Already have an account? <Link to="/login">Log in</Link>
+        </p>
+      </main>
+    </div>
   )
 }
