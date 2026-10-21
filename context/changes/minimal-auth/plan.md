@@ -485,13 +485,13 @@ convention.
 
 #### Automated
 
-- [ ] 1.1 Backend builds: `./mvnw compile`
-- [ ] 1.2 Integration tests pass: `./mvnw test -Dtest=AuthControllerRegisterTest`
+- [x] 1.1 Backend builds: `./mvnw compile`
+- [x] 1.2 Integration tests pass: `./mvnw test -Dtest=AuthControllerRegisterTest`
 
 #### Manual
 
-- [ ] 1.3 curl register returns 201 and a bcrypt-hashed row exists
-- [ ] 1.4 Repeating the same curl register returns 409
+- [x] 1.3 curl register returns 201 and a bcrypt-hashed row exists
+- [x] 1.4 Repeating the same curl register returns 409
 
 ### Phase 2: Backend — login + JWT + protected endpoint
 
