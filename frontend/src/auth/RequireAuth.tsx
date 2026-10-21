@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Navigate } from 'react-router'
+import Topbar from '../components/Topbar'
 import { useAuth } from './AuthContext'
 
 /**
@@ -18,5 +19,10 @@ export function RequireAuth({ children }: { children: ReactNode }) {
     return <Navigate to="/login" replace />
   }
 
-  return <>{children}</>
+  return (
+    <>
+      <Topbar />
+      {children}
+    </>
+  )
 }
