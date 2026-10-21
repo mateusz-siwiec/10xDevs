@@ -485,27 +485,27 @@ convention.
 
 #### Automated
 
-- [x] 1.1 Backend builds: `./mvnw compile`
-- [x] 1.2 Integration tests pass: `./mvnw test -Dtest=AuthControllerRegisterTest`
+- [x] 1.1 Backend builds: `./mvnw compile` — f377cad
+- [x] 1.2 Integration tests pass: `./mvnw test -Dtest=AuthControllerRegisterTest` — f377cad
 
 #### Manual
 
-- [x] 1.3 curl register returns 201 and a bcrypt-hashed row exists
-- [x] 1.4 Repeating the same curl register returns 409
+- [x] 1.3 curl register returns 201 and a bcrypt-hashed row exists — f377cad
+- [x] 1.4 Repeating the same curl register returns 409 — f377cad
 
 ### Phase 2: Backend — login + JWT + protected endpoint
 
 #### Automated
 
-- [ ] 2.1 Integration tests pass: `./mvnw test -Dtest=AuthControllerLoginTest`
-- [ ] 2.2 Integration tests pass: `./mvnw test -Dtest=UserControllerMeTest`
-- [ ] 2.3 Unit tests pass: `./mvnw test -Dtest=JwtServiceTest`
+- [x] 2.1 Integration tests pass: `./mvnw test -Dtest=AuthControllerLoginTest`
+- [x] 2.2 Integration tests pass: `./mvnw test -Dtest=UserControllerMeTest`
+- [x] 2.3 Unit tests pass: `./mvnw test -Dtest=JwtServiceTest`
 
 #### Manual
 
-- [ ] 2.4 curl login returns a token
-- [ ] 2.5 curl `/me` with the token returns the correct id/email
-- [ ] 2.6 curl `/me` with no header or a garbage token returns 401
+- [x] 2.4 curl login returns a token
+- [x] 2.5 curl `/me` with the token returns the correct id/email
+- [x] 2.6 curl `/me` with no header or a garbage token returns 401
 
 ### Phase 3: Frontend — routing + auth UI
 
