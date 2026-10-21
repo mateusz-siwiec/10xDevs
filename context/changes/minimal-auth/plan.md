@@ -497,26 +497,26 @@ convention.
 
 #### Automated
 
-- [x] 2.1 Integration tests pass: `./mvnw test -Dtest=AuthControllerLoginTest`
-- [x] 2.2 Integration tests pass: `./mvnw test -Dtest=UserControllerMeTest`
-- [x] 2.3 Unit tests pass: `./mvnw test -Dtest=JwtServiceTest`
+- [x] 2.1 Integration tests pass: `./mvnw test -Dtest=AuthControllerLoginTest` — e3096b2
+- [x] 2.2 Integration tests pass: `./mvnw test -Dtest=UserControllerMeTest` — e3096b2
+- [x] 2.3 Unit tests pass: `./mvnw test -Dtest=JwtServiceTest` — e3096b2
 
 #### Manual
 
-- [x] 2.4 curl login returns a token
-- [x] 2.5 curl `/me` with the token returns the correct id/email
-- [x] 2.6 curl `/me` with no header or a garbage token returns 401
+- [x] 2.4 curl login returns a token — e3096b2
+- [x] 2.5 curl `/me` with the token returns the correct id/email — e3096b2
+- [x] 2.6 curl `/me` with no header or a garbage token returns 401 — e3096b2
 
 ### Phase 3: Frontend — routing + auth UI
 
 #### Automated
 
-- [ ] 3.1 Frontend builds: `npm run build`
-- [ ] 3.2 Lint passes: `npm run lint`
+- [x] 3.1 Frontend builds: `npm run build`
+- [x] 3.2 Lint passes: `npm run lint`
 
 #### Manual
 
-- [ ] 3.3 Register via UI logs in and shows the dashboard with the user's email
-- [ ] 3.4 Logout returns to `/login`; visiting `/` while logged out redirects to `/login`
-- [ ] 3.5 Hard refresh on `/` while logged in stays logged in (no login-page flash)
-- [ ] 3.6 Login/register forms are comfortably tappable at a 375px viewport
+- [x] 3.3 Register via UI logs in and shows the dashboard with the user's email
+- [x] 3.4 Logout returns to `/login`; visiting `/` while logged out redirects to `/login`
+- [x] 3.5 Hard refresh on `/` while logged in stays logged in (no login-page flash)
+- [x] 3.6 Login/register forms are comfortably tappable at a 375px viewport
