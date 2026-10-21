@@ -51,3 +51,6 @@ target/
 !**/src/test/**/target/
 ### STS ###
 .idea
+
+# Local Netlify folder
+.netlify
