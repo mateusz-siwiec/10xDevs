@@ -314,21 +314,21 @@ Expose the catalog to authenticated users and cover it with integration tests.
 
 #### Automated
 
-- [x] 2.1 Migrations V1+V2 apply on a fresh Testcontainers DB and `validate` accepts the entities: `./mvnw test`
-- [x] 2.2 Seed integrity test passes: `./mvnw test -Dtest=ExerciseSeedTest`
+- [x] 2.1 Migrations V1+V2 apply on a fresh Testcontainers DB and `validate` accepts the entities: `./mvnw test` — 90ba399
+- [x] 2.2 Seed integrity test passes: `./mvnw test -Dtest=ExerciseSeedTest` — 90ba399
 
 #### Manual
 
-- [x] 2.3 Against the existing local Podman Postgres, startup applies V2 on top of the baseline and `select count(*) from exercises` returns 40
-- [x] 2.4 Spot-check the secondary-group tagging of compound lifts reads sensibly
+- [x] 2.3 Against the existing local Podman Postgres, startup applies V2 on top of the baseline and `select count(*) from exercises` returns 40 — 90ba399
+- [x] 2.4 Spot-check the secondary-group tagging of compound lifts reads sensibly — 90ba399
 
 ### Phase 3: Catalog read API and tests
 
 #### Automated
 
-- [ ] 3.1 Full backend suite passes: `./mvnw test`
-- [ ] 3.2 Build succeeds: `./mvnw package`
+- [x] 3.1 Full backend suite passes: `./mvnw test`
+- [x] 3.2 Build succeeds: `./mvnw package`
 
 #### Manual
 
-- [ ] 3.3 With the app running locally, authenticated `GET /api/exercises` returns 40 exercises; `?muscleGroup=CHEST` returns only the 4 chest exercises; no token returns 401
+- [x] 3.3 With the app running locally, authenticated `GET /api/exercises` returns 40 exercises; `?muscleGroup=CHEST` returns only the 4 chest exercises; no token returns 401
