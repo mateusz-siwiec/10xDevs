@@ -1,9 +1,10 @@
 ---
 change_id: exercise-catalog-seed
 title: Seed predefined exercise catalog with muscle groups
-status: impl_reviewed
+status: archived
 created: 2026-10-22
 updated: 2026-10-22
+archived_at: 2026-10-22T16:05:56Z
 ---
 
 ## Notes
