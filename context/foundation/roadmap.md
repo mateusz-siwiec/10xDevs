@@ -3,7 +3,7 @@ project: "GymTrack"
 version: 1
 status: draft
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 prd_version: 1
 main_goal: learn
 top_blocker: skills
@@ -38,7 +38,7 @@ An amateur-to-intermediate gym-goer currently tracks workouts in scattered notes
 
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 | --- | --- | --- | --- | --- | --- |
-| F-01 | minimal-auth | (foundation) register, log in, log out; every request carries a scoped identity | — | FR-001, Access Control | in-progress |
+| F-01 | minimal-auth | (foundation) register, log in, log out; every request carries a scoped identity | — | FR-001, Access Control | done |
 | F-02 | exercise-catalog-seed | (foundation) seeded exercise catalog with muscle-group tags exists and is queryable | — | FR-002, Access Control | ready |
 | S-01 | core-workout-logging-loop | start a session, select an exercise, log a set, end the session, see it on the progression chart | F-01, F-02 | US-01, FR-004, FR-005, FR-006, FR-010 | proposed |
 | S-02 | user-defined-training-plan | define their own training plan as an ordered list of exercises | F-01, F-02 | FR-009 | proposed |
@@ -86,7 +86,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Every downstream slice is blocked on this. Keep the scaffold minimal (e.g. email+password only first) so the "skills" risk budget (new frontend stack) is spent on the core domain rule, not on auth polish.
-- **Status:** in-progress
+- **Status:** done
 
 ### F-02: Exercise catalog seed
 
@@ -264,4 +264,4 @@ No roadmap-wide open questions at this milestone — both PRD `## Open Questions
 
 ## Done
 
-(Empty — `/10x-archive` appends here when a change is archived.)
+- **F-01: (foundation) users can register, log in, and log out; every API request carries a scoped identity so workout/plan/exercise data stays isolated per user.** — Archived 2026-10-22 → `context/archive/2026-10-21-minimal-auth/`. Lesson: —.

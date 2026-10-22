@@ -1,10 +1,10 @@
 ---
 change_id: minimal-auth
 title: Minimal auth: register, log in, log out
-status: impl_reviewed
+status: archived
 created: 2026-10-21
 updated: 2026-10-22
-archived_at: null
+archived_at: 2026-10-22T14:44:08Z
 ---
 
 ## Notes
