@@ -54,3 +54,11 @@ target/
 
 # Local Netlify folder
 .netlify
+
+# 10xDevs course materials (pulled with `10x get`) - must not be public
+.claude/skills/
+.claude/prompts/
+.claude/.10x-cli-manifest.json
+.agents/
+skills-lock.json
+.10x-cli.json
