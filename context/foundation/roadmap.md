@@ -39,7 +39,7 @@ An amateur-to-intermediate gym-goer currently tracks workouts in scattered notes
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 | --- | --- | --- | --- | --- | --- |
 | F-01 | minimal-auth | (foundation) register, log in, log out; every request carries a scoped identity | — | FR-001, Access Control | done |
-| F-02 | exercise-catalog-seed | (foundation) seeded exercise catalog with muscle-group tags exists and is queryable | — | FR-002, Access Control | ready |
+| F-02 | exercise-catalog-seed | (foundation) seeded exercise catalog with muscle-group tags exists and is queryable | — | FR-002, Access Control | done |
 | S-01 | core-workout-logging-loop | start a session, select an exercise, log a set, end the session, see it on the progression chart | F-01, F-02 | US-01, FR-004, FR-005, FR-006, FR-010 | proposed |
 | S-02 | user-defined-training-plan | define their own training plan as an ordered list of exercises | F-01, F-02 | FR-009 | proposed |
 | S-03 | progression-recommendation | see a recommendation to increase weight after N full-rep workouts | S-01 | FR-011 | proposed |
@@ -99,7 +99,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Seed data quality (muscle-group tagging) directly feeds FR-012's substitution suggestion and FR-016's imbalance warning — getting the tagging wrong propagates into two later slices.
-- **Status:** ready
+- **Status:** done
 
 ## Slices
 
@@ -265,3 +265,4 @@ No roadmap-wide open questions at this milestone — both PRD `## Open Questions
 ## Done
 
 - **F-01: (foundation) users can register, log in, and log out; every API request carries a scoped identity so workout/plan/exercise data stays isolated per user.** — Archived 2026-10-22 → `context/archive/2026-10-21-minimal-auth/`. Lesson: —.
+- **F-02: (foundation) a predefined, seeded catalog of exercises exists, each tagged with a muscle group, queryable by the backend.** — Archived 2026-10-22 → `context/archive/2026-10-22-exercise-catalog-seed/`. Lesson: —.
