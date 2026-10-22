@@ -115,6 +115,22 @@ and update the header comment to say why. Editing the file does not deploy anyth
 `password_hash varchar(255) not null`; `created_at timestamp(6) with time zone`. Must pass
 Hibernate's `validate` against the `User` entity; adjust column types if validation reports a mismatch.
 
+#### 5. Addendum (added during implementation, commit 75c2c58): local profile
+
+**File**: `src/main/resources/application-local.properties`
+
+**Intent**: Let developers run the app locally with a dev-only `JWT_SECRET` while `JwtService` still refuses to start in production without a real one.
+
+**Contract**: Spring profile `local` (`./mvnw spring-boot:run -Dspring-boot.run.profiles=local`) sets `JWT_SECRET` to a public dev-only key; production never activates it.
+
+#### 6. Addendum (added during implementation, commit 75c2c58): ApplicationTests secret
+
+**File**: `src/test/java/com/example/gymtrack/ApplicationTests.java`
+
+**Intent**: `contextLoads` already failed on the baseline because `JWT_SECRET` was unset; criterion 1.2 cannot pass without fixing it.
+
+**Contract**: add the same `@TestPropertySource(properties = "JWT_SECRET=...")` used by the other integration tests.
+
 ### Success Criteria:
 
 #### Automated Verification:
@@ -284,27 +300,27 @@ Expose the catalog to authenticated users and cover it with integration tests.
 
 #### Automated
 
-- [x] 1.1 Existing backend suite passes on a fresh Testcontainers DB (V1 creates `users`, `validate` accepts it): `./mvnw test`
-- [x] 1.2 Application context starts with the new defaults: `./mvnw test -Dtest=ApplicationTests`
-- [x] 1.3 `fly.toml` contains both overrides: `grep -E "SPRING_FLYWAY_ENABLED|SPRING_JPA_HIBERNATE_DDL_AUTO" fly.toml`
+- [x] 1.1 Existing backend suite passes on a fresh Testcontainers DB (V1 creates `users`, `validate` accepts it): `./mvnw test` — 75c2c58
+- [x] 1.2 Application context starts with the new defaults: `./mvnw test -Dtest=ApplicationTests` — 75c2c58
+- [x] 1.3 `fly.toml` contains both overrides: `grep -E "SPRING_FLYWAY_ENABLED|SPRING_JPA_HIBERNATE_DDL_AUTO" fly.toml` — 75c2c58
 
 #### Manual
 
-- [x] 1.4 Starting the app against the existing local Podman Postgres baselines cleanly (baseline row at version 1; registration/login still work)
-- [x] 1.5 Starting against a freshly created empty local database also succeeds
-- [x] 1.6 Starting locally with the production overrides creates no `flyway_schema_history` table
+- [x] 1.4 Starting the app against the existing local Podman Postgres baselines cleanly (baseline row at version 1; registration/login still work) — 75c2c58
+- [x] 1.5 Starting against a freshly created empty local database also succeeds — 75c2c58
+- [x] 1.6 Starting locally with the production overrides creates no `flyway_schema_history` table — 75c2c58
 
 ### Phase 2: Exercise catalog schema and seed
 
 #### Automated
 
-- [ ] 2.1 Migrations V1+V2 apply on a fresh Testcontainers DB and `validate` accepts the entities: `./mvnw test`
-- [ ] 2.2 Seed integrity test passes: `./mvnw test -Dtest=ExerciseSeedTest`
+- [x] 2.1 Migrations V1+V2 apply on a fresh Testcontainers DB and `validate` accepts the entities: `./mvnw test`
+- [x] 2.2 Seed integrity test passes: `./mvnw test -Dtest=ExerciseSeedTest`
 
 #### Manual
 
-- [ ] 2.3 Against the existing local Podman Postgres, startup applies V2 on top of the baseline and `select count(*) from exercises` returns 40
-- [ ] 2.4 Spot-check the secondary-group tagging of compound lifts reads sensibly
+- [x] 2.3 Against the existing local Podman Postgres, startup applies V2 on top of the baseline and `select count(*) from exercises` returns 40
+- [x] 2.4 Spot-check the secondary-group tagging of compound lifts reads sensibly
 
 ### Phase 3: Catalog read API and tests
 
