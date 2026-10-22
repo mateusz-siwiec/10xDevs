@@ -326,9 +326,9 @@ Expose the catalog to authenticated users and cover it with integration tests.
 
 #### Automated
 
-- [x] 3.1 Full backend suite passes: `./mvnw test`
-- [x] 3.2 Build succeeds: `./mvnw package`
+- [x] 3.1 Full backend suite passes: `./mvnw test` — 647d10c
+- [x] 3.2 Build succeeds: `./mvnw package` — 647d10c
 
 #### Manual
 
-- [x] 3.3 With the app running locally, authenticated `GET /api/exercises` returns 40 exercises; `?muscleGroup=CHEST` returns only the 4 chest exercises; no token returns 401
+- [x] 3.3 With the app running locally, authenticated `GET /api/exercises` returns 40 exercises; `?muscleGroup=CHEST` returns only the 4 chest exercises; no token returns 401 — 647d10c

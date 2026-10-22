@@ -1,7 +1,7 @@
 ---
 change_id: exercise-catalog-seed
 title: Seed predefined exercise catalog with muscle groups
-status: implementing
+status: implemented
 created: 2026-10-22
 updated: 2026-10-22
 ---
