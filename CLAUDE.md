@@ -17,7 +17,8 @@ background (Polish) is in `idea-notes.md`; the derived PRD/shaping docs live in
 ## Commands
 
 ### Backend (repo root, Maven wrapper)
-- Run the API: `./mvnw spring-boot:run` (listens on port 8080)
+- Run the API: `./mvnw spring-boot:run -Dspring-boot.run.profiles=local` (listens on port 8080;
+  the `local` profile supplies a dev-only `JWT_SECRET`, without which startup fails)
 - Run all tests: `./mvnw test`
 - Run a single test class: `./mvnw test -Dtest=ApplicationTests`
 - Build the jar: `./mvnw package`
@@ -41,11 +42,15 @@ preferred.
   `Application.java` (entrypoint), `HealthController.java` (`GET /api/health`),
   and `config/WebConfig.java` (CORS, scoped to `/api/**`, allowing only the Vite
   dev origin `http://localhost:5173`).
-- Persistence: Spring Data JPA + PostgreSQL, with `spring.jpa.hibernate.ddl-auto=update`
-  (`src/main/resources/application.properties`) — schema is derived from entities
-  directly; no migration tool (e.g. Flyway/Liquibase) is configured yet.
+- Persistence: Spring Data JPA + PostgreSQL. Locally and in tests, Flyway migrations
+  (`src/main/resources/db/migration`) own the schema and Hibernate only validates it
+  (`spring.jpa.hibernate.ddl-auto=validate` in `application.properties`). Production
+  still uses `ddl-auto=update` with Flyway off (see below).
   DB connection is overridable via `DB_HOST`/`DB_PORT`/`DB_NAME`/`DB_USER`/`DB_PASSWORD`
   env vars, defaulting to the `podman-compose.yml` values above.
+- Flyway runs by default (local and tests). Production disables it via `fly.toml`
+  `[env]` (`SPRING_FLYWAY_ENABLED=false`, `SPRING_JPA_HIBERNATE_DDL_AUTO=update`).
+  Never point a local run at the Supabase DB while Flyway is enabled.
 - Frontend and backend are decoupled: the SPA under `frontend/` talks to the
   backend only via `/api/**` REST calls. There is no server-side templating.
 - Deployment: multi-stage `Dockerfile` (builds with `eclipse-temurin:21-jdk`,
