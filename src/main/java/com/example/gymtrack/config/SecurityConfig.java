@@ -46,7 +46,7 @@ public class SecurityConfig {
 				.requestMatchers(HttpMethod.GET, "/api/health").permitAll()
 				.requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login").permitAll()
 				.requestMatchers("/api/**").authenticated()
-				.anyRequest().permitAll())
+				.anyRequest().authenticated())
 			// Explicit entry point: with no httpBasic()/formLogin() configured,
 			// Spring Security's default entry point for an unauthenticated
 			// request to a protected route is Http403ForbiddenEntryPoint (403),
