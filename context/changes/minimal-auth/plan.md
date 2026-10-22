@@ -412,6 +412,13 @@ email and a logout button.
 defines routes `/login`, `/register`, and `/` (wrapped in `RequireAuth`,
 rendering `DashboardPage`).
 
+**Addendum (post-plan, commit b829df1 / PR #15)**: the logged-in user's email
+and logout button described above were relocated from `DashboardPage` into a
+new shared `frontend/src/components/Topbar.tsx`, rendered by `RequireAuth`
+on every protected route instead of by `DashboardPage` itself. End-user
+behavior on `/` is unchanged; this only affects which component owns the
+email/logout markup.
+
 ### Success Criteria:
 
 #### Automated Verification:

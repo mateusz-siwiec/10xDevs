@@ -22,14 +22,21 @@ import org.springframework.stereotype.Service;
 public class JwtService {
 
 	private static final String EMAIL_CLAIM = "email";
+	private static final String INSECURE_DEFAULT_SECRET = "dev-only-insecure-default-change-me";
 
 	private final SecretKey signingKey;
 	private final Duration defaultExpiration;
 
 	public JwtService(
-		@Value("${JWT_SECRET:dev-only-insecure-default-change-me}") String secret,
+		@Value("${JWT_SECRET:" + INSECURE_DEFAULT_SECRET + "}") String secret,
 		@Value("${jwt.expiration-days:30}") long expirationDays
 	) {
+		if (INSECURE_DEFAULT_SECRET.equals(secret)) {
+			throw new IllegalStateException(
+				"JWT_SECRET is not set. Refusing to start with the public default signing key " +
+				"- set the JWT_SECRET environment variable (e.g. via `fly secrets set` in production)."
+			);
+		}
 		this.signingKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 		this.defaultExpiration = Duration.ofDays(expirationDays);
 	}

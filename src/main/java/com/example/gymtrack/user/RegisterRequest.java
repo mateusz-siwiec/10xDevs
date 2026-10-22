@@ -10,7 +10,7 @@ public record RegisterRequest(
 	@NotBlank
 	String email,
 
-	@Size(min = 8)
+	@Size(min = 8, max = 72)
 	@NotBlank
 	String password
 
