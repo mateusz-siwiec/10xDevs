@@ -274,23 +274,23 @@ V5 applies only where Flyway runs (local, tests). Production keeps `ddl-auto=upd
 
 #### Automated
 
-- [x] 1.1 Schema test passes (migration applies, Hibernate `validate` succeeds): `./mvnw test -Dtest=TrainingPlanSchemaTest`
-- [x] 1.2 Full backend suite still passes: `./mvnw test`
+- [x] 1.1 Schema test passes (migration applies, Hibernate `validate` succeeds): `./mvnw test -Dtest=TrainingPlanSchemaTest` — 6e171d8
+- [x] 1.2 Full backend suite still passes: `./mvnw test` — 6e171d8
 
 #### Manual
 
-- [x] 1.3 App starts against local Postgres with the new migration and the tables exist: `./mvnw spring-boot:run -Dspring-boot.run.profiles=local`
+- [x] 1.3 App starts against local Postgres with the new migration and the tables exist: `./mvnw spring-boot:run -Dspring-boot.run.profiles=local` — 6e171d8
 
 ### Phase 2: Plan API
 
 #### Automated
 
-- [ ] 2.1 Plan API tests pass: `./mvnw test -Dtest=TrainingPlanControllerTest`
-- [ ] 2.2 Full backend suite passes: `./mvnw test`
+- [x] 2.1 Plan API tests pass: `./mvnw test -Dtest=TrainingPlanControllerTest`
+- [x] 2.2 Full backend suite passes: `./mvnw test`
 
 #### Manual
 
-- [ ] 2.3 With the app running locally, a curl/HTTP-client flow (register → create plan with a repeated exercise → reorder via PUT → list → delete) returns the documented statuses and bodies
+- [x] 2.3 With the app running locally, a curl/HTTP-client flow (register → create plan with a repeated exercise → reorder via PUT → list → delete) returns the documented statuses and bodies
 
 ### Phase 3: Frontend plan list and navigation
 
