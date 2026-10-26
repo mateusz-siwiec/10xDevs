@@ -3,7 +3,7 @@ project: "GymTrack"
 version: 1
 status: draft
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-10-26
 prd_version: 1
 main_goal: learn
 top_blocker: skills
@@ -40,7 +40,7 @@ An amateur-to-intermediate gym-goer currently tracks workouts in scattered notes
 | --- | --- | --- | --- | --- | --- |
 | F-01 | minimal-auth | (foundation) register, log in, log out; every request carries a scoped identity | — | FR-001, Access Control | done |
 | F-02 | exercise-catalog-seed | (foundation) seeded exercise catalog with muscle-group tags exists and is queryable | — | FR-002, Access Control | done |
-| S-01 | core-workout-logging-loop | start a session, select an exercise, log a set, end the session, see it on the progression chart | F-01, F-02 | US-01, FR-004, FR-005, FR-006, FR-010 | proposed |
+| S-01 | core-workout-logging-loop | start a session, select an exercise, log a set, end the session, see it on the progression chart | F-01, F-02 | US-01, FR-004, FR-005, FR-006, FR-010 | in-progress |
 | S-02 | user-defined-training-plan | define their own training plan as an ordered list of exercises | F-01, F-02 | FR-009 | proposed |
 | S-03 | progression-recommendation | see a recommendation to increase weight after N full-rep workouts | S-01 | FR-011 | proposed |
 | S-04 | exercise-substitution-suggestion | see a substitute exercise suggestion when marking one unavailable | S-01, F-02 | FR-012 | proposed |
@@ -113,7 +113,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Every later recommendation/substitution rule reads from this slice's set history — any schema shortcut here (e.g. losing per-set granularity) blocks FR-011/FR-012 later. Keep sets as the source of truth and the chart as a view on top, per the PRD's own resolution on FR-010.
-- **Status:** proposed
+- **Status:** in-progress
 
 ### S-02: User-defined training plan
 
