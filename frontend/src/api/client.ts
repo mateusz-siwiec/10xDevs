@@ -88,3 +88,80 @@ export async function authFetch(path: string, options: RequestInit = {}): Promis
   }
   return res
 }
+
+export interface Exercise {
+  id: string
+  slug: string
+  name: string
+  primaryMuscleGroup: string
+  secondaryMuscleGroups: string[]
+}
+
+export interface WorkoutSet {
+  id: string
+  exerciseId: string
+  reps: number
+  weightKg: number
+  loggedAt: string
+}
+
+export interface WorkoutSession {
+  id: string
+  startedAt: string
+  endedAt: string | null
+  sets: WorkoutSet[]
+}
+
+export interface LogSetInput {
+  exerciseId: string
+  reps: number
+  weightKg: number
+}
+
+export interface ProgressionPoint {
+  sessionId: string
+  date: string
+  topWeightKg: number
+}
+
+export async function getExercises(): Promise<Exercise[]> {
+  const res = await authFetch('/api/exercises')
+  return res.json()
+}
+
+export async function startSession(): Promise<WorkoutSession> {
+  const res = await authFetch('/api/workout-sessions', { method: 'POST' })
+  return res.json()
+}
+
+/** Returns null when the user has no active session (204 No Content). */
+export async function getCurrentSession(): Promise<WorkoutSession | null> {
+  const res = await authFetch('/api/workout-sessions/current')
+  if (res.status === 204) {
+    return null
+  }
+  return res.json()
+}
+
+export async function endSession(id: string): Promise<WorkoutSession> {
+  const res = await authFetch(`/api/workout-sessions/${id}/end`, { method: 'POST' })
+  return res.json()
+}
+
+export async function logSet(sessionId: string, input: LogSetInput): Promise<WorkoutSet> {
+  const res = await authFetch(`/api/workout-sessions/${sessionId}/sets`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input),
+  })
+  return res.json()
+}
+
+export async function deleteSet(sessionId: string, setId: string): Promise<void> {
+  await authFetch(`/api/workout-sessions/${sessionId}/sets/${setId}`, { method: 'DELETE' })
+}
+
+export async function getProgression(exerciseId: string): Promise<ProgressionPoint[]> {
+  const res = await authFetch(`/api/exercises/${exerciseId}/progression`)
+  return res.json()
+}

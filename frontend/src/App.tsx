@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router'
 import { AuthProvider } from './auth/AuthContext'
 import { RequireAuth } from './auth/RequireAuth'
-import DashboardPage from './pages/DashboardPage'
+import WorkoutPage from './pages/WorkoutPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 
@@ -16,7 +16,7 @@ function App() {
             path="/"
             element={
               <RequireAuth>
-                <DashboardPage />
+                <WorkoutPage />
               </RequireAuth>
             }
           />

@@ -340,26 +340,26 @@ V4 applies only where Flyway runs (local, tests). Production keeps `ddl-auto=upd
 
 #### Automated
 
-- [x] 3.1 Progression tests pass: `./mvnw test -Dtest=ProgressionControllerTest`
-- [x] 3.2 Full backend suite passes: `./mvnw test`
+- [x] 3.1 Progression tests pass: `./mvnw test -Dtest=ProgressionControllerTest` — 9f79350
+- [x] 3.2 Full backend suite passes: `./mvnw test` — 9f79350
 
 #### Manual
 
-- [x] 3.3 Logging sets across two sessions locally returns the expected series from the endpoint
+- [x] 3.3 Logging sets across two sessions locally returns the expected series from the endpoint — 9f79350
 
 ### Phase 4: Frontend workout flow
 
 #### Automated
 
-- [ ] 4.1 Lint passes: `cd frontend && npm run lint`
-- [ ] 4.2 Type check and build pass: `cd frontend && npm run build`
+- [x] 4.1 Lint passes: `cd frontend && npm run lint`
+- [x] 4.2 Type check and build pass: `cd frontend && npm run build`
 
 #### Manual
 
-- [ ] 4.3 Start → pick exercise → log a set → see it listed; reload and the active session and its sets are still there
-- [ ] 4.4 Deleting a set asks for confirmation and removes it only after confirming
-- [ ] 4.5 Ending the workout returns to the "Start workout" state; invalid input shows the server error without losing the form
-- [ ] 4.6 Usable at phone width (about 375 px) with touch targets comfortably tappable
+- [x] 4.3 Start → pick exercise → log a set → see it listed; reload and the active session and its sets are still there
+- [x] 4.4 Deleting a set asks for confirmation and removes it only after confirming
+- [x] 4.5 Ending the workout returns to the "Start workout" state; invalid input shows the server error without losing the form
+- [x] 4.6 Usable at phone width (about 375 px) with touch targets comfortably tappable
 
 ### Phase 5: Frontend progression chart
 
