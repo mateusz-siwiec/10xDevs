@@ -317,24 +317,24 @@ V4 applies only where Flyway runs (local, tests). Production keeps `ddl-auto=upd
 
 #### Automated
 
-- [x] 1.1 Schema test passes (migration applies, Hibernate `validate` succeeds): `./mvnw test -Dtest=WorkoutSchemaTest`
-- [x] 1.2 Full backend suite still passes: `./mvnw test`
+- [x] 1.1 Schema test passes (migration applies, Hibernate `validate` succeeds): `./mvnw test -Dtest=WorkoutSchemaTest` — 8e95608
+- [x] 1.2 Full backend suite still passes: `./mvnw test` — 8e95608
 
 #### Manual
 
-- [x] 1.3 App starts against local Postgres with the new migration: `./mvnw spring-boot:run -Dspring-boot.run.profiles=local`
+- [x] 1.3 App starts against local Postgres with the new migration: `./mvnw spring-boot:run -Dspring-boot.run.profiles=local` — 8e95608
 
 ### Phase 2: Session and set API
 
 #### Automated
 
-- [ ] 2.1 Session lifecycle tests pass: `./mvnw test -Dtest=WorkoutSessionControllerTest`
-- [ ] 2.2 Set tests pass: `./mvnw test -Dtest=WorkoutSetControllerTest`
-- [ ] 2.3 Full backend suite passes: `./mvnw test`
+- [x] 2.1 Session lifecycle tests pass: `./mvnw test -Dtest=WorkoutSessionControllerTest`
+- [x] 2.2 Set tests pass: `./mvnw test -Dtest=WorkoutSetControllerTest`
+- [x] 2.3 Full backend suite passes: `./mvnw test`
 
 #### Manual
 
-- [ ] 2.4 With the app running locally, a curl/HTTP-client flow (register → start → log set → end) returns the documented statuses and bodies
+- [x] 2.4 With the app running locally, a curl/HTTP-client flow (register → start → log set → end) returns the documented statuses and bodies
 
 ### Phase 3: Progression endpoint
 
