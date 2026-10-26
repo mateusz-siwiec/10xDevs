@@ -87,6 +87,11 @@
   cursor: pointer;
 }
 
+.progression-chart-body {
+  width: 100%;
+  min-width: 0;
+}
+
 .workout-end {
   margin-top: 2rem;
 }

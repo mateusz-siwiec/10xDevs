@@ -9,6 +9,7 @@ import {
 } from '../api/client'
 import type { Exercise, WorkoutSession } from '../api/client'
 import ExercisePicker from '../components/ExercisePicker'
+import ProgressionChart from '../components/ProgressionChart'
 import SessionSetList from '../components/SessionSetList'
 import SetLogger from '../components/SetLogger'
 import '../styles/page.css'
@@ -21,6 +22,7 @@ export default function WorkoutPage() {
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
     Promise.all([getExercises(), getCurrentSession()])
@@ -68,6 +70,7 @@ export default function WorkoutPage() {
     try {
       const set = await logSet(session.id, { exerciseId: selectedExercise, reps, weightKg })
       setSession({ ...session, sets: [...session.sets, set] })
+      setRefreshKey((k) => k + 1)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to log set')
       throw err
@@ -80,6 +83,7 @@ export default function WorkoutPage() {
     try {
       await deleteSet(session.id, setId)
       setSession({ ...session, sets: session.sets.filter((s) => s.id !== setId) })
+      setRefreshKey((k) => k + 1)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete set')
     }
@@ -106,6 +110,9 @@ export default function WorkoutPage() {
               onChange={setSelectedExercise}
             />
             <SetLogger disabled={!selectedExercise} onLog={handleLog} />
+            {selectedExercise && (
+              <ProgressionChart exerciseId={selectedExercise} refreshKey={refreshKey} />
+            )}
             <section className="workout-section">
               <h2>Logged sets</h2>
               <SessionSetList

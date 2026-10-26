@@ -351,27 +351,27 @@ V4 applies only where Flyway runs (local, tests). Production keeps `ddl-auto=upd
 
 #### Automated
 
-- [x] 4.1 Lint passes: `cd frontend && npm run lint`
-- [x] 4.2 Type check and build pass: `cd frontend && npm run build`
+- [x] 4.1 Lint passes: `cd frontend && npm run lint` — c083bd9
+- [x] 4.2 Type check and build pass: `cd frontend && npm run build` — c083bd9
 
 #### Manual
 
-- [x] 4.3 Start → pick exercise → log a set → see it listed; reload and the active session and its sets are still there
-- [x] 4.4 Deleting a set asks for confirmation and removes it only after confirming
-- [x] 4.5 Ending the workout returns to the "Start workout" state; invalid input shows the server error without losing the form
-- [x] 4.6 Usable at phone width (about 375 px) with touch targets comfortably tappable
+- [x] 4.3 Start → pick exercise → log a set → see it listed; reload and the active session and its sets are still there — c083bd9
+- [x] 4.4 Deleting a set asks for confirmation and removes it only after confirming — c083bd9
+- [x] 4.5 Ending the workout returns to the "Start workout" state; invalid input shows the server error without losing the form — c083bd9
+- [x] 4.6 Usable at phone width (about 375 px) with touch targets comfortably tappable — c083bd9
 
 ### Phase 5: Frontend progression chart
 
 #### Automated
 
-- [ ] 5.1 Lint passes: `cd frontend && npm run lint`
-- [ ] 5.2 Type check and build pass: `cd frontend && npm run build`
+- [x] 5.1 Lint passes: `cd frontend && npm run lint`
+- [x] 5.2 Type check and build pass: `cd frontend && npm run build`
 
 #### Manual
 
-- [ ] 5.3 Logging the first-ever set for an exercise shows a one-point chart (not blank or error)
-- [ ] 5.4 Logging a heavier set updates the chart immediately without reload; deleting it lowers/removes the point
-- [ ] 5.5 After ending the session and starting a new one, the chart shows one point per session
-- [ ] 5.6 A second account sees none of the first account's points
-- [ ] 5.7 Logging feels immediate (visible acknowledgement within about one second on local run)
+- [x] 5.3 Logging the first-ever set for an exercise shows a one-point chart (not blank or error)
+- [x] 5.4 Logging a heavier set updates the chart immediately without reload; deleting it lowers/removes the point
+- [x] 5.5 After ending the session and starting a new one, the chart shows one point per session
+- [x] 5.6 A second account sees none of the first account's points
+- [x] 5.7 Logging feels immediate (visible acknowledgement within about one second on local run)
