@@ -165,3 +165,62 @@ export async function getProgression(exerciseId: string): Promise<ProgressionPoi
   const res = await authFetch(`/api/exercises/${exerciseId}/progression`)
   return res.json()
 }
+
+export interface PlanSummary {
+  id: string
+  name: string
+  exerciseCount: number
+  updatedAt: string
+}
+
+export interface PlanEntry {
+  exerciseId: string
+  exerciseName: string
+  position: number
+}
+
+export interface Plan {
+  id: string
+  name: string
+  createdAt: string
+  updatedAt: string
+  exercises: PlanEntry[]
+}
+
+export interface PlanInput {
+  name: string
+  exerciseIds: string[]
+}
+
+export async function listPlans(): Promise<PlanSummary[]> {
+  const res = await authFetch('/api/training-plans')
+  return res.json()
+}
+
+export async function getPlan(id: string): Promise<Plan> {
+  const res = await authFetch(`/api/training-plans/${id}`)
+  return res.json()
+}
+
+export async function createPlan(input: PlanInput): Promise<Plan> {
+  const res = await authFetch('/api/training-plans', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input),
+  })
+  return res.json()
+}
+
+export async function updatePlan(id: string, input: PlanInput): Promise<Plan> {
+  const res = await authFetch(`/api/training-plans/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input),
+  })
+  return res.json()
+}
+
+/** Resolves on 204 No Content; there is no body to parse. */
+export async function deletePlan(id: string): Promise<void> {
+  await authFetch(`/api/training-plans/${id}`, { method: 'DELETE' })
+}

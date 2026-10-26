@@ -285,26 +285,26 @@ V5 applies only where Flyway runs (local, tests). Production keeps `ddl-auto=upd
 
 #### Automated
 
-- [x] 2.1 Plan API tests pass: `./mvnw test -Dtest=TrainingPlanControllerTest`
-- [x] 2.2 Full backend suite passes: `./mvnw test`
+- [x] 2.1 Plan API tests pass: `./mvnw test -Dtest=TrainingPlanControllerTest` — f03fe36
+- [x] 2.2 Full backend suite passes: `./mvnw test` — f03fe36
 
 #### Manual
 
-- [x] 2.3 With the app running locally, a curl/HTTP-client flow (register → create plan with a repeated exercise → reorder via PUT → list → delete) returns the documented statuses and bodies
+- [x] 2.3 With the app running locally, a curl/HTTP-client flow (register → create plan with a repeated exercise → reorder via PUT → list → delete) returns the documented statuses and bodies — f03fe36
 
 ### Phase 3: Frontend plan list and navigation
 
 #### Automated
 
-- [ ] 3.1 Lint passes: `cd frontend && npm run lint`
-- [ ] 3.2 Type check and build pass: `cd frontend && npm run build`
+- [x] 3.1 Lint passes: `cd frontend && npm run lint`
+- [x] 3.2 Type check and build pass: `cd frontend && npm run build`
 
 #### Manual
 
-- [ ] 3.3 Topbar shows Workout and Plans links on gated pages; both navigate and the current page is marked
-- [ ] 3.4 With no plans, `/plans` shows an empty state; plans created via the API show name and exercise count
-- [ ] 3.5 Deleting a plan asks for confirmation and removes it only after confirming; cancelling keeps it
-- [ ] 3.6 Usable at phone width (about 375 px) with comfortably tappable controls
+- [x] 3.3 Topbar shows Workout and Plans links on gated pages; both navigate and the current page is marked
+- [x] 3.4 With no plans, `/plans` shows an empty state; plans created via the API show name and exercise count
+- [x] 3.5 Deleting a plan asks for confirmation and removes it only after confirming; cancelling keeps it
+- [x] 3.6 Usable at phone width (about 375 px) with comfortably tappable controls
 
 ### Phase 4: Frontend plan editor
 
