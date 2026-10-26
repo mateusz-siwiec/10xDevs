@@ -1,6 +1,8 @@
 package com.example.gymtrack.workout;
 
 import com.example.gymtrack.exercise.ExerciseRepository;
+import com.example.gymtrack.plan.PlanNotFoundException;
+import com.example.gymtrack.plan.TrainingPlanRepository;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -23,13 +25,17 @@ public class WorkoutService {
 
 	private final ExerciseRepository exerciseRepository;
 
+	private final TrainingPlanRepository planRepository;
+
 	private final TransactionTemplate transactionTemplate;
 
 	public WorkoutService(WorkoutSessionRepository sessionRepository, WorkoutSetRepository setRepository,
-			ExerciseRepository exerciseRepository, PlatformTransactionManager transactionManager) {
+			ExerciseRepository exerciseRepository, TrainingPlanRepository planRepository,
+			PlatformTransactionManager transactionManager) {
 		this.sessionRepository = sessionRepository;
 		this.setRepository = setRepository;
 		this.exerciseRepository = exerciseRepository;
+		this.planRepository = planRepository;
 		this.transactionTemplate = new TransactionTemplate(transactionManager);
 	}
 
@@ -37,14 +43,17 @@ public class WorkoutService {
 	 * Not itself transactional: a unique violation poisons the surrounding transaction, so each
 	 * attempt runs in its own transaction and the re-read after a lost race runs in a fresh one.
 	 */
-	public StartResult startOrGetActive(UUID userId) {
+	public StartResult startOrGetActive(UUID userId, UUID planId) {
 		try {
 			return transactionTemplate.execute(status -> {
 				Optional<WorkoutSession> existing = sessionRepository.findByUserIdAndEndedAtIsNull(userId);
 				if (existing.isPresent()) {
 					return new StartResult(toResponse(existing.get()), false);
 				}
-				WorkoutSession created = sessionRepository.saveAndFlush(new WorkoutSession(userId));
+				if (planId != null && planRepository.findByIdAndUserId(planId, userId).isEmpty()) {
+					throw new PlanNotFoundException("Training plan not found");
+				}
+				WorkoutSession created = sessionRepository.saveAndFlush(new WorkoutSession(userId, planId));
 				return new StartResult(toResponse(created), true);
 			});
 		}

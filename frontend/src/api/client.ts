@@ -109,6 +109,7 @@ export interface WorkoutSession {
   id: string
   startedAt: string
   endedAt: string | null
+  planId: string | null
   sets: WorkoutSet[]
 }
 
@@ -129,8 +130,13 @@ export async function getExercises(): Promise<Exercise[]> {
   return res.json()
 }
 
-export async function startSession(): Promise<WorkoutSession> {
-  const res = await authFetch('/api/workout-sessions', { method: 'POST' })
+export async function startSession(planId?: string): Promise<WorkoutSession> {
+  const res = await authFetch('/api/workout-sessions', {
+    method: 'POST',
+    ...(planId
+      ? { headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ planId }) }
+      : {}),
+  })
   return res.json()
 }
 

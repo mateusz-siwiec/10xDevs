@@ -23,8 +23,10 @@ public class WorkoutController {
 	}
 
 	@PostMapping("/api/workout-sessions")
-	public ResponseEntity<SessionResponse> start(@AuthenticationPrincipal CurrentUser currentUser) {
-		WorkoutService.StartResult result = workoutService.startOrGetActive(currentUser.id());
+	public ResponseEntity<SessionResponse> start(@AuthenticationPrincipal CurrentUser currentUser,
+			@RequestBody(required = false) StartSessionRequest request) {
+		UUID planId = request == null ? null : request.planId();
+		WorkoutService.StartResult result = workoutService.startOrGetActive(currentUser.id(), planId);
 		return ResponseEntity.status(result.created() ? HttpStatus.CREATED : HttpStatus.OK).body(result.session());
 	}
 

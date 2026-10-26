@@ -4,11 +4,15 @@ import {
   endSession,
   getCurrentSession,
   getExercises,
+  getPlan,
+  listPlans,
   logSet,
   startSession,
 } from '../api/client'
-import type { Exercise, WorkoutSession } from '../api/client'
+import type { Exercise, Plan, PlanSummary, WorkoutSession } from '../api/client'
 import ExercisePicker from '../components/ExercisePicker'
+import PlanWalkthrough from '../components/PlanWalkthrough'
+import { computeProgress, currentIndex } from '../components/planProgress'
 import ProgressionChart from '../components/ProgressionChart'
 import SessionSetList from '../components/SessionSetList'
 import SetLogger from '../components/SetLogger'
@@ -18,17 +22,22 @@ import '../styles/workout.css'
 export default function WorkoutPage() {
   const [session, setSession] = useState<WorkoutSession | null>(null)
   const [exercises, setExercises] = useState<Exercise[]>([])
-  const [selectedExercise, setSelectedExercise] = useState('')
+  const [plans, setPlans] = useState<PlanSummary[]>([])
+  const [startPlanId, setStartPlanId] = useState('')
+  const [planState, setPlanState] = useState<{ planId: string; plan: Plan | null } | null>(null)
+  // A manual pick is only honoured while the plan's auto-selected exercise is unchanged.
+  const [manual, setManual] = useState<{ exerciseId: string; autoId: string } | null>(null)
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
-    Promise.all([getExercises(), getCurrentSession()])
-      .then(([exerciseList, current]) => {
+    Promise.all([getExercises(), getCurrentSession(), listPlans().catch(() => [] as PlanSummary[])])
+      .then(([exerciseList, current, planList]) => {
         setExercises(exerciseList)
         setSession(current)
+        setPlans(planList)
       })
       .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load workout'))
       .finally(() => setLoading(false))
@@ -36,11 +45,39 @@ export default function WorkoutPage() {
 
   const exerciseNames = useMemo(() => new Map(exercises.map((e) => [e.id, e.name])), [exercises])
 
-  async function handleStart() {
+  const sessionId = session?.id ?? null
+  const sessionPlanId = session?.planId ?? null
+
+  // A deleted or unavailable plan silently falls back to the free-form view.
+  useEffect(() => {
+    if (!sessionId || !sessionPlanId) return
+    let cancelled = false
+    getPlan(sessionPlanId)
+      .then((plan) => !cancelled && setPlanState({ planId: sessionPlanId, plan }))
+      .catch(() => !cancelled && setPlanState({ planId: sessionPlanId, plan: null }))
+    return () => {
+      cancelled = true
+    }
+  }, [sessionId, sessionPlanId])
+
+  const plan = sessionPlanId && planState?.planId === sessionPlanId ? planState.plan : null
+  const progress = useMemo(
+    () => (plan && session ? computeProgress(plan.exercises, session.sets) : null),
+    [plan, session],
+  )
+  const autoIndex = progress ? currentIndex(progress) : -1
+  const autoId = autoIndex >= 0 && progress ? progress[autoIndex].entry.exerciseId : ''
+  const selectedExercise = manual && manual.autoId === autoId ? manual.exerciseId : autoId
+
+  function handleSelect(exerciseId: string) {
+    setManual({ exerciseId, autoId })
+  }
+
+  async function handleStart(planId?: string) {
     setError(null)
     setBusy(true)
     try {
-      setSession(await startSession())
+      setSession(await startSession(planId))
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to start workout')
     } finally {
@@ -55,7 +92,7 @@ export default function WorkoutPage() {
     try {
       await endSession(session.id)
       setSession(null)
-      setSelectedExercise('')
+      setManual(null)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to end workout')
     } finally {
@@ -107,15 +144,49 @@ export default function WorkoutPage() {
         <h1>Workout</h1>
         {error && <p className="error-text">{error}</p>}
         {session === null ? (
-          <button type="button" className="btn-primary" disabled={busy} onClick={handleStart}>
-            {busy ? 'Starting…' : 'Start workout'}
-          </button>
+          <div className="workout-start">
+            {plans.length > 0 && (
+              <div className="workout-start-plan">
+                <select
+                  className="workout-select"
+                  aria-label="Start from plan"
+                  value={startPlanId}
+                  onChange={(event) => setStartPlanId(event.target.value)}
+                >
+                  <option value="">Start from plan…</option>
+                  {plans.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  className="btn-primary"
+                  disabled={busy || !startPlanId}
+                  onClick={() => handleStart(startPlanId)}
+                >
+                  Start plan
+                </button>
+              </div>
+            )}
+            <button type="button" className="btn-primary" disabled={busy} onClick={() => handleStart()}>
+              {busy ? 'Starting…' : 'Start workout'}
+            </button>
+          </div>
         ) : (
           <>
+            {progress && (
+              <PlanWalkthrough
+                progress={progress}
+                selectedExerciseId={selectedExercise}
+                onSelect={handleSelect}
+              />
+            )}
             <ExercisePicker
               exercises={exercises}
               selectedId={selectedExercise}
-              onChange={setSelectedExercise}
+              onChange={handleSelect}
             />
             <SetLogger disabled={!selectedExercise} onLog={handleLog} />
             {selectedExercise && (

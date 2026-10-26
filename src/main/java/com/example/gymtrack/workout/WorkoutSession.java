@@ -25,11 +25,18 @@ public class WorkoutSession {
 
 	private Instant endedAt;
 
+	private UUID planId;
+
 	protected WorkoutSession() {
 	}
 
 	public WorkoutSession(UUID userId) {
+		this(userId, null);
+	}
+
+	public WorkoutSession(UUID userId, UUID planId) {
 		this.userId = userId;
+		this.planId = planId;
 		this.startedAt = Instant.now();
 	}
 
@@ -55,6 +62,10 @@ public class WorkoutSession {
 
 	public Instant getEndedAt() {
 		return endedAt;
+	}
+
+	public UUID getPlanId() {
+		return planId;
 	}
 
 }

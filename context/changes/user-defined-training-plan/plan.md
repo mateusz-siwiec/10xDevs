@@ -469,33 +469,33 @@ V5, V6 and V7 apply only where Flyway runs (local, tests). Production keeps `ddl
 
 #### Automated
 
-- [x] 5.1 Schema and API tests pass: `./mvnw test -Dtest='TrainingPlan*Test'`
-- [x] 5.2 Full backend suite passes: `./mvnw test`
-- [x] 5.3 Lint passes: `cd frontend && npm run lint`
-- [x] 5.4 Type check and build pass: `cd frontend && npm run build`
+- [x] 5.1 Schema and API tests pass: `./mvnw test -Dtest='TrainingPlan*Test'` — 5b5dc21
+- [x] 5.2 Full backend suite passes: `./mvnw test` — 5b5dc21
+- [x] 5.3 Lint passes: `cd frontend && npm run lint` — 5b5dc21
+- [x] 5.4 Type check and build pass: `cd frontend && npm run build` — 5b5dc21
 
 #### Manual
 
-- [x] 5.5 Create a plan with different sets/reps per exercise (including a repeated exercise with different targets); reopen it: targets are saved per row and survive Move up/down, Remove and a reload
-- [x] 5.6 Existing plans created before this phase open with 3 × 10 targets
-- [x] 5.7 Out-of-range sets/reps (0, 21 sets, 101 reps) show the server error without losing the form
-- [x] 5.8 Sets/reps inputs are comfortably usable at phone width (about 375 px)
+- [x] 5.5 Create a plan with different sets/reps per exercise (including a repeated exercise with different targets); reopen it: targets are saved per row and survive Move up/down, Remove and a reload — 5b5dc21
+- [x] 5.6 Existing plans created before this phase open with 3 × 10 targets — 5b5dc21
+- [x] 5.7 Out-of-range sets/reps (0, 21 sets, 101 reps) show the server error without losing the form — 5b5dc21
+- [x] 5.8 Sets/reps inputs are comfortably usable at phone width (about 375 px) — 5b5dc21
 
 ### Phase 6: Start a workout from a plan
 
 #### Automated
 
-- [ ] 6.1 Workout and schema tests pass: `./mvnw test -Dtest='Workout*Test'`
-- [ ] 6.2 Full backend suite passes: `./mvnw test`
-- [ ] 6.3 Lint passes: `cd frontend && npm run lint`
-- [ ] 6.4 Type check and build pass: `cd frontend && npm run build`
+- [x] 6.1 Workout and schema tests pass: `./mvnw test -Dtest='Workout*Test'`
+- [x] 6.2 Full backend suite passes: `./mvnw test`
+- [x] 6.3 Lint passes: `cd frontend && npm run lint`
+- [x] 6.4 Type check and build pass: `cd frontend && npm run build`
 
 #### Manual
 
-- [ ] 6.5 From an idle workout page, choose a plan and start: exercises appear in order with `sets × reps` targets and `0/sets` progress; the first exercise is preselected
-- [ ] 6.6 Logging sets advances progress; after the target is reached the next exercise becomes current; a repeated exercise fills its entries in order
-- [ ] 6.7 Tapping another entry selects it; free-form logging of an exercise not in the plan still works
-- [ ] 6.8 Reload mid-workout: the walk-through and progress are restored; ending the workout returns to the idle page
-- [ ] 6.9 Deleting the plan while a session from it is active falls back to the normal workout view without errors
-- [ ] 6.10 A second account cannot start a session from the first account's plan
-- [ ] 6.11 Usable at phone width (about 375 px)
+- [x] 6.5 From an idle workout page, choose a plan and start: exercises appear in order with `sets × reps` targets and `0/sets` progress; the first exercise is preselected
+- [x] 6.6 Logging sets advances progress; after the target is reached the next exercise becomes current; a repeated exercise fills its entries in order
+- [x] 6.7 Tapping another entry selects it; free-form logging of an exercise not in the plan still works
+- [x] 6.8 Reload mid-workout: the walk-through and progress are restored; ending the workout returns to the idle page
+- [x] 6.9 Deleting the plan while a session from it is active falls back to the normal workout view without errors
+- [x] 6.10 A second account cannot start a session from the first account's plan
+- [x] 6.11 Usable at phone width (about 375 px)
