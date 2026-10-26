@@ -485,17 +485,17 @@ V5, V6 and V7 apply only where Flyway runs (local, tests). Production keeps `ddl
 
 #### Automated
 
-- [x] 6.1 Workout and schema tests pass: `./mvnw test -Dtest='Workout*Test'`
-- [x] 6.2 Full backend suite passes: `./mvnw test`
-- [x] 6.3 Lint passes: `cd frontend && npm run lint`
-- [x] 6.4 Type check and build pass: `cd frontend && npm run build`
+- [x] 6.1 Workout and schema tests pass: `./mvnw test -Dtest='Workout*Test'` — 1b3b899
+- [x] 6.2 Full backend suite passes: `./mvnw test` — 1b3b899
+- [x] 6.3 Lint passes: `cd frontend && npm run lint` — 1b3b899
+- [x] 6.4 Type check and build pass: `cd frontend && npm run build` — 1b3b899
 
 #### Manual
 
-- [x] 6.5 From an idle workout page, choose a plan and start: exercises appear in order with `sets × reps` targets and `0/sets` progress; the first exercise is preselected
-- [x] 6.6 Logging sets advances progress; after the target is reached the next exercise becomes current; a repeated exercise fills its entries in order
-- [x] 6.7 Tapping another entry selects it; free-form logging of an exercise not in the plan still works
-- [x] 6.8 Reload mid-workout: the walk-through and progress are restored; ending the workout returns to the idle page
-- [x] 6.9 Deleting the plan while a session from it is active falls back to the normal workout view without errors
-- [x] 6.10 A second account cannot start a session from the first account's plan
-- [x] 6.11 Usable at phone width (about 375 px)
+- [x] 6.5 From an idle workout page, choose a plan and start: exercises appear in order with `sets × reps` targets and `0/sets` progress; the first exercise is preselected — 1b3b899
+- [x] 6.6 Logging sets advances progress; after the target is reached the next exercise becomes current; a repeated exercise fills its entries in order — 1b3b899
+- [x] 6.7 Tapping another entry selects it; free-form logging of an exercise not in the plan still works — 1b3b899
+- [x] 6.8 Reload mid-workout: the walk-through and progress are restored; ending the workout returns to the idle page — 1b3b899
+- [x] 6.9 Deleting the plan while a session from it is active falls back to the normal workout view without errors — 1b3b899
+- [x] 6.10 A second account cannot start a session from the first account's plan — 1b3b899
+- [x] 6.11 Usable at phone width (about 375 px) — 1b3b899

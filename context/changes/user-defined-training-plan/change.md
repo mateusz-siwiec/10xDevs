@@ -1,7 +1,7 @@
 ---
 change_id: user-defined-training-plan
 title: User-defined training plan
-status: implementing
+status: implemented
 created: 2026-10-26
 updated: 2026-10-26
 archived_at: null
