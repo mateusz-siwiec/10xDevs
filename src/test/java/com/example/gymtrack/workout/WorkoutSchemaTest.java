@@ -44,6 +44,7 @@ class WorkoutSchemaTest {
 	@AfterEach
 	void cleanUp() {
 		jdbc.update("delete from workout_sessions where user_id = ?", userId);
+		jdbc.update("delete from training_plans where user_id = ?", userId);
 		jdbc.update("delete from users where id = ?", userId);
 	}
 
@@ -103,6 +104,25 @@ class WorkoutSchemaTest {
 		Integer remaining = jdbc.queryForObject("select count(*) from workout_sets where session_id = ?",
 				Integer.class, sessionId);
 		assertThat(remaining).isZero();
+	}
+
+	@Test
+	void deletingPlanNullsPlanIdOnReferencingSessions() {
+		UUID planId = UUID.randomUUID();
+		jdbc.update("insert into training_plans (id, user_id, name, created_at, updated_at) "
+				+ "values (?, ?, ?, now(), now())", planId, userId, "Plan");
+		UUID sessionId = UUID.randomUUID();
+		jdbc.update("insert into workout_sessions (id, user_id, started_at, plan_id) values (?, ?, now(), ?)",
+				sessionId, userId, planId);
+
+		jdbc.update("delete from training_plans where id = ?", planId);
+
+		Integer sessions = jdbc.queryForObject("select count(*) from workout_sessions where id = ?", Integer.class,
+				sessionId);
+		UUID remaining = jdbc.queryForObject("select plan_id from workout_sessions where id = ?", UUID.class,
+				sessionId);
+		assertThat(sessions).isEqualTo(1);
+		assertThat(remaining).isNull();
 	}
 
 }

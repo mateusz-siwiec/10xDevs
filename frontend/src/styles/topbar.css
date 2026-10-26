@@ -30,3 +30,43 @@
 .topbar-logout:hover {
   border-color: var(--accent-border);
 }
+
+.topbar-nav {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.topbar-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 0.75rem;
+  font-weight: 500;
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+
+.topbar-link:hover {
+  color: var(--text-h);
+}
+
+.topbar-link.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.topbar-user {
+  margin-left: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+@media (max-width: 480px) {
+  .topbar {
+    flex-wrap: wrap;
+    padding: 0.5rem 1rem;
+  }
+}

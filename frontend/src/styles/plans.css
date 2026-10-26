@@ -1,0 +1,148 @@
+.plans-card {
+  max-width: 560px;
+}
+
+.plans-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.plans-header h1 {
+  margin: 0;
+}
+
+.plans-link-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.65rem 1.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #fff;
+  background: var(--accent);
+  border-radius: 8px;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.plans-link-button:hover {
+  opacity: 0.9;
+}
+
+.plan-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.plan-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.plan-item-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  color: var(--text);
+}
+
+.plan-item-name {
+  font-weight: 500;
+  color: var(--text-h);
+  overflow-wrap: anywhere;
+}
+
+.plan-item-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.plans-card .btn-secondary,
+.plans-card .btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.65rem 1.25rem;
+  box-sizing: border-box;
+  text-decoration: none;
+}
+
+.plan-add-button {
+  width: 100%;
+}
+
+.plan-exercise-list {
+  list-style: decimal inside;
+  margin: 0;
+  padding: 0;
+}
+
+.plan-exercise-item {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+
+.plan-exercise-name {
+  font-weight: 500;
+  color: var(--text-h);
+  overflow-wrap: anywhere;
+}
+
+.plan-exercise-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.plan-exercise-actions .btn-secondary {
+  flex: 1 1 auto;
+  padding: 0.65rem 0.75rem;
+}
+
+.plan-editor-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.plan-editor-footer .btn-secondary,
+.plans-card > .btn-secondary {
+  text-align: center;
+  text-decoration: none;
+}
+
+.plan-exercise-targets {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.plan-target-field {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.plan-target-field input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  box-sizing: border-box;
+}

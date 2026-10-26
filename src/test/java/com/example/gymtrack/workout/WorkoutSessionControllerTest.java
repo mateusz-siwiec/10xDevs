@@ -19,12 +19,15 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -54,10 +57,42 @@ class WorkoutSessionControllerTest {
 	@Autowired
 	private JwtService jwtService;
 
-	private String bearerToken() {
-		User user = userRepository.save(new User("sessions-" + System.nanoTime() + "@example.com",
+	@Autowired
+	private JdbcTemplate jdbc;
+
+	private final List<UUID> createdPlanIds = new ArrayList<>();
+
+	@AfterEach
+	void cleanUpPlans() {
+		for (UUID planId : createdPlanIds) {
+			jdbc.update("delete from training_plans where id = ?", planId);
+		}
+		createdPlanIds.clear();
+	}
+
+	private User newUser() {
+		return userRepository.save(new User("sessions-" + System.nanoTime() + "@example.com",
 				passwordEncoder.encode("password123")));
+	}
+
+	private String tokenFor(User user) {
 		return "Bearer " + jwtService.generateToken(user.getId(), user.getEmail());
+	}
+
+	private String bearerToken() {
+		return tokenFor(newUser());
+	}
+
+	private UUID createPlan(User owner) {
+		UUID id = UUID.randomUUID();
+		jdbc.update("insert into training_plans (id, user_id, name, created_at, updated_at) "
+				+ "values (?, ?, ?, now(), now())", id, owner.getId(), "Plan " + id);
+		createdPlanIds.add(id);
+		return id;
+	}
+
+	private String planBody(UUID planId) {
+		return "{\"planId\":\"" + planId + "\"}";
 	}
 
 	private String startSession(String token) throws Exception {
@@ -194,6 +229,92 @@ class WorkoutSessionControllerTest {
 
 		mockMvc.perform(post("/api/workout-sessions/" + id + "/end").header(HttpHeaders.AUTHORIZATION, bearerToken()))
 			.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void startWithoutBodyHasNullPlanId() throws Exception {
+		mockMvc.perform(post("/api/workout-sessions").header(HttpHeaders.AUTHORIZATION, bearerToken()))
+			.andExpect(status().isCreated())
+			.andExpect(jsonPath("$.planId", nullValue()));
+	}
+
+	@Test
+	void startWithOwnedPlanStoresAndReturnsPlanId() throws Exception {
+		User user = newUser();
+		String token = tokenFor(user);
+		UUID planId = createPlan(user);
+
+		mockMvc.perform(post("/api/workout-sessions").header(HttpHeaders.AUTHORIZATION, token)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(planBody(planId)))
+			.andExpect(status().isCreated())
+			.andExpect(jsonPath("$.planId", is(planId.toString())));
+
+		mockMvc.perform(get("/api/workout-sessions/current").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.planId", is(planId.toString())));
+	}
+
+	@Test
+	void startWithForeignPlanReturnsNotFoundAndCreatesNoSession() throws Exception {
+		UUID foreignPlanId = createPlan(newUser());
+		String token = bearerToken();
+
+		mockMvc.perform(post("/api/workout-sessions").header(HttpHeaders.AUTHORIZATION, token)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(planBody(foreignPlanId)))
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.error", is("Training plan not found")));
+
+		mockMvc.perform(get("/api/workout-sessions/current").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isNoContent());
+	}
+
+	@Test
+	void startWithUnknownPlanReturnsNotFoundAndCreatesNoSession() throws Exception {
+		String token = bearerToken();
+
+		mockMvc.perform(post("/api/workout-sessions").header(HttpHeaders.AUTHORIZATION, token)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(planBody(UUID.randomUUID())))
+			.andExpect(status().isNotFound());
+
+		mockMvc.perform(get("/api/workout-sessions/current").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isNoContent());
+	}
+
+	@Test
+	void startWhileActiveKeepsExistingSessionAndItsPlanId() throws Exception {
+		User user = newUser();
+		String token = tokenFor(user);
+		UUID firstPlan = createPlan(user);
+		UUID secondPlan = createPlan(user);
+
+		String first = mockMvc.perform(post("/api/workout-sessions").header(HttpHeaders.AUTHORIZATION, token)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(planBody(firstPlan)))
+			.andExpect(status().isCreated())
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+		String firstId = com.jayway.jsonpath.JsonPath.read(first, "$.id");
+
+		mockMvc.perform(post("/api/workout-sessions").header(HttpHeaders.AUTHORIZATION, token)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(planBody(firstPlan)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.id", is(firstId)))
+			.andExpect(jsonPath("$.planId", is(firstPlan.toString())));
+
+		mockMvc.perform(post("/api/workout-sessions").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.id", is(firstId)))
+			.andExpect(jsonPath("$.planId", is(firstPlan.toString())));
+
+		mockMvc.perform(post("/api/workout-sessions").header(HttpHeaders.AUTHORIZATION, token)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(planBody(secondPlan)))
+			.andExpect(status().isConflict());
 	}
 
 }
