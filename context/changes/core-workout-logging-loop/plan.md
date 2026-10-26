@@ -328,24 +328,24 @@ V4 applies only where Flyway runs (local, tests). Production keeps `ddl-auto=upd
 
 #### Automated
 
-- [x] 2.1 Session lifecycle tests pass: `./mvnw test -Dtest=WorkoutSessionControllerTest`
-- [x] 2.2 Set tests pass: `./mvnw test -Dtest=WorkoutSetControllerTest`
-- [x] 2.3 Full backend suite passes: `./mvnw test`
+- [x] 2.1 Session lifecycle tests pass: `./mvnw test -Dtest=WorkoutSessionControllerTest` — 411732b
+- [x] 2.2 Set tests pass: `./mvnw test -Dtest=WorkoutSetControllerTest` — 411732b
+- [x] 2.3 Full backend suite passes: `./mvnw test` — 411732b
 
 #### Manual
 
-- [x] 2.4 With the app running locally, a curl/HTTP-client flow (register → start → log set → end) returns the documented statuses and bodies
+- [x] 2.4 With the app running locally, a curl/HTTP-client flow (register → start → log set → end) returns the documented statuses and bodies — 411732b
 
 ### Phase 3: Progression endpoint
 
 #### Automated
 
-- [ ] 3.1 Progression tests pass: `./mvnw test -Dtest=ProgressionControllerTest`
-- [ ] 3.2 Full backend suite passes: `./mvnw test`
+- [x] 3.1 Progression tests pass: `./mvnw test -Dtest=ProgressionControllerTest`
+- [x] 3.2 Full backend suite passes: `./mvnw test`
 
 #### Manual
 
-- [ ] 3.3 Logging sets across two sessions locally returns the expected series from the endpoint
+- [x] 3.3 Logging sets across two sessions locally returns the expected series from the endpoint
 
 ### Phase 4: Frontend workout flow
 

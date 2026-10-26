@@ -2,6 +2,7 @@ package com.example.gymtrack.workout;
 
 import com.example.gymtrack.exercise.ExerciseRepository;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -96,6 +97,14 @@ public class WorkoutService {
 			throw new WorkoutConflictException("Workout session already ended");
 		}
 		setRepository.delete(set);
+	}
+
+	@Transactional(readOnly = true)
+	public List<ProgressionPointResponse> progression(UUID userId, UUID exerciseId) {
+		if (!exerciseRepository.existsById(exerciseId)) {
+			throw new WorkoutNotFoundException("Exercise not found");
+		}
+		return setRepository.findProgression(userId, exerciseId);
 	}
 
 	private WorkoutSession findOwned(UUID userId, UUID sessionId) {
