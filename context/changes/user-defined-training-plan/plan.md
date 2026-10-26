@@ -296,27 +296,27 @@ V5 applies only where Flyway runs (local, tests). Production keeps `ddl-auto=upd
 
 #### Automated
 
-- [x] 3.1 Lint passes: `cd frontend && npm run lint`
-- [x] 3.2 Type check and build pass: `cd frontend && npm run build`
+- [x] 3.1 Lint passes: `cd frontend && npm run lint` — aed4701
+- [x] 3.2 Type check and build pass: `cd frontend && npm run build` — aed4701
 
 #### Manual
 
-- [x] 3.3 Topbar shows Workout and Plans links on gated pages; both navigate and the current page is marked
-- [x] 3.4 With no plans, `/plans` shows an empty state; plans created via the API show name and exercise count
-- [x] 3.5 Deleting a plan asks for confirmation and removes it only after confirming; cancelling keeps it
-- [x] 3.6 Usable at phone width (about 375 px) with comfortably tappable controls
+- [x] 3.3 Topbar shows Workout and Plans links on gated pages; both navigate and the current page is marked — aed4701
+- [x] 3.4 With no plans, `/plans` shows an empty state; plans created via the API show name and exercise count — aed4701
+- [x] 3.5 Deleting a plan asks for confirmation and removes it only after confirming; cancelling keeps it — aed4701
+- [x] 3.6 Usable at phone width (about 375 px) with comfortably tappable controls — aed4701
 
 ### Phase 4: Frontend plan editor
 
 #### Automated
 
-- [ ] 4.1 Lint passes: `cd frontend && npm run lint`
-- [ ] 4.2 Type check and build pass: `cd frontend && npm run build`
+- [x] 4.1 Lint passes: `cd frontend && npm run lint`
+- [x] 4.2 Type check and build pass: `cd frontend && npm run build`
 
 #### Manual
 
-- [ ] 4.3 Create a plan with a name and several exercises including one added twice; after saving it appears in the list with the right count
-- [ ] 4.4 Reopen it: exercises are in the saved order; Move up/down and Remove change the order and survive a save and reload
-- [ ] 4.5 Invalid input (blank name, name over 60 characters, over 50 exercises) shows the server error without losing the form
-- [ ] 4.6 A second account cannot open the first account's plan by URL (inline not-found error) and sees none of its plans in the list
-- [ ] 4.7 Usable at phone width (about 375 px) with comfortably tappable controls; save feedback is visible within about a second
+- [x] 4.3 Create a plan with a name and several exercises including one added twice; after saving it appears in the list with the right count
+- [x] 4.4 Reopen it: exercises are in the saved order; Move up/down and Remove change the order and survive a save and reload
+- [x] 4.5 Invalid input (blank name, name over 60 characters, over 50 exercises) shows the server error without losing the form
+- [x] 4.6 A second account cannot open the first account's plan by URL (inline not-found error) and sees none of its plans in the list
+- [x] 4.7 Usable at phone width (about 375 px) with comfortably tappable controls; save feedback is visible within about a second
