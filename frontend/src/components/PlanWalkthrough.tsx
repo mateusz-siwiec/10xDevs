@@ -13,13 +13,18 @@ export default function PlanWalkthrough({
   onSelect,
 }: PlanWalkthroughProps) {
   const current = currentIndex(progress)
+  // Highlight a single entry: the current one if it matches, else the first entry of that exercise.
+  const selectedIndex =
+    current >= 0 && progress[current].entry.exerciseId === selectedExerciseId
+      ? current
+      : progress.findIndex((p) => p.entry.exerciseId === selectedExerciseId)
 
   return (
     <ol className="walkthrough-list">
       {progress.map(({ entry, logged }, index) => {
         const done = logged >= entry.sets
         const classes = ['walkthrough-entry']
-        if (entry.exerciseId === selectedExerciseId) classes.push('walkthrough-entry-selected')
+        if (index === selectedIndex) classes.push('walkthrough-entry-selected')
         if (index === current) classes.push('walkthrough-entry-current')
         if (done) classes.push('walkthrough-entry-done')
         return (

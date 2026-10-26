@@ -1,6 +1,8 @@
 package com.example.gymtrack.plan;
 
-public class PlanNotFoundException extends RuntimeException {
+import com.example.gymtrack.common.ResourceNotFoundException;
+
+public class PlanNotFoundException extends ResourceNotFoundException {
 
 	public PlanNotFoundException(String message) {
 		super(message);

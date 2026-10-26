@@ -48,6 +48,9 @@ public class WorkoutService {
 			return transactionTemplate.execute(status -> {
 				Optional<WorkoutSession> existing = sessionRepository.findByUserIdAndEndedAtIsNull(userId);
 				if (existing.isPresent()) {
+					if (planId != null && !planId.equals(existing.get().getPlanId())) {
+						throw new WorkoutConflictException("A workout session is already active");
+					}
 					return new StartResult(toResponse(existing.get()), false);
 				}
 				if (planId != null && planRepository.findByIdAndUserId(planId, userId).isEmpty()) {
@@ -61,7 +64,13 @@ public class WorkoutService {
 			// Lost the race against a concurrent start: the partial unique index arbitrated.
 			return transactionTemplate.execute(status -> sessionRepository.findByUserIdAndEndedAtIsNull(userId)
 				.map(session -> new StartResult(toResponse(session), false))
-				.orElseThrow(() -> ex));
+				.orElseThrow(() -> {
+					// No active session either: the FK failed because the plan was deleted mid-start.
+					if (planId != null && planRepository.findByIdAndUserId(planId, userId).isEmpty()) {
+						return new PlanNotFoundException("Training plan not found");
+					}
+					return ex;
+				}));
 		}
 	}
 

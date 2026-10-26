@@ -1,6 +1,8 @@
 package com.example.gymtrack.workout;
 
-public class WorkoutNotFoundException extends RuntimeException {
+import com.example.gymtrack.common.ResourceNotFoundException;
+
+public class WorkoutNotFoundException extends ResourceNotFoundException {
 
 	public WorkoutNotFoundException(String message) {
 		super(message);

@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Table(name = "training_plans")
@@ -36,6 +37,7 @@ public class TrainingPlan {
 
 	@OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("position")
+	@BatchSize(size = 50)
 	private List<TrainingPlanEntry> entries = new ArrayList<>();
 
 	protected TrainingPlan() {

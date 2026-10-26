@@ -66,7 +66,8 @@ export default function WorkoutPage() {
     [plan, session],
   )
   const autoIndex = progress ? currentIndex(progress) : -1
-  const autoId = autoIndex >= 0 && progress ? progress[autoIndex].entry.exerciseId : ''
+  // Once every entry is done, stay on the last one so extra sets can still be logged.
+  const autoId = progress && progress.length > 0 ? progress[autoIndex >= 0 ? autoIndex : progress.length - 1].entry.exerciseId : ''
   const selectedExercise = manual && manual.autoId === autoId ? manual.exerciseId : autoId
 
   function handleSelect(exerciseId: string) {

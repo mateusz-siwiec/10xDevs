@@ -301,10 +301,20 @@ class WorkoutSessionControllerTest {
 
 		mockMvc.perform(post("/api/workout-sessions").header(HttpHeaders.AUTHORIZATION, token)
 			.contentType(MediaType.APPLICATION_JSON)
-			.content(planBody(secondPlan)))
+			.content(planBody(firstPlan)))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.id", is(firstId)))
 			.andExpect(jsonPath("$.planId", is(firstPlan.toString())));
+
+		mockMvc.perform(post("/api/workout-sessions").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.id", is(firstId)))
+			.andExpect(jsonPath("$.planId", is(firstPlan.toString())));
+
+		mockMvc.perform(post("/api/workout-sessions").header(HttpHeaders.AUTHORIZATION, token)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(planBody(secondPlan)))
+			.andExpect(status().isConflict());
 	}
 
 }

@@ -14,11 +14,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RestControllerAdvice
 public class WorkoutExceptionHandler {
 
-	@ExceptionHandler(WorkoutNotFoundException.class)
-	public ResponseEntity<Map<String, String>> handleNotFound(WorkoutNotFoundException ex) {
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", ex.getMessage()));
-	}
-
 	@ExceptionHandler(WorkoutConflictException.class)
 	public ResponseEntity<Map<String, String>> handleConflict(WorkoutConflictException ex) {
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", ex.getMessage()));

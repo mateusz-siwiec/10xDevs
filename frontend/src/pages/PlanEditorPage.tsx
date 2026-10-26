@@ -10,12 +10,13 @@ import '../styles/page.css'
 import '../styles/workout.css'
 import '../styles/plans.css'
 
-// An empty field becomes null (rejected by the server); other text is sent via Number() unaltered.
+// Empty or non-integer text becomes null (rejected by the server) so fractions like 3.5 are never truncated.
 function toTarget(value: string): number | null {
-  return value.trim() === '' ? null : Number(value)
+  const n = Number(value)
+  return value.trim() === '' || !Number.isInteger(n) ? null : n
 }
 
-export default function PlanEditorPage() {
+function PlanEditor() {
   const { id } = useParams()
   const navigate = useNavigate()
 
@@ -196,4 +197,10 @@ export default function PlanEditorPage() {
       </main>
     </div>
   )
+}
+
+// Keyed on the route id so switching plans (or /plans/new) remounts with fresh state.
+export default function PlanEditorPage() {
+  const { id } = useParams()
+  return <PlanEditor key={id ?? 'new'} />
 }

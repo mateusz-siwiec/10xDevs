@@ -1,8 +1,8 @@
 package com.example.gymtrack.plan;
 
+import com.example.gymtrack.common.ResourceNotFoundException;
 import com.example.gymtrack.exercise.Exercise;
 import com.example.gymtrack.exercise.ExerciseRepository;
-import com.example.gymtrack.workout.WorkoutNotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +45,9 @@ public class TrainingPlanService {
 
 	@Transactional
 	public PlanResponse replace(UUID userId, UUID planId, String name, List<PlanEntryInput> entries) {
-		TrainingPlan plan = findOwned(userId, planId);
+		// Row lock serializes concurrent replaces of the same plan; otherwise the unique position index can 500.
+		TrainingPlan plan = planRepository.findByIdAndUserIdForUpdate(planId, userId)
+			.orElseThrow(() -> new PlanNotFoundException("Training plan not found"));
 		Map<UUID, String> names = loadExerciseNames(exerciseIds(entries));
 		plan.rename(name.trim());
 		// (plan_id, position) is unique and inserts flush before deletes: remove old entries first.
@@ -77,7 +79,7 @@ public class TrainingPlanService {
 			names.put(exercise.getId(), exercise.getName());
 		}
 		if (names.size() != distinct.size()) {
-			throw new WorkoutNotFoundException("Exercise not found");
+			throw new ResourceNotFoundException("Exercise not found");
 		}
 		return names;
 	}
