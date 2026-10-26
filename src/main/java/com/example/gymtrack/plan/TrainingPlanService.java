@@ -35,23 +35,23 @@ public class TrainingPlanService {
 	}
 
 	@Transactional
-	public PlanResponse create(UUID userId, String name, List<UUID> exerciseIds) {
-		Map<UUID, String> names = loadExerciseNames(exerciseIds);
+	public PlanResponse create(UUID userId, String name, List<PlanEntryInput> entries) {
+		Map<UUID, String> names = loadExerciseNames(exerciseIds(entries));
 		TrainingPlan plan = new TrainingPlan(userId, name.trim());
-		plan.replaceEntries(exerciseIds);
+		plan.replaceEntries(entries);
 		planRepository.saveAndFlush(plan);
 		return PlanResponse.from(plan, names);
 	}
 
 	@Transactional
-	public PlanResponse replace(UUID userId, UUID planId, String name, List<UUID> exerciseIds) {
+	public PlanResponse replace(UUID userId, UUID planId, String name, List<PlanEntryInput> entries) {
 		TrainingPlan plan = findOwned(userId, planId);
-		Map<UUID, String> names = loadExerciseNames(exerciseIds);
+		Map<UUID, String> names = loadExerciseNames(exerciseIds(entries));
 		plan.rename(name.trim());
 		// (plan_id, position) is unique and inserts flush before deletes: remove old entries first.
 		plan.replaceEntries(List.of());
 		planRepository.flush();
-		plan.replaceEntries(exerciseIds);
+		plan.replaceEntries(entries);
 		planRepository.saveAndFlush(plan);
 		return PlanResponse.from(plan, names);
 	}
@@ -64,6 +64,10 @@ public class TrainingPlanService {
 	private TrainingPlan findOwned(UUID userId, UUID planId) {
 		return planRepository.findByIdAndUserId(planId, userId)
 			.orElseThrow(() -> new PlanNotFoundException("Training plan not found"));
+	}
+
+	private static List<UUID> exerciseIds(List<PlanEntryInput> entries) {
+		return entries.stream().map(PlanEntryInput::exerciseId).toList();
 	}
 
 	private Map<UUID, String> loadExerciseNames(List<UUID> exerciseIds) {

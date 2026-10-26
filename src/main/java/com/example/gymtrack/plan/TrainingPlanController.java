@@ -37,14 +37,18 @@ public class TrainingPlanController {
 	@PostMapping("/api/training-plans")
 	public ResponseEntity<PlanResponse> create(@AuthenticationPrincipal CurrentUser currentUser,
 			@Valid @RequestBody PlanRequest request) {
-		PlanResponse plan = planService.create(currentUser.id(), request.name(), request.exerciseIds());
+		PlanResponse plan = planService.create(currentUser.id(), request.name(), toInputs(request));
 		return ResponseEntity.status(HttpStatus.CREATED).body(plan);
 	}
 
 	@PutMapping("/api/training-plans/{id}")
 	public PlanResponse replace(@AuthenticationPrincipal CurrentUser currentUser, @PathVariable UUID id,
 			@Valid @RequestBody PlanRequest request) {
-		return planService.replace(currentUser.id(), id, request.name(), request.exerciseIds());
+		return planService.replace(currentUser.id(), id, request.name(), toInputs(request));
+	}
+
+	private static List<PlanEntryInput> toInputs(PlanRequest request) {
+		return request.entries().stream().map(PlanEntryRequest::toInput).toList();
 	}
 
 	@DeleteMapping("/api/training-plans/{id}")

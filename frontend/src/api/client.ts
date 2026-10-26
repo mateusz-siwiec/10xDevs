@@ -177,6 +177,8 @@ export interface PlanEntry {
   exerciseId: string
   exerciseName: string
   position: number
+  sets: number
+  reps: number
 }
 
 export interface Plan {
@@ -187,9 +189,16 @@ export interface Plan {
   exercises: PlanEntry[]
 }
 
+/** sets/reps are sent as typed; null (empty field) is left for the server to reject. */
+export interface PlanEntryInput {
+  exerciseId: string
+  sets: number | null
+  reps: number | null
+}
+
 export interface PlanInput {
   name: string
-  exerciseIds: string[]
+  entries: PlanEntryInput[]
 }
 
 export async function listPlans(): Promise<PlanSummary[]> {

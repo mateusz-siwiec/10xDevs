@@ -5,10 +5,15 @@ import { createPlan, getExercises, getPlan, updatePlan } from '../api/client'
 import type { Exercise } from '../api/client'
 import ExercisePicker from '../components/ExercisePicker'
 import PlanExerciseList from '../components/PlanExerciseList'
-import type { PlanEditorEntry } from '../components/PlanExerciseList'
+import type { PlanEditorEntry, PlanTargetField } from '../components/PlanExerciseList'
 import '../styles/page.css'
 import '../styles/workout.css'
 import '../styles/plans.css'
+
+// An empty field becomes null (rejected by the server); other text is sent via Number() unaltered.
+function toTarget(value: string): number | null {
+  return value.trim() === '' ? null : Number(value)
+}
 
 export default function PlanEditorPage() {
   const { id } = useParams()
@@ -38,6 +43,8 @@ export default function PlanEditorPage() {
                 key: crypto.randomUUID(),
                 exerciseId: e.exerciseId,
                 exerciseName: e.exerciseName,
+                sets: String(e.sets),
+                reps: String(e.reps),
               })),
           )
         }
@@ -60,7 +67,13 @@ export default function PlanEditorPage() {
     if (!exercise) return
     setEntries((list) => [
       ...list,
-      { key: crypto.randomUUID(), exerciseId: exercise.id, exerciseName: exercise.name },
+      {
+        key: crypto.randomUUID(),
+        exerciseId: exercise.id,
+        exerciseName: exercise.name,
+        sets: '3',
+        reps: '10',
+      },
     ])
   }
 
@@ -78,11 +91,22 @@ export default function PlanEditorPage() {
     setEntries((list) => list.filter((e) => e.key !== key))
   }
 
+  function handleTargetChange(key: string, field: PlanTargetField, value: string) {
+    setEntries((list) => list.map((e) => (e.key === key ? { ...e, [field]: value } : e)))
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setError(null)
     setSaving(true)
-    const input = { name: name.trim(), exerciseIds: entries.map((e) => e.exerciseId) }
+    const input = {
+      name: name.trim(),
+      entries: entries.map((e) => ({
+        exerciseId: e.exerciseId,
+        sets: toTarget(e.sets),
+        reps: toTarget(e.reps),
+      })),
+    }
     try {
       if (id) {
         await updatePlan(id, input)
@@ -157,6 +181,7 @@ export default function PlanEditorPage() {
               disabled={saving}
               onMove={handleMove}
               onRemove={handleRemove}
+              onTargetChange={handleTargetChange}
             />
           </section>
           <div className="plan-editor-footer">

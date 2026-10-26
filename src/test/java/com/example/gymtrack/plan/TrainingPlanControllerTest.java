@@ -19,7 +19,6 @@ import com.jayway.jsonpath.JsonPath;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,9 +84,19 @@ class TrainingPlanControllerTest {
 		return exerciseRepository.findAllByOrderByNameAsc().stream().limit(count).map(Exercise::getId).toList();
 	}
 
+	private String entryJson(Object id, String sets, String reps) {
+		String exercise = id == null ? "null" : "\"" + id + "\"";
+		return "{\"exerciseId\":" + exercise + (sets == null ? "" : ",\"sets\":" + sets)
+				+ (reps == null ? "" : ",\"reps\":" + reps) + "}";
+	}
+
+	private String bodyOf(String name, List<String> entryJsons) {
+		return "{\"name\":\"" + name + "\",\"entries\":[" + String.join(",", entryJsons) + "]}";
+	}
+
+	// Default targets 3 x 10 for every id.
 	private String body(String name, List<?> ids) {
-		String idList = ids.stream().map(id -> id == null ? "null" : "\"" + id + "\"").collect(Collectors.joining(","));
-		return "{\"name\":\"" + name + "\",\"exerciseIds\":[" + idList + "]}";
+		return bodyOf(name, ids.stream().map(id -> entryJson(id, "3", "10")).toList());
 	}
 
 	private String createPlan(String token, String name, List<UUID> ids) throws Exception {
@@ -250,6 +259,7 @@ class TrainingPlanControllerTest {
 		withNull.add(ids.get(0));
 		withNull.add(null);
 
+		String ok = entryJson(ids.get(0), "3", "10");
 		String[] badBodies = {
 			body("   ", ids),
 			body("x".repeat(61), ids),
@@ -257,6 +267,18 @@ class TrainingPlanControllerTest {
 			body("Plan", fiftyOne),
 			body("Plan", withNull),
 			"{\"name\":\"Plan\"}",
+			bodyOf("Plan", List.of(entryJson(null, "3", "10"))),
+			bodyOf("Plan", List.of(ok, "null")),
+			bodyOf("Plan", List.of(entryJson(ids.get(0), null, "10"))),
+			bodyOf("Plan", List.of(entryJson(ids.get(0), "3", null))),
+			bodyOf("Plan", List.of(entryJson(ids.get(0), "null", "10"))),
+			bodyOf("Plan", List.of(entryJson(ids.get(0), "3", "null"))),
+			bodyOf("Plan", List.of(entryJson(ids.get(0), "0", "10"))),
+			bodyOf("Plan", List.of(entryJson(ids.get(0), "-1", "10"))),
+			bodyOf("Plan", List.of(entryJson(ids.get(0), "21", "10"))),
+			bodyOf("Plan", List.of(entryJson(ids.get(0), "3", "0"))),
+			bodyOf("Plan", List.of(entryJson(ids.get(0), "3", "-5"))),
+			bodyOf("Plan", List.of(entryJson(ids.get(0), "3", "101"))),
 		};
 		for (String json : badBodies) {
 			mockMvc.perform(post("/api/training-plans")
@@ -291,6 +313,54 @@ class TrainingPlanControllerTest {
 		mockMvc.perform(get("/api/training-plans/" + planId).header(HttpHeaders.AUTHORIZATION, token))
 			.andExpect(jsonPath("$.name", is("Real")))
 			.andExpect(jsonPath("$.exercises", hasSize(1)));
+	}
+
+	@Test
+	void setsAndRepsArePersistedAndReturnedPerEntry() throws Exception {
+		String token = bearerToken();
+		List<UUID> ids = exerciseIds(2);
+		String json = bodyOf("Targets", List.of(entryJson(ids.get(0), "4", "8"), entryJson(ids.get(1), "20", "100")));
+
+		String response = mockMvc.perform(post("/api/training-plans")
+				.header(HttpHeaders.AUTHORIZATION, token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(json))
+			.andExpect(status().isCreated())
+			.andExpect(jsonPath("$.exercises[0].sets", is(4)))
+			.andExpect(jsonPath("$.exercises[0].reps", is(8)))
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+		String planId = JsonPath.read(response, "$.id");
+
+		mockMvc.perform(get("/api/training-plans/" + planId).header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.exercises[0].sets", is(4)))
+			.andExpect(jsonPath("$.exercises[0].reps", is(8)))
+			.andExpect(jsonPath("$.exercises[1].sets", is(20)))
+			.andExpect(jsonPath("$.exercises[1].reps", is(100)));
+	}
+
+	@Test
+	void putReorderKeepsEachEntrysOwnTargets() throws Exception {
+		String token = bearerToken();
+		List<UUID> ids = exerciseIds(2);
+		String planId = createPlan(token, "Targets", ids);
+
+		String reordered = bodyOf("Targets", List.of(entryJson(ids.get(1), "5", "5"), entryJson(ids.get(0), "2", "12")));
+		mockMvc.perform(put("/api/training-plans/" + planId)
+				.header(HttpHeaders.AUTHORIZATION, token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(reordered))
+			.andExpect(status().isOk());
+
+		mockMvc.perform(get("/api/training-plans/" + planId).header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(jsonPath("$.exercises[0].exerciseId", is(ids.get(1).toString())))
+			.andExpect(jsonPath("$.exercises[0].sets", is(5)))
+			.andExpect(jsonPath("$.exercises[0].reps", is(5)))
+			.andExpect(jsonPath("$.exercises[1].exerciseId", is(ids.get(0).toString())))
+			.andExpect(jsonPath("$.exercises[1].sets", is(2)))
+			.andExpect(jsonPath("$.exercises[1].reps", is(12)));
 	}
 
 	@Test

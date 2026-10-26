@@ -12,7 +12,7 @@ public record PlanResponse(UUID id, String name, Instant createdAt, Instant upda
 		List<PlanEntryResponse> entries = plan.getEntries()
 			.stream()
 			.map(entry -> new PlanEntryResponse(entry.getExerciseId(), exerciseNames.get(entry.getExerciseId()),
-					entry.getPosition()))
+					entry.getPosition(), entry.getSets(), entry.getReps()))
 			.toList();
 		return new PlanResponse(plan.getId(), plan.getName(), plan.getCreatedAt(), plan.getUpdatedAt(), entries);
 	}

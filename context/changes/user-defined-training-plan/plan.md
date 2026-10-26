@@ -16,7 +16,7 @@ Build roadmap slice S-02 (PRD FR-009): a logged-in user creates several named tr
 
 ## Desired End State
 
-A user can: open Plans from the Topbar → create a named plan → add catalog exercises (including the same one twice) → reorder with up/down buttons and remove entries → save → see the plan in the list → reopen and edit it → delete it after confirming. Server validation errors show inline without losing the form. Another user can never list, read, change or delete these plans. Verified by backend integration tests plus the manual flows in Phases 2–4.
+A user can: open Plans from the Topbar → create a named plan → add catalog exercises (including the same one twice) → reorder with up/down buttons and remove entries → save → see the plan in the list → reopen and edit it → delete it after confirming. Server validation errors show inline without losing the form. Another user can never list, read, change or delete these plans. Verified by backend integration tests plus the manual flows in Phases 2–4. After the amendment, each plan entry also carries expected sets and reps, and from the workout page the user can start a workout from a saved plan and step through its exercises with the targets visible (Phases 5–6).
 
 ### Key Discoveries:
 
@@ -28,7 +28,7 @@ A user can: open Plans from the Topbar → create a named plan → add catalog e
 
 ## What We're NOT Doing
 
-- Linking a plan to a workout session, "start workout from plan", or any plan-driven navigation (S-06), and per-entry targets (sets/reps/weight).
+- Per-entry weight targets; skip/return and rest timer in a plan-driven session (S-06). *(Amended after Phase 4: required per-entry sets/reps targets and starting a workout from a plan with step-through are now in scope as Phases 5–6.)*
 - Plan templates or recommendations (S-07 / FR-013); sharing or importing plans (PRD Non-Goals).
 - Plan duplicate/clone, archiving, reordering the plan list, drag-and-drop, plan-name uniqueness, unsaved-changes guard on the editor.
 - Granular per-entry endpoints (add/move/remove calls); edits are a whole-plan replace.
@@ -38,6 +38,8 @@ A user can: open Plans from the Topbar → create a named plan → add catalog e
 ## Implementation Approach
 
 Backend first, bottom-up (schema → API), each phase verified by integration tests, then frontend (list and navigation, then editor). New package `com.example.gymtrack.plan` holds the plan code; base route `/api/training-plans`. A plan is a `training_plans` row with ordered `training_plan_entries` (own id, `exercise_id`, `position`). Create and edit both send the full ordered list of exercise ids (`POST` / `PUT`); the server rewrites the entries atomically in one transaction, so reorder and remove need no extra endpoints. Entries therefore get new ids on every save — nothing else may reference an entry id (S-06 should reference the plan and read entries by position).
+
+**Amendment (after Phase 4, user request):** Phase 5 adds required per-entry expected sets and reps (breaking change to the plan request/response shape: `exerciseIds[]` becomes `entries[{exerciseId, sets, reps}]`). Phase 6 lets a workout session optionally reference a plan and walks the user through its exercises on the workout page. Sessions reference the plan id only and read entries by position, never by entry id.
 
 Decisions (from planning interview): many named plans per user; duplicates allowed; reorder with up/down buttons; whole-plan replace API; navigation via Topbar links and `/plans` routes; name 1–60 characters (duplicate names allowed), 1–50 exercises per plan.
 
@@ -235,6 +237,148 @@ Create and edit a plan: name, exercises, order.
 
 ---
 
+## Phase 5: Per-exercise sets/reps targets
+
+### Overview
+
+Every plan entry gets required expected `sets` and `reps`. Existing plans are backfilled; the API shape moves from `exerciseIds[]` to `entries[]`; the editor edits the targets.
+
+### Changes Required:
+
+#### 1. Migration
+
+**File**: `src/main/resources/db/migration/V6__add_plan_entry_targets.sql`
+
+**Intent**: Add the two target columns, backfill existing rows, then make them mandatory with range checks.
+
+**Contract**:
+- `training_plan_entries.sets integer`, `reps integer`: add nullable, `update` existing rows to `sets = 3, reps = 10`, then `set not null`; add CHECKs `sets between 1 and 20` and `reps between 1 and 100` (reps range matches `workout_sets`).
+
+#### 2. Entity and service
+
+**Files**: `plan/TrainingPlanEntry.java`, `plan/TrainingPlan.java`, `plan/TrainingPlanService.java`
+
+**Intent**: Carry sets/reps through the model; keep the replace/flush rules from Critical Implementation Details unchanged.
+
+**Contract**:
+- `TrainingPlanEntry(plan, exerciseId, position, sets, reps)` with getters.
+- `replaceEntries` takes an ordered list of entry inputs (`exerciseId`, `sets`, `reps`) instead of bare ids; `create`/`replace` in the service take the same.
+- Exercise-existence check and name lookup operate on the entries' exercise ids as before.
+
+#### 3. API shape
+
+**Files**: `plan/PlanRequest.java`, `plan/PlanEntryResponse.java`, new `plan/PlanEntryRequest.java`
+
+**Intent**: Replace `exerciseIds[]` with `entries[]`; responses echo the targets. No compatibility shim — the only client is this SPA and is updated in step 5.
+
+**Contract**:
+- `PlanRequest(name, entries[PlanEntryRequest(exerciseId, sets, reps)])`: `entries` not null, 1–50 elements, no null elements; `exerciseId` not null; `sets` required 1–20; `reps` required 1–100; other rules unchanged.
+- `PlanEntryResponse(exerciseId, exerciseName, position, sets, reps)`. List/summary responses unchanged.
+
+#### 4. Backend tests
+
+**Files**: `TrainingPlanSchemaTest.java`, `TrainingPlanControllerTest.java`
+
+**Intent**: Keep existing coverage working on the new shape and prove the new rules.
+
+**Contract**: update fixtures/inserts for the new columns and request shape; add cases — sets/reps are persisted and returned per entry and reorder keeps each entry's own targets; 400 for missing, 0, negative or over-range sets/reps; the DB rejects out-of-range sets/reps via the CHECKs; the migration backfills (a row inserted before V6 semantics is not required — assert via the NOT NULL + range constraints).
+
+#### 5. Frontend
+
+**Files**: `frontend/src/api/client.ts`, `frontend/src/pages/PlanEditorPage.tsx`, `frontend/src/components/PlanExerciseList.tsx`, `frontend/src/styles/plans.css`
+
+**Intent**: Types and calls use `entries`; each editor row has Sets and Reps number inputs (defaults 3 and 10 when an exercise is added) that stay with the row through Move up/down.
+
+**Contract**: local entry rows become `{key, exerciseId, exerciseName, sets, reps}`; inputs are touch-friendly numeric fields; no client-side range blocking (server errors show inline as before), but empty/NaN values are not sent silently — send what the user typed so the server rejects it.
+
+### Success Criteria:
+
+#### Automated Verification:
+
+- Schema and API tests pass: `./mvnw test -Dtest='TrainingPlan*Test'`
+- Full backend suite passes: `./mvnw test`
+- Lint passes: `cd frontend && npm run lint`
+- Type check and build pass: `cd frontend && npm run build`
+
+#### Manual Verification:
+
+- Create a plan with different sets/reps per exercise (including a repeated exercise with different targets); reopen it: targets are saved per row and survive Move up/down, Remove and a reload.
+- Existing plans created before this phase open with 3 × 10 targets.
+- Out-of-range sets/reps (0, 21 sets, 101 reps) show the server error without losing the form.
+- Sets/reps inputs are comfortably usable at phone width (about 375 px).
+
+**Implementation Note**: After completing this phase and all automated verification passes, pause here for manual confirmation from the human that the manual testing was successful before proceeding to the next phase.
+
+---
+
+## Phase 6: Start a workout from a plan
+
+### Overview
+
+A workout session can optionally reference a plan; the workout page offers "Start from plan" and then walks the user through the plan's exercises with targets and progress, while logging sets exactly as in S-01.
+
+### Changes Required:
+
+#### 1. Migration
+
+**File**: `src/main/resources/db/migration/V7__add_workout_session_plan.sql`
+
+**Intent**: Optional link from a session to the plan it was started from.
+
+**Contract**: `workout_sessions.plan_id uuid null references training_plans (id) on delete set null`; index on `(plan_id)`. Production caveat: as with V5/V6, `ddl-auto=update` creates the column but not the FK behaviour tuning there.
+
+#### 2. Backend session start
+
+**Files**: `workout/WorkoutSession.java`, `workout/WorkoutService.java`, `workout/WorkoutController.java`, `workout/SessionResponse.java`, new `workout/StartSessionRequest.java`
+
+**Intent**: `POST /api/workout-sessions` accepts an optional body `{planId}`; behaviour for an empty body is unchanged.
+
+**Contract**:
+- `WorkoutSession` gains nullable `planId` (constructor overload taking it); `SessionResponse` gains `planId` (nullable).
+- `startOrGetActive(userId, planId)`: if an active session exists it is returned unchanged (200) and `planId` is ignored; otherwise the plan must be owned by the caller (`TrainingPlanRepository.findByIdAndUserId`), else 404 `Training plan not found`, and the new session stores `planId`. The race/unique-violation handling stays as is.
+- Request body is optional (`@RequestBody(required = false)`); malformed UUID → existing global 400.
+- The workout package may depend on `TrainingPlanRepository` (read-only existence/ownership check); do not copy plan data into the session.
+
+#### 3. Backend tests
+
+**Files**: `workout/WorkoutSessionControllerTest.java` (and `WorkoutSchemaTest.java` for the FK)
+
+**Contract**: start without body still works and has `planId` null; start with an owned plan stores and returns `planId`; foreign or unknown plan → 404 and no session created; start while a session is active returns the existing one and keeps its original `planId`; deleting a plan nulls `plan_id` on sessions that referenced it (schema test).
+
+#### 4. Frontend walk-through
+
+**Files**: `frontend/src/api/client.ts`, `frontend/src/pages/WorkoutPage.tsx`, new `frontend/src/components/PlanWalkthrough.tsx`, `frontend/src/styles/workout.css`
+
+**Intent**: Starting: next to "Start workout", a plan select ("Start from plan…") lists the user's plans; choosing one starts the session with that `planId`. Active session with `planId`: load the plan (`getPlan`); if it 404s (deleted), fall back to the normal free-form view. `PlanWalkthrough` lists the plan's entries in order, each showing exercise name, target `sets × reps`, and progress `logged/sets`; the current exercise is the first entry whose logged sets are below its target, and is selected in the existing picker/logger automatically; tapping any entry selects it instead. Free-form logging, chart, set list and End workout keep working as today.
+
+**Contract**:
+- `startSession(planId?)`; `WorkoutSession` type gains `planId: string | null`.
+- Progress is derived on the client from the session's logged sets: walk plan entries in order and let each consume up to its `sets` logged sets of the same exercise, so a repeated exercise fills its first entry before the second. Done entries are visibly marked; reps targets are shown as a hint, not enforced.
+- No skip/return controls and no rest timer (S-06); no server-side plan progress.
+
+### Success Criteria:
+
+#### Automated Verification:
+
+- Workout and schema tests pass: `./mvnw test -Dtest='Workout*Test'`
+- Full backend suite passes: `./mvnw test`
+- Lint passes: `cd frontend && npm run lint`
+- Type check and build pass: `cd frontend && npm run build`
+
+#### Manual Verification:
+
+- From an idle workout page, choose a plan and start: the plan's exercises appear in order with `sets × reps` targets and `0/sets` progress; the first exercise is preselected.
+- Logging sets advances progress; after the target is reached the next exercise becomes current; a repeated exercise fills its entries in order.
+- Tapping another entry selects it; free-form logging of an exercise not in the plan still works.
+- Reload mid-workout: the walk-through and progress are restored; ending the workout returns to the idle page.
+- Deleting the plan while a session from it is active falls back to the normal workout view without errors.
+- A second account cannot start a session from the first account's plan.
+- Usable at phone width (about 375 px).
+
+**Implementation Note**: After completing this phase and all automated verification passes, pause here for manual confirmation from the human that the manual testing was successful.
+
+---
+
 ## Testing Strategy
 
 ### Unit Tests:
@@ -258,7 +402,7 @@ Small data volume (PRD `target_scale`); at most 50 entries per plan and a handfu
 
 ## Migration Notes
 
-V5 applies only where Flyway runs (local, tests). Production keeps `ddl-auto=update` and Flyway off (`fly.toml`), so deploying this slice there would create the tables from entities without the unique and CHECK constraints; enabling Flyway in production is a separate decision (noted in the F-02 and S-01 plans) and not part of this change.
+V5, V6 and V7 apply only where Flyway runs (local, tests). Production keeps `ddl-auto=update` and Flyway off (`fly.toml`), so deploying this slice there would create the tables from entities without the unique and CHECK constraints; enabling Flyway in production is a separate decision (noted in the F-02 and S-01 plans) and not part of this change.
 
 ## References
 
@@ -310,13 +454,48 @@ V5 applies only where Flyway runs (local, tests). Production keeps `ddl-auto=upd
 
 #### Automated
 
-- [x] 4.1 Lint passes: `cd frontend && npm run lint`
-- [x] 4.2 Type check and build pass: `cd frontend && npm run build`
+- [x] 4.1 Lint passes: `cd frontend && npm run lint` — 534d8f2
+- [x] 4.2 Type check and build pass: `cd frontend && npm run build` — 534d8f2
 
 #### Manual
 
-- [x] 4.3 Create a plan with a name and several exercises including one added twice; after saving it appears in the list with the right count
-- [x] 4.4 Reopen it: exercises are in the saved order; Move up/down and Remove change the order and survive a save and reload
-- [x] 4.5 Invalid input (blank name, name over 60 characters, over 50 exercises) shows the server error without losing the form
-- [x] 4.6 A second account cannot open the first account's plan by URL (inline not-found error) and sees none of its plans in the list
-- [x] 4.7 Usable at phone width (about 375 px) with comfortably tappable controls; save feedback is visible within about a second
+- [x] 4.3 Create a plan with a name and several exercises including one added twice; after saving it appears in the list with the right count — 534d8f2
+- [x] 4.4 Reopen it: exercises are in the saved order; Move up/down and Remove change the order and survive a save and reload — 534d8f2
+- [x] 4.5 Invalid input (blank name, name over 60 characters, over 50 exercises) shows the server error without losing the form — 534d8f2
+- [x] 4.6 A second account cannot open the first account's plan by URL (inline not-found error) and sees none of its plans in the list — 534d8f2
+- [x] 4.7 Usable at phone width (about 375 px) with comfortably tappable controls; save feedback is visible within about a second — 534d8f2
+
+### Phase 5: Per-exercise sets/reps targets
+
+#### Automated
+
+- [x] 5.1 Schema and API tests pass: `./mvnw test -Dtest='TrainingPlan*Test'`
+- [x] 5.2 Full backend suite passes: `./mvnw test`
+- [x] 5.3 Lint passes: `cd frontend && npm run lint`
+- [x] 5.4 Type check and build pass: `cd frontend && npm run build`
+
+#### Manual
+
+- [x] 5.5 Create a plan with different sets/reps per exercise (including a repeated exercise with different targets); reopen it: targets are saved per row and survive Move up/down, Remove and a reload
+- [x] 5.6 Existing plans created before this phase open with 3 × 10 targets
+- [x] 5.7 Out-of-range sets/reps (0, 21 sets, 101 reps) show the server error without losing the form
+- [x] 5.8 Sets/reps inputs are comfortably usable at phone width (about 375 px)
+
+### Phase 6: Start a workout from a plan
+
+#### Automated
+
+- [ ] 6.1 Workout and schema tests pass: `./mvnw test -Dtest='Workout*Test'`
+- [ ] 6.2 Full backend suite passes: `./mvnw test`
+- [ ] 6.3 Lint passes: `cd frontend && npm run lint`
+- [ ] 6.4 Type check and build pass: `cd frontend && npm run build`
+
+#### Manual
+
+- [ ] 6.5 From an idle workout page, choose a plan and start: exercises appear in order with `sets × reps` targets and `0/sets` progress; the first exercise is preselected
+- [ ] 6.6 Logging sets advances progress; after the target is reached the next exercise becomes current; a repeated exercise fills its entries in order
+- [ ] 6.7 Tapping another entry selects it; free-form logging of an exercise not in the plan still works
+- [ ] 6.8 Reload mid-workout: the walk-through and progress are restored; ending the workout returns to the idle page
+- [ ] 6.9 Deleting the plan while a session from it is active falls back to the normal workout view without errors
+- [ ] 6.10 A second account cannot start a session from the first account's plan
+- [ ] 6.11 Usable at phone width (about 375 px)

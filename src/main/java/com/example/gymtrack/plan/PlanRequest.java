@@ -1,10 +1,10 @@
 package com.example.gymtrack.plan;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.List;
-import java.util.UUID;
 
 public record PlanRequest(
 
@@ -14,7 +14,7 @@ public record PlanRequest(
 
 	@NotNull
 	@Size(min = 1, max = 50)
-	List<@NotNull UUID> exerciseIds
+	List<@NotNull @Valid PlanEntryRequest> entries
 
 ) {
 }

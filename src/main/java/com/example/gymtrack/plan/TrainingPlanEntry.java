@@ -29,13 +29,21 @@ public class TrainingPlanEntry {
 	@Column(nullable = false)
 	private int position;
 
+	@Column(nullable = false)
+	private int sets;
+
+	@Column(nullable = false)
+	private int reps;
+
 	protected TrainingPlanEntry() {
 	}
 
-	public TrainingPlanEntry(TrainingPlan plan, UUID exerciseId, int position) {
+	public TrainingPlanEntry(TrainingPlan plan, UUID exerciseId, int position, int sets, int reps) {
 		this.plan = plan;
 		this.exerciseId = exerciseId;
 		this.position = position;
+		this.sets = sets;
+		this.reps = reps;
 	}
 
 	public UUID getId() {
@@ -52,6 +60,14 @@ public class TrainingPlanEntry {
 
 	public int getPosition() {
 		return position;
+	}
+
+	public int getSets() {
+		return sets;
+	}
+
+	public int getReps() {
+		return reps;
 	}
 
 }

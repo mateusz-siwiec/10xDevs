@@ -57,12 +57,13 @@ public class TrainingPlan {
 	 * Replaces all entries, assigning positions 0..n-1 in list order. Note: (plan_id, position) is
 	 * unique and Hibernate flushes inserts before deletes, so if this plan is already persisted the
 	 * caller must flush between clearing the old entries and re-adding (e.g. call
-	 * {@code replaceEntries(List.of())}, flush, then {@code replaceEntries(newIds)}).
+	 * {@code replaceEntries(List.of())}, flush, then {@code replaceEntries(newEntries)}).
 	 */
-	public void replaceEntries(List<UUID> exerciseIds) {
+	public void replaceEntries(List<PlanEntryInput> inputs) {
 		entries.clear();
-		for (int i = 0; i < exerciseIds.size(); i++) {
-			entries.add(new TrainingPlanEntry(this, exerciseIds.get(i), i));
+		for (int i = 0; i < inputs.size(); i++) {
+			PlanEntryInput input = inputs.get(i);
+			entries.add(new TrainingPlanEntry(this, input.exerciseId(), i, input.sets(), input.reps()));
 		}
 		this.updatedAt = Instant.now();
 	}
