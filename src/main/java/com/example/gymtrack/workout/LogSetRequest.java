@@ -20,6 +20,7 @@ public record LogSetRequest(
 	@NotNull
 	@DecimalMin(value = "0", inclusive = false)
 	@DecimalMax("1000")
+	@HalfKgStep
 	BigDecimal weightKg
 
 ) {

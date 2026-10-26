@@ -67,25 +67,33 @@ export default function WorkoutPage() {
   async function handleLog(reps: number, weightKg: number) {
     if (!session) return
     setError(null)
+    setBusy(true)
     try {
       const set = await logSet(session.id, { exerciseId: selectedExercise, reps, weightKg })
-      setSession({ ...session, sets: [...session.sets, set] })
+      setSession((s) => (s && s.id === session.id ? { ...s, sets: [...s.sets, set] } : s))
       setRefreshKey((k) => k + 1)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to log set')
       throw err
+    } finally {
+      setBusy(false)
     }
   }
 
   async function handleDelete(setId: string) {
     if (!session) return
     setError(null)
+    setBusy(true)
     try {
       await deleteSet(session.id, setId)
-      setSession({ ...session, sets: session.sets.filter((s) => s.id !== setId) })
+      setSession((s) =>
+        s && s.id === session.id ? { ...s, sets: s.sets.filter((x) => x.id !== setId) } : s,
+      )
       setRefreshKey((k) => k + 1)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete set')
+    } finally {
+      setBusy(false)
     }
   }
 

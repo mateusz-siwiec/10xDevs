@@ -1,7 +1,7 @@
 ---
 change_id: core-workout-logging-loop
 title: Core workout logging loop with progression chart
-status: implemented
+status: impl_reviewed
 created: 2026-10-22
 updated: 2026-10-26
 archived_at: null

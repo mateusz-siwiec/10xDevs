@@ -81,9 +81,6 @@ public class WorkoutService {
 		if (!session.isActive()) {
 			throw new WorkoutConflictException("Workout session already ended");
 		}
-		if (weightKg.multiply(BigDecimal.TWO).remainder(BigDecimal.ONE).signum() != 0) {
-			throw new InvalidWeightException("weightKg must be a multiple of 0.5");
-		}
 		WorkoutSet set = setRepository.saveAndFlush(new WorkoutSet(session, exerciseId, reps, weightKg));
 		return SetResponse.from(set);
 	}

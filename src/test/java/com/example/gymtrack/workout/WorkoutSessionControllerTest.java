@@ -12,7 +12,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.example.gymtrack.auth.JwtService;
 import com.example.gymtrack.user.User;
 import com.example.gymtrack.user.UserRepository;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -60,6 +66,50 @@ class WorkoutSessionControllerTest {
 			.getResponse()
 			.getContentAsString();
 		return com.jayway.jsonpath.JsonPath.read(body, "$.id");
+	}
+
+	@Test
+	void concurrentStartsYieldOneCreatedAndSameSession() throws Exception {
+		String token = bearerToken();
+		int threads = 6;
+		ExecutorService pool = Executors.newFixedThreadPool(threads);
+		CountDownLatch ready = new CountDownLatch(threads);
+		CountDownLatch go = new CountDownLatch(1);
+		List<Future<int[]>> results = new ArrayList<>();
+		List<String> ids = new ArrayList<>();
+		try {
+			for (int i = 0; i < threads; i++) {
+				results.add(pool.submit(() -> {
+					ready.countDown();
+					go.await();
+					var response = mockMvc.perform(post("/api/workout-sessions").header(HttpHeaders.AUTHORIZATION, token))
+						.andReturn()
+						.getResponse();
+					synchronized (ids) {
+						ids.add(response.getContentAsString());
+					}
+					return new int[] { response.getStatus() };
+				}));
+			}
+			ready.await();
+			go.countDown();
+			int created = 0;
+			for (Future<int[]> result : results) {
+				int status = result.get()[0];
+				org.junit.jupiter.api.Assertions.assertTrue(status == 200 || status == 201, "unexpected status " + status);
+				if (status == 201) {
+					created++;
+				}
+			}
+			org.junit.jupiter.api.Assertions.assertEquals(1, created);
+			String firstId = com.jayway.jsonpath.JsonPath.read(ids.get(0), "$.id");
+			for (String body : ids) {
+				org.junit.jupiter.api.Assertions.assertEquals(firstId, com.jayway.jsonpath.JsonPath.<String>read(body, "$.id"));
+			}
+		}
+		finally {
+			pool.shutdownNow();
+		}
 	}
 
 	@Test
@@ -121,6 +171,13 @@ class WorkoutSessionControllerTest {
 
 		mockMvc.perform(get("/api/workout-sessions/current").header(HttpHeaders.AUTHORIZATION, token))
 			.andExpect(status().isNoContent());
+	}
+
+	@Test
+	void malformedSessionIdReturnsBadRequestWithErrorBody() throws Exception {
+		mockMvc.perform(post("/api/workout-sessions/not-a-uuid/end").header(HttpHeaders.AUTHORIZATION, bearerToken()))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.error", is("Invalid id")));
 	}
 
 	@Test
