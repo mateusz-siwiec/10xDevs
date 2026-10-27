@@ -25,6 +25,8 @@ milestone_status: open
 - **Intent:** Prove that a logged-in user can run a real workout — start a session, log sets against seeded exercises, end it, and immediately see their own progression chart — while standing up the auth/catalog foundations and the core domain-rule slices (progression recommendation, exercise substitution) that make GymTrack's core value real, not just a note-taking app.
 - **Source materials:** `context/foundation/prd.md` (v1)
 - **Done when:** every F-NN and S-NN below is `done`.
+- **Scope anchors:** PRD FR/US items as listed per slice, plus one anchor added after the PRD (not covered by any FR):
+  - MS-01: After logging in, the user sees a summary of their recent training — completed workouts, time spent and total volume (reps × kg).
 
 ## Vision recap
 
@@ -42,7 +44,7 @@ An amateur-to-intermediate gym-goer currently tracks workouts in scattered notes
 | F-02 | exercise-catalog-seed | (foundation) seeded exercise catalog with muscle-group tags exists and is queryable | — | FR-002, Access Control | done |
 | S-01 | core-workout-logging-loop | start a session, select an exercise, log a set, end the session, see it on the progression chart | F-01, F-02 | US-01, FR-004, FR-005, FR-006, FR-010 | done |
 | S-02 | user-defined-training-plan | define their own training plan as an ordered list of exercises | F-01, F-02 | FR-009 | done |
-| S-03 | progression-recommendation | see a recommendation to increase weight after N full-rep workouts | S-01 | FR-011 | proposed |
+| S-03 | progression-recommendation | see a recommendation to increase weight after N full-rep workouts | S-01 | FR-011 | in-progress |
 | S-04 | exercise-substitution-suggestion | see a substitute exercise suggestion when marking one unavailable | S-01, F-02 | FR-012 | done |
 | S-05 | custom-exercise-entry | add their own custom exercise with a muscle group | F-01, F-02 | FR-003 | proposed |
 | S-06 | guided-session-navigation | navigate sequential exercises with skip/return and a rest timer | S-01 | FR-007, FR-008 | proposed |
@@ -50,6 +52,7 @@ An amateur-to-intermediate gym-goer currently tracks workouts in scattered notes
 | S-08 | personal-record-flag | see a logged set flagged as a new personal record | S-01 | FR-014 | proposed |
 | S-09 | return-after-break-suggestion | get an easier session suggested after a long gap | S-01 | FR-015 | proposed |
 | S-10 | training-volume-balance-warning | get warned when weekly volume is imbalanced across muscle groups | S-01, F-02 | FR-016 | blocked |
+| S-11 | workout-dashboard | see completed workouts, time spent and total volume for the last 7/30 days after logging in | S-01 | MS-01 | planning |
 
 ## Streams
 
@@ -57,7 +60,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 
 | Stream | Theme | Chain | Note |
 | --- | --- | --- | --- |
-| A | Identity & core logging loop | `F-01` → `S-01` → `S-03` → `S-06` → `S-08` → `S-09` | The `learn` goal's priority investment area (the domain rule) runs through this chain. |
+| A | Identity & core logging loop | `F-01` → `S-01` → `S-03` → `S-06` → `S-08` → `S-09` → `S-11` | The `learn` goal's priority investment area (the domain rule) runs through this chain; `S-11` reads the same set history and has no dependency on the others, so it can run any time after `S-01`. |
 | B | Catalog & planning | `F-02` → `S-02` → `S-05` → `S-07` | Joins Stream A at `S-01` (S-02 also needs F-01); `S-07` stays blocked pending the goal/experience/frequency capture gap. |
 | C | Session resilience & balance | `S-04` → `S-10` | Joins Stream A at `S-01` and Stream B at `F-02`; `S-10` stays blocked pending an agreed balance standard. |
 
@@ -138,7 +141,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - What is N (consecutive full-rep workouts) and the weight-increase percentage? — Owner: user. Block: no (PRD allows a reasonable tunable default).
 - **Risk:** This is the "transparent, deterministic recommendation rule" the Vision names as the project's actual value — the agreed investment area, so it's worth the deepest implementation care of any slice here.
-- **Status:** proposed
+- **Status:** in-progress
 
 ### S-04: Exercise substitution suggestion
 
@@ -227,6 +230,18 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Risk:** Cannot be planned responsibly until a balance standard is agreed — an opinionated default risks false warnings during legitimate specialization phases.
 - **Status:** blocked
 
+### S-11: Workout dashboard
+
+- **Outcome:** user sees, right after logging in, how many workouts they completed, how much time they spent and their total volume (reps × kg) over the last 7 or 30 days.
+- **Change ID:** workout-dashboard
+- **PRD refs:** MS-01
+- **Prerequisites:** S-01
+- **Parallel with:** S-03, S-04, S-06, S-08, S-09
+- **Blockers:** —
+- **Unknowns:** —
+- **Risk:** Not in the PRD — added to M-1 after the fact (MS-01), so it widens the milestone. It also takes over `/` from the workout screen, so links and the post-login landing change; only completed sessions count, so abandoned sessions stay invisible by design.
+- **Status:** planning
+
 ## Backlog Handoff
 
 | Roadmap ID | Change ID | Suggested issue title | Ready for `/10x-plan` | Notes |
@@ -243,6 +258,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-08 | personal-record-flag | Personal record flag | no | Blocked on S-01 |
 | S-09 | return-after-break-suggestion | Return-after-break easier session | no | Blocked on S-01 |
 | S-10 | training-volume-balance-warning | Training volume balance warning | no | Blocked on S-01, F-02 + unresolved balance standard |
+| S-11 | workout-dashboard | Workout dashboard: workouts, time and volume for 7/30 days | yes | Planned — run `/10x-implement workout-dashboard phase 1` |
 
 This table is the clean handoff to Jira/Linear or any MCP-backed backlog.
 
