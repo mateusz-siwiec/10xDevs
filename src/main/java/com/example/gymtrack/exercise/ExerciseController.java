@@ -1,7 +1,10 @@
 package com.example.gymtrack.exercise;
 
+import com.example.gymtrack.common.ResourceNotFoundException;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,6 +24,18 @@ public class ExerciseController {
 				: exerciseRepository.findByPrimaryMuscleGroupOrderByNameAsc(muscleGroup);
 
 		return exercises.stream().map(ExerciseResponse::from).toList();
+	}
+
+	@GetMapping("/api/exercises/{exerciseId}/substitutes")
+	public List<ExerciseResponse> substitutes(@PathVariable UUID exerciseId) {
+		Exercise exercise = exerciseRepository.findById(exerciseId)
+				.orElseThrow(() -> new ResourceNotFoundException("Exercise not found"));
+
+		return exerciseRepository
+				.findByPrimaryMuscleGroupAndIdNotOrderByNameAsc(exercise.getPrimaryMuscleGroup(), exercise.getId())
+				.stream()
+				.map(ExerciseResponse::from)
+				.toList();
 	}
 
 }

@@ -1,9 +1,12 @@
 package com.example.gymtrack.exercise;
 
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.everyItem;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -12,6 +15,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.example.gymtrack.auth.JwtService;
 import com.example.gymtrack.user.User;
 import com.example.gymtrack.user.UserRepository;
+import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,6 +45,9 @@ class ExerciseControllerTest {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private ExerciseRepository exerciseRepository;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -85,6 +93,37 @@ class ExerciseControllerTest {
 		mockMvc.perform(get("/api/exercises").param("muscleGroup", "NOPE")
 				.header(HttpHeaders.AUTHORIZATION, bearerToken()))
 			.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void substitutesWithoutTokenReturnsUnauthorized() throws Exception {
+		mockMvc.perform(get("/api/exercises/{id}/substitutes", UUID.randomUUID()))
+			.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void substitutesReturnsOtherExercisesOfSamePrimaryGroupOrderedByName() throws Exception {
+		List<Exercise> chest = exerciseRepository.findByPrimaryMuscleGroupOrderByNameAsc(MuscleGroup.CHEST);
+		Exercise requested = chest.get(1);
+		String[] expectedNames = chest.stream()
+			.filter(e -> !e.getId().equals(requested.getId()))
+			.map(Exercise::getName)
+			.toArray(String[]::new);
+
+		mockMvc.perform(get("/api/exercises/{id}/substitutes", requested.getId())
+				.header(HttpHeaders.AUTHORIZATION, bearerToken()))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$", hasSize(3)))
+			.andExpect(jsonPath("$[*].primaryMuscleGroup", everyItem(is("CHEST"))))
+			.andExpect(jsonPath("$[*].id", not(hasItem(requested.getId().toString()))))
+			.andExpect(jsonPath("$[*].name", contains(expectedNames)));
+	}
+
+	@Test
+	void substitutesForUnknownExerciseReturnsNotFound() throws Exception {
+		mockMvc.perform(get("/api/exercises/{id}/substitutes", UUID.randomUUID())
+				.header(HttpHeaders.AUTHORIZATION, bearerToken()))
+			.andExpect(status().isNotFound());
 	}
 
 	@Test
