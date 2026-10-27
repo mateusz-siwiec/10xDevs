@@ -1,7 +1,7 @@
 ---
 change_id: personal-record-flag
 title: Personal record flag
-status: implementing
+status: implemented
 created: 2026-10-27
 updated: 2026-10-27
 ---

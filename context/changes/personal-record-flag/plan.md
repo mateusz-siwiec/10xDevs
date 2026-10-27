@@ -218,13 +218,13 @@ None. The flag is derived on read: no schema change, no backfill, and nothing to
 
 #### Automated
 
-- [x] 2.1 Linting passes: `cd frontend && npm run lint`
-- [x] 2.2 Type check and build pass: `cd frontend && npm run build`
+- [x] 2.1 Linting passes: `cd frontend && npm run lint` — b69239b
+- [x] 2.2 Type check and build pass: `cd frontend && npm run build` — b69239b
 
 #### Manual
 
-- [x] 2.3 Start a workout, log 5×60 (no badge), then 5×65: the second set shows "PR" immediately
-- [x] 2.4 Delete the 5×65 set: the remaining set shows no badge; re-logging 5×65 shows it again
-- [x] 2.5 Log a 20-rep set heavier by estimate: no badge
-- [x] 2.6 End the workout, open it from History: the same sets show "PR", and a later workout with a tie shows none
-- [x] 2.7 Badge is readable on a phone-width viewport and does not wrap the set row awkwardly
+- [x] 2.3 Start a workout, log 5×60 (no badge), then 5×65: the second set shows "PR" immediately — b69239b
+- [x] 2.4 Delete the 5×65 set: the remaining set shows no badge; re-logging 5×65 shows it again — b69239b
+- [x] 2.5 Log a 20-rep set heavier by estimate: no badge — b69239b
+- [x] 2.6 End the workout, open it from History: the same sets show "PR", and a later workout with a tie shows none — b69239b
+- [x] 2.7 Badge is readable on a phone-width viewport and does not wrap the set row awkwardly — b69239b
