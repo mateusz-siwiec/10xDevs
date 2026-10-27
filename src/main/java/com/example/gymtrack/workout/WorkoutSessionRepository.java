@@ -1,5 +1,6 @@
 package com.example.gymtrack.workout;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,5 +23,11 @@ public interface WorkoutSessionRepository extends JpaRepository<WorkoutSession, 
 			""")
 	List<WorkoutSession> findRecentEndedWithExercise(@Param("userId") UUID userId,
 			@Param("exerciseId") UUID exerciseId, Pageable pageable);
+
+	@Query("""
+			select s from WorkoutSession s
+			where s.userId = :userId and s.endedAt >= :since
+			""")
+	List<WorkoutSession> findEndedSince(@Param("userId") UUID userId, @Param("since") Instant since);
 
 }

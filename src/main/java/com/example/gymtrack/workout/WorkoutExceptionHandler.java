@@ -19,6 +19,11 @@ public class WorkoutExceptionHandler {
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", ex.getMessage()));
 	}
 
+	@ExceptionHandler(InvalidDashboardWindowException.class)
+	public ResponseEntity<Map<String, String>> handleInvalidWindow(InvalidDashboardWindowException ex) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", ex.getMessage()));
+	}
+
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
 	public ResponseEntity<Map<String, String>> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Invalid " + ex.getName()));

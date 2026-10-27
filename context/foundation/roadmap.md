@@ -52,7 +52,7 @@ An amateur-to-intermediate gym-goer currently tracks workouts in scattered notes
 | S-08 | personal-record-flag | see a logged set flagged as a new personal record | S-01 | FR-014 | proposed |
 | S-09 | return-after-break-suggestion | get an easier session suggested after a long gap | S-01 | FR-015 | proposed |
 | S-10 | training-volume-balance-warning | get warned when weekly volume is imbalanced across muscle groups | S-01, F-02 | FR-016 | blocked |
-| S-11 | workout-dashboard | see completed workouts, time spent and total volume for the last 7/30 days after logging in | S-01 | MS-01 | planning |
+| S-11 | workout-dashboard | see completed workouts, time spent and total volume for the last 7/30 days after logging in | S-01 | MS-01 | in-progress |
 
 ## Streams
 
@@ -240,7 +240,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Not in the PRD — added to M-1 after the fact (MS-01), so it widens the milestone. It also takes over `/` from the workout screen, so links and the post-login landing change; only completed sessions count, so abandoned sessions stay invisible by design.
-- **Status:** planning
+- **Status:** in-progress
 
 ## Backlog Handoff
 

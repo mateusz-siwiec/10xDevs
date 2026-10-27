@@ -175,25 +175,25 @@ None — no schema changes. Existing bookmarks to `/` now open the dashboard ins
 
 #### Automated
 
-- [ ] 1.1 New and existing backend tests pass: `./mvnw test`
-- [ ] 1.2 Dashboard test class passes on its own: `./mvnw test -Dtest=DashboardControllerTest`
+- [x] 1.1 New and existing backend tests pass: `./mvnw test` — be437a7
+- [x] 1.2 Dashboard test class passes on its own: `./mvnw test -Dtest=DashboardControllerTest` — be437a7
 
 #### Manual
 
-- [ ] 1.3 `GET /api/dashboard/stats?days=7` with a real token returns plausible numbers after ending a short workout
-- [ ] 1.4 `days=14` returns 400 with an `error` message
+- [x] 1.3 `GET /api/dashboard/stats?days=7` with a real token returns plausible numbers after ending a short workout — be437a7
+- [x] 1.4 `days=14` returns 400 with an `error` message — be437a7
 
 ### Phase 2: Frontend dashboard page and routing
 
 #### Automated
 
-- [ ] 2.1 Frontend builds: `cd frontend && npm run build`
-- [ ] 2.2 Lint passes: `cd frontend && npm run lint`
+- [x] 2.1 Frontend builds: `cd frontend && npm run build` — 3baa2c2
+- [x] 2.2 Lint passes: `cd frontend && npm run lint` — 3baa2c2
 
 #### Manual
 
-- [ ] 2.3 Logging in lands on the dashboard; a new account shows zeros and the empty-state prompt
-- [ ] 2.4 After finishing a workout, dashboard totals match logged sets and session duration
-- [ ] 2.5 7/30 toggle changes numbers when older sessions exist; a running session is not counted
-- [ ] 2.6 Topbar navigation works between Dashboard, Workout and Plans; "Start workout" reaches `/workout`
-- [ ] 2.7 Layout is usable at phone width
+- [x] 2.3 Logging in lands on the dashboard; a new account shows zeros and the empty-state prompt — 3baa2c2
+- [x] 2.4 After finishing a workout, dashboard totals match logged sets and session duration — 3baa2c2
+- [x] 2.5 7/30 toggle changes numbers when older sessions exist; a running session is not counted — 3baa2c2
+- [x] 2.6 Topbar navigation works between Dashboard, Workout and Plans; "Start workout" reaches `/workout` — 3baa2c2
+- [x] 2.7 Layout is usable at phone width — 3baa2c2

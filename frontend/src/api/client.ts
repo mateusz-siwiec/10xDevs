@@ -197,6 +197,18 @@ export async function getProgressionRecommendation(
   return res.json()
 }
 
+export interface DashboardStats {
+  days: number
+  workoutCount: number
+  totalDurationSeconds: number
+  totalVolumeKg: number
+}
+
+export async function getDashboardStats(days: 7 | 30): Promise<DashboardStats> {
+  const res = await authFetch(`/api/dashboard/stats?days=${days}`)
+  return res.json()
+}
+
 export interface PlanSummary {
   id: string
   name: string

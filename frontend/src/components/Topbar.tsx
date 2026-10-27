@@ -19,6 +19,9 @@ export default function Topbar() {
     <header className="topbar">
       <nav className="topbar-nav">
         <NavLink to="/" end className="topbar-link">
+          Dashboard
+        </NavLink>
+        <NavLink to="/workout" className="topbar-link">
           Workout
         </NavLink>
         <NavLink to="/plans" className="topbar-link">
