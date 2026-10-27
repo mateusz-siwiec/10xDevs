@@ -1,9 +1,10 @@
 ---
 change_id: previous-workout-weight-hint
 title: Previous workout weight hint
-status: impl_reviewed
+status: archived
 created: 2026-10-27
 updated: 2026-10-27
+archived_at: 2026-10-27T14:23:18Z
 ---
 
 ## Notes

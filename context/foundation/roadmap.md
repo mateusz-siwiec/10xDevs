@@ -56,7 +56,7 @@ An amateur-to-intermediate gym-goer currently tracks workouts in scattered notes
 | S-09 | return-after-break-suggestion | get an easier session suggested after a long gap | S-01 | FR-015 | proposed |
 | S-10 | training-volume-balance-warning | get warned when weekly volume is imbalanced across muscle groups | S-01, F-02 | FR-016 | blocked |
 | S-11 | workout-dashboard | see completed workouts, time spent and total volume for the last 7/30 days after logging in | S-01 | MS-01 | done |
-| S-12 | previous-workout-weight-hint | see, per exercise and per set, what they lifted last time when starting a workout from the same plan | S-01, S-02 | MS-02 | in-progress |
+| S-12 | previous-workout-weight-hint | see, per exercise and per set, what they lifted last time when starting a workout from the same plan | S-01, S-02 | MS-02 | done |
 | S-13 | training-history | browse a paginated list of past workouts and open a compact view of each | S-01 | MS-03 | proposed |
 | S-14 | training-session-editing | correct a finished workout's sets and times, and add a workout afterwards with a past date | S-13 | MS-04 | proposed |
 
@@ -260,7 +260,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - Show the hint only, or also prefill the set logger with the previous weight? And how it sits next to the S-03 recommendation ("last time 60 kg" vs "try 61.5 kg"). — Owner: user. Block: no (decided in `/10x-plan`).
 - **Risk:** "Previous workout of the same plan" depends on `session.planId`, which is cleared when a plan is deleted and does not snapshot targets, so the hint silently disappears for such sessions; keep it a hint, not a rule.
-- **Status:** in-progress
+- **Status:** done
 
 ### S-13: Training history
 
@@ -336,3 +336,4 @@ No roadmap-wide open questions at this milestone — both PRD `## Open Questions
 - **S-04: user marks an exercise as skipped/unavailable during a session and sees a suggested substitute from the same muscle group.** — Archived 2026-10-27 → `context/archive/2026-10-27-exercise-substitution-suggestion/`. Lesson: —.
 - **S-03: user sees a recommendation to increase weight for an exercise once they've completed all sets at full reps across the last N workouts of that exercise.** — Archived 2026-10-27 → `context/archive/2026-10-27-progression-recommendation/`. Lesson: —.
 - **S-11: user sees, right after logging in, how many workouts they completed, how much time they spent and their total volume (reps × kg) over the last 7 or 30 days.** — Archived 2026-10-27 → `context/archive/2026-10-27-workout-dashboard/`. Lesson: —.
+- **S-12: user starting a workout from a training plan sees, for each exercise, what they lifted per set in their previous workout from the same plan.** — Archived 2026-10-27 → `context/archive/2026-10-27-previous-workout-weight-hint/`. Lesson: —.
