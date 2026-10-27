@@ -193,13 +193,13 @@ None. No schema changes.
 
 #### Automated
 
-- [x] 2.1 Frontend lint passes
-- [x] 2.2 Frontend type-check and build pass
+- [x] 2.1 Frontend lint passes — 76c0075
+- [x] 2.2 Frontend type-check and build pass — 76c0075
 
 #### Manual
 
-- [x] 2.3 Unavailable shows up to three same-group suggestions ordered by name
-- [x] 2.4 Use this switches the logger and chart to the substitute
-- [x] 2.5 Dismissing, changing exercise, or ending the workout hides the panel
-- [x] 2.6 Skipped plan entry stays pending after accepting a substitute
+- [x] 2.3 Unavailable shows up to three same-group suggestions ordered by name — 76c0075
+- [x] 2.4 Use this switches the logger and chart to the substitute — 76c0075
+- [x] 2.5 Dismissing, changing exercise, or ending the workout hides the panel — 76c0075
+- [x] 2.6 Skipped plan entry stays pending after accepting a substitute — 76c0075
 - [ ] 2.7 Layout is usable at phone width
