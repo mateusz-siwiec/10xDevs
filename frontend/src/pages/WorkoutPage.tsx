@@ -16,6 +16,8 @@ import { computeProgress, currentIndex, selectedIndex } from '../components/plan
 import ProgressionChart from '../components/ProgressionChart'
 import PreviousWorkoutHint from '../components/PreviousWorkoutHint'
 import ProgressionRecommendation from '../components/ProgressionRecommendation'
+import RestTimer from '../components/RestTimer'
+import { loadRestDuration, saveRestDuration } from '../components/restDuration'
 import SessionSetList from '../components/SessionSetList'
 import SetLogger from '../components/SetLogger'
 import SubstituteSuggestions from '../components/SubstituteSuggestions'
@@ -34,6 +36,9 @@ export default function WorkoutPage() {
   const [substituteFor, setSubstituteFor] = useState<string | null>(null)
   // Entry positions the user skipped in the active session; cleared on return, log and end.
   const [skipped, setSkipped] = useState<ReadonlySet<number>>(() => new Set())
+  // Absolute end time of the running rest countdown; null when no rest is active.
+  const [restEndsAt, setRestEndsAt] = useState<number | null>(null)
+  const [restDuration, setRestDuration] = useState(loadRestDuration)
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -111,6 +116,7 @@ export default function WorkoutPage() {
     try {
       setSession(await startSession(planId))
       setSkipped(new Set())
+      setRestEndsAt(null)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to start workout')
     } finally {
@@ -128,6 +134,7 @@ export default function WorkoutPage() {
       setManual(null)
       setSubstituteFor(null)
       setSkipped(new Set())
+      setRestEndsAt(null)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to end workout')
     } finally {
@@ -154,6 +161,7 @@ export default function WorkoutPage() {
           })
         }
       }
+      setRestEndsAt(Date.now() + restDuration * 1000)
       setRefreshKey((k) => k + 1)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to log set')
@@ -263,6 +271,15 @@ export default function WorkoutPage() {
             )}
             {selectedExercise && <ProgressionRecommendation exerciseId={selectedExercise} />}
             <SetLogger disabled={!selectedExercise} onLog={handleLog} />
+            <RestTimer
+              endsAt={restEndsAt}
+              onChange={setRestEndsAt}
+              durationSec={restDuration}
+              onDurationChange={(sec) => {
+                setRestDuration(sec)
+                saveRestDuration(sec)
+              }}
+            />
             {selectedExercise && (
               <ProgressionChart exerciseId={selectedExercise} refreshKey={refreshKey} />
             )}

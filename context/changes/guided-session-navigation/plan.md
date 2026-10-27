@@ -201,29 +201,29 @@ None. No schema or API changes; skipped state is lost on reload by design.
 
 #### Automated
 
-- [x] 1.1 Frontend lint passes
-- [x] 1.2 Frontend type-check and build pass
+- [x] 1.1 Frontend lint passes — f75e5d3
+- [x] 1.2 Frontend type-check and build pass — f75e5d3
 
 #### Manual
 
-- [x] 1.3 Skip marks the entry Skipped and selects the next pending entry
-- [x] 1.4 Tapping a skipped entry or logging a set on it clears the skip
-- [x] 1.5 After non-skipped entries are done, the first skipped entry is auto-selected with a return hint
-- [x] 1.6 A skipped entry that reaches its set target shows as done
-- [x] 1.7 Free-form sessions show no walkthrough and ending the workout clears skipped state
+- [x] 1.3 Skip marks the entry Skipped and selects the next pending entry — f75e5d3
+- [x] 1.4 Tapping a skipped entry or logging a set on it clears the skip — f75e5d3
+- [x] 1.5 After non-skipped entries are done, the first skipped entry is auto-selected with a return hint — f75e5d3
+- [x] 1.6 A skipped entry that reaches its set target shows as done — f75e5d3
+- [x] 1.7 Free-form sessions show no walkthrough and ending the workout clears skipped state — f75e5d3
 
 ### Phase 2: Rest timer
 
 #### Automated
 
-- [ ] 2.1 Frontend lint passes
-- [ ] 2.2 Frontend type-check and build pass
+- [x] 2.1 Frontend lint passes
+- [x] 2.2 Frontend type-check and build pass
 
 #### Manual
 
-- [ ] 2.3 Logging a set starts a 90 s countdown in plan and free-form sessions
-- [ ] 2.4 +30 s, Skip rest and Rest over (with vibration) work
-- [ ] 2.5 Duration preset applies to the next set and persists after reload
-- [ ] 2.6 Remaining time is correct after the tab was backgrounded
-- [ ] 2.7 Ending the workout clears the timer and deleting a set does not restart it
-- [ ] 2.8 Layout is usable at phone width
+- [x] 2.3 Logging a set starts a 90 s countdown in plan and free-form sessions
+- [x] 2.4 +30 s, Skip rest and Rest over (with vibration) work
+- [x] 2.5 Duration preset applies to the next set and persists after reload
+- [x] 2.6 Remaining time is correct after the tab was backgrounded
+- [x] 2.7 Ending the workout clears the timer and deleting a set does not restart it
+- [x] 2.8 Layout is usable at phone width
