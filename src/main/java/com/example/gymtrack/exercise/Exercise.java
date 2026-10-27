@@ -37,7 +37,26 @@ public class Exercise {
 	@Enumerated(EnumType.STRING)
 	private Set<MuscleGroup> secondaryMuscleGroups = EnumSet.noneOf(MuscleGroup.class);
 
+	@Column(name = "owner_id")
+	private UUID ownerId;
+
 	protected Exercise() {
+	}
+
+	public Exercise(UUID ownerId, String name, MuscleGroup primaryMuscleGroup,
+			Set<MuscleGroup> secondaryMuscleGroups) {
+		this.id = UUID.randomUUID();
+		this.slug = "custom-" + this.id;
+		this.ownerId = ownerId;
+		this.name = name;
+		this.primaryMuscleGroup = primaryMuscleGroup;
+		if (secondaryMuscleGroups != null && !secondaryMuscleGroups.isEmpty()) {
+			this.secondaryMuscleGroups = EnumSet.copyOf(secondaryMuscleGroups);
+		}
+	}
+
+	public UUID getOwnerId() {
+		return ownerId;
 	}
 
 	public UUID getId() {

@@ -105,6 +105,7 @@ export interface Exercise {
   name: string
   primaryMuscleGroup: string
   secondaryMuscleGroups: string[]
+  custom: boolean
 }
 
 export interface WorkoutSet {
@@ -138,6 +139,26 @@ export interface ProgressionPoint {
 export async function getExercises(): Promise<Exercise[]> {
   const res = await authFetch('/api/exercises')
   return res.json()
+}
+
+export interface CreateExerciseInput {
+  name: string
+  primaryMuscleGroup: string
+  secondaryMuscleGroups: string[]
+}
+
+export async function createExercise(input: CreateExerciseInput): Promise<Exercise> {
+  const res = await authFetch('/api/exercises', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input),
+  })
+  return res.json()
+}
+
+/** Resolves on 204 No Content; there is no body to parse. */
+export async function deleteExercise(id: string): Promise<void> {
+  await authFetch(`/api/exercises/${id}`, { method: 'DELETE' })
 }
 
 export async function startSession(planId?: string): Promise<WorkoutSession> {

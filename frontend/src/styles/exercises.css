@@ -1,0 +1,33 @@
+.exercise-secondary {
+  margin: 0 0 1rem;
+  padding: 0;
+  border: none;
+}
+
+.exercise-secondary legend {
+  padding: 0;
+  margin-bottom: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+.exercise-secondary-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.25rem 0.75rem;
+}
+
+.exercise-secondary-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  color: var(--text);
+}
+
+.exercise-secondary-option input {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0;
+}

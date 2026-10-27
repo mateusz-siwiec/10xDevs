@@ -30,6 +30,9 @@ export default function Topbar() {
         <NavLink to="/plans"className="topbar-link">
           Plans
         </NavLink>
+        <NavLink to="/exercises" className="topbar-link">
+          Exercises
+        </NavLink>
       </nav>
       <span className="topbar-user">{user.email}</span>
       <button type="button" onClick={handleLogout} className="topbar-logout">

@@ -5,16 +5,16 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Response shape for a catalog exercise.
+ * Response shape for a catalog or custom exercise; {@code custom} marks the caller's own.
  */
 public record ExerciseResponse(UUID id, String slug, String name, MuscleGroup primaryMuscleGroup,
-		Set<MuscleGroup> secondaryMuscleGroups) {
+		Set<MuscleGroup> secondaryMuscleGroups, boolean custom) {
 
 	static ExerciseResponse from(Exercise exercise) {
 		Set<MuscleGroup> secondary = EnumSet.noneOf(MuscleGroup.class);
 		secondary.addAll(exercise.getSecondaryMuscleGroups());
 		return new ExerciseResponse(exercise.getId(), exercise.getSlug(), exercise.getName(),
-				exercise.getPrimaryMuscleGroup(), secondary);
+				exercise.getPrimaryMuscleGroup(), secondary, exercise.getOwnerId() != null);
 	}
 
 }

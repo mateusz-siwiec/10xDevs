@@ -7,6 +7,7 @@ import HistoryPage from './pages/HistoryPage'
 import HistoryDetailPage from './pages/HistoryDetailPage'
 import PlansPage from './pages/PlansPage'
 import PlanEditorPage from './pages/PlanEditorPage'
+import MyExercisesPage from './pages/MyExercisesPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 
@@ -70,6 +71,14 @@ function App() {
             element={
               <RequireAuth>
                 <PlanEditorPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/exercises"
+            element={
+              <RequireAuth>
+                <MyExercisesPage />
               </RequireAuth>
             }
           />
