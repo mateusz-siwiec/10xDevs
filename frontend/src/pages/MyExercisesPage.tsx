@@ -33,6 +33,7 @@ function byName(a: Exercise, b: Exercise): number {
 export default function MyExercisesPage() {
   const [exercises, setExercises] = useState<Exercise[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadFailed, setLoadFailed] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [name, setName] = useState('')
   const [primary, setPrimary] = useState('')
@@ -48,7 +49,9 @@ export default function MyExercisesPage() {
         if (!cancelled) setExercises(list.filter((e) => e.custom).sort(byName))
       })
       .catch((err) => {
-        if (!cancelled) setError(err instanceof Error ? err.message : 'Failed to load exercises')
+        if (cancelled) return
+        setLoadFailed(true)
+        setError(err instanceof Error ? err.message : 'Failed to load exercises')
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
@@ -167,7 +170,7 @@ export default function MyExercisesPage() {
           <h2>Your exercises</h2>
           {loading ? (
             <p className="page-subtext">Loading exercises…</p>
-          ) : exercises.length === 0 ? (
+          ) : loadFailed ? null : exercises.length === 0 ? (
             <p className="page-subtext">No custom exercises yet.</p>
           ) : (
             <ul className="plan-list">

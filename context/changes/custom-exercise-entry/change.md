@@ -1,7 +1,7 @@
 ---
 change_id: custom-exercise-entry
 title: Custom exercise entry
-status: implemented
+status: impl_reviewed
 created: 2026-10-27
 updated: 2026-10-27
 ---

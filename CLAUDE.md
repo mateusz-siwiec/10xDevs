@@ -51,6 +51,9 @@ preferred.
 - Flyway runs by default (local and tests). Production disables it via `fly.toml`
   `[env]` (`SPRING_FLYWAY_ENABLED=false`, `SPRING_JPA_HIBERNATE_DDL_AUTO=update`).
   Never point a local run at the Supabase DB while Flyway is enabled.
+  Because production skips Flyway, constraints and indexes that `ddl-auto=update` cannot create
+  (e.g. the FK/cascade and partial unique index in `V8__add_exercise_owner.sql`) must be applied
+  to the Supabase DB by hand.
 - Frontend and backend are decoupled: the SPA under `frontend/` talks to the
   backend only via `/api/**` REST calls. There is no server-side templating.
 - Deployment: multi-stage `Dockerfile` (builds with `eclipse-temurin:21-jdk`,

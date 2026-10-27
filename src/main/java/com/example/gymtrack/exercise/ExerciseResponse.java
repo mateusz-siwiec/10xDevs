@@ -5,7 +5,7 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Response shape for a catalog exercise.
+ * Response shape for a catalog or custom exercise; {@code custom} marks the caller's own.
  */
 public record ExerciseResponse(UUID id, String slug, String name, MuscleGroup primaryMuscleGroup,
 		Set<MuscleGroup> secondaryMuscleGroups, boolean custom) {
