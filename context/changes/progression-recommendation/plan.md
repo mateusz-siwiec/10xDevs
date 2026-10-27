@@ -194,24 +194,24 @@ None — no schema changes. Known limitation to document: plan edits and plan de
 
 #### Automated
 
-- [x] 1.1 Backend tests pass: `./mvnw test`
-- [x] 1.2 New test class passes on its own: `./mvnw test -Dtest=ProgressionRecommendationControllerTest`
+- [x] 1.1 Backend tests pass: `./mvnw test` — 0c40b66
+- [x] 1.2 New test class passes on its own: `./mvnw test -Dtest=ProgressionRecommendationControllerTest` — 0c40b66
 
 #### Manual
 
-- [x] 1.3 After two qualifying ended plan workouts, the endpoint returns the expected recommended weight
-- [x] 1.4 With only one qualifying workout, or after a plan edit that raises the target, the endpoint returns 204
+- [x] 1.3 After two qualifying ended plan workouts, the endpoint returns the expected recommended weight — 0c40b66
+- [x] 1.4 With only one qualifying workout, or after a plan edit that raises the target, the endpoint returns 204 — 0c40b66
 
 ### Phase 2: Frontend recommendation panel
 
 #### Automated
 
-- [ ] 2.1 Frontend builds: `cd frontend && npm run build`
-- [ ] 2.2 Lint passes: `cd frontend && npm run lint`
+- [x] 2.1 Frontend builds: `cd frontend && npm run build`
+- [x] 2.2 Lint passes: `cd frontend && npm run lint`
 
 #### Manual
 
-- [ ] 2.3 Selecting the exercise in a third workout shows the "Try X kg" sentence with the right numbers
-- [ ] 2.4 Switching exercises updates or hides the panel; a free-form workout shows nothing
-- [ ] 2.5 A server error or a missing recommendation leaves the workout screen fully usable
-- [ ] 2.6 Layout is usable at phone width
+- [x] 2.3 Selecting the exercise in a third workout shows the "Try X kg" sentence with the right numbers
+- [x] 2.4 Switching exercises updates or hides the panel; a free-form workout shows nothing
+- [x] 2.5 A server error or a missing recommendation leaves the workout screen fully usable
+- [x] 2.6 Layout is usable at phone width

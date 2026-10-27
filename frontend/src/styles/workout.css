@@ -162,6 +162,17 @@
   color: var(--text-h);
 }
 
+.progression-recommendation {
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.progression-recommendation p {
+  margin: 0;
+  color: var(--text-h);
+}
+
 .workout-end {
   margin-top: 2rem;
 }
