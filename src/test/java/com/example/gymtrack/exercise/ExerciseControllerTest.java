@@ -108,12 +108,13 @@ class ExerciseControllerTest {
 		String[] expectedNames = chest.stream()
 			.filter(e -> !e.getId().equals(requested.getId()))
 			.map(Exercise::getName)
+			.sorted(String.CASE_INSENSITIVE_ORDER)
 			.toArray(String[]::new);
 
 		mockMvc.perform(get("/api/exercises/{id}/substitutes", requested.getId())
 				.header(HttpHeaders.AUTHORIZATION, bearerToken()))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$", hasSize(3)))
+			.andExpect(jsonPath("$", hasSize(chest.size() - 1)))
 			.andExpect(jsonPath("$[*].primaryMuscleGroup", everyItem(is("CHEST"))))
 			.andExpect(jsonPath("$[*].id", not(hasItem(requested.getId().toString()))))
 			.andExpect(jsonPath("$[*].name", contains(expectedNames)));
@@ -124,6 +125,13 @@ class ExerciseControllerTest {
 		mockMvc.perform(get("/api/exercises/{id}/substitutes", UUID.randomUUID())
 				.header(HttpHeaders.AUTHORIZATION, bearerToken()))
 			.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void substitutesWithMalformedExerciseIdReturnsBadRequest() throws Exception {
+		mockMvc.perform(get("/api/exercises/{id}/substitutes", "not-a-uuid")
+				.header(HttpHeaders.AUTHORIZATION, bearerToken()))
+			.andExpect(status().isBadRequest());
 	}
 
 	@Test

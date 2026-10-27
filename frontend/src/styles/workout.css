@@ -97,6 +97,7 @@
   grid-template-columns: 1fr auto;
   gap: 0.5rem;
   align-items: end;
+  margin-bottom: 1rem;
 }
 
 /* The picker's own bottom margin would push the button below the select. */
@@ -104,11 +105,7 @@
   margin-bottom: 0;
 }
 
-.exercise-picker-row {
-  margin-bottom: 1rem;
-}
-
-.exercise-unavailable {
+.find-substitute-btn {
   min-height: 48px;
   white-space: nowrap;
 }
@@ -143,6 +140,11 @@
   gap: 0.75rem;
   padding: 0.5rem 0;
   border-bottom: 1px solid var(--border);
+}
+
+.substitute-item .btn-primary {
+  width: auto;
+  flex-shrink: 0;
 }
 
 .substitute-item:last-child {

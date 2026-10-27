@@ -197,7 +197,7 @@ export default function WorkoutPage() {
               />
               <button
                 type="button"
-                className="btn-secondary exercise-unavailable"
+                className="btn-secondary find-substitute-btn"
                 disabled={!selectedExercise}
                 onClick={() => setSubstituteFor(selectedExercise)}
               >

@@ -50,7 +50,11 @@ export default function SubstituteSuggestions({
   if (current === null) {
     body = <p className="page-subtext">Loading alternatives…</p>
   } else if (current.error) {
-    body = <p className="error-text">{current.error}</p>
+    body = (
+      <p className="error-text" role="alert">
+        {current.error}
+      </p>
+    )
   } else if (current.items.length === 0) {
     body = <p className="page-subtext">No alternatives available for this exercise.</p>
   } else {
@@ -62,7 +66,12 @@ export default function SubstituteSuggestions({
               <span className="substitute-item-name">{exercise.name}</span>
               <span className="page-subtext">{exercise.primaryMuscleGroup}</span>
             </div>
-            <button type="button" className="btn-primary" onClick={() => onAccept(exercise.id)}>
+            <button
+              type="button"
+              className="btn-primary"
+              aria-label={`Use ${exercise.name}`}
+              onClick={() => onAccept(exercise.id)}
+            >
               Use this
             </button>
           </li>
@@ -72,14 +81,14 @@ export default function SubstituteSuggestions({
   }
 
   return (
-    <section className="workout-section substitute-panel">
+    <section className="workout-section substitute-panel" aria-labelledby="substitute-heading">
       <div className="substitute-header">
-        <h2>Alternatives</h2>
+        <h2 id="substitute-heading">Alternatives</h2>
         <button type="button" className="btn-secondary" onClick={onDismiss}>
           Dismiss
         </button>
       </div>
-      {body}
+      <div aria-live="polite">{body}</div>
     </section>
   )
 }
