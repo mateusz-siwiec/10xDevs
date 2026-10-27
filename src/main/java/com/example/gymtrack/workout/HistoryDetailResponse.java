@@ -11,7 +11,7 @@ public record HistoryDetailResponse(UUID id, Instant startedAt, Instant endedAt,
 	public record ExerciseEntry(UUID exerciseId, List<SetEntry> sets) {
 	}
 
-	public record SetEntry(int reps, BigDecimal weightKg) {
+	public record SetEntry(int reps, BigDecimal weightKg, boolean personalRecord) {
 	}
 
 }

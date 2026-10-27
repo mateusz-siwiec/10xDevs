@@ -35,11 +35,14 @@ public class HistoryService {
 
 	private final TrainingPlanRepository planRepository;
 
+	private final PersonalRecordService personalRecordService;
+
 	public HistoryService(WorkoutSessionRepository sessionRepository, WorkoutSetRepository setRepository,
-			TrainingPlanRepository planRepository) {
+			TrainingPlanRepository planRepository, PersonalRecordService personalRecordService) {
 		this.sessionRepository = sessionRepository;
 		this.setRepository = setRepository;
 		this.planRepository = planRepository;
+		this.personalRecordService = personalRecordService;
 	}
 
 	@Transactional(readOnly = true)
@@ -88,9 +91,12 @@ public class HistoryService {
 			.orElseThrow(() -> new WorkoutNotFoundException("Workout session not found"));
 		Map<UUID, List<HistoryDetailResponse.SetEntry>> byExercise = new LinkedHashMap<>();
 		BigDecimal volume = BigDecimal.ZERO;
-		for (WorkoutSet set : setRepository.findBySessionIdOrderByLoggedAtAsc(session.getId())) {
+		List<WorkoutSet> sets = setRepository.findBySessionIdOrderByLoggedAtAsc(session.getId());
+		Set<UUID> personalRecordSetIds = personalRecordService.personalRecordSetIds(session, sets);
+		for (WorkoutSet set : sets) {
 			byExercise.computeIfAbsent(set.getExerciseId(), key -> new ArrayList<>())
-				.add(new HistoryDetailResponse.SetEntry(set.getReps(), set.getWeightKg()));
+				.add(new HistoryDetailResponse.SetEntry(set.getReps(), set.getWeightKg(),
+						personalRecordSetIds.contains(set.getId())));
 			volume = volume.add(set.getWeightKg().multiply(BigDecimal.valueOf(set.getReps())));
 		}
 		List<HistoryDetailResponse.ExerciseEntry> exercises = byExercise.entrySet()
