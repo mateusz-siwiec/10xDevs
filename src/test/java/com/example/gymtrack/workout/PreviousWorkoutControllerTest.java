@@ -99,7 +99,7 @@ class PreviousWorkoutControllerTest {
 		Thread.sleep(10);
 		WorkoutSession session = sessionRepository.saveAndFlush(new WorkoutSession(user.getId(), planId));
 		for (Entry entry : entries) {
-			Thread.sleep(2);
+			Thread.sleep(5);
 			setRepository.saveAndFlush(
 					new WorkoutSet(session, entry.exerciseId(), entry.reps(), new BigDecimal(entry.weightKg())));
 		}

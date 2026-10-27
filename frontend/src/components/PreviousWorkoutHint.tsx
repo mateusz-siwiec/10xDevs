@@ -50,7 +50,6 @@ export default function PreviousWorkoutHint({ exerciseId, planId, setNumber }: P
               <li
                 key={index}
                 className={index + 1 === setNumber ? 'previous-workout-hint-current' : undefined}
-                aria-current={index + 1 === setNumber ? 'step' : undefined}
               >
                 Set {index + 1}: {set.reps} × {set.weightKg} kg
               </li>

@@ -56,7 +56,7 @@ An amateur-to-intermediate gym-goer currently tracks workouts in scattered notes
 | S-09 | return-after-break-suggestion | get an easier session suggested after a long gap | S-01 | FR-015 | proposed |
 | S-10 | training-volume-balance-warning | get warned when weekly volume is imbalanced across muscle groups | S-01, F-02 | FR-016 | blocked |
 | S-11 | workout-dashboard | see completed workouts, time spent and total volume for the last 7/30 days after logging in | S-01 | MS-01 | done |
-| S-12 | previous-workout-weight-hint | see, per exercise and per set, what they lifted last time when starting a workout from the same plan | S-01, S-02 | MS-02 | proposed |
+| S-12 | previous-workout-weight-hint | see, per exercise and per set, what they lifted last time when starting a workout from the same plan | S-01, S-02 | MS-02 | in-progress |
 | S-13 | training-history | browse a paginated list of past workouts and open a compact view of each | S-01 | MS-03 | proposed |
 | S-14 | training-session-editing | correct a finished workout's sets and times, and add a workout afterwards with a past date | S-13 | MS-04 | proposed |
 
@@ -260,7 +260,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - Show the hint only, or also prefill the set logger with the previous weight? And how it sits next to the S-03 recommendation ("last time 60 kg" vs "try 61.5 kg"). — Owner: user. Block: no (decided in `/10x-plan`).
 - **Risk:** "Previous workout of the same plan" depends on `session.planId`, which is cleared when a plan is deleted and does not snapshot targets, so the hint silently disappears for such sessions; keep it a hint, not a rule.
-- **Status:** proposed
+- **Status:** in-progress
 
 ### S-13: Training history
 
