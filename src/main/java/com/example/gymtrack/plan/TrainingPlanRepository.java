@@ -19,4 +19,7 @@ public interface TrainingPlanRepository extends JpaRepository<TrainingPlan, UUID
 	@Query("select p from TrainingPlan p where p.id = :id and p.userId = :userId")
 	Optional<TrainingPlan> findByIdAndUserIdForUpdate(@Param("id") UUID id, @Param("userId") UUID userId);
 
+	@Query("select count(e) > 0 from TrainingPlanEntry e where e.exerciseId = :exerciseId")
+	boolean existsEntryByExerciseId(@Param("exerciseId") UUID exerciseId);
+
 }
