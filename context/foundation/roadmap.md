@@ -44,7 +44,7 @@ An amateur-to-intermediate gym-goer currently tracks workouts in scattered notes
 | F-02 | exercise-catalog-seed | (foundation) seeded exercise catalog with muscle-group tags exists and is queryable | — | FR-002, Access Control | done |
 | S-01 | core-workout-logging-loop | start a session, select an exercise, log a set, end the session, see it on the progression chart | F-01, F-02 | US-01, FR-004, FR-005, FR-006, FR-010 | done |
 | S-02 | user-defined-training-plan | define their own training plan as an ordered list of exercises | F-01, F-02 | FR-009 | done |
-| S-03 | progression-recommendation | see a recommendation to increase weight after N full-rep workouts | S-01 | FR-011 | in-progress |
+| S-03 | progression-recommendation | see a recommendation to increase weight after N full-rep workouts | S-01 | FR-011 | done |
 | S-04 | exercise-substitution-suggestion | see a substitute exercise suggestion when marking one unavailable | S-01, F-02 | FR-012 | done |
 | S-05 | custom-exercise-entry | add their own custom exercise with a muscle group | F-01, F-02 | FR-003 | proposed |
 | S-06 | guided-session-navigation | navigate sequential exercises with skip/return and a rest timer | S-01 | FR-007, FR-008 | proposed |
@@ -141,7 +141,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - What is N (consecutive full-rep workouts) and the weight-increase percentage? — Owner: user. Block: no (PRD allows a reasonable tunable default).
 - **Risk:** This is the "transparent, deterministic recommendation rule" the Vision names as the project's actual value — the agreed investment area, so it's worth the deepest implementation care of any slice here.
-- **Status:** in-progress
+- **Status:** done
 
 ### S-04: Exercise substitution suggestion
 
@@ -285,3 +285,4 @@ No roadmap-wide open questions at this milestone — both PRD `## Open Questions
 - **S-01: user can start a workout session, select a seeded exercise, log a set (reps + weight), end the session, and immediately see that set reflected on the exercise's progression chart.** — Archived 2026-10-26 → `context/archive/2026-10-22-core-workout-logging-loop/`. Lesson: —.
 - **S-02: user can define their own training plan as an ordered list of exercises from the catalog.** — Archived 2026-10-26 → `context/archive/2026-10-26-user-defined-training-plan/`. Lesson: —.
 - **S-04: user marks an exercise as skipped/unavailable during a session and sees a suggested substitute from the same muscle group.** — Archived 2026-10-27 → `context/archive/2026-10-27-exercise-substitution-suggestion/`. Lesson: —.
+- **S-03: user sees a recommendation to increase weight for an exercise once they've completed all sets at full reps across the last N workouts of that exercise.** — Archived 2026-10-27 → `context/archive/2026-10-27-progression-recommendation/`. Lesson: —.
