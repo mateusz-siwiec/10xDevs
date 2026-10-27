@@ -18,7 +18,7 @@ public interface WorkoutSessionRepository extends JpaRepository<WorkoutSession, 
 			select s from WorkoutSession s
 			where s.userId = :userId and s.endedAt is not null
 			and exists (select 1 from WorkoutSet w where w.session = s and w.exerciseId = :exerciseId)
-			order by s.endedAt desc, s.startedAt desc
+			order by s.endedAt desc, s.startedAt desc, s.id desc
 			""")
 	List<WorkoutSession> findRecentEndedWithExercise(@Param("userId") UUID userId,
 			@Param("exerciseId") UUID exerciseId, Pageable pageable);

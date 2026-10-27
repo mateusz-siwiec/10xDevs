@@ -1,7 +1,7 @@
 ---
 change_id: progression-recommendation
 title: Progression recommendation
-status: implemented
+status: impl_reviewed
 created: 2026-10-27
 updated: 2026-10-27
 ---

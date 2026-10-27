@@ -305,4 +305,30 @@ class ProgressionRecommendationControllerTest {
 		assertNoRecommendation(other, exerciseId);
 	}
 
+	@Test
+	void duplicateExerciseInPlanUsesTheFirstEntryAsTarget() throws Exception {
+		User user = newUser();
+		UUID exerciseId = exerciseId();
+		TrainingPlan plan = new TrainingPlan(user.getId(), "Plan " + System.nanoTime());
+		plan.replaceEntries(List.of(new PlanEntryInput(exerciseId, 3, 10), new PlanEntryInput(exerciseId, 2, 8)));
+		plan = planRepository.saveAndFlush(plan);
+		// 2 x 8 would satisfy the second entry, but the first (3 x 10) is the target.
+		endedSession(user, plan.getId(), exerciseId, set(8, "60"), set(8, "60"));
+		endedSession(user, plan.getId(), exerciseId, set(8, "60"), set(8, "60"));
+
+		assertNoRecommendation(user, exerciseId);
+	}
+
+	@Test
+	void sessionsOfAnotherUsersPlanGiveNoRecommendation() throws Exception {
+		User user = newUser();
+		User planOwner = newUser();
+		UUID exerciseId = exerciseId();
+		TrainingPlan foreignPlan = plan(planOwner, exerciseId, 3, 10);
+		endedSession(user, foreignPlan.getId(), exerciseId, threeByTen("60"));
+		endedSession(user, foreignPlan.getId(), exerciseId, threeByTen("60"));
+
+		assertNoRecommendation(user, exerciseId);
+	}
+
 }

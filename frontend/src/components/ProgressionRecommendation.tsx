@@ -31,17 +31,19 @@ export default function ProgressionRecommendation({ exerciseId }: ProgressionRec
   }, [exerciseId])
 
   const recommendation = result !== null && result.key === exerciseId ? result.recommendation : null
-  if (recommendation === null) {
-    return null
-  }
 
+  // The live region stays mounted so screen readers announce the hint when it appears.
   return (
-    <section className="workout-section progression-recommendation" aria-live="polite">
-      <p>
-        Try {recommendation.recommendedWeightKg} kg — you completed {recommendation.targetSets}×
-        {recommendation.targetReps} at {recommendation.currentWeightKg} kg in your last{' '}
-        {recommendation.workouts} workouts.
-      </p>
-    </section>
+    <div aria-live="polite">
+      {recommendation !== null && (
+        <section className="workout-section progression-recommendation">
+          <p>
+            Try {recommendation.recommendedWeightKg} kg — you completed {recommendation.targetSets}×
+            {recommendation.targetReps} at {recommendation.currentWeightKg} kg in your last{' '}
+            {recommendation.workouts} workouts.
+          </p>
+        </section>
+      )}
+    </div>
   )
 }
