@@ -197,6 +197,27 @@ export async function getProgressionRecommendation(
   return res.json()
 }
 
+export interface PreviousWorkout {
+  exerciseId: string
+  sessionId: string
+  endedAt: string
+  sets: { reps: number; weightKg: number }[]
+}
+
+/** Returns null when the exercise has no earlier workout in this plan (204 No Content). */
+export async function getPreviousWorkout(
+  exerciseId: string,
+  planId: string,
+): Promise<PreviousWorkout | null> {
+  const res = await authFetch(
+    `/api/exercises/${exerciseId}/previous-workout?planId=${encodeURIComponent(planId)}`,
+  )
+  if (res.status === 204) {
+    return null
+  }
+  return res.json()
+}
+
 export interface DashboardStats {
   days: number
   workoutCount: number

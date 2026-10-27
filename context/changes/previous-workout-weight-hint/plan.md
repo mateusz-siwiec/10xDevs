@@ -180,24 +180,24 @@ None — no schema changes. Known limitation: sessions lose their plan when it i
 
 #### Automated
 
-- [x] 1.1 Backend tests pass: `./mvnw test`
-- [x] 1.2 New test class passes on its own: `./mvnw test -Dtest=PreviousWorkoutControllerTest`
+- [x] 1.1 Backend tests pass: `./mvnw test` — f7c58a2
+- [x] 1.2 New test class passes on its own: `./mvnw test -Dtest=PreviousWorkoutControllerTest` — f7c58a2
 
 #### Manual
 
-- [x] 1.3 After one ended plan workout with a warm-up and working sets, the endpoint returns all of them in order
-- [x] 1.4 For an exercise never done with that plan, or without a planId, the endpoint returns 204 / 400 as specified
+- [x] 1.3 After one ended plan workout with a warm-up and working sets, the endpoint returns all of them in order — f7c58a2
+- [x] 1.4 For an exercise never done with that plan, or without a planId, the endpoint returns 204 / 400 as specified — f7c58a2
 
 ### Phase 2: Frontend "Last time" panel
 
 #### Automated
 
-- [ ] 2.1 Frontend builds: `cd frontend && npm run build`
-- [ ] 2.2 Lint passes: `cd frontend && npm run lint`
+- [x] 2.1 Frontend builds: `cd frontend && npm run build`
+- [x] 2.2 Lint passes: `cd frontend && npm run lint`
 
 #### Manual
 
-- [ ] 2.3 Selecting an exercise in a second workout of the plan shows "Last time" with every set in logged order, above the "Try X kg" line when both apply
-- [ ] 2.4 A free-form workout, an exercise not in the previous workout, or a plan without history shows no hint
-- [ ] 2.5 Switching exercises updates or hides the hint; an error leaves the workout screen fully usable
-- [ ] 2.6 Layout is usable at phone width
+- [x] 2.3 Selecting an exercise in a second workout of the plan shows "Last time" with every set in logged order, above the "Try X kg" line when both apply
+- [x] 2.4 A free-form workout, an exercise not in the previous workout, or a plan without history shows no hint
+- [x] 2.5 Switching exercises updates or hides the hint; an error leaves the workout screen fully usable
+- [x] 2.6 Layout is usable at phone width
