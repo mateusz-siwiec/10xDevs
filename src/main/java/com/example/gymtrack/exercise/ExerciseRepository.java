@@ -10,4 +10,6 @@ public interface ExerciseRepository extends JpaRepository<Exercise, UUID> {
 
 	List<Exercise> findByPrimaryMuscleGroupOrderByNameAsc(MuscleGroup primaryMuscleGroup);
 
+	List<Exercise> findByPrimaryMuscleGroupAndIdNotOrderByNameAsc(MuscleGroup primaryMuscleGroup, UUID id);
+
 }
