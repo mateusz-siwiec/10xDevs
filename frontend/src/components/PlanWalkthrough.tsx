@@ -1,39 +1,42 @@
 import type { EntryProgress } from './planProgress'
-import { currentIndex } from './planProgress'
+import { currentIndex, selectedIndex as findSelectedIndex } from './planProgress'
 
 interface PlanWalkthroughProps {
   progress: EntryProgress[]
   selectedExerciseId: string
-  onSelect: (exerciseId: string) => void
+  skipped: ReadonlySet<number>
+  onSelect: (exerciseId: string, position?: number) => void
+  onSkip: (position: number) => void
 }
 
 export default function PlanWalkthrough({
   progress,
   selectedExerciseId,
+  skipped,
   onSelect,
+  onSkip,
 }: PlanWalkthroughProps) {
-  const current = currentIndex(progress)
+  const current = currentIndex(progress, skipped)
   // Highlight a single entry: the current one if it matches, else the first entry of that exercise.
-  const selectedIndex =
-    current >= 0 && progress[current].entry.exerciseId === selectedExerciseId
-      ? current
-      : progress.findIndex((p) => p.entry.exerciseId === selectedExerciseId)
+  const selectedIndex = findSelectedIndex(progress, current, selectedExerciseId)
 
   return (
     <ol className="walkthrough-list">
       {progress.map(({ entry, logged }, index) => {
         const done = logged >= entry.sets
+        const isSkipped = !done && skipped.has(entry.position)
         const classes = ['walkthrough-entry']
         if (index === selectedIndex) classes.push('walkthrough-entry-selected')
         if (index === current) classes.push('walkthrough-entry-current')
         if (done) classes.push('walkthrough-entry-done')
+        if (isSkipped) classes.push('walkthrough-entry-skipped')
         return (
           <li key={entry.position}>
             <button
               type="button"
               className={classes.join(' ')}
               aria-current={index === current ? 'step' : undefined}
-              onClick={() => onSelect(entry.exerciseId)}
+              onClick={() => onSelect(entry.exerciseId, entry.position)}
             >
               <span className="walkthrough-entry-info">
                 <span className="walkthrough-entry-name">{entry.exerciseName}</span>
@@ -42,10 +45,20 @@ export default function PlanWalkthrough({
                 </span>
               </span>
               <span className="walkthrough-entry-progress">
+                {isSkipped && <span className="walkthrough-skipped-badge">Skipped</span>}
                 {done ? '✓ ' : ''}
                 {logged}/{entry.sets}
               </span>
             </button>
+            {index === selectedIndex && !done && (
+              <button
+                type="button"
+                className="btn-secondary walkthrough-skip-btn"
+                onClick={() => onSkip(entry.position)}
+              >
+                Skip
+              </button>
+            )}
           </li>
         )
       })}

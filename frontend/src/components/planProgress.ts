@@ -24,7 +24,25 @@ export function computeProgress(entries: PlanEntry[], sets: WorkoutSet[]): Entry
     })
 }
 
-/** Index of the first entry whose logged sets are below its target, or -1 when all are done. */
-export function currentIndex(progress: EntryProgress[]): number {
+/**
+ * Index of the first entry that is not done and not skipped (skipped is keyed by entry position).
+ * When only skipped entries remain, falls back to the first of them; -1 when all are done.
+ */
+export function currentIndex(progress: EntryProgress[], skipped?: ReadonlySet<number>): number {
+  const pending = progress.findIndex(
+    (p) => p.logged < p.entry.sets && !skipped?.has(p.entry.position),
+  )
+  if (pending >= 0) return pending
   return progress.findIndex((p) => p.logged < p.entry.sets)
+}
+
+/** Index of the single highlighted entry: the current one if it matches, else the first of that exercise, else -1. */
+export function selectedIndex(
+  progress: EntryProgress[],
+  current: number,
+  selectedExerciseId: string,
+): number {
+  return current >= 0 && progress[current].entry.exerciseId === selectedExerciseId
+    ? current
+    : progress.findIndex((p) => p.entry.exerciseId === selectedExerciseId)
 }
