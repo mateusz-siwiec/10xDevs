@@ -175,13 +175,13 @@ None — no schema changes. Existing bookmarks to `/` now open the dashboard ins
 
 #### Automated
 
-- [ ] 1.1 New and existing backend tests pass: `./mvnw test`
-- [ ] 1.2 Dashboard test class passes on its own: `./mvnw test -Dtest=DashboardControllerTest`
+- [x] 1.1 New and existing backend tests pass: `./mvnw test`
+- [x] 1.2 Dashboard test class passes on its own: `./mvnw test -Dtest=DashboardControllerTest`
 
 #### Manual
 
-- [ ] 1.3 `GET /api/dashboard/stats?days=7` with a real token returns plausible numbers after ending a short workout
-- [ ] 1.4 `days=14` returns 400 with an `error` message
+- [x] 1.3 `GET /api/dashboard/stats?days=7` with a real token returns plausible numbers after ending a short workout
+- [x] 1.4 `days=14` returns 400 with an `error` message
 
 ### Phase 2: Frontend dashboard page and routing
 
