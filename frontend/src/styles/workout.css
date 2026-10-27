@@ -162,15 +162,35 @@
   color: var(--text-h);
 }
 
-.progression-recommendation {
+.progression-recommendation,
+.previous-workout-hint {
   padding: 0.75rem;
   border: 1px solid var(--border);
   border-radius: 8px;
 }
 
-.progression-recommendation p {
+.progression-recommendation p,
+.previous-workout-hint p {
   margin: 0;
   color: var(--text-h);
+}
+
+.previous-workout-hint ol {
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--text);
+}
+
+.previous-workout-hint li {
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+}
+
+.previous-workout-hint .previous-workout-hint-current {
+  background: var(--accent-bg);
+  color: var(--text-h);
+  font-weight: 500;
 }
 
 .workout-end {
