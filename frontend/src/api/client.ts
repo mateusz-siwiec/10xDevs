@@ -177,6 +177,26 @@ export async function getSubstitutes(exerciseId: string): Promise<Exercise[]> {
   return res.json()
 }
 
+export interface ProgressionRecommendation {
+  exerciseId: string
+  currentWeightKg: number
+  recommendedWeightKg: number
+  workouts: number
+  targetSets: number
+  targetReps: number
+}
+
+/** Returns null when there is no recommendation for the exercise (204 No Content). */
+export async function getProgressionRecommendation(
+  exerciseId: string,
+): Promise<ProgressionRecommendation | null> {
+  const res = await authFetch(`/api/exercises/${exerciseId}/progression-recommendation`)
+  if (res.status === 204) {
+    return null
+  }
+  return res.json()
+}
+
 export interface PlanSummary {
   id: string
   name: string

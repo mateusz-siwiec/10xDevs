@@ -14,6 +14,7 @@ import ExercisePicker from '../components/ExercisePicker'
 import PlanWalkthrough from '../components/PlanWalkthrough'
 import { computeProgress, currentIndex } from '../components/planProgress'
 import ProgressionChart from '../components/ProgressionChart'
+import ProgressionRecommendation from '../components/ProgressionRecommendation'
 import SessionSetList from '../components/SessionSetList'
 import SetLogger from '../components/SetLogger'
 import SubstituteSuggestions from '../components/SubstituteSuggestions'
@@ -211,6 +212,7 @@ export default function WorkoutPage() {
                 onDismiss={() => setSubstituteFor(null)}
               />
             )}
+            {selectedExercise && <ProgressionRecommendation exerciseId={selectedExercise} />}
             <SetLogger disabled={!selectedExercise} onLog={handleLog} />
             {selectedExercise && (
               <ProgressionChart exerciseId={selectedExercise} refreshKey={refreshKey} />
