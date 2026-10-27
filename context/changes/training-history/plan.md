@@ -256,12 +256,12 @@ None — no schema changes. Existing sessions already carry everything needed. K
 
 #### Automated
 
-- [x] 3.1 Frontend builds: `cd frontend && npm run build`
-- [x] 3.2 Lint passes: `cd frontend && npm run lint`
+- [x] 3.1 Frontend builds: `cd frontend && npm run build` — 7a9e72a
+- [x] 3.2 Lint passes: `cd frontend && npm run lint` — 7a9e72a
 
 #### Manual
 
-- [x] 3.3 Clicking a row opens the workout with date, plan, duration, volume and every exercise's sets in logged order
-- [x] 3.4 Back to history (link and browser back) returns to the same page and filter
-- [x] 3.5 A running or non-existent workout id shows "Workout not found"; an error leaves the app usable
-- [x] 3.6 Layout is usable at phone width
+- [x] 3.3 Clicking a row opens the workout with date, plan, duration, volume and every exercise's sets in logged order — 7a9e72a
+- [x] 3.4 Back to history (link and browser back) returns to the same page and filter — 7a9e72a
+- [x] 3.5 A running or non-existent workout id shows "Workout not found"; an error leaves the app usable — 7a9e72a
+- [x] 3.6 Layout is usable at phone width — 7a9e72a
