@@ -29,7 +29,6 @@ milestone_status: open
   - MS-01: After logging in, the user sees a summary of their recent training — completed workouts, time spent and total volume (reps × kg).
   - MS-02: When starting a workout from a training plan, the user sees what they lifted per set in their previous workout from the same plan.
   - MS-03: The user can browse a paginated list of all their past workouts and open a compact view of how a given workout went.
-  - MS-04: The user can correct a finished workout (its sets and its start/end time) and record a workout afterwards, with a date in the past.
 
 ## Vision recap
 
@@ -57,8 +56,7 @@ An amateur-to-intermediate gym-goer currently tracks workouts in scattered notes
 | S-10 | training-volume-balance-warning | get warned when weekly volume is imbalanced across muscle groups | S-01, F-02 | FR-016 | blocked |
 | S-11 | workout-dashboard | see completed workouts, time spent and total volume for the last 7/30 days after logging in | S-01 | MS-01 | done |
 | S-12 | previous-workout-weight-hint | see, per exercise and per set, what they lifted last time when starting a workout from the same plan | S-01, S-02 | MS-02 | done |
-| S-13 | training-history | browse a paginated list of past workouts and open a compact view of each | S-01 | MS-03 | proposed |
-| S-14 | training-session-editing | correct a finished workout's sets and times, and add a workout afterwards with a past date | S-13 | MS-04 | proposed |
+| S-13 | training-history | browse a paginated list of past workouts and open a compact view of each | S-01 | MS-03 | done |
 
 ## Streams
 
@@ -69,7 +67,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 | A | Identity & core logging loop | `F-01` → `S-01` → `S-03` → `S-06` → `S-08` → `S-09` → `S-11` → `S-12` | The `learn` goal's priority investment area (the domain rule) runs through this chain; `S-11` reads the same set history and has no dependency on the others, so it can run any time after `S-01`. `S-12` also needs `S-02` (joins Stream B) and is independent of the rest of the chain. |
 | B | Catalog & planning | `F-02` → `S-02` → `S-05` → `S-07` | Joins Stream A at `S-01` (S-02 also needs F-01); `S-07` stays blocked pending the goal/experience/frequency capture gap. |
 | C | Session resilience & balance | `S-04` → `S-10` | Joins Stream A at `S-01` and Stream B at `F-02`; `S-10` stays blocked pending an agreed balance standard. |
-| D | Training history | `S-13` → `S-14` | Joins Stream A at `S-01`; `S-14` builds on the compact session view from `S-13` and reopens the "finished sessions are immutable" rule, so it is sequenced last. |
+| D | Training history | `S-13` | Joins Stream A at `S-01`; standalone slice. Its successor `S-14` (editing finished sessions) is deferred to the next milestone — see Parked. |
 
 ## Baseline
 
@@ -273,20 +271,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - Which summary fields the list shows and how large a page is. — Owner: user. Block: no (decided in `/10x-plan`).
 - **Risk:** The list needs per-session aggregates (duration, set count, volume) in one query to avoid N+1; the compact per-exercise view built here is the shape `S-14` edits and `S-12` can reuse.
-- **Status:** proposed
-
-### S-14: Training session editing
-
-- **Outcome:** user can correct a finished workout — its sets and its start/end time — and record a workout afterwards with a date in the past.
-- **Change ID:** training-session-editing
-- **PRD refs:** MS-04
-- **Prerequisites:** S-13
-- **Parallel with:** —
-- **Blockers:** —
-- **Unknowns:**
-  - Edit scope: sets only, times only, or both; and whether adding a workout with a past date is part of this slice or separate. — Owner: user. Block: no (frame with `/10x-frame` before planning).
-- **Risk:** Reopens the "finished sessions are immutable" rule (`WorkoutService` rejects set changes after `end`) and the PRD guardrail that a logged set is never silently overwritten; edits also re-judge dashboard totals and the S-03 recommendation. Keep every change explicit.
-- **Status:** proposed
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -307,7 +292,6 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-11 | workout-dashboard | Workout dashboard: workouts, time and volume for 7/30 days | yes | Planned — run `/10x-implement workout-dashboard phase 1` |
 | S-12 | previous-workout-weight-hint | Previous workout weight hint when starting from a plan | yes | Run `/10x-plan previous-workout-weight-hint` |
 | S-13 | training-history | Training history: paginated list + compact session view | yes | Run `/10x-plan training-history` |
-| S-14 | training-session-editing | Edit finished sessions (sets, times) and add sessions retroactively | no | Blocked on S-13; frame with `/10x-frame` first |
 
 This table is the clean handoff to Jira/Linear or any MCP-backed backlog.
 
@@ -317,6 +301,7 @@ No roadmap-wide open questions at this milestone — both PRD `## Open Questions
 
 ## Parked
 
+- **S-14: Training session editing (MS-04)** — Why parked: deferred to the next milestone by decision on 2026-10-27; it reopens the "finished sessions are immutable" rule, so it should be framed (`/10x-frame`) and sequenced after S-13 ships. Change ID: `training-session-editing`. Scope anchor MS-04: the user can correct a finished workout (its sets and its start/end time) and record a workout afterwards, with a date in the past.
 - **No offline support** — Why parked: PRD §Non-Goals — the product assumes a stable connection during a workout; no service worker or offline sync in the MVP.
 - **No import of training plans from external files** — Why parked: PRD §Non-Goals — plans are entered manually inside the product.
 - **No social features or plan/workout sharing** — Why parked: PRD §Non-Goals — the product is single-tenant per user in the MVP.
@@ -337,3 +322,4 @@ No roadmap-wide open questions at this milestone — both PRD `## Open Questions
 - **S-03: user sees a recommendation to increase weight for an exercise once they've completed all sets at full reps across the last N workouts of that exercise.** — Archived 2026-10-27 → `context/archive/2026-10-27-progression-recommendation/`. Lesson: —.
 - **S-11: user sees, right after logging in, how many workouts they completed, how much time they spent and their total volume (reps × kg) over the last 7 or 30 days.** — Archived 2026-10-27 → `context/archive/2026-10-27-workout-dashboard/`. Lesson: —.
 - **S-12: user starting a workout from a training plan sees, for each exercise, what they lifted per set in their previous workout from the same plan.** — Archived 2026-10-27 → `context/archive/2026-10-27-previous-workout-weight-hint/`. Lesson: —.
+- **S-13: user can browse a paginated list of all their past workouts (newest first) and open a compact view of how a given workout went.** — Archived 2026-10-27 → `context/archive/2026-10-27-training-history/`. Lesson: —.
