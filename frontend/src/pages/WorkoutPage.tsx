@@ -182,6 +182,16 @@ export default function WorkoutPage() {
       setSession((s) =>
         s && s.id === session.id ? { ...s, sets: s.sets.filter((x) => x.id !== setId) } : s,
       )
+      // Deleting can change which remaining sets are records, so reload the flags from the server.
+      // A failed or empty refetch keeps the local filter above.
+      try {
+        const fresh = await getCurrentSession()
+        if (fresh && fresh.id === session.id) {
+          setSession((s) => (s && s.id === session.id ? fresh : s))
+        }
+      } catch {
+        // the delete itself succeeded; the filtered list is already shown
+      }
       setRefreshKey((k) => k + 1)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete set')

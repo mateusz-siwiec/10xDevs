@@ -133,7 +133,7 @@ class PersonalRecordControllerTest {
 	}
 
 	@Test
-	void setsAboveTwelveRepsAreIgnoredAndDoNotRaiseBaseline() throws Exception {
+	void setsAboveFifteenRepsAreIgnoredAndDoNotRaiseBaseline() throws Exception {
 		String token = bearerToken();
 		String sessionId = startSession(token);
 		UUID exerciseId = exerciseId();
@@ -143,6 +143,18 @@ class PersonalRecordControllerTest {
 		assertFalse(logSetFlag(token, sessionId, exerciseId, 20, "60"));
 		// Would not beat the 20-rep score (60 x 36 = 2160 < 3000) if it had raised the baseline.
 		assertTrue(logSetFlag(token, sessionId, exerciseId, 6, "60"));
+	}
+
+	@Test
+	void fifteenRepsIsTheLastEligibleCount() throws Exception {
+		String token = bearerToken();
+		String sessionId = startSession(token);
+		UUID exerciseId = exerciseId();
+
+		assertFalse(logSetFlag(token, sessionId, exerciseId, 5, "60"));
+		assertFalse(logSetFlag(token, sessionId, exerciseId, 16, "60"));
+		// 60 x 45 = 2700 beats 60 x 35 = 2100; the 16-rep set (2760) never entered the baseline.
+		assertTrue(logSetFlag(token, sessionId, exerciseId, 15, "60"));
 	}
 
 	@Test

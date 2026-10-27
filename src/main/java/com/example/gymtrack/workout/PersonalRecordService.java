@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PersonalRecordService {
 
-	static final int MAX_ELIGIBLE_REPS = 12;
+	static final int MAX_ELIGIBLE_REPS = 15;
 
 	private static final BigDecimal EPLEY_BASE = BigDecimal.valueOf(30);
 

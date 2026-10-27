@@ -19,7 +19,7 @@ While logging, a set that beats the user's best estimated 1RM for that exercise 
 | Decision | Choice | Why (1 sentence) |
 | --- | --- | --- |
 | Baseline | Any earlier eligible set of that exercise (this and past sessions); the first-ever set is never flagged | Matches "beats the user's estimated 1RM" and avoids a badge on every new exercise. |
-| High reps | Sets above 12 reps are ignored (never flagged, never a baseline) | The PRD notes the estimate is only reliable at lower reps. |
+| High reps | Sets above 15 reps are ignored (never flagged, never a baseline) | The PRD notes the estimate is only reliable at lower reps. |
 | Ties | Strictly greater is a record; equal is not | "Beats" read literally. |
 | Formula | Epley, compared as `weight × (30 + reps)` | Exact `BigDecimal` comparison with no division or rounding. |
 | Storage | Derived on read, no column or migration | Stays correct when sets are deleted, and production skips Flyway. |
@@ -54,7 +54,7 @@ One service decides which of a session's sets are records: it loads each exercis
 
 ## Open Risks & Assumptions
 
-- 1RM estimates are inaccurate at high reps; the 12-rep cutoff is a judgement call and is documented as a heuristic.
+- 1RM estimates are inaccurate at high reps; the 15-rep cutoff is a judgement call and is documented as a heuristic.
 - Deleting an early set can retroactively change later flags (by design, since the flag is derived).
 - Assumes one active session per user, so earlier sets always have `loggedAt` before the current session's start.
 

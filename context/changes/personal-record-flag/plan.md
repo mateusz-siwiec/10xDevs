@@ -15,7 +15,7 @@ Flag a logged set as a new personal record (PR) when its estimated one-rep max (
 ## Desired End State
 
 - `POST /api/workout-sessions/{id}/sets`, `GET /api/workout-sessions/current`, `POST .../end` return sets with `personalRecord`; `GET /api/workout-sessions/{id}` (history detail) returns each set with `personalRecord`.
-- A set is flagged iff it has at most 12 reps, an earlier eligible set exists for the same exercise (same user, this or a past session), and its score is strictly greater than the best score among those earlier sets.
+- A set is flagged iff it has at most 15 reps, an earlier eligible set exists for the same exercise (same user, this or a past session), and its score is strictly greater than the best score among those earlier sets.
 - The live workout page and the history detail page show a "PR" badge on flagged sets. Deleting a set during a workout re-evaluates the flags of the remaining sets.
 - Verified by the new backend integration tests, `npm run lint` / `npm run build`, and the manual checks below.
 
@@ -38,7 +38,7 @@ Flag a logged set as a new personal record (PR) when its estimated one-rep max (
 
 ## Implementation Approach
 
-Epley's estimate is `weight × (1 + reps/30)`. To avoid division and rounding, compare the exact score `weight × (30 + reps)` (Epley × 30). A new `PersonalRecordService` takes a session and its sets (ordered by `loggedAt`), loads one baseline score per exercise from earlier sessions with a grouped query, then walks the session's sets in order keeping a running best per exercise. Sets above 12 reps are skipped entirely (not flagged, not counted in the baseline or the running best). The first eligible set for an exercise with no baseline is not flagged but seeds the running best. Ties are not records. All set payloads that list a session's sets call this one service, so the live and history views cannot disagree. The frontend only renders the field and refetches the session after a delete.
+Epley's estimate is `weight × (1 + reps/30)`. To avoid division and rounding, compare the exact score `weight × (30 + reps)` (Epley × 30). A new `PersonalRecordService` takes a session and its sets (ordered by `loggedAt`), loads one baseline score per exercise from earlier sessions with a grouped query, then walks the session's sets in order keeping a running best per exercise. Sets above 15 reps are skipped entirely (not flagged, not counted in the baseline or the running best). The first eligible set for an exercise with no baseline is not flagged but seeds the running best. Ties are not records. All set payloads that list a session's sets call this one service, so the live and history views cannot disagree. The frontend only renders the field and refetches the session after a delete.
 
 ## Phase 1: Backend — PR rule and API
 
@@ -60,9 +60,9 @@ Add the rule, the baseline query and the `personalRecord` field to every respons
 
 **File**: `src/main/java/com/example/gymtrack/workout/PersonalRecordService.java` (new)
 
-**Intent**: Single place that decides which of a session's sets are personal records. Javadoc names FR-014, the Epley score, the 12-rep eligibility cutoff, strict "greater than", and the known limitation that 1RM estimates are least reliable at higher reps (as in `ProgressionRecommendationService`).
+**Intent**: Single place that decides which of a session's sets are personal records. Javadoc names FR-014, the Epley score, the 15-rep eligibility cutoff, strict "greater than", and the known limitation that 1RM estimates are least reliable at higher reps (as in `ProgressionRecommendationService`).
 
-**Contract**: `static final int MAX_ELIGIBLE_REPS = 12`; `Set<UUID> personalRecordSetIds(WorkoutSession session, List<WorkoutSet> sets)` — `sets` are the session's sets in `loggedAt` order, returns the ids of flagged sets. Sets with `reps > MAX_ELIGIBLE_REPS` never appear in the result and never update the baseline. Score is `weightKg × (30 + reps)` as `BigDecimal`; comparison is `compareTo`. A set is flagged only when a baseline or earlier in-session eligible score for its exercise exists and the set's score is strictly greater. Must be called inside the caller's transaction; the service is not itself a transaction boundary.
+**Contract**: `static final int MAX_ELIGIBLE_REPS = 15`; `Set<UUID> personalRecordSetIds(WorkoutSession session, List<WorkoutSet> sets)` — `sets` are the session's sets in `loggedAt` order, returns the ids of flagged sets. Sets with `reps > MAX_ELIGIBLE_REPS` never appear in the result and never update the baseline. Score is `weightKg × (30 + reps)` as `BigDecimal`; comparison is `compareTo`. A set is flagged only when a baseline or earlier in-session eligible score for its exercise exists and the set's score is strictly greater. Must be called inside the caller's transaction; the service is not itself a transaction boundary.
 
 #### 3. Set payloads
 
@@ -86,7 +86,7 @@ Add the rule, the baseline query and the `personalRecord` field to every respons
 **Contract** — scenarios (weights in kg × reps):
 - First-ever set of an exercise is not flagged; a later set with higher score is (e.g. 3×60 then 5×60 → second flagged).
 - Tie is not flagged (5×60 twice → neither flagged).
-- A set with 13+ reps is never flagged and does not raise the baseline (5×60, then 20×60 unflagged, then 6×60 flagged).
+- A set with 16+ reps is never flagged and does not raise the baseline (5×60, then 20×60 unflagged, then 6×60 flagged).
 - Cross-session: 5×60 in a finished session; in the next session 5×60 is not flagged and 5×65 is. Another user's heavier sets do not affect the baseline.
 - Different exercises have independent baselines.
 - The `logSet` response, `GET /current` and history detail report identical flags for the same sets.
@@ -189,7 +189,7 @@ The baseline is a single grouped query per response, served by `idx_workout_sets
 
 ## Migration Notes
 
-None. The flag is derived on read: no schema change, no backfill, and nothing to apply by hand on the Supabase DB (where Flyway is disabled). Known limitation to keep documented in the service javadoc: 1RM estimates are least reliable at higher reps, which is why sets above 12 reps are ignored.
+None. The flag is derived on read: no schema change, no backfill, and nothing to apply by hand on the Supabase DB (where Flyway is disabled). Known limitation to keep documented in the service javadoc: 1RM estimates are least reliable at higher reps, which is why sets above 15 reps are ignored.
 
 ## References
 
@@ -206,25 +206,25 @@ None. The flag is derived on read: no schema change, no backfill, and nothing to
 
 #### Automated
 
-- [x] 1.1 New tests pass: `./mvnw test -Dtest=PersonalRecordControllerTest`
-- [x] 1.2 Full backend suite passes (existing responses stay compatible): `./mvnw test`
+- [x] 1.1 New tests pass: `./mvnw test -Dtest=PersonalRecordControllerTest` — 0bae371
+- [x] 1.2 Full backend suite passes (existing responses stay compatible): `./mvnw test` — 0bae371
 
 #### Manual
 
-- [x] 1.3 With the API running (`local` profile), logging a heavier set via the API returns `"personalRecord": true`, a lighter one `false`
-- [x] 1.4 `GET /api/workout-sessions/{id}` for an ended session returns the same flags the live session showed
+- [x] 1.3 With the API running (`local` profile), logging a heavier set via the API returns `"personalRecord": true`, a lighter one `false` — 0bae371
+- [x] 1.4 `GET /api/workout-sessions/{id}` for an ended session returns the same flags the live session showed — 0bae371
 
 ### Phase 2: Frontend — PR badge
 
 #### Automated
 
-- [ ] 2.1 Linting passes: `cd frontend && npm run lint`
-- [ ] 2.2 Type check and build pass: `cd frontend && npm run build`
+- [x] 2.1 Linting passes: `cd frontend && npm run lint`
+- [x] 2.2 Type check and build pass: `cd frontend && npm run build`
 
 #### Manual
 
-- [ ] 2.3 Start a workout, log 5×60 (no badge), then 5×65: the second set shows "PR" immediately
-- [ ] 2.4 Delete the 5×65 set: the remaining set shows no badge; re-logging 5×65 shows it again
-- [ ] 2.5 Log a 20-rep set heavier by estimate: no badge
-- [ ] 2.6 End the workout, open it from History: the same sets show "PR", and a later workout with a tie shows none
-- [ ] 2.7 Badge is readable on a phone-width viewport and does not wrap the set row awkwardly
+- [x] 2.3 Start a workout, log 5×60 (no badge), then 5×65: the second set shows "PR" immediately
+- [x] 2.4 Delete the 5×65 set: the remaining set shows no badge; re-logging 5×65 shows it again
+- [x] 2.5 Log a 20-rep set heavier by estimate: no badge
+- [x] 2.6 End the workout, open it from History: the same sets show "PR", and a later workout with a tie shows none
+- [x] 2.7 Badge is readable on a phone-width viewport and does not wrap the set row awkwardly
