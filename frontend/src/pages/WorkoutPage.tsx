@@ -87,11 +87,13 @@ export default function WorkoutPage() {
     progress.some((p) => p.logged < p.entry.sets && skipped.has(p.entry.position)) &&
     !progress.some((p) => p.logged < p.entry.sets && !skipped.has(p.entry.position))
 
-  function handleSelect(exerciseId: string) {
+  function handleSelect(exerciseId: string, entryPosition?: number) {
     // Returning to a skipped entry clears its skip; recompute the auto entry so the pick stays honoured.
     let nextAutoId = autoId
     if (progress) {
-      const position = progress[selectedIndex(progress, autoIndex, exerciseId)]?.entry.position
+      // A walkthrough tap names its entry; picker picks fall back to the entry that exercise highlights.
+      const position =
+        entryPosition ?? progress[selectedIndex(progress, autoIndex, exerciseId)]?.entry.position
       if (position !== undefined && skipped.has(position)) {
         const nextSkipped = new Set(skipped)
         nextSkipped.delete(position)

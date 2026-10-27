@@ -5,7 +5,7 @@ interface PlanWalkthroughProps {
   progress: EntryProgress[]
   selectedExerciseId: string
   skipped: ReadonlySet<number>
-  onSelect: (exerciseId: string) => void
+  onSelect: (exerciseId: string, position?: number) => void
   onSkip: (position: number) => void
 }
 
@@ -36,7 +36,7 @@ export default function PlanWalkthrough({
               type="button"
               className={classes.join(' ')}
               aria-current={index === current ? 'step' : undefined}
-              onClick={() => onSelect(entry.exerciseId)}
+              onClick={() => onSelect(entry.exerciseId, entry.position)}
             >
               <span className="walkthrough-entry-info">
                 <span className="walkthrough-entry-name">{entry.exerciseName}</span>
