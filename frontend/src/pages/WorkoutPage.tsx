@@ -16,6 +16,7 @@ import { computeProgress, currentIndex } from '../components/planProgress'
 import ProgressionChart from '../components/ProgressionChart'
 import SessionSetList from '../components/SessionSetList'
 import SetLogger from '../components/SetLogger'
+import SubstituteSuggestions from '../components/SubstituteSuggestions'
 import '../styles/page.css'
 import '../styles/workout.css'
 
@@ -27,6 +28,8 @@ export default function WorkoutPage() {
   const [planState, setPlanState] = useState<{ planId: string; plan: Plan | null } | null>(null)
   // A manual pick is only honoured while the plan's auto-selected exercise is unchanged.
   const [manual, setManual] = useState<{ exerciseId: string; autoId: string } | null>(null)
+  // Exercise id the substitutes panel is open for; rendered only while it matches the selection.
+  const [substituteFor, setSubstituteFor] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -72,6 +75,7 @@ export default function WorkoutPage() {
 
   function handleSelect(exerciseId: string) {
     setManual({ exerciseId, autoId })
+    setSubstituteFor(null)
   }
 
   async function handleStart(planId?: string) {
@@ -94,6 +98,7 @@ export default function WorkoutPage() {
       await endSession(session.id)
       setSession(null)
       setManual(null)
+      setSubstituteFor(null)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to end workout')
     } finally {
@@ -184,11 +189,28 @@ export default function WorkoutPage() {
                 onSelect={handleSelect}
               />
             )}
-            <ExercisePicker
-              exercises={exercises}
-              selectedId={selectedExercise}
-              onChange={handleSelect}
-            />
+            <div className="exercise-picker-row">
+              <ExercisePicker
+                exercises={exercises}
+                selectedId={selectedExercise}
+                onChange={handleSelect}
+              />
+              <button
+                type="button"
+                className="btn-secondary exercise-unavailable"
+                disabled={!selectedExercise}
+                onClick={() => setSubstituteFor(selectedExercise)}
+              >
+                Find substitute
+              </button>
+            </div>
+            {selectedExercise && substituteFor === selectedExercise && (
+              <SubstituteSuggestions
+                exerciseId={selectedExercise}
+                onAccept={handleSelect}
+                onDismiss={() => setSubstituteFor(null)}
+              />
+            )}
             <SetLogger disabled={!selectedExercise} onLog={handleLog} />
             {selectedExercise && (
               <ProgressionChart exerciseId={selectedExercise} refreshKey={refreshKey} />

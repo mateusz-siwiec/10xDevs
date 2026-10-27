@@ -172,6 +172,11 @@ export async function getProgression(exerciseId: string): Promise<ProgressionPoi
   return res.json()
 }
 
+export async function getSubstitutes(exerciseId: string): Promise<Exercise[]> {
+  const res = await authFetch(`/api/exercises/${exerciseId}/substitutes`)
+  return res.json()
+}
+
 export interface PlanSummary {
   id: string
   name: string

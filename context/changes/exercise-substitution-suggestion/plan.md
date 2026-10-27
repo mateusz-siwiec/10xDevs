@@ -182,24 +182,24 @@ None. No schema changes.
 
 #### Automated
 
-- [x] 1.1 New and existing exercise controller tests pass
-- [x] 1.2 Full backend suite passes
+- [x] 1.1 New and existing exercise controller tests pass — fe59d7d
+- [x] 1.2 Full backend suite passes — fe59d7d
 
 #### Manual
 
-- [x] 1.3 Authenticated substitutes request returns three same-group exercises excluding the requested one
+- [x] 1.3 Authenticated substitutes request returns three same-group exercises excluding the requested one — fe59d7d
 
 ### Phase 2: Frontend suggestion UI
 
 #### Automated
 
-- [ ] 2.1 Frontend lint passes
-- [ ] 2.2 Frontend type-check and build pass
+- [x] 2.1 Frontend lint passes
+- [x] 2.2 Frontend type-check and build pass
 
 #### Manual
 
-- [ ] 2.3 Unavailable shows up to three same-group suggestions ordered by name
-- [ ] 2.4 Use this switches the logger and chart to the substitute
-- [ ] 2.5 Dismissing, changing exercise, or ending the workout hides the panel
-- [ ] 2.6 Skipped plan entry stays pending after accepting a substitute
+- [x] 2.3 Unavailable shows up to three same-group suggestions ordered by name
+- [x] 2.4 Use this switches the logger and chart to the substitute
+- [x] 2.5 Dismissing, changing exercise, or ending the workout hides the panel
+- [x] 2.6 Skipped plan entry stays pending after accepting a substitute
 - [ ] 2.7 Layout is usable at phone width
