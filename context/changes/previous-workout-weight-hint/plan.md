@@ -192,12 +192,12 @@ None — no schema changes. Known limitation: sessions lose their plan when it i
 
 #### Automated
 
-- [x] 2.1 Frontend builds: `cd frontend && npm run build`
-- [x] 2.2 Lint passes: `cd frontend && npm run lint`
+- [x] 2.1 Frontend builds: `cd frontend && npm run build` — 2786d10
+- [x] 2.2 Lint passes: `cd frontend && npm run lint` — 2786d10
 
 #### Manual
 
-- [x] 2.3 Selecting an exercise in a second workout of the plan shows "Last time" with every set in logged order, above the "Try X kg" line when both apply
-- [x] 2.4 A free-form workout, an exercise not in the previous workout, or a plan without history shows no hint
-- [x] 2.5 Switching exercises updates or hides the hint; an error leaves the workout screen fully usable
-- [x] 2.6 Layout is usable at phone width
+- [x] 2.3 Selecting an exercise in a second workout of the plan shows "Last time" with every set in logged order, above the "Try X kg" line when both apply — 2786d10
+- [x] 2.4 A free-form workout, an exercise not in the previous workout, or a plan without history shows no hint — 2786d10
+- [x] 2.5 Switching exercises updates or hides the hint; an error leaves the workout screen fully usable — 2786d10
+- [x] 2.6 Layout is usable at phone width — 2786d10
