@@ -12,7 +12,7 @@ import {
 import type { Exercise, Plan, PlanSummary, WorkoutSession } from '../api/client'
 import ExercisePicker from '../components/ExercisePicker'
 import PlanWalkthrough from '../components/PlanWalkthrough'
-import { computeProgress, currentIndex } from '../components/planProgress'
+import { computeProgress, currentIndex, selectedIndex } from '../components/planProgress'
 import ProgressionChart from '../components/ProgressionChart'
 import PreviousWorkoutHint from '../components/PreviousWorkoutHint'
 import ProgressionRecommendation from '../components/ProgressionRecommendation'
@@ -32,6 +32,8 @@ export default function WorkoutPage() {
   const [manual, setManual] = useState<{ exerciseId: string; autoId: string } | null>(null)
   // Exercise id the substitutes panel is open for; rendered only while it matches the selection.
   const [substituteFor, setSubstituteFor] = useState<string | null>(null)
+  // Entry positions the user skipped in the active session; cleared on return, log and end.
+  const [skipped, setSkipped] = useState<ReadonlySet<number>>(() => new Set())
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -70,13 +72,36 @@ export default function WorkoutPage() {
     () => (plan && session ? computeProgress(plan.exercises, session.sets) : null),
     [plan, session],
   )
-  const autoIndex = progress ? currentIndex(progress) : -1
+  const autoIndex = progress ? currentIndex(progress, skipped) : -1
   // Once every entry is done, stay on the last one so extra sets can still be logged.
   const autoId = progress && progress.length > 0 ? progress[autoIndex >= 0 ? autoIndex : progress.length - 1].entry.exerciseId : ''
   const selectedExercise = manual && manual.autoId === autoId ? manual.exerciseId : autoId
+  // Only skipped entries are left to do: the walkthrough has fallen back to the first of them.
+  const showReturnHint =
+    progress !== null &&
+    progress.some((p) => p.logged < p.entry.sets && skipped.has(p.entry.position)) &&
+    !progress.some((p) => p.logged < p.entry.sets && !skipped.has(p.entry.position))
 
   function handleSelect(exerciseId: string) {
-    setManual({ exerciseId, autoId })
+    // Returning to a skipped entry clears its skip; recompute the auto entry so the pick stays honoured.
+    let nextAutoId = autoId
+    if (progress) {
+      const position = progress[selectedIndex(progress, autoIndex, exerciseId)]?.entry.position
+      if (position !== undefined && skipped.has(position)) {
+        const nextSkipped = new Set(skipped)
+        nextSkipped.delete(position)
+        const nextIndex = currentIndex(progress, nextSkipped)
+        nextAutoId = progress[nextIndex >= 0 ? nextIndex : progress.length - 1].entry.exerciseId
+        setSkipped(nextSkipped)
+      }
+    }
+    setManual({ exerciseId, autoId: nextAutoId })
+    setSubstituteFor(null)
+  }
+
+  function handleSkip(position: number) {
+    setSkipped((s) => new Set(s).add(position))
+    setManual(null)
     setSubstituteFor(null)
   }
 
@@ -85,6 +110,7 @@ export default function WorkoutPage() {
     setBusy(true)
     try {
       setSession(await startSession(planId))
+      setSkipped(new Set())
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to start workout')
     } finally {
@@ -101,6 +127,7 @@ export default function WorkoutPage() {
       setSession(null)
       setManual(null)
       setSubstituteFor(null)
+      setSkipped(new Set())
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to end workout')
     } finally {
@@ -116,6 +143,17 @@ export default function WorkoutPage() {
     try {
       const set = await logSet(session.id, { exerciseId: selectedExercise, reps, weightKg })
       setSession((s) => (s && s.id === session.id ? { ...s, sets: [...s.sets, set] } : s))
+      // Logging against a skipped entry counts as returning to it.
+      if (progress) {
+        const position = progress[selectedIndex(progress, autoIndex, selectedExercise)]?.entry.position
+        if (position !== undefined && skipped.has(position)) {
+          setSkipped((s) => {
+            const next = new Set(s)
+            next.delete(position)
+            return next
+          })
+        }
+      }
       setRefreshKey((k) => k + 1)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to log set')
@@ -184,11 +222,14 @@ export default function WorkoutPage() {
           </div>
         ) : (
           <>
+            {showReturnHint && <p className="walkthrough-return-hint">Return to skipped exercises</p>}
             {progress && (
               <PlanWalkthrough
                 progress={progress}
                 selectedExerciseId={selectedExercise}
+                skipped={skipped}
                 onSelect={handleSelect}
+                onSkip={handleSkip}
               />
             )}
             <div className="exercise-picker-row">
