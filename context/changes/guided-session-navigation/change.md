@@ -1,7 +1,7 @@
 ---
 change_id: guided-session-navigation
 title: Guided session navigation
-status: implementing
+status: implemented
 created: 2026-10-27
 updated: 2026-10-27
 ---

@@ -216,14 +216,14 @@ None. No schema or API changes; skipped state is lost on reload by design.
 
 #### Automated
 
-- [x] 2.1 Frontend lint passes
-- [x] 2.2 Frontend type-check and build pass
+- [x] 2.1 Frontend lint passes — a87fa96
+- [x] 2.2 Frontend type-check and build pass — a87fa96
 
 #### Manual
 
-- [x] 2.3 Logging a set starts a 90 s countdown in plan and free-form sessions
-- [x] 2.4 +30 s, Skip rest and Rest over (with vibration) work
-- [x] 2.5 Duration preset applies to the next set and persists after reload
-- [x] 2.6 Remaining time is correct after the tab was backgrounded
-- [x] 2.7 Ending the workout clears the timer and deleting a set does not restart it
-- [x] 2.8 Layout is usable at phone width
+- [x] 2.3 Logging a set starts a 90 s countdown in plan and free-form sessions — a87fa96
+- [x] 2.4 +30 s, Skip rest and Rest over (with vibration) work — a87fa96
+- [x] 2.5 Duration preset applies to the next set and persists after reload — a87fa96
+- [x] 2.6 Remaining time is correct after the tab was backgrounded — a87fa96
+- [x] 2.7 Ending the workout clears the timer and deleting a set does not restart it — a87fa96
+- [x] 2.8 Layout is usable at phone width — a87fa96
