@@ -48,8 +48,8 @@ An amateur-to-intermediate gym-goer currently tracks workouts in scattered notes
 | S-02 | user-defined-training-plan | define their own training plan as an ordered list of exercises | F-01, F-02 | FR-009 | done |
 | S-03 | progression-recommendation | see a recommendation to increase weight after N full-rep workouts | S-01 | FR-011 | done |
 | S-04 | exercise-substitution-suggestion | see a substitute exercise suggestion when marking one unavailable | S-01, F-02 | FR-012 | done |
-| S-05 | custom-exercise-entry | add their own custom exercise with a muscle group | F-01, F-02 | FR-003 | proposed |
-| S-06 | guided-session-navigation | navigate sequential exercises with skip/return and a rest timer | S-01 | FR-007, FR-008 | proposed |
+| S-05 | custom-exercise-entry | add their own custom exercise with a muscle group | F-01, F-02 | FR-003 | done |
+| S-06 | guided-session-navigation | navigate sequential exercises with skip/return and a rest timer | S-01 | FR-007, FR-008 | done |
 | S-07 | plan-template-recommendation | receive a recommended plan template based on goal/experience/frequency | S-02 | FR-013 | blocked |
 | S-08 | personal-record-flag | see a logged set flagged as a new personal record | S-01 | FR-014 | proposed |
 | S-09 | return-after-break-suggestion | get an easier session suggested after a long gap | S-01 | FR-015 | proposed |
@@ -170,7 +170,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Low — a fast-follow once the predefined catalog proves insufficient; no need to build it ahead of real need.
-- **Status:** proposed
+- **Status:** done
 
 ### S-06: Guided session navigation
 
@@ -182,7 +182,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** The PRD's own resolution on FR-007 names the exact risk: building a stateful session navigator before the core logging loop (S-01) is validated risks wasted effort — that's why this is sequenced after S-01.
-- **Status:** proposed
+- **Status:** done
 
 ### S-07: Plan-template recommendation
 
@@ -323,3 +323,5 @@ No roadmap-wide open questions at this milestone — both PRD `## Open Questions
 - **S-11: user sees, right after logging in, how many workouts they completed, how much time they spent and their total volume (reps × kg) over the last 7 or 30 days.** — Archived 2026-10-27 → `context/archive/2026-10-27-workout-dashboard/`. Lesson: —.
 - **S-12: user starting a workout from a training plan sees, for each exercise, what they lifted per set in their previous workout from the same plan.** — Archived 2026-10-27 → `context/archive/2026-10-27-previous-workout-weight-hint/`. Lesson: —.
 - **S-13: user can browse a paginated list of all their past workouts (newest first) and open a compact view of how a given workout went.** — Archived 2026-10-27 → `context/archive/2026-10-27-training-history/`. Lesson: —.
+- **S-05: user can add their own custom exercise, including its muscle group.** — Archived 2026-10-27 → `context/archive/2026-10-27-custom-exercise-entry/`. Lesson: —.
+- **S-06: user experiences a full guided session — sequential exercise navigation with skip/return — and sees a countdown rest timer between sets.** — Archived 2026-10-27 → `context/archive/2026-10-27-guided-session-navigation/`. Lesson: —.
