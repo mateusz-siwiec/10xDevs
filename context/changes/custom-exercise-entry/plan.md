@@ -252,24 +252,24 @@ One additive migration (nullable `owner_id`, indexes); existing rows and all exi
 
 #### Automated
 
-- [x] 2.1 Backend tests pass: `./mvnw test`
-- [x] 2.2 New test class passes on its own: `./mvnw test -Dtest=CustomExerciseVisibilityTest`
+- [x] 2.1 Backend tests pass: `./mvnw test` — 59984dc
+- [x] 2.2 New test class passes on its own: `./mvnw test -Dtest=CustomExerciseVisibilityTest` — 59984dc
 
 #### Manual
 
-- [x] 2.3 Account B gets 404 when logging a set or saving a plan with account A's custom exercise id
-- [x] 2.4 Account A still sees its custom exercise in substitutes of a same-group catalog exercise
+- [x] 2.3 Account B gets 404 when logging a set or saving a plan with account A's custom exercise id — 59984dc
+- [x] 2.4 Account A still sees its custom exercise in substitutes of a same-group catalog exercise — 59984dc
 
 ### Phase 3: "My exercises" page
 
 #### Automated
 
-- [ ] 3.1 Frontend builds: `cd frontend && npm run build`
-- [ ] 3.2 Lint passes: `cd frontend && npm run lint`
+- [x] 3.1 Frontend builds: `cd frontend && npm run build`
+- [x] 3.2 Lint passes: `cd frontend && npm run lint`
 
 #### Manual
 
-- [ ] 3.3 Adding a custom exercise shows it in the list, the workout picker and the plan editor picker
-- [ ] 3.4 Duplicate and catalog names show the error inline; unused exercises delete, used ones are refused and kept
-- [ ] 3.5 A second account does not see the exercise anywhere
-- [ ] 3.6 Layout is usable at phone width
+- [x] 3.3 Adding a custom exercise shows it in the list, the workout picker and the plan editor picker
+- [x] 3.4 Duplicate and catalog names show the error inline; unused exercises delete, used ones are refused and kept
+- [x] 3.5 A second account does not see the exercise anywhere
+- [x] 3.6 Layout is usable at phone width
