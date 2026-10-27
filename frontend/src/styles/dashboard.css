@@ -14,9 +14,10 @@
 }
 
 .dashboard-toggle .btn-secondary[aria-pressed='true'] {
-  color: var(--accent);
+  color: var(--text-h);
   background: var(--accent-bg);
-  border-color: var(--accent-border);
+  border-color: var(--accent);
+  font-weight: 600;
 }
 
 .dashboard-tiles {
@@ -52,10 +53,6 @@
   box-sizing: border-box;
   text-align: center;
   text-decoration: none;
-}
-
-.dashboard-card .dashboard-start:hover {
-  opacity: 0.9;
 }
 
 @media (max-width: 480px) {

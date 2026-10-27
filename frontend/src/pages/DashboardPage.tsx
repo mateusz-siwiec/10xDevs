@@ -17,6 +17,9 @@ function formatDuration(totalSeconds: number): string {
   const totalMinutes = Math.floor(Math.max(0, totalSeconds) / 60)
   const hours = Math.floor(totalMinutes / 60)
   const minutes = totalMinutes % 60
+  if (totalSeconds > 0 && totalMinutes === 0) {
+    return '<1m'
+  }
   return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`
 }
 
@@ -55,11 +58,15 @@ export default function DashboardPage() {
   if (shown === null) {
     body = <p className="page-subtext">Loading stats…</p>
   } else if (shown.error || shown.stats === null) {
-    body = <p className="error-text">{shown.error ?? 'Failed to load dashboard'}</p>
+    body = (
+      <p className="error-text" role="alert">
+        {shown.error ?? 'Failed to load dashboard'}
+      </p>
+    )
   } else if (shown.stats.workoutCount === 0) {
     body = (
       <p className="page-subtext">
-        No completed workouts yet in the last {days} days. Start your first workout to see your stats here.
+        No completed workouts in the last {days} days. Start a workout to see your stats here.
       </p>
     )
   } else {
@@ -98,7 +105,7 @@ export default function DashboardPage() {
             </button>
           ))}
         </div>
-        {body}
+        <div aria-live="polite">{body}</div>
         <Link to="/workout" className="btn-primary dashboard-start">
           Start workout
         </Link>

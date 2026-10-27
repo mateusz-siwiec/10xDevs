@@ -185,4 +185,18 @@ class DashboardControllerTest {
 			.andExpect(jsonPath("$.error", notNullValue()));
 	}
 
+	@Test
+	void zeroDaysReturnsBadRequest() throws Exception {
+		mockMvc.perform(get("/api/dashboard/stats").param("days", "0").header(HttpHeaders.AUTHORIZATION, bearerToken()))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.error", notNullValue()));
+	}
+
+	@Test
+	void nonNumericDaysReturnsBadRequest() throws Exception {
+		mockMvc.perform(get("/api/dashboard/stats").param("days", "abc").header(HttpHeaders.AUTHORIZATION, bearerToken()))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.error", notNullValue()));
+	}
+
 }
