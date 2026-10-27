@@ -52,7 +52,7 @@ An amateur-to-intermediate gym-goer currently tracks workouts in scattered notes
 | S-08 | personal-record-flag | see a logged set flagged as a new personal record | S-01 | FR-014 | proposed |
 | S-09 | return-after-break-suggestion | get an easier session suggested after a long gap | S-01 | FR-015 | proposed |
 | S-10 | training-volume-balance-warning | get warned when weekly volume is imbalanced across muscle groups | S-01, F-02 | FR-016 | blocked |
-| S-11 | workout-dashboard | see completed workouts, time spent and total volume for the last 7/30 days after logging in | S-01 | MS-01 | in-progress |
+| S-11 | workout-dashboard | see completed workouts, time spent and total volume for the last 7/30 days after logging in | S-01 | MS-01 | done |
 
 ## Streams
 
@@ -240,7 +240,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Not in the PRD — added to M-1 after the fact (MS-01), so it widens the milestone. It also takes over `/` from the workout screen, so links and the post-login landing change; only completed sessions count, so abandoned sessions stay invisible by design.
-- **Status:** in-progress
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -286,3 +286,4 @@ No roadmap-wide open questions at this milestone — both PRD `## Open Questions
 - **S-02: user can define their own training plan as an ordered list of exercises from the catalog.** — Archived 2026-10-26 → `context/archive/2026-10-26-user-defined-training-plan/`. Lesson: —.
 - **S-04: user marks an exercise as skipped/unavailable during a session and sees a suggested substitute from the same muscle group.** — Archived 2026-10-27 → `context/archive/2026-10-27-exercise-substitution-suggestion/`. Lesson: —.
 - **S-03: user sees a recommendation to increase weight for an exercise once they've completed all sets at full reps across the last N workouts of that exercise.** — Archived 2026-10-27 → `context/archive/2026-10-27-progression-recommendation/`. Lesson: —.
+- **S-11: user sees, right after logging in, how many workouts they completed, how much time they spent and their total volume (reps × kg) over the last 7 or 30 days.** — Archived 2026-10-27 → `context/archive/2026-10-27-workout-dashboard/`. Lesson: —.
