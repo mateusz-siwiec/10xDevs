@@ -48,7 +48,7 @@ public class ProgressionRecommendationService {
 
 	@Transactional(readOnly = true)
 	public Optional<ProgressionRecommendationResponse> recommend(UUID userId, UUID exerciseId) {
-		if (!exerciseRepository.existsById(exerciseId)) {
+		if (!exerciseRepository.existsVisible(exerciseId, userId)) {
 			throw new WorkoutNotFoundException("Exercise not found");
 		}
 		List<WorkoutSession> sessions = sessionRepository.findRecentEndedWithExercise(userId, exerciseId,

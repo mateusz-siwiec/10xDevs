@@ -1,7 +1,6 @@
 package com.example.gymtrack.exercise;
 
 import com.example.gymtrack.auth.CurrentUser;
-import com.example.gymtrack.common.ResourceNotFoundException;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
@@ -19,12 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ExerciseController {
 
-	private final ExerciseRepository exerciseRepository;
-
 	private final ExerciseService exerciseService;
 
-	public ExerciseController(ExerciseRepository exerciseRepository, ExerciseService exerciseService) {
-		this.exerciseRepository = exerciseRepository;
+	public ExerciseController(ExerciseService exerciseService) {
 		this.exerciseService = exerciseService;
 	}
 
@@ -47,15 +43,9 @@ public class ExerciseController {
 	}
 
 	@GetMapping("/api/exercises/{exerciseId}/substitutes")
-	public List<ExerciseResponse> substitutes(@PathVariable UUID exerciseId) {
-		Exercise exercise = exerciseRepository.findById(exerciseId)
-				.orElseThrow(() -> new ResourceNotFoundException("Exercise not found"));
-
-		return exerciseRepository
-				.findByPrimaryMuscleGroupAndIdNotOrderByNameAsc(exercise.getPrimaryMuscleGroup(), exercise.getId())
-				.stream()
-				.map(ExerciseResponse::from)
-				.toList();
+	public List<ExerciseResponse> substitutes(@AuthenticationPrincipal CurrentUser currentUser,
+			@PathVariable UUID exerciseId) {
+		return exerciseService.substitutes(currentUser.id(), exerciseId);
 	}
 
 }

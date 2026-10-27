@@ -240,25 +240,25 @@ One additive migration (nullable `owner_id`, indexes); existing rows and all exi
 
 #### Automated
 
-- [x] 1.1 Backend tests pass: `./mvnw test`
-- [x] 1.2 New test class passes on its own: `./mvnw test -Dtest=CustomExerciseControllerTest`
+- [x] 1.1 Backend tests pass: `./mvnw test` — 8d9a902
+- [x] 1.2 New test class passes on its own: `./mvnw test -Dtest=CustomExerciseControllerTest` — 8d9a902
 
 #### Manual
 
-- [x] 1.3 POST creates a custom exercise that then shows up in the list with custom: true
-- [x] 1.4 A second account does not see it; DELETE removes it; a duplicate or catalog-equal name is refused with 409
+- [x] 1.3 POST creates a custom exercise that then shows up in the list with custom: true — 8d9a902
+- [x] 1.4 A second account does not see it; DELETE removes it; a duplicate or catalog-equal name is refused with 409 — 8d9a902
 
 ### Phase 2: Enforce visibility everywhere
 
 #### Automated
 
-- [ ] 2.1 Backend tests pass: `./mvnw test`
-- [ ] 2.2 New test class passes on its own: `./mvnw test -Dtest=CustomExerciseVisibilityTest`
+- [x] 2.1 Backend tests pass: `./mvnw test`
+- [x] 2.2 New test class passes on its own: `./mvnw test -Dtest=CustomExerciseVisibilityTest`
 
 #### Manual
 
-- [ ] 2.3 Account B gets 404 when logging a set or saving a plan with account A's custom exercise id
-- [ ] 2.4 Account A still sees its custom exercise in substitutes of a same-group catalog exercise
+- [x] 2.3 Account B gets 404 when logging a set or saving a plan with account A's custom exercise id
+- [x] 2.4 Account A still sees its custom exercise in substitutes of a same-group catalog exercise
 
 ### Phase 3: "My exercises" page
 

@@ -1,5 +1,6 @@
 package com.example.gymtrack.exercise;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -28,6 +29,18 @@ public interface ExerciseRepository extends JpaRepository<Exercise, UUID> {
 
 	@Query("select e from Exercise e where e.id = :id and (e.ownerId is null or e.ownerId = :userId)")
 	Optional<Exercise> findVisibleById(@Param("id") UUID id, @Param("userId") UUID userId);
+
+	@Query("select e from Exercise e where e.id in :ids and (e.ownerId is null or e.ownerId = :userId)")
+	List<Exercise> findVisibleByIdIn(@Param("ids") Collection<UUID> ids, @Param("userId") UUID userId);
+
+	@Query("""
+			select e from Exercise e
+			where (e.ownerId is null or e.ownerId = :userId)
+			and e.primaryMuscleGroup = :muscleGroup and e.id <> :excludeId
+			order by e.name asc
+			""")
+	List<Exercise> findVisibleSubstitutes(@Param("userId") UUID userId, @Param("muscleGroup") MuscleGroup muscleGroup,
+			@Param("excludeId") UUID excludeId);
 
 	@Query("select count(e) > 0 from Exercise e where e.id = :id and (e.ownerId is null or e.ownerId = :userId)")
 	boolean existsVisible(@Param("id") UUID id, @Param("userId") UUID userId);

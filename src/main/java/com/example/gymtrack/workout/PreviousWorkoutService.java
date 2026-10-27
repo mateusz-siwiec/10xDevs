@@ -27,7 +27,7 @@ public class PreviousWorkoutService {
 
 	@Transactional(readOnly = true)
 	public Optional<PreviousWorkoutResponse> find(UUID userId, UUID exerciseId, UUID planId) {
-		if (!exerciseRepository.existsById(exerciseId)) {
+		if (!exerciseRepository.existsVisible(exerciseId, userId)) {
 			throw new WorkoutNotFoundException("Exercise not found");
 		}
 		return sessionRepository.findRecentEndedInPlanWithExercise(userId, planId, exerciseId, PageRequest.of(0, 1))

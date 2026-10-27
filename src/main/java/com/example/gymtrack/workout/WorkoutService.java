@@ -93,7 +93,7 @@ public class WorkoutService {
 	@Transactional
 	public SetResponse logSet(UUID userId, UUID sessionId, UUID exerciseId, int reps, BigDecimal weightKg) {
 		WorkoutSession session = findOwned(userId, sessionId);
-		if (!exerciseRepository.existsById(exerciseId)) {
+		if (!exerciseRepository.existsVisible(exerciseId, userId)) {
 			throw new WorkoutNotFoundException("Exercise not found");
 		}
 		if (!session.isActive()) {
@@ -116,7 +116,7 @@ public class WorkoutService {
 
 	@Transactional(readOnly = true)
 	public List<ProgressionPointResponse> progression(UUID userId, UUID exerciseId) {
-		if (!exerciseRepository.existsById(exerciseId)) {
+		if (!exerciseRepository.existsVisible(exerciseId, userId)) {
 			throw new WorkoutNotFoundException("Exercise not found");
 		}
 		return setRepository.findProgression(userId, exerciseId);

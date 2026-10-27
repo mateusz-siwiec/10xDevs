@@ -32,6 +32,16 @@ public class ExerciseService {
 		return exercises.stream().map(ExerciseResponse::from).toList();
 	}
 
+	@Transactional(readOnly = true)
+	public List<ExerciseResponse> substitutes(UUID userId, UUID exerciseId) {
+		Exercise exercise = exerciseRepository.findVisibleById(exerciseId, userId)
+				.orElseThrow(() -> new ResourceNotFoundException("Exercise not found"));
+		return exerciseRepository.findVisibleSubstitutes(userId, exercise.getPrimaryMuscleGroup(), exercise.getId())
+				.stream()
+				.map(ExerciseResponse::from)
+				.toList();
+	}
+
 	@Transactional
 	public ExerciseResponse create(UUID userId, CreateExerciseRequest request) {
 		String name = request.name().trim();
