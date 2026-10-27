@@ -71,6 +71,16 @@ export async function getMe(token: string): Promise<CurrentUser> {
   return res.json()
 }
 
+/** Error from a non-OK authFetch response; `status` lets callers tell e.g. a 404 apart. */
+export class ApiError extends Error {
+  status: number
+
+  constructor(message: string, status: number) {
+    super(message)
+    this.status = status
+  }
+}
+
 /**
  * Generic fetch wrapper for authenticated requests. Reads the stored token
  * from localStorage and attaches it as a Bearer Authorization header.
@@ -296,4 +306,54 @@ export async function updatePlan(id: string, input: PlanInput): Promise<Plan> {
 /** Resolves on 204 No Content; there is no body to parse. */
 export async function deletePlan(id: string): Promise<void> {
   await authFetch(`/api/training-plans/${id}`, { method: 'DELETE' })
+}
+
+export interface HistoryItem {
+  id: string
+  startedAt: string
+  endedAt: string
+  planId: string | null
+  planName: string | null
+  durationSeconds: number
+  setCount: number
+  volumeKg: number
+}
+
+export interface HistoryPage {
+  items: HistoryItem[]
+  page: number
+  size: number
+  totalElements: number
+  totalPages: number
+}
+
+/** `page` is 0-based, matching the backend. */
+export async function getHistory(
+  page: number,
+  plan: { planId?: string; noPlan?: boolean },
+): Promise<HistoryPage> {
+  const params = new URLSearchParams({ page: String(page) })
+  if (plan.planId) {
+    params.set('planId', plan.planId)
+  } else if (plan.noPlan) {
+    params.set('noPlan', 'true')
+  }
+  const res = await authFetch(`/api/workout-sessions?${params.toString()}`)
+  return res.json()
+}
+
+export interface HistoryDetail {
+  id: string
+  startedAt: string
+  endedAt: string
+  planId: string | null
+  planName: string | null
+  durationSeconds: number
+  volumeKg: number
+  exercises: { exerciseId: string; sets: { reps: number; weightKg: number }[] }[]
+}
+
+export async function getHistorySession(id: string): Promise<HistoryDetail> {
+  const res = await authFetch(`/api/workout-sessions/${encodeURIComponent(id)}`)
+  return res.json()
 }

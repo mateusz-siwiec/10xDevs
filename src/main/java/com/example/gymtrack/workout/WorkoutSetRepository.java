@@ -2,6 +2,7 @@ package com.example.gymtrack.workout;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,5 +32,13 @@ public interface WorkoutSetRepository extends JpaRepository<WorkoutSet, UUID> {
 			where s.session.userId = :userId and s.session.endedAt >= :since
 			""")
 	BigDecimal sumVolumeSince(@Param("userId") UUID userId, @Param("since") Instant since);
+
+	@Query("""
+			select new com.example.gymtrack.workout.SessionAggregate(s.session.id, count(s), coalesce(sum(s.reps * s.weightKg), 0))
+			from WorkoutSet s
+			where s.session.id in :sessionIds
+			group by s.session.id
+			""")
+	List<SessionAggregate> aggregateBySession(@Param("sessionIds") Collection<UUID> sessionIds);
 
 }
