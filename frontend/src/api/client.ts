@@ -297,3 +297,37 @@ export async function updatePlan(id: string, input: PlanInput): Promise<Plan> {
 export async function deletePlan(id: string): Promise<void> {
   await authFetch(`/api/training-plans/${id}`, { method: 'DELETE' })
 }
+
+export interface HistoryItem {
+  id: string
+  startedAt: string
+  endedAt: string
+  planId: string | null
+  planName: string | null
+  durationSeconds: number
+  setCount: number
+  volumeKg: number
+}
+
+export interface HistoryPage {
+  items: HistoryItem[]
+  page: number
+  size: number
+  totalElements: number
+  totalPages: number
+}
+
+/** `page` is 0-based, matching the backend. */
+export async function getHistory(
+  page: number,
+  plan: { planId?: string; noPlan?: boolean },
+): Promise<HistoryPage> {
+  const params = new URLSearchParams({ page: String(page) })
+  if (plan.planId) {
+    params.set('planId', plan.planId)
+  } else if (plan.noPlan) {
+    params.set('noPlan', 'true')
+  }
+  const res = await authFetch(`/api/workout-sessions?${params.toString()}`)
+  return res.json()
+}

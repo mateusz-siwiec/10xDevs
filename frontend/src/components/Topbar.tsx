@@ -24,7 +24,10 @@ export default function Topbar() {
         <NavLink to="/workout" className="topbar-link">
           Workout
         </NavLink>
-        <NavLink to="/plans" className="topbar-link">
+        <NavLink to="/history" className="topbar-link">
+          History
+        </NavLink>
+        <NavLink to="/plans"className="topbar-link">
           Plans
         </NavLink>
       </nav>

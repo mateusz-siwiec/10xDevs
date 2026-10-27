@@ -229,28 +229,28 @@ None — no schema changes. Existing sessions already carry everything needed. K
 
 #### Automated
 
-- [x] 1.1 Backend tests pass: `./mvnw test`
-- [x] 1.2 New test class passes on its own: `./mvnw test -Dtest=HistoryControllerTest`
+- [x] 1.1 Backend tests pass: `./mvnw test` — cbe015a
+- [x] 1.2 New test class passes on its own: `./mvnw test -Dtest=HistoryControllerTest` — cbe015a
 
 #### Manual
 
-- [ ] 1.3 List endpoint returns ended workouts newest first with sensible duration, set count and volume, and pages correctly
-- [ ] 1.4 planId and noPlan filter as specified, and the detail endpoint returns the grouped sets of one workout
+- [x] 1.3 List endpoint returns ended workouts newest first with sensible duration, set count and volume, and pages correctly — cbe015a
+- [x] 1.4 planId and noPlan filter as specified, and the detail endpoint returns the grouped sets of one workout — cbe015a
 
 ### Phase 2: Frontend history list
 
 #### Automated
 
-- [ ] 2.1 Frontend builds: `cd frontend && npm run build`
-- [ ] 2.2 Lint passes: `cd frontend && npm run lint`
+- [x] 2.1 Frontend builds: `cd frontend && npm run build`
+- [x] 2.2 Lint passes: `cd frontend && npm run lint`
 
 #### Manual
 
-- [ ] 2.3 The History link opens the list: newest first, each row shows date, plan, duration, sets and volume
-- [ ] 2.4 Prev / Next page correctly and disable at the ends; the page survives reload and browser back
-- [ ] 2.5 Plan filter works for a plan, "No plan" and "All workouts", and resets to page 1
-- [ ] 2.6 Empty states show the right message; an API error shows an alert and the rest of the app still works
-- [ ] 2.7 Layout is usable at phone width
+- [x] 2.3 The History link opens the list: newest first, each row shows date, plan, duration, sets and volume
+- [x] 2.4 Prev / Next page correctly and disable at the ends; the page survives reload and browser back
+- [x] 2.5 Plan filter works for a plan, "No plan" and "All workouts", and resets to page 1
+- [x] 2.6 Empty states show the right message; an API error shows an alert and the rest of the app still works
+- [x] 2.7 Layout is usable at phone width
 
 ### Phase 3: Frontend compact workout view
 
