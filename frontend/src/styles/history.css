@@ -98,3 +98,33 @@
   font-size: 0.875rem;
   text-align: center;
 }
+
+.history-detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin: 0 0 1.5rem;
+  color: var(--text);
+}
+
+.history-detail-exercise {
+  margin-bottom: 1.25rem;
+}
+
+.history-detail-exercise h2 {
+  font-size: 1.05rem;
+  margin: 0 0 0.5rem;
+}
+
+.history-detail-exercise ol {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.history-back {
+  display: inline-block;
+  margin-bottom: 1rem;
+  min-height: 44px;
+  line-height: 44px;
+  color: var(--accent);
+}

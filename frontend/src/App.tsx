@@ -4,6 +4,7 @@ import { RequireAuth } from './auth/RequireAuth'
 import DashboardPage from './pages/DashboardPage'
 import WorkoutPage from './pages/WorkoutPage'
 import HistoryPage from './pages/HistoryPage'
+import HistoryDetailPage from './pages/HistoryDetailPage'
 import PlansPage from './pages/PlansPage'
 import PlanEditorPage from './pages/PlanEditorPage'
 import LoginPage from './pages/LoginPage'
@@ -37,6 +38,14 @@ function App() {
             element={
               <RequireAuth>
                 <HistoryPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/history/:id"
+            element={
+              <RequireAuth>
+                <HistoryDetailPage />
               </RequireAuth>
             }
           />

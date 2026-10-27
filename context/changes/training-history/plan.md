@@ -241,27 +241,27 @@ None — no schema changes. Existing sessions already carry everything needed. K
 
 #### Automated
 
-- [x] 2.1 Frontend builds: `cd frontend && npm run build`
-- [x] 2.2 Lint passes: `cd frontend && npm run lint`
+- [x] 2.1 Frontend builds: `cd frontend && npm run build` — cbe66fb
+- [x] 2.2 Lint passes: `cd frontend && npm run lint` — cbe66fb
 
 #### Manual
 
-- [x] 2.3 The History link opens the list: newest first, each row shows date, plan, duration, sets and volume
-- [x] 2.4 Prev / Next page correctly and disable at the ends; the page survives reload and browser back
-- [x] 2.5 Plan filter works for a plan, "No plan" and "All workouts", and resets to page 1
-- [x] 2.6 Empty states show the right message; an API error shows an alert and the rest of the app still works
-- [x] 2.7 Layout is usable at phone width
+- [x] 2.3 The History link opens the list: newest first, each row shows date, plan, duration, sets and volume — cbe66fb
+- [x] 2.4 Prev / Next page correctly and disable at the ends; the page survives reload and browser back — cbe66fb
+- [x] 2.5 Plan filter works for a plan, "No plan" and "All workouts", and resets to page 1 — cbe66fb
+- [x] 2.6 Empty states show the right message; an API error shows an alert and the rest of the app still works — cbe66fb
+- [x] 2.7 Layout is usable at phone width — cbe66fb
 
 ### Phase 3: Frontend compact workout view
 
 #### Automated
 
-- [ ] 3.1 Frontend builds: `cd frontend && npm run build`
-- [ ] 3.2 Lint passes: `cd frontend && npm run lint`
+- [x] 3.1 Frontend builds: `cd frontend && npm run build`
+- [x] 3.2 Lint passes: `cd frontend && npm run lint`
 
 #### Manual
 
-- [ ] 3.3 Clicking a row opens the workout with date, plan, duration, volume and every exercise's sets in logged order
-- [ ] 3.4 Back to history (link and browser back) returns to the same page and filter
-- [ ] 3.5 A running or non-existent workout id shows "Workout not found"; an error leaves the app usable
-- [ ] 3.6 Layout is usable at phone width
+- [x] 3.3 Clicking a row opens the workout with date, plan, duration, volume and every exercise's sets in logged order
+- [x] 3.4 Back to history (link and browser back) returns to the same page and filter
+- [x] 3.5 A running or non-existent workout id shows "Workout not found"; an error leaves the app usable
+- [x] 3.6 Layout is usable at phone width

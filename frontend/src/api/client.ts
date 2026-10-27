@@ -71,6 +71,16 @@ export async function getMe(token: string): Promise<CurrentUser> {
   return res.json()
 }
 
+/** Error from a non-OK authFetch response; `status` lets callers tell e.g. a 404 apart. */
+export class ApiError extends Error {
+  status: number
+
+  constructor(message: string, status: number) {
+    super(message)
+    this.status = status
+  }
+}
+
 /**
  * Generic fetch wrapper for authenticated requests. Reads the stored token
  * from localStorage and attaches it as a Bearer Authorization header.
@@ -329,5 +339,21 @@ export async function getHistory(
     params.set('noPlan', 'true')
   }
   const res = await authFetch(`/api/workout-sessions?${params.toString()}`)
+  return res.json()
+}
+
+export interface HistoryDetail {
+  id: string
+  startedAt: string
+  endedAt: string
+  planId: string | null
+  planName: string | null
+  durationSeconds: number
+  volumeKg: number
+  exercises: { exerciseId: string; sets: { reps: number; weightKg: number }[] }[]
+}
+
+export async function getHistorySession(id: string): Promise<HistoryDetail> {
+  const res = await authFetch(`/api/workout-sessions/${encodeURIComponent(id)}`)
   return res.json()
 }
