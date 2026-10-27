@@ -206,12 +206,12 @@ None — no schema changes. Known limitation to document: plan edits and plan de
 
 #### Automated
 
-- [x] 2.1 Frontend builds: `cd frontend && npm run build`
-- [x] 2.2 Lint passes: `cd frontend && npm run lint`
+- [x] 2.1 Frontend builds: `cd frontend && npm run build` — 5bd5ca9
+- [x] 2.2 Lint passes: `cd frontend && npm run lint` — 5bd5ca9
 
 #### Manual
 
-- [x] 2.3 Selecting the exercise in a third workout shows the "Try X kg" sentence with the right numbers
-- [x] 2.4 Switching exercises updates or hides the panel; a free-form workout shows nothing
-- [x] 2.5 A server error or a missing recommendation leaves the workout screen fully usable
-- [x] 2.6 Layout is usable at phone width
+- [x] 2.3 Selecting the exercise in a third workout shows the "Try X kg" sentence with the right numbers — 5bd5ca9
+- [x] 2.4 Switching exercises updates or hides the panel; a free-form workout shows nothing — 5bd5ca9
+- [x] 2.5 A server error or a missing recommendation leaves the workout screen fully usable — 5bd5ca9
+- [x] 2.6 Layout is usable at phone width — 5bd5ca9
