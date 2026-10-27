@@ -24,6 +24,11 @@ public class WorkoutExceptionHandler {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", ex.getMessage()));
 	}
 
+	@ExceptionHandler(InvalidHistoryQueryException.class)
+	public ResponseEntity<Map<String, String>> handleInvalidHistoryQuery(InvalidHistoryQueryException ex) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", ex.getMessage()));
+	}
+
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
 	public ResponseEntity<Map<String, String>> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Invalid " + ex.getName()));
