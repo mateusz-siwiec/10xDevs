@@ -264,12 +264,12 @@ One additive migration (nullable `owner_id`, indexes); existing rows and all exi
 
 #### Automated
 
-- [x] 3.1 Frontend builds: `cd frontend && npm run build`
-- [x] 3.2 Lint passes: `cd frontend && npm run lint`
+- [x] 3.1 Frontend builds: `cd frontend && npm run build` — 738c442
+- [x] 3.2 Lint passes: `cd frontend && npm run lint` — 738c442
 
 #### Manual
 
-- [x] 3.3 Adding a custom exercise shows it in the list, the workout picker and the plan editor picker
-- [x] 3.4 Duplicate and catalog names show the error inline; unused exercises delete, used ones are refused and kept
-- [x] 3.5 A second account does not see the exercise anywhere
-- [x] 3.6 Layout is usable at phone width
+- [x] 3.3 Adding a custom exercise shows it in the list, the workout picker and the plan editor picker — 738c442
+- [x] 3.4 Duplicate and catalog names show the error inline; unused exercises delete, used ones are refused and kept — 738c442
+- [x] 3.5 A second account does not see the exercise anywhere — 738c442
+- [x] 3.6 Layout is usable at phone width — 738c442
