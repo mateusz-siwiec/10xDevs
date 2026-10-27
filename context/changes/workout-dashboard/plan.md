@@ -187,13 +187,13 @@ None — no schema changes. Existing bookmarks to `/` now open the dashboard ins
 
 #### Automated
 
-- [x] 2.1 Frontend builds: `cd frontend && npm run build`
-- [x] 2.2 Lint passes: `cd frontend && npm run lint`
+- [x] 2.1 Frontend builds: `cd frontend && npm run build` — 3baa2c2
+- [x] 2.2 Lint passes: `cd frontend && npm run lint` — 3baa2c2
 
 #### Manual
 
-- [x] 2.3 Logging in lands on the dashboard; a new account shows zeros and the empty-state prompt
-- [x] 2.4 After finishing a workout, dashboard totals match logged sets and session duration
-- [x] 2.5 7/30 toggle changes numbers when older sessions exist; a running session is not counted
-- [x] 2.6 Topbar navigation works between Dashboard, Workout and Plans; "Start workout" reaches `/workout`
-- [x] 2.7 Layout is usable at phone width
+- [x] 2.3 Logging in lands on the dashboard; a new account shows zeros and the empty-state prompt — 3baa2c2
+- [x] 2.4 After finishing a workout, dashboard totals match logged sets and session duration — 3baa2c2
+- [x] 2.5 7/30 toggle changes numbers when older sessions exist; a running session is not counted — 3baa2c2
+- [x] 2.6 Topbar navigation works between Dashboard, Workout and Plans; "Start workout" reaches `/workout` — 3baa2c2
+- [x] 2.7 Layout is usable at phone width — 3baa2c2
