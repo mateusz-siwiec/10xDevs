@@ -249,24 +249,24 @@ Insights scans the user's ended-session end times and eligible sets on every loa
 
 #### Automated
 
-- [x] 2.1 Migration applies and Hibernate validate passes: `./mvnw test -Dtest=DashboardInsightsControllerTest`
-- [x] 2.2 Full backend suite passes: `./mvnw test`
+- [x] 2.1 Migration applies and Hibernate validate passes: `./mvnw test -Dtest=DashboardInsightsControllerTest` — 2e91c41
+- [x] 2.2 Full backend suite passes: `./mvnw test` — 2e91c41
 
 #### Manual
 
-- [x] 2.3 PUT weekly goal then GET insights on the local API shows the goal, 12 weekly items and plausible PRs
+- [x] 2.3 PUT weekly goal then GET insights on the local API shows the goal, 12 weekly items and plausible PRs — 2e91c41
 
 ### Phase 3: Frontend — dashboard UI
 
 #### Automated
 
-- [ ] 3.1 Lint passes: `cd frontend && npm run lint`
-- [ ] 3.2 Type check and production build pass: `cd frontend && npm run build`
+- [x] 3.1 Lint passes: `cd frontend && npm run lint`
+- [x] 3.2 Type check and production build pass: `cd frontend && npm run build`
 
 #### Manual
 
-- [ ] 3.3 Toggling 7 / 30 / 90 / All updates tiles; deltas show on the first three and are hidden on All
-- [ ] 3.4 Weekly chart shows 12 bars and matches the tiles for the last 7 days
-- [ ] 3.5 Recent PRs matches the PR badges in History for the same workouts
-- [ ] 3.6 Setting a goal updates streak and "X of goal" immediately; clearing it shows the prompt
-- [ ] 3.7 New user sees sensible empty states and the layout holds at phone width
+- [x] 3.3 Toggling 7 / 30 / 90 / All updates tiles; deltas show on the first three and are hidden on All
+- [x] 3.4 Weekly chart shows 12 bars and matches the tiles for the last 7 days
+- [x] 3.5 Recent PRs matches the PR badges in History for the same workouts
+- [x] 3.6 Setting a goal updates streak and "X of goal" immediately; clearing it shows the prompt
+- [x] 3.7 New user sees sensible empty states and the layout holds at phone width

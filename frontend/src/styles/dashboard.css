@@ -55,6 +55,89 @@
   text-decoration: none;
 }
 
+.dashboard-delta {
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.dashboard-delta[data-direction='up'] {
+  color: #1a7f37;
+}
+
+.dashboard-delta[data-direction='down'] {
+  color: #cf222e;
+}
+
+.dashboard-delta[data-direction='flat'] {
+  color: var(--text);
+}
+
+.dashboard-section {
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-section h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.125rem;
+}
+
+.recent-records {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.recent-records li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.25rem 0.75rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.recent-record-name {
+  color: var(--text-h);
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.recent-record-detail {
+  color: var(--text);
+  font-size: 0.875rem;
+}
+
+.consistency-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.consistency-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.consistency-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  color: var(--text);
+}
+
+.consistency-label input {
+  width: 6rem;
+  box-sizing: border-box;
+}
+
 @media (max-width: 480px) {
   .dashboard-tiles {
     grid-template-columns: 1fr;
