@@ -1,10 +1,10 @@
 ---
 change_id: dashboard-insights
 title: Dashboard insights: trends, PRs and consistency
-status: impl_reviewed
+status: archived
 created: 2026-10-27
 updated: 2026-10-28
-archived_at: null
+archived_at: 2026-10-28T10:19:11Z
 ---
 
 ## Notes
