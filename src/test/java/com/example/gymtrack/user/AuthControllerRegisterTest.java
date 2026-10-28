@@ -1,5 +1,6 @@
 package com.example.gymtrack.user;
 
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -56,6 +57,7 @@ class AuthControllerRegisterTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("{\"email\":\"DUPLICATE@example.com\",\"password\":\"password123\"}"))
 			.andExpect(status().isConflict())
+			.andExpect(jsonPath("$.code", is("EMAIL_ALREADY_EXISTS")))
 			.andExpect(jsonPath("$.error").exists());
 	}
 
@@ -65,6 +67,9 @@ class AuthControllerRegisterTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("{\"email\":\"short-password@example.com\",\"password\":\"short1\"}"))
 			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("VALIDATION_FAILED")))
+			.andExpect(jsonPath("$.field", is("password")))
+			.andExpect(jsonPath("$.rule", is("Size")))
 			.andExpect(jsonPath("$.error").exists());
 	}
 
@@ -74,6 +79,9 @@ class AuthControllerRegisterTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("{\"email\":\"not-an-email\",\"password\":\"password123\"}"))
 			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("VALIDATION_FAILED")))
+			.andExpect(jsonPath("$.field", is("email")))
+			.andExpect(jsonPath("$.rule", is("Email")))
 			.andExpect(jsonPath("$.error").exists());
 	}
 

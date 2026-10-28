@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { createExercise, deleteExercise, getExercises } from '../api/client'
-import i18n from '../i18n'
 import type { Exercise } from '../api/client'
 import '../styles/page.css'
 import '../styles/workout.css'
 import '../styles/plans.css'
 import '../styles/exercises.css'
+import { translateError } from '../utils/errors'
 
 const MUSCLE_GROUPS = [
   'CHEST',
@@ -54,7 +54,7 @@ export default function MyExercisesPage() {
       .catch((err) => {
         if (cancelled) return
         setLoadFailed(true)
-        setError(err instanceof Error ? err.message : i18n.t('exercises.loadFailed'))
+        setError(translateError(err, 'exercises.loadFailed'))
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
@@ -90,7 +90,7 @@ export default function MyExercisesPage() {
       setPrimary('')
       setSecondary([])
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('exercises.addFailed'))
+      setError(translateError(err, 'exercises.addFailed'))
     } finally {
       setSaving(false)
     }
@@ -103,7 +103,7 @@ export default function MyExercisesPage() {
       await deleteExercise(id)
       setExercises((list) => list.filter((e) => e.id !== id))
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('exercises.deleteFailed'))
+      setError(translateError(err, 'exercises.deleteFailed'))
     } finally {
       setBusy(false)
       setConfirmingId(null)

@@ -261,6 +261,9 @@ class DashboardInsightsControllerTest {
 				"{\"weeklyGoal\":2.5}", "{\"weeklyGoal\":\"abc\"}", "{\"weeklyGoal\":true}", "{}", "{bad", "" }) {
 			putGoal(token, body).andExpect(status().isBadRequest()).andExpect(jsonPath("$.error", notNullValue()));
 		}
+		putGoal(token, "{\"weeklyGoal\":0}").andExpect(jsonPath("$.code", is("INVALID_WEEKLY_GOAL")));
+		putGoal(token, "{}").andExpect(jsonPath("$.code", is("INVALID_WEEKLY_GOAL")));
+		putGoal(token, "{bad").andExpect(jsonPath("$.code", is("MALFORMED_BODY")));
 		insights(token).andExpect(jsonPath("$.streak.goal", nullValue()));
 	}
 

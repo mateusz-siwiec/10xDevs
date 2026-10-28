@@ -136,6 +136,7 @@ class PreviousWorkoutControllerTest {
 			.perform(get(url(UUID.randomUUID())).param("planId", UUID.randomUUID().toString())
 				.header(HttpHeaders.AUTHORIZATION, bearer(newUser())))
 			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.code", is("EXERCISE_NOT_FOUND")))
 			.andExpect(jsonPath("$.error", notNullValue()));
 	}
 
@@ -145,6 +146,8 @@ class PreviousWorkoutControllerTest {
 			.perform(get(url(exerciseId())).param("planId", "not-a-uuid")
 				.header(HttpHeaders.AUTHORIZATION, bearer(newUser())))
 			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("INVALID_PARAMETER")))
+			.andExpect(jsonPath("$.field", is("planId")))
 			.andExpect(jsonPath("$.error", notNullValue()));
 	}
 

@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { deletePlan, listPlans } from '../api/client'
-import i18n from '../i18n'
 import type { PlanSummary } from '../api/client'
 import '../styles/page.css'
 import '../styles/workout.css'
 import '../styles/plans.css'
+import { translateError } from '../utils/errors'
 
 export default function PlansPage() {
   const { t } = useTranslation()
@@ -19,7 +19,7 @@ export default function PlansPage() {
   useEffect(() => {
     listPlans()
       .then(setPlans)
-      .catch((err) => setError(err instanceof Error ? err.message : i18n.t('plans.loadFailed')))
+      .catch((err) => setError(translateError(err, 'plans.loadFailed')))
       .finally(() => setLoading(false))
   }, [])
 
@@ -30,7 +30,7 @@ export default function PlansPage() {
       await deletePlan(id)
       setPlans((list) => list.filter((p) => p.id !== id))
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('plans.deleteFailed'))
+      setError(translateError(err, 'plans.deleteFailed'))
     } finally {
       setBusy(false)
       setConfirmingId(null)

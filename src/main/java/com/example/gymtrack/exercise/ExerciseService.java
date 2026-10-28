@@ -1,5 +1,6 @@
 package com.example.gymtrack.exercise;
 
+import com.example.gymtrack.common.ErrorCode;
 import com.example.gymtrack.common.ResourceNotFoundException;
 import com.example.gymtrack.plan.TrainingPlanRepository;
 import com.example.gymtrack.workout.WorkoutSetRepository;
@@ -36,7 +37,7 @@ public class ExerciseService {
 	@Transactional(readOnly = true)
 	public List<ExerciseResponse> substitutes(UUID userId, UUID exerciseId) {
 		Exercise exercise = exerciseRepository.findVisibleById(exerciseId, userId)
-				.orElseThrow(() -> new ResourceNotFoundException("Exercise not found"));
+				.orElseThrow(() -> new ResourceNotFoundException(ErrorCode.EXERCISE_NOT_FOUND, "Exercise not found"));
 		return exerciseRepository.findVisibleSubstitutes(userId, exercise.getPrimaryMuscleGroup(), exercise.getId())
 				.stream()
 				.map(ExerciseResponse::from)
@@ -47,7 +48,7 @@ public class ExerciseService {
 	public ExerciseResponse create(UUID userId, CreateExerciseRequest request) {
 		String name = request.name().trim();
 		if (exerciseRepository.existsVisibleByName(name, userId)) {
-			throw new ExerciseConflictException("An exercise with this name already exists");
+			throw new ExerciseConflictException(ErrorCode.EXERCISE_NAME_TAKEN, "An exercise with this name already exists");
 		}
 
 		try {
@@ -57,17 +58,17 @@ public class ExerciseService {
 		}
 		catch (DataIntegrityViolationException e) {
 			// A concurrent create with the same name won the race past the check above.
-			throw new ExerciseConflictException("An exercise with this name already exists");
+			throw new ExerciseConflictException(ErrorCode.EXERCISE_NAME_TAKEN, "An exercise with this name already exists");
 		}
 	}
 
 	@Transactional
 	public void delete(UUID userId, UUID id) {
 		Exercise exercise = exerciseRepository.findByIdAndOwnerId(id, userId)
-				.orElseThrow(() -> new ResourceNotFoundException("Exercise not found"));
+				.orElseThrow(() -> new ResourceNotFoundException(ErrorCode.EXERCISE_NOT_FOUND, "Exercise not found"));
 
 		if (planRepository.existsEntryByExerciseId(id) || workoutSetRepository.existsByExerciseId(id)) {
-			throw new ExerciseConflictException("Exercise is used in a plan or a workout");
+			throw new ExerciseConflictException(ErrorCode.EXERCISE_IN_USE, "Exercise is used in a plan or a workout");
 		}
 
 		try {
@@ -76,7 +77,7 @@ public class ExerciseService {
 		}
 		catch (DataIntegrityViolationException e) {
 			// A plan entry or logged set referenced the exercise after the check above.
-			throw new ExerciseConflictException("Exercise is used in a plan or a workout");
+			throw new ExerciseConflictException(ErrorCode.EXERCISE_IN_USE, "Exercise is used in a plan or a workout");
 		}
 	}
 

@@ -201,5 +201,50 @@
       "useThis": "Use this",
       "useLabel": "Use {{name}}"
     }
+  },
+  "errors": {
+    "EXERCISE_NOT_FOUND": "Exercise not found.",
+    "PLAN_NOT_FOUND": "Training plan not found.",
+    "WORKOUT_NOT_FOUND": "Workout not found.",
+    "SET_NOT_FOUND": "Set not found.",
+    "USER_NOT_FOUND": "User not found.",
+    "MALFORMED_BODY": "The request could not be read. Please try again.",
+    "EMAIL_ALREADY_EXISTS": "An account with this email already exists.",
+    "INVALID_CREDENTIALS": "Invalid email or password.",
+    "EXERCISE_NAME_TAKEN": "You already have an exercise with this name.",
+    "EXERCISE_IN_USE": "This exercise is used in a plan or a workout and cannot be deleted.",
+    "WORKOUT_ALREADY_ACTIVE": "A workout is already in progress.",
+    "WORKOUT_ENDED": "This workout has already ended.",
+    "INVALID_DASHBOARD_WINDOW": "Unsupported time range.",
+    "INVALID_WEEKLY_GOAL": "The weekly goal must be a whole number from 1 to 14.",
+    "INVALID_HISTORY_PAGE": "Invalid page number.",
+    "INVALID_HISTORY_SIZE": "Invalid page size.",
+    "INVALID_HISTORY_FILTER": "These filters cannot be combined.",
+    "INVALID_PARAMETER": "The request contains an invalid value.",
+    "VALIDATION_FAILED": "Please check the entered data."
+  },
+  "validation": {
+    "NotBlank": "{{field}} is required.",
+    "NotNull": "{{field}} is required.",
+    "Email": "Enter a valid email address.",
+    "Size": "{{field}} has an invalid length.",
+    "Min": "{{field}} is too small.",
+    "Max": "{{field}} is too large.",
+    "DecimalMin": "{{field}} is too small.",
+    "DecimalMax": "{{field}} is too large.",
+    "AssertTrue": "Secondary muscle groups must not include the primary muscle group.",
+    "HalfKgStep": "{{field}} must be a multiple of 0.5.",
+    "fields": {
+      "email": "Email",
+      "password": "Password",
+      "name": "Name",
+      "primaryMuscleGroup": "Primary muscle group",
+      "secondaryMuscleGroups": "Secondary muscle groups",
+      "entries": "Exercises",
+      "exerciseId": "Exercise",
+      "sets": "Sets",
+      "reps": "Reps",
+      "weightKg": "Weight"
+    }
   }
 }

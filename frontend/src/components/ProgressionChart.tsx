@@ -4,6 +4,7 @@ import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YA
 import { getProgression } from '../api/client'
 import type { ProgressionPoint } from '../api/client'
 import i18n from '../i18n'
+import { translateError } from '../utils/errors'
 
 interface ProgressionChartProps {
   exerciseId: string
@@ -40,7 +41,7 @@ export default function ProgressionChart({ exerciseId, refreshKey }: Progression
           setResult({
             key: requestKey,
             points: [],
-            error: err instanceof Error ? err.message : '',
+            error: translateError(err) ?? '',
           })
         }
       })

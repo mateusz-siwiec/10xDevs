@@ -1,5 +1,6 @@
 package com.example.gymtrack.user;
 
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -57,6 +58,7 @@ class AuthControllerLoginTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("{\"email\":\"wrong-password@example.com\",\"password\":\"not-the-password\"}"))
 			.andExpect(status().isUnauthorized())
+			.andExpect(jsonPath("$.code", is("INVALID_CREDENTIALS")))
 			.andExpect(jsonPath("$.error").value("Invalid email or password"));
 	}
 
@@ -66,6 +68,7 @@ class AuthControllerLoginTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("{\"email\":\"nobody-here@example.com\",\"password\":\"password123\"}"))
 			.andExpect(status().isUnauthorized())
+			.andExpect(jsonPath("$.code", is("INVALID_CREDENTIALS")))
 			.andExpect(jsonPath("$.error").value("Invalid email or password"));
 	}
 

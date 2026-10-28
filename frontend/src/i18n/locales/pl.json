@@ -211,5 +211,50 @@
       "useThis": "Użyj",
       "useLabel": "Użyj: {{name}}"
     }
+  },
+  "errors": {
+    "EXERCISE_NOT_FOUND": "Nie znaleziono ćwiczenia.",
+    "PLAN_NOT_FOUND": "Nie znaleziono planu treningowego.",
+    "WORKOUT_NOT_FOUND": "Nie znaleziono treningu.",
+    "SET_NOT_FOUND": "Nie znaleziono serii.",
+    "USER_NOT_FOUND": "Nie znaleziono użytkownika.",
+    "MALFORMED_BODY": "Nie udało się odczytać żądania. Spróbuj ponownie.",
+    "EMAIL_ALREADY_EXISTS": "Konto z tym adresem e-mail już istnieje.",
+    "INVALID_CREDENTIALS": "Nieprawidłowy e-mail lub hasło.",
+    "EXERCISE_NAME_TAKEN": "Masz już ćwiczenie o tej nazwie.",
+    "EXERCISE_IN_USE": "To ćwiczenie jest używane w planie lub treningu i nie można go usunąć.",
+    "WORKOUT_ALREADY_ACTIVE": "Trening jest już w toku.",
+    "WORKOUT_ENDED": "Ten trening został już zakończony.",
+    "INVALID_DASHBOARD_WINDOW": "Nieobsługiwany zakres czasu.",
+    "INVALID_WEEKLY_GOAL": "Cel tygodniowy musi być liczbą całkowitą od 1 do 14.",
+    "INVALID_HISTORY_PAGE": "Nieprawidłowy numer strony.",
+    "INVALID_HISTORY_SIZE": "Nieprawidłowy rozmiar strony.",
+    "INVALID_HISTORY_FILTER": "Tych filtrów nie można łączyć.",
+    "INVALID_PARAMETER": "Żądanie zawiera nieprawidłową wartość.",
+    "VALIDATION_FAILED": "Sprawdź wprowadzone dane."
+  },
+  "validation": {
+    "NotBlank": "Pole „{{field}}” jest wymagane.",
+    "NotNull": "Pole „{{field}}” jest wymagane.",
+    "Email": "Podaj prawidłowy adres e-mail.",
+    "Size": "Pole „{{field}}” ma nieprawidłową długość.",
+    "Min": "Wartość pola „{{field}}” jest za mała.",
+    "Max": "Wartość pola „{{field}}” jest za duża.",
+    "DecimalMin": "Wartość pola „{{field}}” jest za mała.",
+    "DecimalMax": "Wartość pola „{{field}}” jest za duża.",
+    "AssertTrue": "Dodatkowe partie mięśniowe nie mogą zawierać partii głównej.",
+    "HalfKgStep": "Pole „{{field}}” musi być wielokrotnością 0,5.",
+    "fields": {
+      "email": "E-mail",
+      "password": "Hasło",
+      "name": "Nazwa",
+      "primaryMuscleGroup": "Główna partia mięśniowa",
+      "secondaryMuscleGroups": "Dodatkowe partie mięśniowe",
+      "entries": "Ćwiczenia",
+      "exerciseId": "Ćwiczenie",
+      "sets": "Serie",
+      "reps": "Powtórzenia",
+      "weightKg": "Ciężar"
+    }
   }
 }

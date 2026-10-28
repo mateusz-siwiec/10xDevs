@@ -1,5 +1,6 @@
 package com.example.gymtrack.workout;
 
+import com.example.gymtrack.common.ErrorCode;
 import com.example.gymtrack.exercise.ExerciseRepository;
 import com.example.gymtrack.plan.PlanNotFoundException;
 import com.example.gymtrack.plan.TrainingPlanRepository;
@@ -53,7 +54,7 @@ public class WorkoutService {
 				Optional<WorkoutSession> existing = sessionRepository.findByUserIdAndEndedAtIsNull(userId);
 				if (existing.isPresent()) {
 					if (planId != null && !planId.equals(existing.get().getPlanId())) {
-						throw new WorkoutConflictException("A workout session is already active");
+						throw new WorkoutConflictException(ErrorCode.WORKOUT_ALREADY_ACTIVE, "A workout session is already active");
 					}
 					return new StartResult(toResponse(existing.get()), false);
 				}
@@ -87,7 +88,7 @@ public class WorkoutService {
 	public SessionResponse end(UUID userId, UUID sessionId) {
 		WorkoutSession session = findOwned(userId, sessionId);
 		if (!session.isActive()) {
-			throw new WorkoutConflictException("Workout session already ended");
+			throw new WorkoutConflictException(ErrorCode.WORKOUT_ENDED, "Workout session already ended");
 		}
 		session.end();
 		sessionRepository.saveAndFlush(session);
@@ -98,10 +99,10 @@ public class WorkoutService {
 	public SetResponse logSet(UUID userId, UUID sessionId, UUID exerciseId, int reps, BigDecimal weightKg) {
 		WorkoutSession session = findOwned(userId, sessionId);
 		if (!exerciseRepository.existsVisible(exerciseId, userId)) {
-			throw new WorkoutNotFoundException("Exercise not found");
+			throw new WorkoutNotFoundException(ErrorCode.EXERCISE_NOT_FOUND, "Exercise not found");
 		}
 		if (!session.isActive()) {
-			throw new WorkoutConflictException("Workout session already ended");
+			throw new WorkoutConflictException(ErrorCode.WORKOUT_ENDED, "Workout session already ended");
 		}
 		WorkoutSet set = setRepository.saveAndFlush(new WorkoutSet(session, exerciseId, reps, weightKg));
 		Set<UUID> personalRecordSetIds = personalRecordService.personalRecordSetIds(session,
@@ -113,9 +114,9 @@ public class WorkoutService {
 	public void deleteSet(UUID userId, UUID sessionId, UUID setId) {
 		WorkoutSession session = findOwned(userId, sessionId);
 		WorkoutSet set = setRepository.findByIdAndSessionId(setId, sessionId)
-			.orElseThrow(() -> new WorkoutNotFoundException("Set not found"));
+			.orElseThrow(() -> new WorkoutNotFoundException(ErrorCode.SET_NOT_FOUND, "Set not found"));
 		if (!session.isActive()) {
-			throw new WorkoutConflictException("Workout session already ended");
+			throw new WorkoutConflictException(ErrorCode.WORKOUT_ENDED, "Workout session already ended");
 		}
 		setRepository.delete(set);
 	}
@@ -123,14 +124,14 @@ public class WorkoutService {
 	@Transactional(readOnly = true)
 	public List<ProgressionPointResponse> progression(UUID userId, UUID exerciseId) {
 		if (!exerciseRepository.existsVisible(exerciseId, userId)) {
-			throw new WorkoutNotFoundException("Exercise not found");
+			throw new WorkoutNotFoundException(ErrorCode.EXERCISE_NOT_FOUND, "Exercise not found");
 		}
 		return setRepository.findProgression(userId, exerciseId);
 	}
 
 	private WorkoutSession findOwned(UUID userId, UUID sessionId) {
 		return sessionRepository.findByIdAndUserId(sessionId, userId)
-			.orElseThrow(() -> new WorkoutNotFoundException("Workout session not found"));
+			.orElseThrow(() -> new WorkoutNotFoundException(ErrorCode.WORKOUT_NOT_FOUND, "Workout session not found"));
 	}
 
 	private SessionResponse toResponse(WorkoutSession session) {

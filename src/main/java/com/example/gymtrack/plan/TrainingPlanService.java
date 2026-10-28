@@ -1,5 +1,6 @@
 package com.example.gymtrack.plan;
 
+import com.example.gymtrack.common.ErrorCode;
 import com.example.gymtrack.common.ResourceNotFoundException;
 import com.example.gymtrack.exercise.Exercise;
 import com.example.gymtrack.exercise.ExerciseRepository;
@@ -79,7 +80,7 @@ public class TrainingPlanService {
 			names.put(exercise.getId(), exercise.getName());
 		}
 		if (names.size() != distinct.size()) {
-			throw new ResourceNotFoundException("Exercise not found");
+			throw new ResourceNotFoundException(ErrorCode.EXERCISE_NOT_FOUND, "Exercise not found");
 		}
 		return names;
 	}

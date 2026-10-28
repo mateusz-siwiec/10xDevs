@@ -213,6 +213,7 @@ class DashboardControllerTest {
 	void uppercaseAllIsRejected() throws Exception {
 		mockMvc.perform(get("/api/dashboard/stats").param("days", "ALL").header(HttpHeaders.AUTHORIZATION, bearerToken()))
 			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("INVALID_DASHBOARD_WINDOW")))
 			.andExpect(jsonPath("$.error", notNullValue()));
 	}
 
@@ -291,6 +292,7 @@ class DashboardControllerTest {
 	void unsupportedWindowReturnsBadRequest() throws Exception {
 		mockMvc.perform(get("/api/dashboard/stats").param("days", "14").header(HttpHeaders.AUTHORIZATION, bearerToken()))
 			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("INVALID_DASHBOARD_WINDOW")))
 			.andExpect(jsonPath("$.error", notNullValue()));
 	}
 
@@ -298,6 +300,7 @@ class DashboardControllerTest {
 	void zeroDaysReturnsBadRequest() throws Exception {
 		mockMvc.perform(get("/api/dashboard/stats").param("days", "0").header(HttpHeaders.AUTHORIZATION, bearerToken()))
 			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("INVALID_DASHBOARD_WINDOW")))
 			.andExpect(jsonPath("$.error", notNullValue()));
 	}
 
@@ -305,6 +308,7 @@ class DashboardControllerTest {
 	void nonNumericDaysReturnsBadRequest() throws Exception {
 		mockMvc.perform(get("/api/dashboard/stats").param("days", "abc").header(HttpHeaders.AUTHORIZATION, bearerToken()))
 			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("INVALID_DASHBOARD_WINDOW")))
 			.andExpect(jsonPath("$.error", notNullValue()));
 	}
 

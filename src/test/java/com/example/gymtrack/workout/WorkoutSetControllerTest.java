@@ -146,6 +146,7 @@ class WorkoutSetControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(body))
 				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.code", is("VALIDATION_FAILED")))
 				.andExpect(jsonPath("$.error", notNullValue()));
 		}
 	}
@@ -160,6 +161,7 @@ class WorkoutSetControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(setBody(UUID.randomUUID(), 5, "60")))
 			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.code", is("EXERCISE_NOT_FOUND")))
 			.andExpect(jsonPath("$.error", notNullValue()));
 	}
 
@@ -174,6 +176,7 @@ class WorkoutSetControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(setBody(exerciseId(), 5, "60")))
 			.andExpect(status().isConflict())
+			.andExpect(jsonPath("$.code", is("WORKOUT_ENDED")))
 			.andExpect(jsonPath("$.error", notNullValue()));
 	}
 
@@ -210,7 +213,8 @@ class WorkoutSetControllerTest {
 
 		mockMvc.perform(delete("/api/workout-sessions/" + sessionId + "/sets/" + setId)
 				.header(HttpHeaders.AUTHORIZATION, token))
-			.andExpect(status().isNotFound());
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.code", is("SET_NOT_FOUND")));
 	}
 
 	@Test

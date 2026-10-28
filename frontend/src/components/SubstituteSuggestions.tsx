@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getSubstitutes } from '../api/client'
 import type { Exercise } from '../api/client'
+import { translateError } from '../utils/errors'
 
 interface SubstituteSuggestionsProps {
   exerciseId: string
@@ -37,7 +38,7 @@ export default function SubstituteSuggestions({
           setResult({
             key: exerciseId,
             items: [],
-            error: err instanceof Error ? err.message : '',
+            error: translateError(err) ?? '',
           })
         }
       })

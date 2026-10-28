@@ -6,8 +6,15 @@ package com.example.gymtrack.common;
  */
 public class ResourceNotFoundException extends RuntimeException {
 
-	public ResourceNotFoundException(String message) {
+	private final ErrorCode code;
+
+	public ResourceNotFoundException(ErrorCode code, String message) {
 		super(message);
+		this.code = code;
+	}
+
+	public ErrorCode getCode() {
+		return code;
 	}
 
 }

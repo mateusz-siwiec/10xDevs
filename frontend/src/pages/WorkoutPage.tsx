@@ -12,7 +12,6 @@ import {
 } from '../api/client'
 import type { Exercise, Plan, PlanSummary, WorkoutSession } from '../api/client'
 import ExercisePicker from '../components/ExercisePicker'
-import i18n from '../i18n'
 import PlanWalkthrough from '../components/PlanWalkthrough'
 import { computeProgress, currentIndex, selectedIndex } from '../components/planProgress'
 import ProgressionChart from '../components/ProgressionChart'
@@ -25,6 +24,7 @@ import SetLogger from '../components/SetLogger'
 import SubstituteSuggestions from '../components/SubstituteSuggestions'
 import '../styles/page.css'
 import '../styles/workout.css'
+import { translateError } from '../utils/errors'
 
 export default function WorkoutPage() {
   const { t } = useTranslation()
@@ -54,7 +54,7 @@ export default function WorkoutPage() {
         setSession(current)
         setPlans(planList)
       })
-      .catch((err) => setError(err instanceof Error ? err.message : i18n.t('workout.loadFailed')))
+      .catch((err) => setError(translateError(err, 'workout.loadFailed')))
       .finally(() => setLoading(false))
   }, [])
 
@@ -123,7 +123,7 @@ export default function WorkoutPage() {
       setSkipped(new Set())
       setRestEndsAt(null)
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('workout.startFailed'))
+      setError(translateError(err, 'workout.startFailed'))
     } finally {
       setBusy(false)
     }
@@ -141,7 +141,7 @@ export default function WorkoutPage() {
       setSkipped(new Set())
       setRestEndsAt(null)
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('workout.endFailed'))
+      setError(translateError(err, 'workout.endFailed'))
     } finally {
       setBusy(false)
     }
@@ -169,7 +169,7 @@ export default function WorkoutPage() {
       setRestEndsAt(Date.now() + restDuration * 1000)
       setRefreshKey((k) => k + 1)
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('workout.logFailed'))
+      setError(translateError(err, 'workout.logFailed'))
       throw err
     } finally {
       setBusy(false)
@@ -203,7 +203,7 @@ export default function WorkoutPage() {
       }
       setRefreshKey((k) => k + 1)
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('workout.deleteFailed'))
+      setError(translateError(err, 'workout.deleteFailed'))
     } finally {
       setBusy(false)
     }

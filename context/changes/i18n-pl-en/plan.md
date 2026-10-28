@@ -374,32 +374,32 @@ None for data. Because Flyway is disabled in production and this plan adds no sc
 
 #### Automated
 
-- [x] 2.1 Frontend builds and typechecks
-- [x] 2.2 Frontend linting passes
-- [x] 2.3 Locale parity test passes with all new keys and Polish plural categories
+- [x] 2.1 Frontend builds and typechecks — a8ae21e
+- [x] 2.2 Frontend linting passes — a8ae21e
+- [x] 2.3 Locale parity test passes with all new keys and Polish plural categories — a8ae21e
 
 #### Manual
 
-- [x] 2.4 Every screen in Polish shows no English except server errors, exercise names and muscle-group labels
-- [x] 2.5 Plurals read correctly in Polish (1, 2, 5, 22) and English (1, 2)
-- [x] 2.6 Inline-link sentences render as working links in both languages
-- [x] 2.7 Aria-labels and chart tooltip are translated and update on live language switch
+- [x] 2.4 Every screen in Polish shows no English except server errors, exercise names and muscle-group labels — a8ae21e
+- [x] 2.5 Plurals read correctly in Polish (1, 2, 5, 22) and English (1, 2) — a8ae21e
+- [x] 2.6 Inline-link sentences render as working links in both languages — a8ae21e
+- [x] 2.7 Aria-labels and chart tooltip are translated and update on live language switch — a8ae21e
 
 ### Phase 3: Backend error codes
 
 #### Automated
 
-- [ ] 3.1 Backend tests pass, including the new code assertions
-- [ ] 3.2 Frontend builds and typechecks
-- [ ] 3.3 Frontend linting passes
-- [ ] 3.4 Locale parity test passes with the new errors and validation keys
+- [x] 3.1 Backend tests pass, including the new code assertions
+- [x] 3.2 Frontend builds and typechecks
+- [x] 3.3 Frontend linting passes
+- [x] 3.4 Locale parity test passes with the new errors and validation keys
 
 #### Manual
 
-- [ ] 3.5 Wrong password shows the translated message in both languages
-- [ ] 3.6 Invalid registration input shows a translated, field-aware validation message
-- [ ] 3.7 A non-existent history entry shows the translated not-found state
-- [ ] 3.8 A response with an unknown or missing code falls back to the English error text
+- [x] 3.5 Wrong password shows the translated message in both languages
+- [x] 3.6 Invalid registration input shows a translated, field-aware validation message
+- [x] 3.7 A non-existent history entry shows the translated not-found state
+- [x] 3.8 A response with an unknown or missing code falls back to the English error text
 
 ### Phase 4: Exercise and muscle-group names
 

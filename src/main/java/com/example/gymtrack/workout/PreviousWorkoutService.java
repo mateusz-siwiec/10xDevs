@@ -1,5 +1,6 @@
 package com.example.gymtrack.workout;
 
+import com.example.gymtrack.common.ErrorCode;
 import com.example.gymtrack.exercise.ExerciseRepository;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +29,7 @@ public class PreviousWorkoutService {
 	@Transactional(readOnly = true)
 	public Optional<PreviousWorkoutResponse> find(UUID userId, UUID exerciseId, UUID planId) {
 		if (!exerciseRepository.existsVisible(exerciseId, userId)) {
-			throw new WorkoutNotFoundException("Exercise not found");
+			throw new WorkoutNotFoundException(ErrorCode.EXERCISE_NOT_FOUND, "Exercise not found");
 		}
 		return sessionRepository.findRecentEndedInPlanWithExercise(userId, planId, exerciseId, PageRequest.of(0, 1))
 			.stream()

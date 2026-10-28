@@ -202,6 +202,7 @@ class WorkoutSessionControllerTest {
 
 		mockMvc.perform(post("/api/workout-sessions/" + id + "/end").header(HttpHeaders.AUTHORIZATION, token))
 			.andExpect(status().isConflict())
+			.andExpect(jsonPath("$.code", is("WORKOUT_ENDED")))
 			.andExpect(jsonPath("$.error", notNullValue()));
 
 		mockMvc.perform(get("/api/workout-sessions/current").header(HttpHeaders.AUTHORIZATION, token))
@@ -212,6 +213,8 @@ class WorkoutSessionControllerTest {
 	void malformedSessionIdReturnsBadRequestWithErrorBody() throws Exception {
 		mockMvc.perform(post("/api/workout-sessions/not-a-uuid/end").header(HttpHeaders.AUTHORIZATION, bearerToken()))
 			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("INVALID_PARAMETER")))
+			.andExpect(jsonPath("$.field", is("id")))
 			.andExpect(jsonPath("$.error", is("Invalid id")));
 	}
 
@@ -220,6 +223,7 @@ class WorkoutSessionControllerTest {
 		mockMvc.perform(post("/api/workout-sessions/" + UUID.randomUUID() + "/end")
 				.header(HttpHeaders.AUTHORIZATION, bearerToken()))
 			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.code", is("WORKOUT_NOT_FOUND")))
 			.andExpect(jsonPath("$.error", notNullValue()));
 	}
 
@@ -264,6 +268,7 @@ class WorkoutSessionControllerTest {
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(planBody(foreignPlanId)))
 			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.code", is("PLAN_NOT_FOUND")))
 			.andExpect(jsonPath("$.error", is("Training plan not found")));
 
 		mockMvc.perform(get("/api/workout-sessions/current").header(HttpHeaders.AUTHORIZATION, token))
@@ -314,7 +319,8 @@ class WorkoutSessionControllerTest {
 		mockMvc.perform(post("/api/workout-sessions").header(HttpHeaders.AUTHORIZATION, token)
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(planBody(secondPlan)))
-			.andExpect(status().isConflict());
+			.andExpect(status().isConflict())
+			.andExpect(jsonPath("$.code", is("WORKOUT_ALREADY_ACTIVE")));
 	}
 
 }

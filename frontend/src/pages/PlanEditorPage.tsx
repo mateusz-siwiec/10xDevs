@@ -10,6 +10,7 @@ import type { PlanEditorEntry, PlanTargetField } from '../components/PlanExercis
 import '../styles/page.css'
 import '../styles/workout.css'
 import '../styles/plans.css'
+import { translateError } from '../utils/errors'
 
 // Empty or non-integer text becomes null (rejected by the server) so fractions like 3.5 are never truncated.
 function toTarget(value: string): number | null {
@@ -55,7 +56,7 @@ function PlanEditor() {
       .catch((err) => {
         if (cancelled) return
         setLoadFailed(true)
-        setError(err instanceof Error ? err.message : null)
+        setError(translateError(err))
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
@@ -118,7 +119,7 @@ function PlanEditor() {
       }
       navigate('/plans')
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('plans.editor.saveFailed'))
+      setError(translateError(err, 'plans.editor.saveFailed'))
       setSaving(false)
     }
   }

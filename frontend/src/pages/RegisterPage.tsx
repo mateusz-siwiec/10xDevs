@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router'
 import { useAuth } from '../auth/AuthContext'
 import LanguageSwitcher from '../components/LanguageSwitcher'
 import '../styles/page.css'
+import { translateError } from '../utils/errors'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -23,7 +24,7 @@ export default function RegisterPage() {
       await register(email, password)
       navigate('/')
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('auth.registrationFailed'))
+      setError(translateError(err, 'auth.registrationFailed'))
     } finally {
       setSubmitting(false)
     }

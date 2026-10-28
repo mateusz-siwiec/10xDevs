@@ -1,5 +1,7 @@
 package com.example.gymtrack.workout;
 
+import com.example.gymtrack.common.ErrorBody;
+import com.example.gymtrack.common.ErrorCode;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,28 +17,28 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 public class WorkoutExceptionHandler {
 
 	@ExceptionHandler(WorkoutConflictException.class)
-	public ResponseEntity<Map<String, String>> handleConflict(WorkoutConflictException ex) {
-		return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", ex.getMessage()));
+	public ResponseEntity<Map<String, Object>> handleConflict(WorkoutConflictException ex) {
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorBody.of(ex.getCode(), ex.getMessage()));
 	}
 
 	@ExceptionHandler(InvalidDashboardWindowException.class)
-	public ResponseEntity<Map<String, String>> handleInvalidWindow(InvalidDashboardWindowException ex) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", ex.getMessage()));
+	public ResponseEntity<Map<String, Object>> handleInvalidWindow(InvalidDashboardWindowException ex) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorBody.of(ex.getCode(), ex.getMessage()));
 	}
 
 	@ExceptionHandler(InvalidWeeklyGoalException.class)
-	public ResponseEntity<Map<String, String>> handleInvalidWeeklyGoal(InvalidWeeklyGoalException ex) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", ex.getMessage()));
+	public ResponseEntity<Map<String, Object>> handleInvalidWeeklyGoal(InvalidWeeklyGoalException ex) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorBody.of(ex.getCode(), ex.getMessage()));
 	}
 
 	@ExceptionHandler(InvalidHistoryQueryException.class)
-	public ResponseEntity<Map<String, String>> handleInvalidHistoryQuery(InvalidHistoryQueryException ex) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", ex.getMessage()));
+	public ResponseEntity<Map<String, Object>> handleInvalidHistoryQuery(InvalidHistoryQueryException ex) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorBody.of(ex.getCode(), ex.getMessage()));
 	}
 
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
-	public ResponseEntity<Map<String, String>> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Invalid " + ex.getName()));
+	public ResponseEntity<Map<String, Object>> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorBody.of(ErrorCode.INVALID_PARAMETER, "Invalid " + ex.getName(), ex.getName(), null));
 	}
 
 }

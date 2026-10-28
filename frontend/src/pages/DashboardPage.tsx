@@ -9,6 +9,7 @@ import WeeklyVolumeChart from '../components/WeeklyVolumeChart'
 import { formatDuration, formatVolume } from '../utils/format'
 import '../styles/page.css'
 import '../styles/dashboard.css'
+import { translateError } from '../utils/errors'
 
 interface FetchResult {
   days: StatsWindow
@@ -71,7 +72,7 @@ export default function DashboardPage() {
           setResult({
             days,
             stats: null,
-            error: err instanceof Error ? err.message : null,
+            error: translateError(err),
           })
         }
       })
@@ -91,7 +92,7 @@ export default function DashboardPage() {
         if (!cancelled) {
           setInsightsResult({
             insights: null,
-            error: err instanceof Error ? err.message : null,
+            error: translateError(err),
           })
         }
       })
@@ -124,7 +125,7 @@ export default function DashboardPage() {
         )
       }
     } catch (err) {
-      setGoalError(err instanceof Error ? err.message : t('dashboard.goalSaveFailed'))
+      setGoalError(translateError(err, 'dashboard.goalSaveFailed'))
     } finally {
       setSaving(false)
     }

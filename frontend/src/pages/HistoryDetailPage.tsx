@@ -6,6 +6,7 @@ import type { Exercise, HistoryDetail } from '../api/client'
 import { formatDate, formatDuration, formatVolume } from '../utils/format'
 import '../styles/page.css'
 import '../styles/history.css'
+import { translateError } from '../utils/errors'
 
 interface FetchResult {
   id: string
@@ -35,7 +36,7 @@ export default function HistoryDetailPage() {
           data: null,
           exercises: [],
           notFound,
-          error: err instanceof Error ? err.message : null,
+          error: translateError(err),
         })
       })
     return () => {

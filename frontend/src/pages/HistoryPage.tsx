@@ -6,6 +6,7 @@ import type { HistoryPage as HistoryPageData, PlanSummary } from '../api/client'
 import { formatDate, formatDuration, formatVolume } from '../utils/format'
 import '../styles/page.css'
 import '../styles/history.css'
+import { translateError } from '../utils/errors'
 
 interface FetchResult {
   key: string
@@ -56,7 +57,7 @@ export default function HistoryPage() {
           setResult({
             key,
             data: null,
-            error: err instanceof Error ? err.message : null,
+            error: translateError(err),
           })
         }
       })

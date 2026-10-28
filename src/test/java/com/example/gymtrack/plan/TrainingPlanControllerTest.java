@@ -222,6 +222,7 @@ class TrainingPlanControllerTest {
 
 		mockMvc.perform(get("/api/training-plans/" + planId).header(HttpHeaders.AUTHORIZATION, tokenB))
 			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.code", is("PLAN_NOT_FOUND")))
 			.andExpect(jsonPath("$.error", notNullValue()));
 		mockMvc.perform(put("/api/training-plans/" + planId)
 				.header(HttpHeaders.AUTHORIZATION, tokenB)
@@ -286,6 +287,7 @@ class TrainingPlanControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(json))
 				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.code", is("VALIDATION_FAILED")))
 				.andExpect(jsonPath("$.error", notNullValue()));
 		}
 	}
@@ -302,12 +304,14 @@ class TrainingPlanControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(body("Bad", unknown)))
 			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.code", is("EXERCISE_NOT_FOUND")))
 			.andExpect(jsonPath("$.error", is("Exercise not found")));
 		mockMvc.perform(put("/api/training-plans/" + planId)
 				.header(HttpHeaders.AUTHORIZATION, token)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(body("Bad", unknown)))
 			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.code", is("EXERCISE_NOT_FOUND")))
 			.andExpect(jsonPath("$.error", is("Exercise not found")));
 
 		mockMvc.perform(get("/api/training-plans/" + planId).header(HttpHeaders.AUTHORIZATION, token))
