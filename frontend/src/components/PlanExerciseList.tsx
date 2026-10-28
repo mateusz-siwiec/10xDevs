@@ -1,9 +1,11 @@
 import { useTranslation } from 'react-i18next'
+import { exerciseName } from '../utils/exercises'
 
 export interface PlanEditorEntry {
   key: string
   exerciseId: string
   exerciseName: string
+  exerciseSlug: string
   sets: string
   reps: string
 }
@@ -34,14 +36,14 @@ export default function PlanExerciseList({
     <ol className="plan-exercise-list">
       {entries.map((entry, index) => (
         <li key={entry.key} className="plan-exercise-item">
-          <span className="plan-exercise-name">{entry.exerciseName}</span>
+          <span className="plan-exercise-name">{exerciseName({ slug: entry.exerciseSlug, name: entry.exerciseName })}</span>
           <div className="plan-exercise-targets">
             <label className="plan-target-field">
               <span>{t('plans.editor.sets')}</span>
               <input
                 type="text"
                 inputMode="numeric"
-                aria-label={t('plans.editor.setsFor', { name: entry.exerciseName })}
+                aria-label={t('plans.editor.setsFor', { name: exerciseName({ slug: entry.exerciseSlug, name: entry.exerciseName }) })}
                 value={entry.sets}
                 disabled={disabled}
                 onChange={(event) => onTargetChange(entry.key, 'sets', event.target.value)}
@@ -52,7 +54,7 @@ export default function PlanExerciseList({
               <input
                 type="text"
                 inputMode="numeric"
-                aria-label={t('plans.editor.repsFor', { name: entry.exerciseName })}
+                aria-label={t('plans.editor.repsFor', { name: exerciseName({ slug: entry.exerciseSlug, name: entry.exerciseName }) })}
                 value={entry.reps}
                 disabled={disabled}
                 onChange={(event) => onTargetChange(entry.key, 'reps', event.target.value)}
@@ -63,7 +65,7 @@ export default function PlanExerciseList({
             <button
               type="button"
               className="btn-secondary"
-              aria-label={t('plans.editor.moveUpLabel', { name: entry.exerciseName })}
+              aria-label={t('plans.editor.moveUpLabel', { name: exerciseName({ slug: entry.exerciseSlug, name: entry.exerciseName }) })}
               disabled={disabled || index === 0}
               onClick={() => onMove(index, -1)}
             >
@@ -72,7 +74,7 @@ export default function PlanExerciseList({
             <button
               type="button"
               className="btn-secondary"
-              aria-label={t('plans.editor.moveDownLabel', { name: entry.exerciseName })}
+              aria-label={t('plans.editor.moveDownLabel', { name: exerciseName({ slug: entry.exerciseSlug, name: entry.exerciseName }) })}
               disabled={disabled || index === entries.length - 1}
               onClick={() => onMove(index, 1)}
             >
@@ -81,7 +83,7 @@ export default function PlanExerciseList({
             <button
               type="button"
               className="btn-secondary"
-              aria-label={t('plans.editor.removeLabel', { name: entry.exerciseName })}
+              aria-label={t('plans.editor.removeLabel', { name: exerciseName({ slug: entry.exerciseSlug, name: entry.exerciseName }) })}
               disabled={disabled}
               onClick={() => onRemove(entry.key)}
             >

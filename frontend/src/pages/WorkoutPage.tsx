@@ -58,7 +58,7 @@ export default function WorkoutPage() {
       .finally(() => setLoading(false))
   }, [])
 
-  const exerciseNames = useMemo(() => new Map(exercises.map((e) => [e.id, e.name])), [exercises])
+  const exercisesById = useMemo(() => new Map(exercises.map((e) => [e.id, e])), [exercises])
 
   const sessionId = session?.id ?? null
   const sessionPlanId = session?.planId ?? null
@@ -308,7 +308,7 @@ export default function WorkoutPage() {
               <h2>{t('workout.loggedSets')}</h2>
               <SessionSetList
                 sets={session.sets}
-                exerciseNames={exerciseNames}
+                exercisesById={exercisesById}
                 onDelete={handleDelete}
               />
             </section>

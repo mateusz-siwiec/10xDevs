@@ -8,29 +8,10 @@ import '../styles/workout.css'
 import '../styles/plans.css'
 import '../styles/exercises.css'
 import { translateError } from '../utils/errors'
-
-const MUSCLE_GROUPS = [
-  'CHEST',
-  'BACK',
-  'SHOULDERS',
-  'BICEPS',
-  'TRICEPS',
-  'QUADS',
-  'HAMSTRINGS',
-  'GLUTES',
-  'CALVES',
-  'CORE',
-]
+import { exerciseName, sortExercisesByName } from '../utils/exercises'
+import { MUSCLE_GROUPS, muscleGroupLabel } from '../utils/muscleGroups'
 
 const NAME_MAX_LENGTH = 60
-
-function formatGroup(group: string): string {
-  return group.charAt(0) + group.slice(1).toLowerCase()
-}
-
-function byName(a: Exercise, b: Exercise): number {
-  return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
-}
 
 export default function MyExercisesPage() {
   const { t } = useTranslation()
@@ -49,7 +30,7 @@ export default function MyExercisesPage() {
     let cancelled = false
     getExercises()
       .then((list) => {
-        if (!cancelled) setExercises(list.filter((e) => e.custom).sort(byName))
+        if (!cancelled) setExercises(list.filter((e) => e.custom))
       })
       .catch((err) => {
         if (cancelled) return
@@ -85,7 +66,7 @@ export default function MyExercisesPage() {
         primaryMuscleGroup: primary,
         secondaryMuscleGroups: secondary,
       })
-      setExercises((list) => [...list, created].sort(byName))
+      setExercises((list) => [...list, created])
       setName('')
       setPrimary('')
       setSecondary([])
@@ -140,7 +121,7 @@ export default function MyExercisesPage() {
               </option>
               {MUSCLE_GROUPS.map((group) => (
                 <option key={group} value={group}>
-                  {formatGroup(group)}
+                  {muscleGroupLabel(group)}
                 </option>
               ))}
             </select>
@@ -155,7 +136,7 @@ export default function MyExercisesPage() {
                     checked={secondary.includes(group)}
                     onChange={() => toggleSecondary(group)}
                   />
-                  {formatGroup(group)}
+                  {muscleGroupLabel(group)}
                 </label>
               ))}
             </div>
@@ -177,14 +158,14 @@ export default function MyExercisesPage() {
             <p className="page-subtext">{t('exercises.empty')}</p>
           ) : (
             <ul className="plan-list">
-              {exercises.map((exercise) => (
+              {sortExercisesByName(exercises).map((exercise) => (
                 <li key={exercise.id} className="plan-item">
                   <div className="plan-item-info">
-                    <span className="plan-item-name">{exercise.name}</span>
+                    <span className="plan-item-name">{exerciseName(exercise)}</span>
                     <span>
-                      {formatGroup(exercise.primaryMuscleGroup)}
+                      {muscleGroupLabel(exercise.primaryMuscleGroup)}
                       {exercise.secondaryMuscleGroups.length > 0 &&
-                        ` · ${exercise.secondaryMuscleGroups.map(formatGroup).join(', ')}`}
+                        ` · ${exercise.secondaryMuscleGroups.map(muscleGroupLabel).join(', ')}`}
                     </span>
                   </div>
                   {confirmingId === exercise.id ? (

@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { exerciseName } from '../utils/exercises'
 import type { EntryProgress } from './planProgress'
 import { currentIndex, selectedIndex as findSelectedIndex } from './planProgress'
 
@@ -41,7 +42,7 @@ export default function PlanWalkthrough({
               onClick={() => onSelect(entry.exerciseId, entry.position)}
             >
               <span className="walkthrough-entry-info">
-                <span className="walkthrough-entry-name">{entry.exerciseName}</span>
+                <span className="walkthrough-entry-name">{exerciseName({ slug: entry.exerciseSlug, name: entry.exerciseName })}</span>
                 <span>
                   {entry.sets} × {entry.reps}
                 </span>

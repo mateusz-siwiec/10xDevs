@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { getSubstitutes } from '../api/client'
 import type { Exercise } from '../api/client'
 import { translateError } from '../utils/errors'
+import { exerciseName, sortExercisesByName } from '../utils/exercises'
+import { muscleGroupLabel } from '../utils/muscleGroups'
 
 interface SubstituteSuggestionsProps {
   exerciseId: string
@@ -63,16 +65,16 @@ export default function SubstituteSuggestions({
   } else {
     body = (
       <ul className="substitute-list">
-        {current.items.slice(0, MAX_SUGGESTIONS).map((exercise) => (
+        {sortExercisesByName(current.items.slice(0, MAX_SUGGESTIONS)).map((exercise) => (
           <li key={exercise.id} className="substitute-item">
             <div className="substitute-item-info">
-              <span className="substitute-item-name">{exercise.name}</span>
-              <span className="page-subtext">{exercise.primaryMuscleGroup}</span>
+              <span className="substitute-item-name">{exerciseName(exercise)}</span>
+              <span className="page-subtext">{muscleGroupLabel(exercise.primaryMuscleGroup)}</span>
             </div>
             <button
               type="button"
               className="btn-primary"
-              aria-label={t('workout.substitutes.useLabel', { name: exercise.name })}
+              aria-label={t('workout.substitutes.useLabel', { name: exerciseName(exercise) })}
               onClick={() => onAccept(exercise.id)}
             >
               {t('workout.substitutes.useThis')}

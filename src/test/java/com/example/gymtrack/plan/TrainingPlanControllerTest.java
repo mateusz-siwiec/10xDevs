@@ -140,6 +140,8 @@ class TrainingPlanControllerTest {
 			.andExpect(jsonPath("$.exercises", hasSize(3)))
 			.andExpect(jsonPath("$.exercises[0].exerciseId", is(reordered.get(0).toString())))
 			.andExpect(jsonPath("$.exercises[0].exerciseName", notNullValue()))
+			.andExpect(jsonPath("$.exercises[0].exerciseSlug",
+				is(exerciseRepository.findById(reordered.get(0)).orElseThrow().getSlug())))
 			.andExpect(jsonPath("$.exercises[0].position", is(0)))
 			.andExpect(jsonPath("$.exercises[1].exerciseId", is(reordered.get(1).toString())))
 			.andExpect(jsonPath("$.exercises[1].position", is(1)))

@@ -389,30 +389,30 @@ None for data. Because Flyway is disabled in production and this plan adds no sc
 
 #### Automated
 
-- [x] 3.1 Backend tests pass, including the new code assertions
-- [x] 3.2 Frontend builds and typechecks
-- [x] 3.3 Frontend linting passes
-- [x] 3.4 Locale parity test passes with the new errors and validation keys
+- [x] 3.1 Backend tests pass, including the new code assertions — fa43ee8
+- [x] 3.2 Frontend builds and typechecks — fa43ee8
+- [x] 3.3 Frontend linting passes — fa43ee8
+- [x] 3.4 Locale parity test passes with the new errors and validation keys — fa43ee8
 
 #### Manual
 
-- [x] 3.5 Wrong password shows the translated message in both languages
+- [x] 3.5 Wrong password shows the translated message in both languages — fa43ee8
 - [x] 3.6 Invalid registration input shows a translated, field-aware validation message
 - [x] 3.7 A non-existent history entry shows the translated not-found state
-- [x] 3.8 A response with an unknown or missing code falls back to the English error text
+- [x] 3.8 A response with an unknown or missing code falls back to the English error text — fa43ee8
 
 ### Phase 4: Exercise and muscle-group names
 
 #### Automated
 
-- [ ] 4.1 Backend tests pass, including the exerciseSlug assertion
-- [ ] 4.2 Frontend builds and typechecks
-- [ ] 4.3 Frontend linting passes
-- [ ] 4.4 Locale parity and seed-slug tests pass
+- [x] 4.1 Backend tests pass, including the exerciseSlug assertion
+- [x] 4.2 Frontend builds and typechecks
+- [x] 4.3 Frontend linting passes
+- [x] 4.4 Locale parity and seed-slug tests pass
 
 #### Manual
 
-- [ ] 4.5 Polish exercise names appear and sort correctly in picker, alternatives, plans, workout and history
-- [ ] 4.6 Custom exercise and plan names are shown verbatim in both languages
-- [ ] 4.7 Muscle groups are labelled in both languages with no raw enum text left
-- [ ] 4.8 A lifter has reviewed the Polish exercise names
+- [x] 4.5 Polish exercise names appear and sort correctly in picker, alternatives, plans, workout and history
+- [x] 4.6 Custom exercise and plan names are shown verbatim in both languages
+- [x] 4.7 Muscle groups are labelled in both languages with no raw enum text left
+- [x] 4.8 A lifter has reviewed the Polish exercise names

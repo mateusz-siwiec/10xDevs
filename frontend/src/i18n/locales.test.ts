@@ -1,3 +1,5 @@
+import { readdirSync, readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import en from './locales/en.json'
 import pl from './locales/pl.json'
@@ -48,5 +50,29 @@ describe('locale parity', () => {
       }
     }
     expect(missing.sort()).toEqual([])
+  })
+})
+
+describe('seeded exercise names', () => {
+  const dir = resolve(__dirname, '../../../src/main/resources/db/migration')
+  const seededSlugs = readdirSync(dir)
+    .filter((file) => file.endsWith('.sql'))
+    .flatMap((file) => {
+      const sql = readFileSync(resolve(dir, file), 'utf8')
+      return [...sql.matchAll(/insert\s+into\s+exercises\b[^;]*;/gi)].flatMap((statement) =>
+        [...statement[0].matchAll(/\(\s*'([^']+)'\s*,\s*'/g)].map((row) => row[1]),
+      )
+    })
+
+  it('finds the seeded slugs in the migrations', () => {
+    expect(seededSlugs.length).toBeGreaterThanOrEqual(40)
+  })
+
+  it.each([
+    ['en', en],
+    ['pl', pl],
+  ])('has an exercises.<slug> entry in %s for every seeded slug', (_lang, resource) => {
+    const names = resource.exercises as Record<string, unknown>
+    expect(seededSlugs.filter((slug) => typeof names[slug] !== 'string')).toEqual([])
   })
 })

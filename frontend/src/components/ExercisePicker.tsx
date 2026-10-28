@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import type { Exercise } from '../api/client'
+import { exerciseName, sortExercisesByName } from '../utils/exercises'
 
 interface ExercisePickerProps {
   exercises: Exercise[]
@@ -21,9 +22,9 @@ export default function ExercisePicker({ exercises, selectedId, onChange }: Exer
         <option value="" disabled>
           {t('exercises.picker.choose')}
         </option>
-        {exercises.map((exercise) => (
+        {sortExercisesByName(exercises).map((exercise) => (
           <option key={exercise.id} value={exercise.id}>
-            {exercise.name}
+            {exerciseName(exercise)}
           </option>
         ))}
       </select>

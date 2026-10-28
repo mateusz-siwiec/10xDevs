@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useParams } from 'react-router'
 import { ApiError, getExercises, getHistorySession } from '../api/client'
 import type { Exercise, HistoryDetail } from '../api/client'
+import { exerciseName } from '../utils/exercises'
 import { formatDate, formatDuration, formatVolume } from '../utils/format'
 import '../styles/page.css'
 import '../styles/history.css'
@@ -72,7 +73,11 @@ export default function HistoryDetailPage() {
     )
   } else {
     const { data, exercises } = shown
-    const names = new Map(exercises.map((e) => [e.id, e.name]))
+    const byId = new Map(exercises.map((e) => [e.id, e]))
+    const nameOf = (exerciseId: string) => {
+      const exercise = byId.get(exerciseId)
+      return exercise ? exerciseName(exercise) : t('common.unknownExercise')
+    }
     const groups = data.exercises.filter((g) => g.sets.length > 0)
     body = (
       <>
@@ -90,7 +95,7 @@ export default function HistoryDetailPage() {
         ) : (
           groups.map((group, gi) => (
             <section key={`${group.exerciseId}-${gi}`} className="history-detail-exercise">
-              <h2>{names.get(group.exerciseId) ?? t('common.unknownExercise')}</h2>
+              <h2>{nameOf(group.exerciseId)}</h2>
               <ol>
                 {group.sets.map((set, index) => (
                   <li key={index}>

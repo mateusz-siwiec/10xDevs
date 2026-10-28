@@ -344,6 +344,7 @@ export interface PlanSummary {
 export interface PlanEntry {
   exerciseId: string
   exerciseName: string
+  exerciseSlug: string
   position: number
   sets: number
   reps: number

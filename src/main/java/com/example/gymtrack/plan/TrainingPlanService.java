@@ -37,7 +37,7 @@ public class TrainingPlanService {
 
 	@Transactional
 	public PlanResponse create(UUID userId, String name, List<PlanEntryInput> entries) {
-		Map<UUID, String> names = loadExerciseNames(userId, exerciseIds(entries));
+		Map<UUID, Exercise> names = loadExerciseNames(userId, exerciseIds(entries));
 		TrainingPlan plan = new TrainingPlan(userId, name.trim());
 		plan.replaceEntries(entries);
 		planRepository.saveAndFlush(plan);
@@ -49,7 +49,7 @@ public class TrainingPlanService {
 		// Row lock serializes concurrent replaces of the same plan; otherwise the unique position index can 500.
 		TrainingPlan plan = planRepository.findByIdAndUserIdForUpdate(planId, userId)
 			.orElseThrow(() -> new PlanNotFoundException("Training plan not found"));
-		Map<UUID, String> names = loadExerciseNames(userId, exerciseIds(entries));
+		Map<UUID, Exercise> names = loadExerciseNames(userId, exerciseIds(entries));
 		plan.rename(name.trim());
 		// (plan_id, position) is unique and inserts flush before deletes: remove old entries first.
 		plan.replaceEntries(List.of());
@@ -73,11 +73,11 @@ public class TrainingPlanService {
 		return entries.stream().map(PlanEntryInput::exerciseId).toList();
 	}
 
-	private Map<UUID, String> loadExerciseNames(UUID userId, List<UUID> exerciseIds) {
+	private Map<UUID, Exercise> loadExerciseNames(UUID userId, List<UUID> exerciseIds) {
 		List<UUID> distinct = exerciseIds.stream().distinct().toList();
-		Map<UUID, String> names = new HashMap<>();
+		Map<UUID, Exercise> names = new HashMap<>();
 		for (Exercise exercise : exerciseRepository.findVisibleByIdIn(distinct, userId)) {
-			names.put(exercise.getId(), exercise.getName());
+			names.put(exercise.getId(), exercise);
 		}
 		if (names.size() != distinct.size()) {
 			throw new ResourceNotFoundException(ErrorCode.EXERCISE_NOT_FOUND, "Exercise not found");
