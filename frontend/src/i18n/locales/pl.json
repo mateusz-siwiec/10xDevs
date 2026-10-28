@@ -1,0 +1,18 @@
+{
+  "nav": {
+    "dashboard": "Pulpit",
+    "workout": "Trening",
+    "history": "Historia",
+    "plans": "Plany",
+    "exercises": "Ćwiczenia",
+    "logout": "Wyloguj"
+  },
+  "common": {
+    "language": "Język",
+    "duration": {
+      "lessThanMinute": "<1 min",
+      "minutes": "{{minutes}} min",
+      "hoursMinutes": "{{hours}} godz. {{minutes}} min"
+    }
+  }
+}

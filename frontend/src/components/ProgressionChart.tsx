@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { getProgression } from '../api/client'
 import type { ProgressionPoint } from '../api/client'
+import i18n from '../i18n'
 
 interface ProgressionChartProps {
   exerciseId: string
@@ -18,10 +20,11 @@ function formatDate(value: string): string {
   const date = new Date(value)
   return Number.isNaN(date.getTime())
     ? value
-    : date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+    : date.toLocaleDateString(i18n.language === 'pl' ? 'pl-PL' : 'en-GB', { month: 'short', day: 'numeric' })
 }
 
 export default function ProgressionChart({ exerciseId, refreshKey }: ProgressionChartProps) {
+  useTranslation() // re-render on language change so axis dates are reformatted
   const [result, setResult] = useState<FetchResult | null>(null)
   const requestKey = `${exerciseId}:${refreshKey}`
 

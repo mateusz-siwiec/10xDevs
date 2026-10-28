@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { useAuth } from '../auth/AuthContext'
+import LanguageSwitcher from '../components/LanguageSwitcher'
 import '../styles/page.css'
 
 export default function LoginPage() {
@@ -28,6 +29,9 @@ export default function LoginPage() {
 
   return (
     <div className="page-shell">
+      <div className="language-switcher-floating">
+        <LanguageSwitcher />
+      </div>
       <main className="page-card">
         <h1>Log in</h1>
         <form onSubmit={handleSubmit}>

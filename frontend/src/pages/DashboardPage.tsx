@@ -5,6 +5,7 @@ import type { DashboardInsights, DashboardStats, StatsWindow } from '../api/clie
 import ConsistencyCard from '../components/ConsistencyCard'
 import RecentRecords from '../components/RecentRecords'
 import WeeklyVolumeChart from '../components/WeeklyVolumeChart'
+import { formatDuration, formatVolume } from '../utils/format'
 import '../styles/page.css'
 import '../styles/dashboard.css'
 
@@ -45,20 +46,6 @@ function Delta({ current, previous }: { current: number; previous: number | unde
       {arrow} {Math.abs(delta)}% vs previous
     </span>
   )
-}
-
-function formatDuration(totalSeconds: number): string {
-  const totalMinutes = Math.floor(Math.max(0, totalSeconds) / 60)
-  const hours = Math.floor(totalMinutes / 60)
-  const minutes = totalMinutes % 60
-  if (totalSeconds > 0 && totalMinutes === 0) {
-    return '<1m'
-  }
-  return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`
-}
-
-function formatVolume(kg: number): string {
-  return `${kg.toLocaleString(undefined, { maximumFractionDigits: 1 })} kg`
 }
 
 export default function DashboardPage() {

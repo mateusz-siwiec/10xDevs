@@ -1,0 +1,18 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "workout": "Workout",
+    "history": "History",
+    "plans": "Plans",
+    "exercises": "Exercises",
+    "logout": "Log out"
+  },
+  "common": {
+    "language": "Language",
+    "duration": {
+      "lessThanMinute": "<1m",
+      "minutes": "{{minutes}}m",
+      "hoursMinutes": "{{hours}}h {{minutes}}m"
+    }
+  }
+}
