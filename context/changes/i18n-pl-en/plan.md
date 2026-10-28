@@ -405,14 +405,14 @@ None for data. Because Flyway is disabled in production and this plan adds no sc
 
 #### Automated
 
-- [x] 4.1 Backend tests pass, including the exerciseSlug assertion
-- [x] 4.2 Frontend builds and typechecks
-- [x] 4.3 Frontend linting passes
-- [x] 4.4 Locale parity and seed-slug tests pass
+- [x] 4.1 Backend tests pass, including the exerciseSlug assertion — 8545f0d
+- [x] 4.2 Frontend builds and typechecks — 8545f0d
+- [x] 4.3 Frontend linting passes — 8545f0d
+- [x] 4.4 Locale parity and seed-slug tests pass — 8545f0d
 
 #### Manual
 
-- [x] 4.5 Polish exercise names appear and sort correctly in picker, alternatives, plans, workout and history
-- [x] 4.6 Custom exercise and plan names are shown verbatim in both languages
-- [x] 4.7 Muscle groups are labelled in both languages with no raw enum text left
-- [x] 4.8 A lifter has reviewed the Polish exercise names
+- [x] 4.5 Polish exercise names appear and sort correctly in picker, alternatives, plans, workout and history — 8545f0d
+- [x] 4.6 Custom exercise and plan names are shown verbatim in both languages — 8545f0d
+- [x] 4.7 Muscle groups are labelled in both languages with no raw enum text left — 8545f0d
+- [x] 4.8 A lifter has reviewed the Polish exercise names — 8545f0d
