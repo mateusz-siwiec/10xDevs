@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import type { Streak } from '../api/client'
 
 interface ConsistencyCardProps {
@@ -9,6 +10,7 @@ interface ConsistencyCardProps {
 }
 
 export default function ConsistencyCard({ streak, saving, error, onSaveGoal }: ConsistencyCardProps) {
+  const { t } = useTranslation()
   const [draft, setDraft] = useState(streak.goal !== null ? String(streak.goal) : '')
 
   const parsed = Number(draft)
@@ -16,16 +18,16 @@ export default function ConsistencyCard({ streak, saving, error, onSaveGoal }: C
 
   return (
     <section className="dashboard-section">
-      <h2>Consistency</h2>
+      <h2>{t('dashboard.consistency.title')}</h2>
       {streak.goal === null ? (
-        <p className="page-subtext">Set a weekly workout goal to start a streak.</p>
+        <p className="page-subtext">{t('dashboard.consistency.setGoalPrompt')}</p>
       ) : (
         <div className="consistency-summary">
           <span className="dashboard-tile-value">
-            {streak.weeks} {streak.weeks === 1 ? 'week' : 'weeks'} streak
+            {t('dashboard.consistency.streak', { count: streak.weeks })}
           </span>
           <span className="dashboard-tile-label">
-            {streak.currentWeekWorkouts} of {streak.goal} this week
+            {t('dashboard.consistency.thisWeek', { done: streak.currentWeekWorkouts, goal: streak.goal })}
           </span>
         </div>
       )}
@@ -37,7 +39,7 @@ export default function ConsistencyCard({ streak, saving, error, onSaveGoal }: C
         }}
       >
         <label className="consistency-label">
-          Weekly goal (1-14)
+          {t('dashboard.consistency.weeklyGoal')}
           <input
             type="number"
             min={1}
@@ -50,7 +52,7 @@ export default function ConsistencyCard({ streak, saving, error, onSaveGoal }: C
           />
         </label>
         <button type="submit" className="btn-secondary" disabled={saving || !draftValid}>
-          {saving ? 'Saving…' : 'Save'}
+          {saving ? t('common.saving') : t('common.save')}
         </button>
         {streak.goal !== null && (
           <button
@@ -62,7 +64,7 @@ export default function ConsistencyCard({ streak, saving, error, onSaveGoal }: C
               onSaveGoal(null)
             }}
           >
-            Clear
+            {t('common.clear')}
           </button>
         )}
       </form>

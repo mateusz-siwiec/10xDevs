@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import type { EntryProgress } from './planProgress'
 import { currentIndex, selectedIndex as findSelectedIndex } from './planProgress'
 
@@ -16,6 +17,7 @@ export default function PlanWalkthrough({
   onSelect,
   onSkip,
 }: PlanWalkthroughProps) {
+  const { t } = useTranslation()
   const current = currentIndex(progress, skipped)
   // Highlight a single entry: the current one if it matches, else the first entry of that exercise.
   const selectedIndex = findSelectedIndex(progress, current, selectedExerciseId)
@@ -45,7 +47,7 @@ export default function PlanWalkthrough({
                 </span>
               </span>
               <span className="walkthrough-entry-progress">
-                {isSkipped && <span className="walkthrough-skipped-badge">Skipped</span>}
+                {isSkipped && <span className="walkthrough-skipped-badge">{t('workout.skipped')}</span>}
                 {done ? '✓ ' : ''}
                 {logged}/{entry.sets}
               </span>
@@ -56,7 +58,7 @@ export default function PlanWalkthrough({
                 className="btn-secondary walkthrough-skip-btn"
                 onClick={() => onSkip(entry.position)}
               >
-                Skip
+                {t('workout.skip')}
               </button>
             )}
           </li>

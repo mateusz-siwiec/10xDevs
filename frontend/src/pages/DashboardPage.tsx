@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { getDashboardInsights, getDashboardStats, setWeeklyGoal } from '../api/client'
 import type { DashboardInsights, DashboardStats, StatsWindow } from '../api/client'
@@ -20,11 +21,11 @@ interface InsightsResult {
   error: string | null
 }
 
-const WINDOW_OPTIONS: { value: StatsWindow; label: string }[] = [
+const WINDOW_OPTIONS: { value: StatsWindow; label: string | null }[] = [
   { value: 7, label: '7' },
   { value: 30, label: '30' },
   { value: 90, label: '90' },
-  { value: 'all', label: 'All' },
+  { value: 'all', label: null },
 ]
 
 /** Whole-number percentage change; null when there is no previous window or it was 0. */
@@ -37,18 +38,20 @@ function percentDelta(current: number, previous: number | undefined): number | n
 }
 
 function Delta({ current, previous }: { current: number; previous: number | undefined }) {
+  const { t } = useTranslation()
   const delta = percentDelta(current, previous)
   if (delta === null) return null
   const direction = delta > 0 ? 'up' : delta < 0 ? 'down' : 'flat'
   const arrow = delta > 0 ? '▲' : delta < 0 ? '▼' : '='
   return (
     <span className="dashboard-delta" data-direction={direction}>
-      {arrow} {Math.abs(delta)}% vs previous
+      {arrow} {t('dashboard.deltaVsPrevious', { percent: Math.abs(delta) })}
     </span>
   )
 }
 
 export default function DashboardPage() {
+  const { t } = useTranslation()
   const [days, setDays] = useState<StatsWindow>(7)
   const [result, setResult] = useState<FetchResult | null>(null)
   const [insightsResult, setInsightsResult] = useState<InsightsResult | null>(null)
@@ -68,7 +71,7 @@ export default function DashboardPage() {
           setResult({
             days,
             stats: null,
-            error: err instanceof Error ? err.message : 'Failed to load dashboard',
+            error: err instanceof Error ? err.message : null,
           })
         }
       })
@@ -88,7 +91,7 @@ export default function DashboardPage() {
         if (!cancelled) {
           setInsightsResult({
             insights: null,
-            error: err instanceof Error ? err.message : 'Failed to load insights',
+            error: err instanceof Error ? err.message : null,
           })
         }
       })
@@ -121,7 +124,7 @@ export default function DashboardPage() {
         )
       }
     } catch (err) {
-      setGoalError(err instanceof Error ? err.message : 'Failed to save goal')
+      setGoalError(err instanceof Error ? err.message : t('dashboard.goalSaveFailed'))
     } finally {
       setSaving(false)
     }
@@ -131,18 +134,18 @@ export default function DashboardPage() {
 
   let body
   if (shown === null) {
-    body = <p className="page-subtext">Loading stats…</p>
+    body = <p className="page-subtext">{t('dashboard.loading')}</p>
   } else if (shown.error || shown.stats === null) {
     body = (
       <p className="error-text" role="alert">
-        {shown.error ?? 'Failed to load dashboard'}
+        {shown.error ?? t('dashboard.loadFailed')}
       </p>
     )
   } else if (shown.stats.workoutCount === 0) {
     body = (
       <p className="page-subtext">
-        {days === 'all' ? 'No completed workouts yet.' : `No completed workouts in the last ${days} days.`} Start a
-        workout to see your stats here.
+        {days === 'all' ? t('dashboard.noWorkoutsAll') : t('dashboard.noWorkoutsWindow', { days })}{' '}
+        {t('dashboard.startHint')}
       </p>
     )
   } else {
@@ -150,17 +153,17 @@ export default function DashboardPage() {
     body = (
       <div className="dashboard-tiles">
         <div className="dashboard-tile">
-          <span className="dashboard-tile-label">Workouts</span>
+          <span className="dashboard-tile-label">{t('dashboard.tileWorkouts')}</span>
           <span className="dashboard-tile-value">{stats.workoutCount}</span>
           <Delta current={stats.workoutCount} previous={stats.previous?.workoutCount} />
         </div>
         <div className="dashboard-tile">
-          <span className="dashboard-tile-label">Time</span>
+          <span className="dashboard-tile-label">{t('dashboard.tileTime')}</span>
           <span className="dashboard-tile-value">{formatDuration(stats.totalDurationSeconds)}</span>
           <Delta current={stats.totalDurationSeconds} previous={stats.previous?.totalDurationSeconds} />
         </div>
         <div className="dashboard-tile">
-          <span className="dashboard-tile-label">Volume</span>
+          <span className="dashboard-tile-label">{t('dashboard.tileVolume')}</span>
           <span className="dashboard-tile-value">{formatVolume(stats.totalVolumeKg)}</span>
           <Delta current={stats.totalVolumeKg} previous={stats.previous?.totalVolumeKg} />
         </div>
@@ -170,12 +173,12 @@ export default function DashboardPage() {
 
   let insightsBody
   if (insightsResult === null) {
-    insightsBody = <p className="page-subtext">Loading insights…</p>
+    insightsBody = <p className="page-subtext">{t('dashboard.insightsLoading')}</p>
   } else if (insightsResult.error || insightsResult.insights === null) {
     insightsBody = (
       <>
         <p className="error-text" role="alert">
-          {insightsResult.error ?? 'Failed to load insights'}
+          {insightsResult.error ?? t('dashboard.insightsFailed')}
         </p>
         <button
           type="button"
@@ -185,7 +188,7 @@ export default function DashboardPage() {
             setInsightsAttempt((attempt) => attempt + 1)
           }}
         >
-          Retry
+          {t('common.retry')}
         </button>
       </>
     )
@@ -209,8 +212,8 @@ export default function DashboardPage() {
   return (
     <div className="page-shell">
       <main className="page-card dashboard-card">
-        <h1>Dashboard</h1>
-        <div className="dashboard-toggle" role="group" aria-label="Time window (days)">
+        <h1>{t('dashboard.title')}</h1>
+        <div className="dashboard-toggle" role="group" aria-label={t('dashboard.windowLabel')}>
           {WINDOW_OPTIONS.map((option) => (
             <button
               key={option.value}
@@ -219,14 +222,14 @@ export default function DashboardPage() {
               aria-pressed={days === option.value}
               onClick={() => setDays(option.value)}
             >
-              {option.label}
+              {option.label ?? t('dashboard.windowAll')}
             </button>
           ))}
         </div>
         <div aria-live="polite">{body}</div>
         {insightsBody}
         <Link to="/workout" className="btn-primary dashboard-start">
-          Start workout
+          {t('dashboard.startWorkout')}
         </Link>
       </main>
     </div>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
+import { Trans, useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router'
 import { useAuth } from '../auth/AuthContext'
 import LanguageSwitcher from '../components/LanguageSwitcher'
@@ -12,6 +13,7 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false)
   const { login } = useAuth()
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -21,7 +23,7 @@ export default function LoginPage() {
       await login(email, password)
       navigate('/')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed')
+      setError(err instanceof Error ? err.message : t('auth.loginFailed'))
     } finally {
       setSubmitting(false)
     }
@@ -33,10 +35,10 @@ export default function LoginPage() {
         <LanguageSwitcher />
       </div>
       <main className="page-card">
-        <h1>Log in</h1>
+        <h1>{t('auth.loginTitle')}</h1>
         <form onSubmit={handleSubmit}>
           <div className="field">
-            <label htmlFor="login-email">Email</label>
+            <label htmlFor="login-email">{t('auth.email')}</label>
             <input
               id="login-email"
               type="email"
@@ -47,7 +49,7 @@ export default function LoginPage() {
             />
           </div>
           <div className="field">
-            <label htmlFor="login-password">Password</label>
+            <label htmlFor="login-password">{t('auth.password')}</label>
             <input
               id="login-password"
               type="password"
@@ -59,11 +61,11 @@ export default function LoginPage() {
           </div>
           {error && <p className="error-text">{error}</p>}
           <button type="submit" disabled={submitting} className="btn-primary">
-            {submitting ? 'Logging in…' : 'Log in'}
+            {submitting ? t('auth.loggingIn') : t('auth.login')}
           </button>
         </form>
         <p className="page-switch">
-          No account? <Link to="/register">Register</Link>
+          <Trans i18nKey="auth.noAccount" components={{ link: <Link to="/register" /> }} />
         </p>
       </main>
     </div>

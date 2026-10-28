@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { getSubstitutes } from '../api/client'
 import type { Exercise } from '../api/client'
 
@@ -21,6 +22,7 @@ export default function SubstituteSuggestions({
   onAccept,
   onDismiss,
 }: SubstituteSuggestionsProps) {
+  const { t } = useTranslation()
   const [result, setResult] = useState<FetchResult | null>(null)
 
   // State is only set from async callbacks; a cancelled flag drops stale responses.
@@ -35,7 +37,7 @@ export default function SubstituteSuggestions({
           setResult({
             key: exerciseId,
             items: [],
-            error: err instanceof Error ? err.message : 'Failed to load alternatives',
+            error: err instanceof Error ? err.message : '',
           })
         }
       })
@@ -48,15 +50,15 @@ export default function SubstituteSuggestions({
 
   let body
   if (current === null) {
-    body = <p className="page-subtext">Loading alternatives…</p>
-  } else if (current.error) {
+    body = <p className="page-subtext">{t('workout.substitutes.loading')}</p>
+  } else if (current.error !== null) {
     body = (
       <p className="error-text" role="alert">
-        {current.error}
+        {current.error || t('workout.substitutes.loadFailed')}
       </p>
     )
   } else if (current.items.length === 0) {
-    body = <p className="page-subtext">No alternatives available for this exercise.</p>
+    body = <p className="page-subtext">{t('workout.substitutes.empty')}</p>
   } else {
     body = (
       <ul className="substitute-list">
@@ -69,10 +71,10 @@ export default function SubstituteSuggestions({
             <button
               type="button"
               className="btn-primary"
-              aria-label={`Use ${exercise.name}`}
+              aria-label={t('workout.substitutes.useLabel', { name: exercise.name })}
               onClick={() => onAccept(exercise.id)}
             >
-              Use this
+              {t('workout.substitutes.useThis')}
             </button>
           </li>
         ))}
@@ -83,9 +85,9 @@ export default function SubstituteSuggestions({
   return (
     <section className="workout-section substitute-panel" aria-labelledby="substitute-heading">
       <div className="substitute-header">
-        <h2 id="substitute-heading">Alternatives</h2>
+        <h2 id="substitute-heading">{t('workout.substitutes.title')}</h2>
         <button type="button" className="btn-secondary" onClick={onDismiss}>
-          Dismiss
+          {t('workout.substitutes.dismiss')}
         </button>
       </div>
       <div aria-live="polite">{body}</div>

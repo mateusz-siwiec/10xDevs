@@ -16,7 +16,7 @@ interface FetchResult {
 }
 
 export default function PreviousWorkoutHint({ exerciseId, planId, setNumber }: PreviousWorkoutHintProps) {
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [result, setResult] = useState<FetchResult | null>(null)
   const key = `${exerciseId}:${planId}`
 
@@ -49,14 +49,14 @@ export default function PreviousWorkoutHint({ exerciseId, planId, setNumber }: P
     <div aria-live="polite">
       {previous && previous.sets.length > 0 && (
         <section className="workout-section previous-workout-hint">
-          <p>Last time ({dateFormat.format(new Date(previous.endedAt))}):</p>
+          <p>{t('workout.lastTime', { date: dateFormat.format(new Date(previous.endedAt)) })}</p>
           <ol>
             {previous.sets.map((set, index) => (
               <li
                 key={index}
                 className={index + 1 === setNumber ? 'previous-workout-hint-current' : undefined}
               >
-                Set {index + 1}: {set.reps} × {set.weightKg} kg
+                {t('workout.setLine', { n: index + 1, reps: set.reps, weight: set.weightKg })}
               </li>
             ))}
           </ol>

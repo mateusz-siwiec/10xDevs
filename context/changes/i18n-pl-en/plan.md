@@ -360,30 +360,30 @@ None for data. Because Flyway is disabled in production and this plan adds no sc
 
 #### Automated
 
-- [x] 1.1 Frontend installs and builds, typechecking included
-- [x] 1.2 Frontend linting passes
-- [x] 1.3 Locale parity test passes
+- [x] 1.1 Frontend installs and builds, typechecking included — 67920b9
+- [x] 1.2 Frontend linting passes — 67920b9
+- [x] 1.3 Locale parity test passes — 67920b9
 
 #### Manual
 
-- [x] 1.4 Switcher is visible on topbar, login and register; switching changes topbar labels immediately and survives reload
-- [x] 1.5 Browser language selects the initial language and `<html lang>` follows the selection
-- [x] 1.6 Dashboard and previous-workout date/number/duration formats follow the selected language, including on a live switch
+- [x] 1.4 Switcher is visible on topbar, login and register; switching changes topbar labels immediately and survives reload — 67920b9
+- [x] 1.5 Browser language selects the initial language and `<html lang>` follows the selection — 67920b9
+- [x] 1.6 Dashboard and previous-workout date/number/duration formats follow the selected language, including on a live switch — 67920b9
 
 ### Phase 2: UI string conversion by area
 
 #### Automated
 
-- [ ] 2.1 Frontend builds and typechecks
-- [ ] 2.2 Frontend linting passes
-- [ ] 2.3 Locale parity test passes with all new keys and Polish plural categories
+- [x] 2.1 Frontend builds and typechecks
+- [x] 2.2 Frontend linting passes
+- [x] 2.3 Locale parity test passes with all new keys and Polish plural categories
 
 #### Manual
 
-- [ ] 2.4 Every screen in Polish shows no English except server errors, exercise names and muscle-group labels
-- [ ] 2.5 Plurals read correctly in Polish (1, 2, 5, 22) and English (1, 2)
-- [ ] 2.6 Inline-link sentences render as working links in both languages
-- [ ] 2.7 Aria-labels and chart tooltip are translated and update on live language switch
+- [x] 2.4 Every screen in Polish shows no English except server errors, exercise names and muscle-group labels
+- [x] 2.5 Plurals read correctly in Polish (1, 2, 5, 22) and English (1, 2)
+- [x] 2.6 Inline-link sentences render as working links in both languages
+- [x] 2.7 Aria-labels and chart tooltip are translated and update on live language switch
 
 ### Phase 3: Backend error codes
 

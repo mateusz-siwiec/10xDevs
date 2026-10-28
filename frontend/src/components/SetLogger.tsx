@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface SetLoggerProps {
   disabled: boolean
@@ -7,6 +8,7 @@ interface SetLoggerProps {
 }
 
 export default function SetLogger({ disabled, onLog }: SetLoggerProps) {
+  const { t } = useTranslation()
   const [reps, setReps] = useState('')
   const [weight, setWeight] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -29,7 +31,7 @@ export default function SetLogger({ disabled, onLog }: SetLoggerProps) {
     <form onSubmit={handleSubmit}>
       <div className="set-logger-fields">
         <div className="field">
-          <label htmlFor="set-reps">Reps</label>
+          <label htmlFor="set-reps">{t('workout.reps')}</label>
           <input
             id="set-reps"
             type="number"
@@ -41,7 +43,7 @@ export default function SetLogger({ disabled, onLog }: SetLoggerProps) {
           />
         </div>
         <div className="field">
-          <label htmlFor="set-weight">Weight (kg)</label>
+          <label htmlFor="set-weight">{t('workout.weightKg')}</label>
           <input
             id="set-weight"
             type="number"
@@ -54,7 +56,7 @@ export default function SetLogger({ disabled, onLog }: SetLoggerProps) {
         </div>
       </div>
       <button type="submit" disabled={disabled || submitting} className="btn-primary">
-        {submitting ? 'Logging…' : 'Log set'}
+        {submitting ? t('workout.logging') : t('workout.logSet')}
       </button>
     </form>
   )

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { getProgressionRecommendation } from '../api/client'
 import type { ProgressionRecommendation as Recommendation } from '../api/client'
 
@@ -12,6 +13,7 @@ interface FetchResult {
 }
 
 export default function ProgressionRecommendation({ exerciseId }: ProgressionRecommendationProps) {
+  const { t } = useTranslation()
   const [result, setResult] = useState<FetchResult | null>(null)
 
   // State is only set from async callbacks; a cancelled flag drops stale responses.
@@ -38,9 +40,13 @@ export default function ProgressionRecommendation({ exerciseId }: ProgressionRec
       {recommendation !== null && (
         <section className="workout-section progression-recommendation">
           <p>
-            Try {recommendation.recommendedWeightKg} kg — you completed {recommendation.targetSets}×
-            {recommendation.targetReps} at {recommendation.currentWeightKg} kg in your last{' '}
-            {recommendation.workouts} workouts.
+            {t('workout.recommendation', {
+              weight: recommendation.recommendedWeightKg,
+              sets: recommendation.targetSets,
+              reps: recommendation.targetReps,
+              previousWeight: recommendation.currentWeightKg,
+              count: recommendation.workouts,
+            })}
           </p>
         </section>
       )}
