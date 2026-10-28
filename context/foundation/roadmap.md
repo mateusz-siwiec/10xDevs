@@ -29,6 +29,7 @@ milestone_status: open
   - MS-01: After logging in, the user sees a summary of their recent training — completed workouts, time spent and total volume (reps × kg).
   - MS-02: When starting a workout from a training plan, the user sees what they lifted per set in their previous workout from the same plan.
   - MS-03: The user can browse a paginated list of all their past workouts and open a compact view of how a given workout went.
+  - MS-05: On the dashboard, the user sees how their training is trending and how consistent they are — change vs the previous period, weekly volume, recent personal records, and a weekly streak against a goal they set.
 
 ## Vision recap
 
@@ -50,13 +51,11 @@ An amateur-to-intermediate gym-goer currently tracks workouts in scattered notes
 | S-04 | exercise-substitution-suggestion | see a substitute exercise suggestion when marking one unavailable | S-01, F-02 | FR-012 | done |
 | S-05 | custom-exercise-entry | add their own custom exercise with a muscle group | F-01, F-02 | FR-003 | done |
 | S-06 | guided-session-navigation | navigate sequential exercises with skip/return and a rest timer | S-01 | FR-007, FR-008 | done |
-| S-07 | plan-template-recommendation | receive a recommended plan template based on goal/experience/frequency | S-02 | FR-013 | blocked |
-| S-08 | personal-record-flag | see a logged set flagged as a new personal record | S-01 | FR-014 | proposed |
-| S-09 | return-after-break-suggestion | get an easier session suggested after a long gap | S-01 | FR-015 | proposed |
-| S-10 | training-volume-balance-warning | get warned when weekly volume is imbalanced across muscle groups | S-01, F-02 | FR-016 | blocked |
+| S-08 | personal-record-flag | see a logged set flagged as a new personal record | S-01 | FR-014 | in-progress |
 | S-11 | workout-dashboard | see completed workouts, time spent and total volume for the last 7/30 days after logging in | S-01 | MS-01 | done |
 | S-12 | previous-workout-weight-hint | see, per exercise and per set, what they lifted last time when starting a workout from the same plan | S-01, S-02 | MS-02 | done |
 | S-13 | training-history | browse a paginated list of past workouts and open a compact view of each | S-01 | MS-03 | done |
+| S-15 | dashboard-insights | see on the dashboard period-over-period change, a 12-week volume chart, recent personal records and a weekly streak with a goal | S-11, S-08 | MS-05 | planning |
 
 ## Streams
 
@@ -64,9 +63,9 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 
 | Stream | Theme | Chain | Note |
 | --- | --- | --- | --- |
-| A | Identity & core logging loop | `F-01` → `S-01` → `S-03` → `S-06` → `S-08` → `S-09` → `S-11` → `S-12` | The `learn` goal's priority investment area (the domain rule) runs through this chain; `S-11` reads the same set history and has no dependency on the others, so it can run any time after `S-01`. `S-12` also needs `S-02` (joins Stream B) and is independent of the rest of the chain. |
-| B | Catalog & planning | `F-02` → `S-02` → `S-05` → `S-07` | Joins Stream A at `S-01` (S-02 also needs F-01); `S-07` stays blocked pending the goal/experience/frequency capture gap. |
-| C | Session resilience & balance | `S-04` → `S-10` | Joins Stream A at `S-01` and Stream B at `F-02`; `S-10` stays blocked pending an agreed balance standard. |
+| A | Identity & core logging loop | `F-01` → `S-01` → `S-03` → `S-06` → `S-08` → `S-11` → `S-15` → `S-12` | `S-15` extends `S-11` and reuses the `S-08` record rule. The `learn` goal's priority investment area (the domain rule) runs through this chain; `S-11` reads the same set history and has no dependency on the others, so it can run any time after `S-01`. `S-12` also needs `S-02` (joins Stream B) and is independent of the rest of the chain. |
+| B | Catalog & planning | `F-02` → `S-02` → `S-05` | Joins Stream A at `S-01` (S-02 also needs F-01). Its former successor `S-07` (plan-template recommendation) is parked — see Parked. |
+| C | Session resilience | `S-04` | Joins Stream A at `S-01` and Stream B at `F-02`. Its former successor `S-10` (volume balance warning) is parked — see Parked. |
 | D | Training history | `S-13` | Joins Stream A at `S-01`; standalone slice. Its successor `S-14` (editing finished sessions) is deferred to the next milestone — see Parked. |
 
 ## Baseline
@@ -88,7 +87,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Outcome:** (foundation) users can register, log in, and log out; every API request carries a scoped identity so workout/plan/exercise data stays isolated per user.
 - **Change ID:** minimal-auth
 - **PRD refs:** FR-001, Access Control
-- **Unlocks:** S-01, S-02, S-03, S-04, S-05, S-06, S-07, S-08, S-09, S-10
+- **Unlocks:** S-01, S-02, S-03, S-04, S-05, S-06, S-08
 - **Prerequisites:** —
 - **Parallel with:** F-02
 - **Blockers:** —
@@ -101,7 +100,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Outcome:** (foundation) a predefined, seeded catalog of exercises exists, each tagged with a muscle group, queryable by the backend.
 - **Change ID:** exercise-catalog-seed
 - **PRD refs:** FR-002, Access Control
-- **Unlocks:** S-01, S-02, S-04, S-05, S-10
+- **Unlocks:** S-01, S-02, S-04, S-05
 - **Prerequisites:** —
 - **Parallel with:** F-01
 - **Blockers:** —
@@ -178,24 +177,11 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Change ID:** guided-session-navigation
 - **PRD refs:** FR-007, FR-008
 - **Prerequisites:** S-01
-- **Parallel with:** S-03, S-04, S-08, S-09
+- **Parallel with:** S-03, S-04, S-08
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** The PRD's own resolution on FR-007 names the exact risk: building a stateful session navigator before the core logging loop (S-01) is validated risks wasted effort — that's why this is sequenced after S-01.
 - **Status:** done
-
-### S-07: Plan-template recommendation
-
-- **Outcome:** user receives a recommended training plan matched to a predefined template based on their goal, experience level, and training frequency.
-- **Change ID:** plan-template-recommendation
-- **PRD refs:** FR-013
-- **Prerequisites:** S-02
-- **Parallel with:** —
-- **Blockers:** —
-- **Unknowns:**
-  - The PRD never defines where or how a user's goal, experience level, and training frequency are captured — no profile or onboarding flow exists in any FR. — Owner: user. Block: yes.
-- **Risk:** Cannot be planned until the capture mechanism for goal/experience/frequency is decided — this is a genuine PRD gap, not an implementation detail `/10x-plan` should paper over.
-- **Status:** blocked
 
 ### S-08: Personal record flag
 
@@ -203,37 +189,11 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Change ID:** personal-record-flag
 - **PRD refs:** FR-014
 - **Prerequisites:** S-01
-- **Parallel with:** S-03, S-04, S-06, S-09
+- **Parallel with:** S-03, S-04, S-06
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** The PRD itself notes 1RM estimation formulas are inaccurate at high rep counts — document this as a known limitation when implemented, not a bug to fix.
-- **Status:** proposed
-
-### S-09: Return-after-break suggestion
-
-- **Outcome:** user who returns after a gap longer than a configurable number of days is recommended an easier, warm-up-oriented session.
-- **Change ID:** return-after-break-suggestion
-- **PRD refs:** FR-015
-- **Prerequisites:** S-01
-- **Parallel with:** S-03, S-04, S-06, S-08
-- **Blockers:** —
-- **Unknowns:**
-  - What is the gap threshold (in days) that triggers this suggestion? — Owner: user. Block: no (nice-to-have, non-blocking per PRD).
-- **Risk:** A fixed day-threshold can't distinguish a planned break from an accidental lapse (the PRD's own noted limitation) — document it as a heuristic, not a diagnosis.
-- **Status:** proposed
-
-### S-10: Training volume balance warning
-
-- **Outcome:** user is warned when their weekly training volume is significantly imbalanced across muscle groups.
-- **Change ID:** training-volume-balance-warning
-- **PRD refs:** FR-016
-- **Prerequisites:** S-01, F-02
-- **Parallel with:** —
-- **Blockers:** —
-- **Unknowns:**
-  - What counts as "significantly imbalanced"? The PRD has no agreed balance standard or threshold, and itself notes this risks encoding an arbitrary opinion that may not fit intentional specialization phases. — Owner: user. Block: yes.
-- **Risk:** Cannot be planned responsibly until a balance standard is agreed — an opinionated default risks false warnings during legitimate specialization phases.
-- **Status:** blocked
+- **Status:** in-progress
 
 ### S-11: Workout dashboard
 
@@ -241,7 +201,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Change ID:** workout-dashboard
 - **PRD refs:** MS-01
 - **Prerequisites:** S-01
-- **Parallel with:** S-03, S-04, S-06, S-08, S-09
+- **Parallel with:** S-03, S-04, S-06, S-08
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Not in the PRD — added to M-1 after the fact (MS-01), so it widens the milestone. It also takes over `/` from the workout screen, so links and the post-login landing change; only completed sessions count, so abandoned sessions stay invisible by design.
@@ -253,7 +213,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Change ID:** previous-workout-weight-hint
 - **PRD refs:** MS-02
 - **Prerequisites:** S-01, S-02
-- **Parallel with:** S-03, S-05, S-06, S-08, S-09, S-13
+- **Parallel with:** S-03, S-05, S-06, S-08, S-13
 - **Blockers:** —
 - **Unknowns:**
   - Show the hint only, or also prefill the set logger with the previous weight? And how it sits next to the S-03 recommendation ("last time 60 kg" vs "try 61.5 kg"). — Owner: user. Block: no (decided in `/10x-plan`).
@@ -266,12 +226,24 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Change ID:** training-history
 - **PRD refs:** MS-03
 - **Prerequisites:** S-01
-- **Parallel with:** S-03, S-04, S-06, S-08, S-09, S-12
+- **Parallel with:** S-03, S-04, S-06, S-08, S-12
 - **Blockers:** —
 - **Unknowns:**
   - Which summary fields the list shows and how large a page is. — Owner: user. Block: no (decided in `/10x-plan`).
 - **Risk:** The list needs per-session aggregates (duration, set count, volume) in one query to avoid N+1; the compact per-exercise view built here is the shape `S-14` edits and `S-12` can reuse.
 - **Status:** done
+
+### S-15: Dashboard insights
+
+- **Outcome:** user sees on the dashboard how their training is trending and how consistent they are: each tile compared with the previous equal period (7 / 30 / 90 days; All has no comparison), a 12-week volume chart, their 5 most recent personal records, and a weekly streak against a workout-per-week goal they set.
+- **Change ID:** dashboard-insights
+- **PRD refs:** MS-05
+- **Prerequisites:** S-11, S-08
+- **Parallel with:** S-03, S-04, S-06, S-12
+- **Blockers:** —
+- **Unknowns:** —
+- **Risk:** Not in the PRD — added to M-1 after the fact (MS-05), so it widens the milestone. It reuses the S-08 record rule across sessions (backend only, already committed) and adds the first stored user setting (`weekly_goal`); weeks are rolling 7-day blocks, so bars won't align with Monday–Sunday. Land the S-08 frontend first, since both touch `frontend/src/api/client.ts`.
+- **Status:** planning
 
 ## Backlog Handoff
 
@@ -285,22 +257,23 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-04 | exercise-substitution-suggestion | Exercise substitution suggestion | no | Blocked on S-01, F-02 |
 | S-05 | custom-exercise-entry | Custom exercise entry | no | Blocked on F-01, F-02 |
 | S-06 | guided-session-navigation | Guided session: skip/return + rest timer | no | Blocked on S-01 |
-| S-07 | plan-template-recommendation | Plan-template recommendation | no | Blocked on S-02 + unresolved profile-capture gap |
 | S-08 | personal-record-flag | Personal record flag | no | Blocked on S-01 |
-| S-09 | return-after-break-suggestion | Return-after-break easier session | no | Blocked on S-01 |
-| S-10 | training-volume-balance-warning | Training volume balance warning | no | Blocked on S-01, F-02 + unresolved balance standard |
 | S-11 | workout-dashboard | Workout dashboard: workouts, time and volume for 7/30 days | yes | Planned — run `/10x-implement workout-dashboard phase 1` |
 | S-12 | previous-workout-weight-hint | Previous workout weight hint when starting from a plan | yes | Run `/10x-plan previous-workout-weight-hint` |
 | S-13 | training-history | Training history: paginated list + compact session view | yes | Run `/10x-plan training-history` |
+| S-15 | dashboard-insights | Dashboard insights: trends, PRs and weekly streak | yes | Planned — run `/10x-implement dashboard-insights phase 1` |
 
 This table is the clean handoff to Jira/Linear or any MCP-backed backlog.
 
 ## Open Roadmap Questions
 
-No roadmap-wide open questions at this milestone — both PRD `## Open Questions` map cleanly to a single slice each (see S-03's N/percentage unknown and S-09's gap-threshold unknown above).
+No roadmap-wide open questions at this milestone. The PRD `## Open Questions` map to S-03's N/percentage unknown (in M-1) and to the parked S-09 gap-threshold and S-10 balance-standard unknowns (see Parked).
 
 ## Parked
 
+- **S-09: Return-after-break suggestion (FR-015)** — Why parked: removed from M-1 by decision on 2026-10-27; it is a nice-to-have. Change ID: `return-after-break-suggestion`. Prerequisite: S-01 (done). Outcome: a user who returns after a gap longer than a configurable number of days is recommended an easier, warm-up-oriented session. Open unknown (non-blocking): the gap threshold in days. Risk: a fixed day-threshold can't tell a planned break from an accidental lapse — document it as a heuristic, not a diagnosis.
+- **S-10: Training volume balance warning (FR-016)** — Why parked: removed from M-1 by decision on 2026-10-27; it was blocked on an agreed balance standard. Change ID: `training-volume-balance-warning`. Prerequisites: S-01, F-02 (both done). Outcome: the user is warned when weekly training volume is significantly imbalanced across muscle groups. Blocking unknown: what counts as "significantly imbalanced" — the PRD has no threshold and notes an arbitrary default risks false warnings during intentional specialization phases.
+- **S-07: Plan-template recommendation (FR-013)** — Why parked: removed from M-1 by decision on 2026-10-27; it is a nice-to-have and was blocked on an undefined goal/experience/frequency capture mechanism. Change ID: `plan-template-recommendation`. Prerequisite: S-02 (done). Outcome: user receives a recommended plan matched to a predefined template based on goal, experience level and training frequency. Suggested direction when revisited (`/10x-frame` first): ask the three questions at plan-creation time with no stored profile, keep ~6–8 hand-written templates as static seeded data matched by simple rules, copy the chosen template into a normal editable user plan, and fall back to closest-match + "start from scratch" when nothing fits.
 - **S-14: Training session editing (MS-04)** — Why parked: deferred to the next milestone by decision on 2026-10-27; it reopens the "finished sessions are immutable" rule, so it should be framed (`/10x-frame`) and sequenced after S-13 ships. Change ID: `training-session-editing`. Scope anchor MS-04: the user can correct a finished workout (its sets and its start/end time) and record a workout afterwards, with a date in the past.
 - **No offline support** — Why parked: PRD §Non-Goals — the product assumes a stable connection during a workout; no service worker or offline sync in the MVP.
 - **No import of training plans from external files** — Why parked: PRD §Non-Goals — plans are entered manually inside the product.
