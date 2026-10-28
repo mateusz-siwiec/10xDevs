@@ -107,6 +107,21 @@
   border-color: var(--accent-border);
 }
 
+.pr-badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.1rem 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  vertical-align: middle;
+  color: var(--accent);
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  border-radius: 999px;
+}
+
 .page-subtext {
   color: var(--text);
   margin-bottom: 1.5rem;

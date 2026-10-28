@@ -14,7 +14,7 @@ public interface WorkoutSetRepository extends JpaRepository<WorkoutSet, UUID> {
 
 	boolean existsByExerciseId(UUID exerciseId);
 
-	List<WorkoutSet> findBySessionIdOrderByLoggedAtAsc(UUID sessionId);
+	List<WorkoutSet> findBySessionIdOrderByLoggedAtAscIdAsc(UUID sessionId);
 
 	Optional<WorkoutSet> findByIdAndSessionId(UUID id, UUID sessionId);
 
@@ -42,5 +42,16 @@ public interface WorkoutSetRepository extends JpaRepository<WorkoutSet, UUID> {
 			group by s.session.id
 			""")
 	List<SessionAggregate> aggregateBySession(@Param("sessionIds") Collection<UUID> sessionIds);
+
+	@Query("""
+			select new com.example.gymtrack.workout.ExerciseScore(s.exerciseId, max(s.weightKg * (30 + s.reps)))
+			from WorkoutSet s
+			where s.session.userId = :userId and s.exerciseId in :exerciseIds
+				and s.reps <= :maxReps and s.loggedAt < :before
+			group by s.exerciseId
+			""")
+	List<ExerciseScore> findBestScoresBefore(@Param("userId") UUID userId,
+			@Param("exerciseIds") Collection<UUID> exerciseIds, @Param("maxReps") int maxReps,
+			@Param("before") Instant before);
 
 }

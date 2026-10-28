@@ -114,6 +114,7 @@ export interface WorkoutSet {
   reps: number
   weightKg: number
   loggedAt: string
+  personalRecord: boolean
 }
 
 export interface WorkoutSession {
@@ -371,7 +372,7 @@ export interface HistoryDetail {
   planName: string | null
   durationSeconds: number
   volumeKg: number
-  exercises: { exerciseId: string; sets: { reps: number; weightKg: number }[] }[]
+  exercises: { exerciseId: string; sets: { reps: number; weightKg: number; personalRecord: boolean }[] }[]
 }
 
 export async function getHistorySession(id: string): Promise<HistoryDetail> {

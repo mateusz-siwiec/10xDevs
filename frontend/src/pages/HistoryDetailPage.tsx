@@ -92,6 +92,11 @@ export default function HistoryDetailPage() {
                 {group.sets.map((set, index) => (
                   <li key={index}>
                     Set {index + 1}: {set.reps} × {set.weightKg} kg
+                    {set.personalRecord && (
+                      <span className="pr-badge" role="img" aria-label="New personal record">
+                        PR
+                      </span>
+                    )}
                   </li>
                 ))}
               </ol>

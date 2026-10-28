@@ -30,6 +30,11 @@ export default function SessionSetList({ sets, exerciseNames, onDelete }: Sessio
             <span className="set-item-name">{exerciseNames.get(set.exerciseId) ?? 'Unknown exercise'}</span>
             <span>
               {set.reps} × {set.weightKg} kg
+              {set.personalRecord && (
+                <span className="pr-badge" role="img" aria-label="New personal record">
+                  PR
+                </span>
+              )}
             </span>
           </div>
           {confirmingId === set.id ? (

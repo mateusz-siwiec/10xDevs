@@ -6,6 +6,7 @@ import com.example.gymtrack.plan.TrainingPlanRepository;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -27,15 +28,18 @@ public class WorkoutService {
 
 	private final TrainingPlanRepository planRepository;
 
+	private final PersonalRecordService personalRecordService;
+
 	private final TransactionTemplate transactionTemplate;
 
 	public WorkoutService(WorkoutSessionRepository sessionRepository, WorkoutSetRepository setRepository,
 			ExerciseRepository exerciseRepository, TrainingPlanRepository planRepository,
-			PlatformTransactionManager transactionManager) {
+			PersonalRecordService personalRecordService, PlatformTransactionManager transactionManager) {
 		this.sessionRepository = sessionRepository;
 		this.setRepository = setRepository;
 		this.exerciseRepository = exerciseRepository;
 		this.planRepository = planRepository;
+		this.personalRecordService = personalRecordService;
 		this.transactionTemplate = new TransactionTemplate(transactionManager);
 	}
 
@@ -100,7 +104,9 @@ public class WorkoutService {
 			throw new WorkoutConflictException("Workout session already ended");
 		}
 		WorkoutSet set = setRepository.saveAndFlush(new WorkoutSet(session, exerciseId, reps, weightKg));
-		return SetResponse.from(set);
+		Set<UUID> personalRecordSetIds = personalRecordService.personalRecordSetIds(session,
+				setRepository.findBySessionIdOrderByLoggedAtAscIdAsc(session.getId()));
+		return SetResponse.from(set, personalRecordSetIds.contains(set.getId()));
 	}
 
 	@Transactional
@@ -128,7 +134,8 @@ public class WorkoutService {
 	}
 
 	private SessionResponse toResponse(WorkoutSession session) {
-		return SessionResponse.from(session, setRepository.findBySessionIdOrderByLoggedAtAsc(session.getId()));
+		List<WorkoutSet> sets = setRepository.findBySessionIdOrderByLoggedAtAscIdAsc(session.getId());
+		return SessionResponse.from(session, sets, personalRecordService.personalRecordSetIds(session, sets));
 	}
 
 }
