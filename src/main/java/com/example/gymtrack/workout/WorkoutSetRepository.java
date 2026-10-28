@@ -14,7 +14,7 @@ public interface WorkoutSetRepository extends JpaRepository<WorkoutSet, UUID> {
 
 	boolean existsByExerciseId(UUID exerciseId);
 
-	List<WorkoutSet> findBySessionIdOrderByLoggedAtAsc(UUID sessionId);
+	List<WorkoutSet> findBySessionIdOrderByLoggedAtAscIdAsc(UUID sessionId);
 
 	Optional<WorkoutSet> findByIdAndSessionId(UUID id, UUID sessionId);
 

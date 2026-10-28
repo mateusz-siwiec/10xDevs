@@ -91,7 +91,7 @@ public class HistoryService {
 			.orElseThrow(() -> new WorkoutNotFoundException("Workout session not found"));
 		Map<UUID, List<HistoryDetailResponse.SetEntry>> byExercise = new LinkedHashMap<>();
 		BigDecimal volume = BigDecimal.ZERO;
-		List<WorkoutSet> sets = setRepository.findBySessionIdOrderByLoggedAtAsc(session.getId());
+		List<WorkoutSet> sets = setRepository.findBySessionIdOrderByLoggedAtAscIdAsc(session.getId());
 		Set<UUID> personalRecordSetIds = personalRecordService.personalRecordSetIds(session, sets);
 		for (WorkoutSet set : sets) {
 			byExercise.computeIfAbsent(set.getExerciseId(), key -> new ArrayList<>())

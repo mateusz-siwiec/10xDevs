@@ -35,7 +35,7 @@ public class PreviousWorkoutService {
 			.findFirst()
 			.map(session -> {
 				List<PreviousWorkoutResponse.SetEntry> sets = setRepository
-					.findBySessionIdOrderByLoggedAtAsc(session.getId())
+					.findBySessionIdOrderByLoggedAtAscIdAsc(session.getId())
 					.stream()
 					.filter(set -> set.getExerciseId().equals(exerciseId))
 					.map(set -> new PreviousWorkoutResponse.SetEntry(set.getReps(), set.getWeightKg()))

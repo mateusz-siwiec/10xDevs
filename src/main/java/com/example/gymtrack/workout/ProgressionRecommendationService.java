@@ -64,7 +64,7 @@ public class ProgressionRecommendationService {
 			if (target.isEmpty()) {
 				return Optional.empty();
 			}
-			List<WorkoutSet> sets = setRepository.findBySessionIdOrderByLoggedAtAsc(session.getId())
+			List<WorkoutSet> sets = setRepository.findBySessionIdOrderByLoggedAtAscIdAsc(session.getId())
 				.stream()
 				.filter(set -> set.getExerciseId().equals(exerciseId))
 				.toList();

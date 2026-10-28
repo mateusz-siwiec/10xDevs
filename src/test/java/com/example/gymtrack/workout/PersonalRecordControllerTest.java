@@ -141,7 +141,7 @@ class PersonalRecordControllerTest {
 		assertFalse(logSetFlag(token, sessionId, exerciseId, 5, "60"));
 		// Score 60 x 50 = 3000 beats 60 x 35 = 2100, yet 20 reps is ineligible.
 		assertFalse(logSetFlag(token, sessionId, exerciseId, 20, "60"));
-		// Would not beat the 20-rep score (60 x 36 = 2160 < 3000) if it had raised the baseline.
+		// Beats the 5-rep baseline (2160 > 2100); it would not have beaten the 20-rep score (3000) had that raised the baseline.
 		assertTrue(logSetFlag(token, sessionId, exerciseId, 6, "60"));
 	}
 

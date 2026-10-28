@@ -105,7 +105,7 @@ public class WorkoutService {
 		}
 		WorkoutSet set = setRepository.saveAndFlush(new WorkoutSet(session, exerciseId, reps, weightKg));
 		Set<UUID> personalRecordSetIds = personalRecordService.personalRecordSetIds(session,
-				setRepository.findBySessionIdOrderByLoggedAtAsc(session.getId()));
+				setRepository.findBySessionIdOrderByLoggedAtAscIdAsc(session.getId()));
 		return SetResponse.from(set, personalRecordSetIds.contains(set.getId()));
 	}
 
@@ -134,7 +134,7 @@ public class WorkoutService {
 	}
 
 	private SessionResponse toResponse(WorkoutSession session) {
-		List<WorkoutSet> sets = setRepository.findBySessionIdOrderByLoggedAtAsc(session.getId());
+		List<WorkoutSet> sets = setRepository.findBySessionIdOrderByLoggedAtAscIdAsc(session.getId());
 		return SessionResponse.from(session, sets, personalRecordService.personalRecordSetIds(session, sets));
 	}
 

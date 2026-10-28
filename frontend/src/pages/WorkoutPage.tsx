@@ -187,7 +187,13 @@ export default function WorkoutPage() {
       try {
         const fresh = await getCurrentSession()
         if (fresh && fresh.id === session.id) {
-          setSession((s) => (s && s.id === session.id ? fresh : s))
+          // Only the flags are taken from the server; a set logged meanwhile must not be dropped.
+          const flags = new Map(fresh.sets.map((x) => [x.id, x.personalRecord]))
+          setSession((s) =>
+            s && s.id === session.id
+              ? { ...s, sets: s.sets.map((x) => ({ ...x, personalRecord: flags.get(x.id) ?? x.personalRecord })) }
+              : s,
+          )
         }
       } catch {
         // the delete itself succeeded; the filtered list is already shown
