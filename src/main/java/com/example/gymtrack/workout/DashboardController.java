@@ -17,7 +17,7 @@ public class DashboardController {
 
 	@GetMapping("/api/dashboard/stats")
 	public DashboardStatsResponse stats(@AuthenticationPrincipal CurrentUser currentUser,
-			@RequestParam(defaultValue = "7") int days) {
+			@RequestParam(defaultValue = "7") String days) {
 		return dashboardService.stats(currentUser.id(), days);
 	}
 

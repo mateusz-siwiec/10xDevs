@@ -2,7 +2,8 @@ package com.example.gymtrack.workout;
 
 import java.math.BigDecimal;
 
-public record DashboardStatsResponse(int days, long workoutCount, long totalDurationSeconds,
-		BigDecimal totalVolumeKg) {
+/** {@code days} and {@code previous} are null for the unbounded "all" window. */
+public record DashboardStatsResponse(Integer days, long workoutCount, long totalDurationSeconds,
+		BigDecimal totalVolumeKg, DashboardPeriodTotals previous) {
 
 }
