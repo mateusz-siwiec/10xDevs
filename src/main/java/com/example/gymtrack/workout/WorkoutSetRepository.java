@@ -31,9 +31,11 @@ public interface WorkoutSetRepository extends JpaRepository<WorkoutSet, UUID> {
 	@Query("""
 			select coalesce(sum(s.reps * s.weightKg), 0)
 			from WorkoutSet s
-			where s.session.userId = :userId and s.session.endedAt >= :since
+			where s.session.userId = :userId and s.session.endedAt >= :from
+			and s.session.endedAt < :to
 			""")
-	BigDecimal sumVolumeSince(@Param("userId") UUID userId, @Param("since") Instant since);
+	BigDecimal sumVolumeBetween(@Param("userId") UUID userId, @Param("from") Instant from,
+			@Param("to") Instant to);
 
 	@Query("""
 			select new com.example.gymtrack.workout.SessionAggregate(s.session.id, count(s), coalesce(sum(s.reps * s.weightKg), 0))
@@ -53,5 +55,12 @@ public interface WorkoutSetRepository extends JpaRepository<WorkoutSet, UUID> {
 	List<ExerciseScore> findBestScoresBefore(@Param("userId") UUID userId,
 			@Param("exerciseIds") Collection<UUID> exerciseIds, @Param("maxReps") int maxReps,
 			@Param("before") Instant before);
+
+	@Query("""
+			select s from WorkoutSet s join fetch s.session ss
+			where ss.userId = :userId and ss.endedAt is not null and s.reps <= :maxReps
+			order by s.loggedAt asc, s.id asc
+			""")
+	List<WorkoutSet> findEligibleSetsOfEndedSessions(@Param("userId") UUID userId, @Param("maxReps") int maxReps);
 
 }

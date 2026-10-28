@@ -1,6 +1,8 @@
 package com.example.gymtrack.workout;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -64,6 +66,36 @@ public class PersonalRecordService {
 			}
 		}
 		return flagged;
+	}
+
+	/**
+	 * The user's latest record sets across all ended sessions, newest first. Scans the eligible sets
+	 * in {@code loggedAt} order with a running best per exercise, applying the same eligibility and
+	 * score rule as {@link #personalRecordSetIds}, so it agrees with the flags History shows. The
+	 * agreement relies on sessions never overlapping in time: set and session timestamps are only ever
+	 * assigned at creation and a user has one active session at a time, so a running best by
+	 * {@code loggedAt} equals History's "everything logged before the session started" baseline.
+	 */
+	public List<PersonalRecordEntry> recentRecords(UUID userId, int limit) {
+		Map<UUID, BigDecimal> best = new HashMap<>();
+		List<PersonalRecordEntry> records = new ArrayList<>();
+		for (WorkoutSet set : setRepository.findEligibleSetsOfEndedSessions(userId, MAX_ELIGIBLE_REPS)) {
+			if (!isEligible(set)) {
+				continue;
+			}
+			BigDecimal score = score(set);
+			BigDecimal previousBest = best.get(set.getExerciseId());
+			if (previousBest == null) {
+				best.put(set.getExerciseId(), score);
+			}
+			else if (score.compareTo(previousBest) > 0) {
+				records.add(new PersonalRecordEntry(set.getSession().getId(), set.getExerciseId(), set.getReps(),
+						set.getWeightKg(), set.getLoggedAt()));
+				best.put(set.getExerciseId(), score);
+			}
+		}
+		Collections.reverse(records);
+		return records.size() > limit ? List.copyOf(records.subList(0, limit)) : records;
 	}
 
 	private static boolean isEligible(WorkoutSet set) {

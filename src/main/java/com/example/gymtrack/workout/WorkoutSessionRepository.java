@@ -36,9 +36,10 @@ public interface WorkoutSessionRepository extends JpaRepository<WorkoutSession, 
 
 	@Query("""
 			select s from WorkoutSession s
-			where s.userId = :userId and s.endedAt >= :since
+			where s.userId = :userId and s.endedAt >= :from and s.endedAt < :to
 			""")
-	List<WorkoutSession> findEndedSince(@Param("userId") UUID userId, @Param("since") Instant since);
+	List<WorkoutSession> findEndedBetween(@Param("userId") UUID userId, @Param("from") Instant from,
+			@Param("to") Instant to);
 
 	@Query("""
 			select s from WorkoutSession s

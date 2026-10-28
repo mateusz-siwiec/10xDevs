@@ -24,6 +24,11 @@ public class WorkoutExceptionHandler {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", ex.getMessage()));
 	}
 
+	@ExceptionHandler(InvalidWeeklyGoalException.class)
+	public ResponseEntity<Map<String, String>> handleInvalidWeeklyGoal(InvalidWeeklyGoalException ex) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", ex.getMessage()));
+	}
+
 	@ExceptionHandler(InvalidHistoryQueryException.class)
 	public ResponseEntity<Map<String, String>> handleInvalidHistoryQuery(InvalidHistoryQueryException ex) {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", ex.getMessage()));

@@ -107,8 +107,117 @@ class DashboardControllerTest {
 		setTimes(sessionId, endedAt.minusSeconds(3600), endedAt);
 	}
 
+	/** Same session shape as endedSession, but ended at an arbitrary offset before now. */
+	private void endedSessionAgo(String token, java.time.Duration ago) throws Exception {
+		String sessionId = startSession(token);
+		logSet(token, sessionId, 5, "100");
+		logSet(token, sessionId, 3, "50");
+		endSession(token, sessionId);
+		Instant endedAt = Instant.now().minus(ago);
+		setTimes(sessionId, endedAt.minusSeconds(3600), endedAt);
+	}
+
 	@Test
-	void statsWithoutTokenReturnsUnauthorized() throws Exception {
+	void sessionInPreviousWindowAppearsOnlyInPrevious() throws Exception {
+		String token = bearerToken();
+		endedSession(token, 10);
+
+		mockMvc.perform(get("/api/dashboard/stats").param("days", "7").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.workoutCount", is(0)))
+			.andExpect(jsonPath("$.totalDurationSeconds", is(0)))
+			.andExpect(jsonPath("$.totalVolumeKg", is(0)))
+			.andExpect(jsonPath("$.previous.workoutCount", is(1)))
+			.andExpect(jsonPath("$.previous.totalDurationSeconds", is(3600)))
+			.andExpect(jsonPath("$.previous.totalVolumeKg", closeTo(650.0, 0.001)));
+	}
+
+	@Test
+	void emptyUserGetsZeroPreviousTotals() throws Exception {
+		mockMvc.perform(get("/api/dashboard/stats").header(HttpHeaders.AUTHORIZATION, bearerToken()))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.previous.workoutCount", is(0)))
+			.andExpect(jsonPath("$.previous.totalDurationSeconds", is(0)))
+			.andExpect(jsonPath("$.previous.totalVolumeKg", is(0)));
+	}
+
+	/**
+	 * Windows are half-open [now-N, now) and [now-2N, now-N). Sessions are pinned one minute on either side of
+	 * the edge so the few ms of drift between setup and request cannot flip the result.
+	 */
+	@Test
+	void windowEdgeSplitsCurrentFromPrevious() throws Exception {
+		String token = bearerToken();
+		endedSessionAgo(token, java.time.Duration.ofDays(7).minusMinutes(1));
+		endedSessionAgo(token, java.time.Duration.ofDays(7).plusMinutes(1));
+
+		mockMvc.perform(get("/api/dashboard/stats").param("days", "7").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.workoutCount", is(1)))
+			.andExpect(jsonPath("$.previous.workoutCount", is(1)));
+	}
+
+	@Test
+	void sessionBeyondTwoWindowsIsInNeitherCurrentNorPrevious() throws Exception {
+		String token = bearerToken();
+		endedSession(token, 20);
+
+		mockMvc.perform(get("/api/dashboard/stats").param("days", "7").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(jsonPath("$.workoutCount", is(0)))
+			.andExpect(jsonPath("$.previous.workoutCount", is(0)));
+	}
+
+	@Test
+	void ninetyDayWindowIncludesOlderSessionsAndPrevious() throws Exception {
+		String token = bearerToken();
+		endedSession(token, 60);
+		endedSession(token, 120);
+
+		mockMvc.perform(get("/api/dashboard/stats").param("days", "90").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.days", is(90)))
+			.andExpect(jsonPath("$.workoutCount", is(1)))
+			.andExpect(jsonPath("$.totalVolumeKg", closeTo(650.0, 0.001)))
+			.andExpect(jsonPath("$.previous.workoutCount", is(1)));
+	}
+
+	@Test
+	void allWindowIncludesOldSessionsWithNullDaysAndPrevious() throws Exception {
+		String token = bearerToken();
+		endedSession(token, 1);
+		endedSession(token, 400);
+
+		mockMvc.perform(get("/api/dashboard/stats").param("days", "all").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.days").value(org.hamcrest.Matchers.nullValue()))
+			.andExpect(jsonPath("$.workoutCount", is(2)))
+			.andExpect(jsonPath("$.totalDurationSeconds", is(7200)))
+			.andExpect(jsonPath("$.totalVolumeKg", closeTo(1300.0, 0.001)))
+			.andExpect(jsonPath("$.previous").value(org.hamcrest.Matchers.nullValue()));
+	}
+
+	@Test
+	void otherUsersPreviousWindowNeverLeaks() throws Exception {
+		String tokenA = bearerToken();
+		String tokenB = bearerToken();
+		endedSession(tokenA, 10);
+
+		mockMvc.perform(get("/api/dashboard/stats").param("days", "7").header(HttpHeaders.AUTHORIZATION, tokenB))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.previous.workoutCount", is(0)))
+			.andExpect(jsonPath("$.previous.totalDurationSeconds", is(0)))
+			.andExpect(jsonPath("$.previous.totalVolumeKg", is(0)));
+	}
+
+	@Test
+	void uppercaseAllIsRejected() throws Exception {
+		mockMvc.perform(get("/api/dashboard/stats").param("days", "ALL").header(HttpHeaders.AUTHORIZATION, bearerToken()))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.error", notNullValue()));
+	}
+
+	@Test
+	void statsWithoutTokenReturnsUnauthorized()throws Exception {
 		mockMvc.perform(get("/api/dashboard/stats")).andExpect(status().isUnauthorized());
 	}
 

@@ -250,15 +250,70 @@ export async function getPreviousWorkout(
   return res.json()
 }
 
-export interface DashboardStats {
-  days: number
+export interface PeriodTotals {
   workoutCount: number
   totalDurationSeconds: number
   totalVolumeKg: number
 }
 
-export async function getDashboardStats(days: 7 | 30): Promise<DashboardStats> {
+export interface DashboardStats {
+  /** null for the unbounded "all" window. */
+  days: number | null
+  workoutCount: number
+  totalDurationSeconds: number
+  totalVolumeKg: number
+  /** Totals for the equally long preceding window; null for "all". */
+  previous: PeriodTotals | null
+}
+
+export type StatsWindow = 7 | 30 | 90 | 'all'
+
+export async function getDashboardStats(days: StatsWindow): Promise<DashboardStats> {
   const res = await authFetch(`/api/dashboard/stats?days=${days}`)
+  return res.json()
+}
+
+export interface WeeklyVolume {
+  weekStart: string
+  workoutCount: number
+  volumeKg: number
+}
+
+export interface Streak {
+  goal: number | null
+  weeks: number
+  currentWeekWorkouts: number
+}
+
+export interface RecentPersonalRecord {
+  sessionId: string
+  exerciseId: string
+  exerciseName: string
+  reps: number
+  weightKg: number
+  achievedAt: string
+}
+
+export interface DashboardInsights {
+  /** 12 items, oldest first. */
+  weeklyVolume: WeeklyVolume[]
+  streak: Streak
+  /** At most 5, newest first. */
+  recentPersonalRecords: RecentPersonalRecord[]
+}
+
+export async function getDashboardInsights(): Promise<DashboardInsights> {
+  const res = await authFetch('/api/dashboard/insights')
+  return res.json()
+}
+
+/** `weeklyGoal` is 1-14, or null to clear the goal. */
+export async function setWeeklyGoal(weeklyGoal: number | null): Promise<{ weeklyGoal: number | null }> {
+  const res = await authFetch('/api/dashboard/weekly-goal', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ weeklyGoal }),
+  })
   return res.json()
 }
 
