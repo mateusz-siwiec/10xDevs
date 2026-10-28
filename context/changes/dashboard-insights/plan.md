@@ -238,23 +238,23 @@ Insights scans the user's ended-session end times and eligible sets on every loa
 
 #### Automated
 
-- [x] 1.1 Dashboard tests pass, old and new: `./mvnw test -Dtest=DashboardControllerTest`
-- [x] 1.2 Full backend suite passes: `./mvnw test`
+- [x] 1.1 Dashboard tests pass, old and new: `./mvnw test -Dtest=DashboardControllerTest` — 4b78da5
+- [x] 1.2 Full backend suite passes: `./mvnw test` — 4b78da5
 
 #### Manual
 
-- [x] 1.3 Against the local API, `days=all` returns `previous: null` and `days=7` returns a `previous` object
+- [x] 1.3 Against the local API, `days=all` returns `previous: null` and `days=7` returns a `previous` object — 4b78da5
 
 ### Phase 2: Backend — insights and weekly goal
 
 #### Automated
 
-- [ ] 2.1 Migration applies and Hibernate validate passes: `./mvnw test -Dtest=DashboardInsightsControllerTest`
-- [ ] 2.2 Full backend suite passes: `./mvnw test`
+- [x] 2.1 Migration applies and Hibernate validate passes: `./mvnw test -Dtest=DashboardInsightsControllerTest`
+- [x] 2.2 Full backend suite passes: `./mvnw test`
 
 #### Manual
 
-- [ ] 2.3 PUT weekly goal then GET insights on the local API shows the goal, 12 weekly items and plausible PRs
+- [x] 2.3 PUT weekly goal then GET insights on the local API shows the goal, 12 weekly items and plausible PRs
 
 ### Phase 3: Frontend — dashboard UI
 

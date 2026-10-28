@@ -1,11 +1,19 @@
 package com.example.gymtrack.workout;
 
+import com.example.gymtrack.exercise.Exercise;
+import com.example.gymtrack.exercise.ExerciseRepository;
+import com.example.gymtrack.user.User;
+import com.example.gymtrack.user.UserRepository;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,13 +29,114 @@ public class DashboardService {
 
 	static final String ALL = "all";
 
+	static final int MIN_WEEKLY_GOAL = 1;
+
+	static final int MAX_WEEKLY_GOAL = 14;
+
+	private static final Duration WEEK = Duration.ofDays(7);
+
+	private static final int WEEKS = 12;
+
+	private static final int RECENT_RECORDS = 5;
+
+	private static final String UNKNOWN_EXERCISE = "Unknown exercise";
+
 	private final WorkoutSessionRepository sessionRepository;
 
 	private final WorkoutSetRepository setRepository;
 
-	public DashboardService(WorkoutSessionRepository sessionRepository, WorkoutSetRepository setRepository) {
+	private final UserRepository userRepository;
+
+	private final ExerciseRepository exerciseRepository;
+
+	private final PersonalRecordService personalRecordService;
+
+	public DashboardService(WorkoutSessionRepository sessionRepository, WorkoutSetRepository setRepository,
+			UserRepository userRepository, ExerciseRepository exerciseRepository,
+			PersonalRecordService personalRecordService) {
 		this.sessionRepository = sessionRepository;
 		this.setRepository = setRepository;
+		this.userRepository = userRepository;
+		this.exerciseRepository = exerciseRepository;
+		this.personalRecordService = personalRecordService;
+	}
+
+	/** Sets (or clears, with null) the weekly workout goal; only integers 1..14 are accepted. */
+	@Transactional
+	public Integer setWeeklyGoal(UUID userId, Object value) {
+		Integer goal = null;
+		if (value != null) {
+			if (!(value instanceof Integer number) || number < MIN_WEEKLY_GOAL || number > MAX_WEEKLY_GOAL) {
+				throw new InvalidWeeklyGoalException(
+						"weeklyGoal must be an integer from " + MIN_WEEKLY_GOAL + " to " + MAX_WEEKLY_GOAL + " or null");
+			}
+			goal = number;
+		}
+		User user = userRepository.findById(userId).orElseThrow();
+		user.setWeeklyGoal(goal);
+		userRepository.save(user);
+		return goal;
+	}
+
+	/**
+	 * Twelve weekly blocks (block k is {@code [now - (k+1)*7d, now - k*7d)}, k=0 current), the
+	 * streak and the latest personal records, all anchored on one {@code now} and on session
+	 * endedAt. The streak counts consecutive full blocks before the current one that met the goal,
+	 * plus one if the current block already does.
+	 */
+	@Transactional(readOnly = true)
+	public DashboardInsightsResponse insights(UUID userId) {
+		Instant now = Instant.now();
+		Map<Long, List<WorkoutSession>> byBlock = sessionRepository.findEndedBetween(userId, Instant.EPOCH, now)
+			.stream()
+			.collect(Collectors.groupingBy(session -> Duration.between(session.getEndedAt(), now).dividedBy(WEEK)));
+
+		List<UUID> recentSessionIds = new ArrayList<>();
+		for (long k = 0; k < WEEKS; k++) {
+			byBlock.getOrDefault(k, List.of()).forEach(session -> recentSessionIds.add(session.getId()));
+		}
+		Map<UUID, BigDecimal> volumeBySession = new HashMap<>();
+		if (!recentSessionIds.isEmpty()) {
+			for (SessionAggregate aggregate : setRepository.aggregateBySession(recentSessionIds)) {
+				volumeBySession.put(aggregate.sessionId(), aggregate.volumeKg());
+			}
+		}
+		List<DashboardInsightsResponse.WeeklyVolume> weeklyVolume = new ArrayList<>();
+		for (long k = WEEKS - 1; k >= 0; k--) {
+			List<WorkoutSession> sessions = byBlock.getOrDefault(k, List.of());
+			BigDecimal volume = sessions.stream()
+				.map(session -> volumeBySession.getOrDefault(session.getId(), BigDecimal.ZERO))
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+			weeklyVolume.add(new DashboardInsightsResponse.WeeklyVolume(now.minus(WEEK.multipliedBy(k + 1)),
+					sessions.size(), volume));
+		}
+
+		Integer goal = userRepository.findById(userId).map(User::getWeeklyGoal).orElse(null);
+		long currentWeekWorkouts = byBlock.getOrDefault(0L, List.of()).size();
+		int streakWeeks = 0;
+		if (goal != null) {
+			for (long k = 1; byBlock.getOrDefault(k, List.of()).size() >= goal; k++) {
+				streakWeeks++;
+			}
+			if (currentWeekWorkouts >= goal) {
+				streakWeeks++;
+			}
+		}
+
+		List<PersonalRecordEntry> records = personalRecordService.recentRecords(userId, RECENT_RECORDS);
+		Map<UUID, String> names = records.isEmpty() ? Map.of()
+				: exerciseRepository
+					.findVisibleByIdIn(records.stream().map(PersonalRecordEntry::exerciseId).distinct().toList(), userId)
+					.stream()
+					.collect(Collectors.toMap(Exercise::getId, Exercise::getName));
+		List<DashboardInsightsResponse.RecentPersonalRecord> recent = records.stream()
+			.map(record -> new DashboardInsightsResponse.RecentPersonalRecord(record.sessionId(),
+					record.exerciseId(), names.getOrDefault(record.exerciseId(), UNKNOWN_EXERCISE), record.reps(),
+					record.weightKg(), record.achievedAt()))
+			.toList();
+
+		return new DashboardInsightsResponse(weeklyVolume,
+				new DashboardInsightsResponse.Streak(goal, streakWeeks, currentWeekWorkouts), recent);
 	}
 
 	@Transactional(readOnly = true)

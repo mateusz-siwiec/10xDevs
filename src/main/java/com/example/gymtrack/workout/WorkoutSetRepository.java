@@ -56,4 +56,11 @@ public interface WorkoutSetRepository extends JpaRepository<WorkoutSet, UUID> {
 			@Param("exerciseIds") Collection<UUID> exerciseIds, @Param("maxReps") int maxReps,
 			@Param("before") Instant before);
 
+	@Query("""
+			select s from WorkoutSet s join fetch s.session ss
+			where ss.userId = :userId and ss.endedAt is not null and s.reps <= :maxReps
+			order by s.loggedAt asc, s.id asc
+			""")
+	List<WorkoutSet> findEligibleSetsOfEndedSessions(@Param("userId") UUID userId, @Param("maxReps") int maxReps);
+
 }

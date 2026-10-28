@@ -27,6 +27,8 @@ public class User {
 	@CreationTimestamp
 	private Instant createdAt;
 
+	private Integer weeklyGoal;
+
 	protected User() {
 	}
 
@@ -49,6 +51,14 @@ public class User {
 
 	public Instant getCreatedAt() {
 		return createdAt;
+	}
+
+	public Integer getWeeklyGoal() {
+		return weeklyGoal;
+	}
+
+	public void setWeeklyGoal(Integer weeklyGoal) {
+		this.weeklyGoal = weeklyGoal;
 	}
 
 }
