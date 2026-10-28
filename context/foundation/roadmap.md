@@ -3,7 +3,7 @@ project: "GymTrack"
 version: 1
 status: draft
 created: 2026-10-21
-updated: 2026-10-27
+updated: 2026-10-28
 prd_version: 1
 main_goal: learn
 top_blocker: skills
@@ -51,7 +51,7 @@ An amateur-to-intermediate gym-goer currently tracks workouts in scattered notes
 | S-04 | exercise-substitution-suggestion | see a substitute exercise suggestion when marking one unavailable | S-01, F-02 | FR-012 | done |
 | S-05 | custom-exercise-entry | add their own custom exercise with a muscle group | F-01, F-02 | FR-003 | done |
 | S-06 | guided-session-navigation | navigate sequential exercises with skip/return and a rest timer | S-01 | FR-007, FR-008 | done |
-| S-08 | personal-record-flag | see a logged set flagged as a new personal record | S-01 | FR-014 | in-progress |
+| S-08 | personal-record-flag | see a logged set flagged as a new personal record | S-01 | FR-014 | done |
 | S-11 | workout-dashboard | see completed workouts, time spent and total volume for the last 7/30 days after logging in | S-01 | MS-01 | done |
 | S-12 | previous-workout-weight-hint | see, per exercise and per set, what they lifted last time when starting a workout from the same plan | S-01, S-02 | MS-02 | done |
 | S-13 | training-history | browse a paginated list of past workouts and open a compact view of each | S-01 | MS-03 | done |
@@ -193,7 +193,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** The PRD itself notes 1RM estimation formulas are inaccurate at high rep counts — document this as a known limitation when implemented, not a bug to fix.
-- **Status:** in-progress
+- **Status:** done
 
 ### S-11: Workout dashboard
 
@@ -298,3 +298,4 @@ No roadmap-wide open questions at this milestone. The PRD `## Open Questions` ma
 - **S-13: user can browse a paginated list of all their past workouts (newest first) and open a compact view of how a given workout went.** — Archived 2026-10-27 → `context/archive/2026-10-27-training-history/`. Lesson: —.
 - **S-05: user can add their own custom exercise, including its muscle group.** — Archived 2026-10-27 → `context/archive/2026-10-27-custom-exercise-entry/`. Lesson: —.
 - **S-06: user experiences a full guided session — sequential exercise navigation with skip/return — and sees a countdown rest timer between sets.** — Archived 2026-10-27 → `context/archive/2026-10-27-guided-session-navigation/`. Lesson: —.
+- **S-08: user sees a logged set flagged as a new personal record when it beats their estimated one-rep max for that exercise.** — Archived 2026-10-28 → `context/archive/2026-10-27-personal-record-flag/`. Lesson: —.
