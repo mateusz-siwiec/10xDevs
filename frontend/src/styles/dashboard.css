@@ -61,11 +61,11 @@
 }
 
 .dashboard-delta[data-direction='up'] {
-  color: #1a7f37;
+  color: var(--success);
 }
 
 .dashboard-delta[data-direction='down'] {
-  color: #cf222e;
+  color: var(--danger);
 }
 
 .dashboard-delta[data-direction='flat'] {

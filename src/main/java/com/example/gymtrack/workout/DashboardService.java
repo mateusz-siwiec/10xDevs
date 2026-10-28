@@ -1,5 +1,6 @@
 package com.example.gymtrack.workout;
 
+import com.example.gymtrack.common.ResourceNotFoundException;
 import com.example.gymtrack.exercise.Exercise;
 import com.example.gymtrack.exercise.ExerciseRepository;
 import com.example.gymtrack.user.User;
@@ -72,7 +73,8 @@ public class DashboardService {
 			}
 			goal = number;
 		}
-		User user = userRepository.findById(userId).orElseThrow();
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new ResourceNotFoundException("User not found"));
 		user.setWeeklyGoal(goal);
 		userRepository.save(user);
 		return goal;
@@ -89,7 +91,9 @@ public class DashboardService {
 		Instant now = Instant.now();
 		Map<Long, List<WorkoutSession>> byBlock = sessionRepository.findEndedBetween(userId, Instant.EPOCH, now)
 			.stream()
-			.collect(Collectors.groupingBy(session -> Duration.between(session.getEndedAt(), now).dividedBy(WEEK)));
+			// minusNanos(1) keeps the block's lower edge inclusive: an age of exactly k weeks falls in block k-1.
+			.collect(Collectors.groupingBy(
+					session -> Duration.between(session.getEndedAt(), now).minusNanos(1).dividedBy(WEEK)));
 
 		List<UUID> recentSessionIds = new ArrayList<>();
 		for (long k = 0; k < WEEKS; k++) {

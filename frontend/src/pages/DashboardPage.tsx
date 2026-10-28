@@ -67,6 +67,7 @@ export default function DashboardPage() {
   const [insightsResult, setInsightsResult] = useState<InsightsResult | null>(null)
   const [saving, setSaving] = useState(false)
   const [goalError, setGoalError] = useState<string | null>(null)
+  const [insightsAttempt, setInsightsAttempt] = useState(0)
 
   // State is only set from async callbacks; a cancelled flag drops stale responses.
   useEffect(() => {
@@ -89,7 +90,7 @@ export default function DashboardPage() {
     }
   }, [days])
 
-  // Insights are independent of the window toggle, so they load once on mount.
+  // Insights are independent of the window toggle, so they load on mount (and on an explicit retry).
   useEffect(() => {
     let cancelled = false
     getDashboardInsights()
@@ -107,16 +108,31 @@ export default function DashboardPage() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [insightsAttempt])
 
   async function handleSaveGoal(goal: number | null) {
     setSaving(true)
     setGoalError(null)
     try {
-      await setWeeklyGoal(goal)
-      // The streak is computed server-side, so refetch rather than recompute locally.
-      const insights = await getDashboardInsights()
-      setInsightsResult({ insights, error: null })
+      const saved = await setWeeklyGoal(goal)
+      try {
+        // The streak is computed server-side, so refetch rather than recompute locally.
+        const insights = await getDashboardInsights()
+        setInsightsResult({ insights, error: null })
+      } catch {
+        // The goal is saved; only the refresh failed, so keep the old numbers with the new goal.
+        setInsightsResult((prev) =>
+          prev?.insights
+            ? {
+                insights: {
+                  ...prev.insights,
+                  streak: { ...prev.insights.streak, goal: saved.weeklyGoal },
+                },
+                error: null,
+              }
+            : prev,
+        )
+      }
     } catch (err) {
       setGoalError(err instanceof Error ? err.message : 'Failed to save goal')
     } finally {
@@ -170,9 +186,21 @@ export default function DashboardPage() {
     insightsBody = <p className="page-subtext">Loading insights…</p>
   } else if (insightsResult.error || insightsResult.insights === null) {
     insightsBody = (
-      <p className="error-text" role="alert">
-        {insightsResult.error ?? 'Failed to load insights'}
-      </p>
+      <>
+        <p className="error-text" role="alert">
+          {insightsResult.error ?? 'Failed to load insights'}
+        </p>
+        <button
+          type="button"
+          className="btn-secondary"
+          onClick={() => {
+            setInsightsResult(null)
+            setInsightsAttempt((attempt) => attempt + 1)
+          }}
+        >
+          Retry
+        </button>
+      </>
     )
   } else {
     const { insights } = insightsResult
@@ -180,6 +208,7 @@ export default function DashboardPage() {
       <>
         <WeeklyVolumeChart weeks={insights.weeklyVolume} />
         <ConsistencyCard
+          key={insights.streak.goal ?? 'none'}
           streak={insights.streak}
           saving={saving}
           error={goalError}

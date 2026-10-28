@@ -71,7 +71,10 @@ public class PersonalRecordService {
 	/**
 	 * The user's latest record sets across all ended sessions, newest first. Scans the eligible sets
 	 * in {@code loggedAt} order with a running best per exercise, applying the same eligibility and
-	 * score rule as {@link #personalRecordSetIds}, so it agrees with the flags History shows.
+	 * score rule as {@link #personalRecordSetIds}, so it agrees with the flags History shows. The
+	 * agreement relies on sessions never overlapping in time: set and session timestamps are only ever
+	 * assigned at creation and a user has one active session at a time, so a running best by
+	 * {@code loggedAt} equals History's "everything logged before the session started" baseline.
 	 */
 	public List<PersonalRecordEntry> recentRecords(UUID userId, int limit) {
 		Map<UUID, BigDecimal> best = new HashMap<>();

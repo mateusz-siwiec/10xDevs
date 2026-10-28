@@ -53,7 +53,8 @@ preferred.
   Never point a local run at the Supabase DB while Flyway is enabled.
   Because production skips Flyway, constraints and indexes that `ddl-auto=update` cannot create
   (e.g. the FK/cascade and partial unique index in `V8__add_exercise_owner.sql`) must be applied
-  to the Supabase DB by hand.
+  to the Supabase DB by hand. Plain nullable columns (e.g. `users.weekly_goal` in
+  `V9__add_user_weekly_goal.sql`) are created by `ddl-auto=update` and need no manual step.
 - Frontend and backend are decoupled: the SPA under `frontend/` talks to the
   backend only via `/api/**` REST calls. There is no server-side templating.
 - Deployment: multi-stage `Dockerfile` (builds with `eclipse-temurin:21-jdk`,
