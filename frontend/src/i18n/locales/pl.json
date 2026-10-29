@@ -38,8 +38,8 @@
     "registrationFailed": "Rejestracja nie powiodła się",
     "email": "E-mail",
     "password": "Hasło",
-    "noAccount": "Nie masz konta? <link>Zarejestruj się</link>",
-    "haveAccount": "Masz już konto? <link>Zaloguj się</link>"
+    "noAccount": "Nie masz konta? <authLink>Zarejestruj się</authLink>",
+    "haveAccount": "Masz już konto? <authLink>Zaloguj się</authLink>"
   },
   "dashboard": {
     "title": "Pulpit",

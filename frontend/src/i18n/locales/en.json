@@ -38,8 +38,8 @@
     "registrationFailed": "Registration failed",
     "email": "Email",
     "password": "Password",
-    "noAccount": "No account? <link>Register</link>",
-    "haveAccount": "Already have an account? <link>Log in</link>"
+    "noAccount": "No account? <authLink>Register</authLink>",
+    "haveAccount": "Already have an account? <authLink>Log in</authLink>"
   },
   "dashboard": {
     "title": "Dashboard",

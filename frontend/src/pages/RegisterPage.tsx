@@ -68,7 +68,7 @@ export default function RegisterPage() {
           </button>
         </form>
         <p className="page-switch">
-          <Trans i18nKey="auth.haveAccount" components={{ link: <Link to="/login" /> }} />
+          <Trans i18nKey="auth.haveAccount" components={{ authLink: <Link to="/login" /> }} />
         </p>
       </main>
     </div>
