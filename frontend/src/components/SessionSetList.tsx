@@ -1,17 +1,26 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import type { WorkoutSet } from '../api/client'
+import { exerciseName } from '../utils/exercises'
+import type { NamedExercise } from '../utils/exercises'
 
 interface SessionSetListProps {
   sets: WorkoutSet[]
-  exerciseNames: Map<string, string>
+  exercisesById: Map<string, NamedExercise>
   onDelete: (setId: string) => Promise<void>
 }
 
-export default function SessionSetList({ sets, exerciseNames, onDelete }: SessionSetListProps) {
+export default function SessionSetList({ sets, exercisesById, onDelete }: SessionSetListProps) {
+  const { t } = useTranslation()
   const [confirmingId, setConfirmingId] = useState<string | null>(null)
 
+  const nameOf = (exerciseId: string) => {
+    const exercise = exercisesById.get(exerciseId)
+    return exercise ? exerciseName(exercise) : t('common.unknownExercise')
+  }
+
   if (sets.length === 0) {
-    return <p className="page-subtext">No sets logged yet.</p>
+    return <p className="page-subtext">{t('workout.noSets')}</p>
   }
 
   async function confirmDelete(setId: string) {
@@ -27,12 +36,12 @@ export default function SessionSetList({ sets, exerciseNames, onDelete }: Sessio
       {sets.map((set) => (
         <li key={set.id} className="set-item">
           <div className="set-item-info">
-            <span className="set-item-name">{exerciseNames.get(set.exerciseId) ?? 'Unknown exercise'}</span>
+            <span className="set-item-name">{nameOf(set.exerciseId)}</span>
             <span>
               {set.reps} × {set.weightKg} kg
               {set.personalRecord && (
-                <span className="pr-badge" role="img" aria-label="New personal record">
-                  PR
+                <span className="pr-badge" role="img" aria-label={t('common.personalRecord')}>
+                  {t('common.prBadge')}
                 </span>
               )}
             </span>
@@ -40,15 +49,15 @@ export default function SessionSetList({ sets, exerciseNames, onDelete }: Sessio
           {confirmingId === set.id ? (
             <div className="set-item-actions">
               <button type="button" className="btn-danger" onClick={() => confirmDelete(set.id)}>
-                Confirm
+                {t('common.confirm')}
               </button>
               <button type="button" className="btn-secondary" onClick={() => setConfirmingId(null)}>
-                Cancel
+                {t('common.cancel')}
               </button>
             </div>
           ) : (
             <button type="button" className="btn-secondary" onClick={() => setConfirmingId(set.id)}>
-              Delete
+              {t('common.delete')}
             </button>
           )}
         </li>

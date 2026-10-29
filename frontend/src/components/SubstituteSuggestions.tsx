@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { getSubstitutes } from '../api/client'
 import type { Exercise } from '../api/client'
+import { translateError } from '../utils/errors'
+import { exerciseName, sortExercisesByName } from '../utils/exercises'
+import { muscleGroupLabel } from '../utils/muscleGroups'
 
 interface SubstituteSuggestionsProps {
   exerciseId: string
@@ -11,7 +15,7 @@ interface SubstituteSuggestionsProps {
 interface FetchResult {
   key: string
   items: Exercise[]
-  error: string | null
+  error: unknown
 }
 
 const MAX_SUGGESTIONS = 3
@@ -21,6 +25,7 @@ export default function SubstituteSuggestions({
   onAccept,
   onDismiss,
 }: SubstituteSuggestionsProps) {
+  const { t } = useTranslation()
   const [result, setResult] = useState<FetchResult | null>(null)
 
   // State is only set from async callbacks; a cancelled flag drops stale responses.
@@ -35,7 +40,7 @@ export default function SubstituteSuggestions({
           setResult({
             key: exerciseId,
             items: [],
-            error: err instanceof Error ? err.message : 'Failed to load alternatives',
+            error: err,
           })
         }
       })
@@ -48,31 +53,31 @@ export default function SubstituteSuggestions({
 
   let body
   if (current === null) {
-    body = <p className="page-subtext">Loading alternatives…</p>
-  } else if (current.error) {
+    body = <p className="page-subtext">{t('workout.substitutes.loading')}</p>
+  } else if (current.error !== null) {
     body = (
       <p className="error-text" role="alert">
-        {current.error}
+        {translateError(current.error, 'workout.substitutes.loadFailed')}
       </p>
     )
   } else if (current.items.length === 0) {
-    body = <p className="page-subtext">No alternatives available for this exercise.</p>
+    body = <p className="page-subtext">{t('workout.substitutes.empty')}</p>
   } else {
     body = (
       <ul className="substitute-list">
-        {current.items.slice(0, MAX_SUGGESTIONS).map((exercise) => (
+        {sortExercisesByName(current.items.slice(0, MAX_SUGGESTIONS)).map((exercise) => (
           <li key={exercise.id} className="substitute-item">
             <div className="substitute-item-info">
-              <span className="substitute-item-name">{exercise.name}</span>
-              <span className="page-subtext">{exercise.primaryMuscleGroup}</span>
+              <span className="substitute-item-name">{exerciseName(exercise)}</span>
+              <span className="page-subtext">{muscleGroupLabel(exercise.primaryMuscleGroup)}</span>
             </div>
             <button
               type="button"
               className="btn-primary"
-              aria-label={`Use ${exercise.name}`}
+              aria-label={t('workout.substitutes.useLabel', { name: exerciseName(exercise) })}
               onClick={() => onAccept(exercise.id)}
             >
-              Use this
+              {t('workout.substitutes.useThis')}
             </button>
           </li>
         ))}
@@ -83,9 +88,9 @@ export default function SubstituteSuggestions({
   return (
     <section className="workout-section substitute-panel" aria-labelledby="substitute-heading">
       <div className="substitute-header">
-        <h2 id="substitute-heading">Alternatives</h2>
+        <h2 id="substitute-heading">{t('workout.substitutes.title')}</h2>
         <button type="button" className="btn-secondary" onClick={onDismiss}>
-          Dismiss
+          {t('workout.substitutes.dismiss')}
         </button>
       </div>
       <div aria-live="polite">{body}</div>

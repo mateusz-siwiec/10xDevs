@@ -215,6 +215,7 @@ class CustomExerciseVisibilityTest {
 		mockMvc.perform(get("/api/exercises/" + UUID.randomUUID() + "/substitutes")
 			.header(HttpHeaders.AUTHORIZATION, bearer(owner)))
 			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.code", is("EXERCISE_NOT_FOUND")))
 			.andExpect(jsonPath("$.error", is("Exercise not found")));
 	}
 

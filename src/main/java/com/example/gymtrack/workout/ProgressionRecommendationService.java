@@ -1,5 +1,6 @@
 package com.example.gymtrack.workout;
 
+import com.example.gymtrack.common.ErrorCode;
 import com.example.gymtrack.exercise.ExerciseRepository;
 import com.example.gymtrack.plan.TrainingPlanEntry;
 import com.example.gymtrack.plan.TrainingPlanRepository;
@@ -49,7 +50,7 @@ public class ProgressionRecommendationService {
 	@Transactional(readOnly = true)
 	public Optional<ProgressionRecommendationResponse> recommend(UUID userId, UUID exerciseId) {
 		if (!exerciseRepository.existsVisible(exerciseId, userId)) {
-			throw new WorkoutNotFoundException("Exercise not found");
+			throw new WorkoutNotFoundException(ErrorCode.EXERCISE_NOT_FOUND, "Exercise not found");
 		}
 		List<WorkoutSession> sessions = sessionRepository.findRecentEndedWithExercise(userId, exerciseId,
 				PageRequest.of(0, REQUIRED_WORKOUTS));

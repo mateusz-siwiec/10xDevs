@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   deleteSet,
   endSession,
@@ -23,8 +24,11 @@ import SetLogger from '../components/SetLogger'
 import SubstituteSuggestions from '../components/SubstituteSuggestions'
 import '../styles/page.css'
 import '../styles/workout.css'
+import { translateError } from '../utils/errors'
+import type { ErrorInfo } from '../utils/errors'
 
 export default function WorkoutPage() {
+  const { t } = useTranslation()
   const [session, setSession] = useState<WorkoutSession | null>(null)
   const [exercises, setExercises] = useState<Exercise[]>([])
   const [plans, setPlans] = useState<PlanSummary[]>([])
@@ -41,7 +45,7 @@ export default function WorkoutPage() {
   const [restDuration, setRestDuration] = useState(loadRestDuration)
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<ErrorInfo | null>(null)
   const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
@@ -51,11 +55,11 @@ export default function WorkoutPage() {
         setSession(current)
         setPlans(planList)
       })
-      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load workout'))
+      .catch((err) => setError({ err, key: 'workout.loadFailed' }))
       .finally(() => setLoading(false))
   }, [])
 
-  const exerciseNames = useMemo(() => new Map(exercises.map((e) => [e.id, e.name])), [exercises])
+  const exercisesById = useMemo(() => new Map(exercises.map((e) => [e.id, e])), [exercises])
 
   const sessionId = session?.id ?? null
   const sessionPlanId = session?.planId ?? null
@@ -120,7 +124,7 @@ export default function WorkoutPage() {
       setSkipped(new Set())
       setRestEndsAt(null)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to start workout')
+      setError({ err, key: 'workout.startFailed' })
     } finally {
       setBusy(false)
     }
@@ -138,7 +142,7 @@ export default function WorkoutPage() {
       setSkipped(new Set())
       setRestEndsAt(null)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to end workout')
+      setError({ err, key: 'workout.endFailed' })
     } finally {
       setBusy(false)
     }
@@ -166,7 +170,7 @@ export default function WorkoutPage() {
       setRestEndsAt(Date.now() + restDuration * 1000)
       setRefreshKey((k) => k + 1)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to log set')
+      setError({ err, key: 'workout.logFailed' })
       throw err
     } finally {
       setBusy(false)
@@ -200,7 +204,7 @@ export default function WorkoutPage() {
       }
       setRefreshKey((k) => k + 1)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete set')
+      setError({ err, key: 'workout.deleteFailed' })
     } finally {
       setBusy(false)
     }
@@ -213,19 +217,19 @@ export default function WorkoutPage() {
   return (
     <div className="page-shell">
       <main className="page-card workout-card">
-        <h1>Workout</h1>
-        {error && <p className="error-text">{error}</p>}
+        <h1>{t('workout.title')}</h1>
+        {error && <p className="error-text">{translateError(error.err, error.key)}</p>}
         {session === null ? (
           <div className="workout-start">
             {plans.length > 0 && (
               <div className="workout-start-plan">
                 <select
                   className="workout-select"
-                  aria-label="Start from plan"
+                  aria-label={t('workout.startFromPlanLabel')}
                   value={startPlanId}
                   onChange={(event) => setStartPlanId(event.target.value)}
                 >
-                  <option value="">Start from plan…</option>
+                  <option value="">{t('workout.startFromPlan')}</option>
                   {plans.map((p) => (
                     <option key={p.id} value={p.id}>
                       {p.name}
@@ -238,17 +242,17 @@ export default function WorkoutPage() {
                   disabled={busy || !startPlanId}
                   onClick={() => handleStart(startPlanId)}
                 >
-                  Start plan
+                  {t('workout.startPlan')}
                 </button>
               </div>
             )}
             <button type="button" className="btn-primary" disabled={busy} onClick={() => handleStart()}>
-              {busy ? 'Starting…' : 'Start workout'}
+              {busy ? t('workout.starting') : t('workout.startWorkout')}
             </button>
           </div>
         ) : (
           <>
-            {showReturnHint && <p className="walkthrough-return-hint">Return to skipped exercises</p>}
+            {showReturnHint && <p className="walkthrough-return-hint">{t('workout.returnToSkipped')}</p>}
             {progress && (
               <PlanWalkthrough
                 progress={progress}
@@ -270,7 +274,7 @@ export default function WorkoutPage() {
                 disabled={!selectedExercise}
                 onClick={() => setSubstituteFor(selectedExercise)}
               >
-                Find substitute
+                {t('workout.findSubstitute')}
               </button>
             </div>
             {selectedExercise && substituteFor === selectedExercise && (
@@ -302,10 +306,10 @@ export default function WorkoutPage() {
               <ProgressionChart exerciseId={selectedExercise} refreshKey={refreshKey} />
             )}
             <section className="workout-section">
-              <h2>Logged sets</h2>
+              <h2>{t('workout.loggedSets')}</h2>
               <SessionSetList
                 sets={session.sets}
-                exerciseNames={exerciseNames}
+                exercisesById={exercisesById}
                 onDelete={handleDelete}
               />
             </section>
@@ -315,7 +319,7 @@ export default function WorkoutPage() {
               disabled={busy}
               onClick={handleEnd}
             >
-              End workout
+              {t('workout.endWorkout')}
             </button>
           </>
         )}

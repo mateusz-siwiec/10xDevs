@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { getProgression } from '../api/client'
 import type { ProgressionPoint } from '../api/client'
+import i18n from '../i18n'
+import { translateError } from '../utils/errors'
 
 interface ProgressionChartProps {
   exerciseId: string
@@ -11,17 +14,18 @@ interface ProgressionChartProps {
 interface FetchResult {
   key: string
   points: ProgressionPoint[]
-  error: string | null
+  error: unknown
 }
 
 function formatDate(value: string): string {
   const date = new Date(value)
   return Number.isNaN(date.getTime())
     ? value
-    : date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+    : date.toLocaleDateString(i18n.language === 'pl' ? 'pl-PL' : 'en-GB', { month: 'short', day: 'numeric' })
 }
 
 export default function ProgressionChart({ exerciseId, refreshKey }: ProgressionChartProps) {
+  const { t } = useTranslation() // also re-renders on language change so axis dates are reformatted
   const [result, setResult] = useState<FetchResult | null>(null)
   const requestKey = `${exerciseId}:${refreshKey}`
 
@@ -37,7 +41,7 @@ export default function ProgressionChart({ exerciseId, refreshKey }: Progression
           setResult({
             key: requestKey,
             points: [],
-            error: err instanceof Error ? err.message : 'Failed to load progression',
+            error: err,
           })
         }
       })
@@ -54,11 +58,11 @@ export default function ProgressionChart({ exerciseId, refreshKey }: Progression
 
   let body
   if (shown === null) {
-    body = <p className="page-subtext">Loading progression…</p>
-  } else if (shown.error) {
-    body = <p className="error-text">{shown.error}</p>
+    body = <p className="page-subtext">{t('progression.loading')}</p>
+  } else if (shown.error !== null) {
+    body = <p className="error-text">{translateError(shown.error, 'progression.loadFailed')}</p>
   } else if (shown.points.length === 0) {
-    body = <p className="page-subtext">No history for this exercise yet. Log a set to start the chart.</p>
+    body = <p className="page-subtext">{t('progression.empty')}</p>
   } else {
     body = (
       <div className="progression-chart-body">
@@ -75,7 +79,7 @@ export default function ProgressionChart({ exerciseId, refreshKey }: Progression
             />
             <Tooltip
               labelFormatter={(label) => formatDate(String(label))}
-              formatter={(value) => [`${value} kg`, 'Top weight']}
+              formatter={(value) => [`${value} kg`, t('progression.topWeight')]}
             />
             <Line
               type="monotone"
@@ -94,7 +98,7 @@ export default function ProgressionChart({ exerciseId, refreshKey }: Progression
 
   return (
     <section className="workout-section progression-chart">
-      <h2>Progression</h2>
+      <h2>{t('progression.title')}</h2>
       {body}
     </section>
   )

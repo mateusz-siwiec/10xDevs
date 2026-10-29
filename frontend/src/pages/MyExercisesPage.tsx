@@ -1,40 +1,25 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 import { createExercise, deleteExercise, getExercises } from '../api/client'
 import type { Exercise } from '../api/client'
 import '../styles/page.css'
 import '../styles/workout.css'
 import '../styles/plans.css'
 import '../styles/exercises.css'
-
-const MUSCLE_GROUPS = [
-  'CHEST',
-  'BACK',
-  'SHOULDERS',
-  'BICEPS',
-  'TRICEPS',
-  'QUADS',
-  'HAMSTRINGS',
-  'GLUTES',
-  'CALVES',
-  'CORE',
-]
+import { translateError } from '../utils/errors'
+import type { ErrorInfo } from '../utils/errors'
+import { exerciseName, sortExercisesByName } from '../utils/exercises'
+import { MUSCLE_GROUPS, muscleGroupLabel } from '../utils/muscleGroups'
 
 const NAME_MAX_LENGTH = 60
 
-function formatGroup(group: string): string {
-  return group.charAt(0) + group.slice(1).toLowerCase()
-}
-
-function byName(a: Exercise, b: Exercise): number {
-  return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
-}
-
 export default function MyExercisesPage() {
+  const { t } = useTranslation()
   const [exercises, setExercises] = useState<Exercise[]>([])
   const [loading, setLoading] = useState(true)
   const [loadFailed, setLoadFailed] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<ErrorInfo | null>(null)
   const [name, setName] = useState('')
   const [primary, setPrimary] = useState('')
   const [secondary, setSecondary] = useState<string[]>([])
@@ -46,12 +31,12 @@ export default function MyExercisesPage() {
     let cancelled = false
     getExercises()
       .then((list) => {
-        if (!cancelled) setExercises(list.filter((e) => e.custom).sort(byName))
+        if (!cancelled) setExercises(list.filter((e) => e.custom))
       })
       .catch((err) => {
         if (cancelled) return
         setLoadFailed(true)
-        setError(err instanceof Error ? err.message : 'Failed to load exercises')
+        setError({ err, key: 'exercises.loadFailed' })
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
@@ -82,12 +67,12 @@ export default function MyExercisesPage() {
         primaryMuscleGroup: primary,
         secondaryMuscleGroups: secondary,
       })
-      setExercises((list) => [...list, created].sort(byName))
+      setExercises((list) => [...list, created])
       setName('')
       setPrimary('')
       setSecondary([])
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add exercise')
+      setError({ err, key: 'exercises.addFailed' })
     } finally {
       setSaving(false)
     }
@@ -100,7 +85,7 @@ export default function MyExercisesPage() {
       await deleteExercise(id)
       setExercises((list) => list.filter((e) => e.id !== id))
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete exercise')
+      setError({ err, key: 'exercises.deleteFailed' })
     } finally {
       setBusy(false)
       setConfirmingId(null)
@@ -112,10 +97,10 @@ export default function MyExercisesPage() {
   return (
     <div className="page-shell">
       <main className="page-card plans-card">
-        <h1>My exercises</h1>
+        <h1>{t('exercises.title')}</h1>
         <form onSubmit={handleSubmit}>
           <div className="field">
-            <label htmlFor="exercise-name">Name</label>
+            <label htmlFor="exercise-name">{t('exercises.name')}</label>
             <input
               id="exercise-name"
               type="text"
@@ -125,7 +110,7 @@ export default function MyExercisesPage() {
             />
           </div>
           <div className="field">
-            <label htmlFor="exercise-primary">Primary muscle group</label>
+            <label htmlFor="exercise-primary">{t('exercises.primaryGroup')}</label>
             <select
               id="exercise-primary"
               className="workout-select"
@@ -133,17 +118,17 @@ export default function MyExercisesPage() {
               onChange={(event) => handlePrimaryChange(event.target.value)}
             >
               <option value="" disabled>
-                Choose a muscle group…
+                {t('exercises.choosePrimary')}
               </option>
               {MUSCLE_GROUPS.map((group) => (
                 <option key={group} value={group}>
-                  {formatGroup(group)}
+                  {muscleGroupLabel(group)}
                 </option>
               ))}
             </select>
           </div>
           <fieldset className="exercise-secondary">
-            <legend>Secondary muscle groups (optional)</legend>
+            <legend>{t('exercises.secondaryGroups')}</legend>
             <div className="exercise-secondary-options">
               {MUSCLE_GROUPS.filter((group) => group !== primary).map((group) => (
                 <label key={group} className="exercise-secondary-option">
@@ -152,36 +137,36 @@ export default function MyExercisesPage() {
                     checked={secondary.includes(group)}
                     onChange={() => toggleSecondary(group)}
                   />
-                  {formatGroup(group)}
+                  {muscleGroupLabel(group)}
                 </label>
               ))}
             </div>
           </fieldset>
           {error && (
             <p role="alert" className="error-text">
-              {error}
+              {translateError(error.err, error.key)}
             </p>
           )}
           <button type="submit" className="btn-primary" disabled={!canSave}>
-            {saving ? 'Adding…' : 'Add exercise'}
+            {saving ? t('exercises.adding') : t('exercises.add')}
           </button>
         </form>
         <section className="workout-section" aria-live="polite">
-          <h2>Your exercises</h2>
+          <h2>{t('exercises.yours')}</h2>
           {loading ? (
-            <p className="page-subtext">Loading exercises…</p>
+            <p className="page-subtext">{t('exercises.loading')}</p>
           ) : loadFailed ? null : exercises.length === 0 ? (
-            <p className="page-subtext">No custom exercises yet.</p>
+            <p className="page-subtext">{t('exercises.empty')}</p>
           ) : (
             <ul className="plan-list">
-              {exercises.map((exercise) => (
+              {sortExercisesByName(exercises).map((exercise) => (
                 <li key={exercise.id} className="plan-item">
                   <div className="plan-item-info">
-                    <span className="plan-item-name">{exercise.name}</span>
+                    <span className="plan-item-name">{exerciseName(exercise)}</span>
                     <span>
-                      {formatGroup(exercise.primaryMuscleGroup)}
+                      {muscleGroupLabel(exercise.primaryMuscleGroup)}
                       {exercise.secondaryMuscleGroups.length > 0 &&
-                        ` · ${exercise.secondaryMuscleGroups.map(formatGroup).join(', ')}`}
+                        ` · ${exercise.secondaryMuscleGroups.map(muscleGroupLabel).join(', ')}`}
                     </span>
                   </div>
                   {confirmingId === exercise.id ? (
@@ -192,7 +177,7 @@ export default function MyExercisesPage() {
                         disabled={busy}
                         onClick={() => handleDelete(exercise.id)}
                       >
-                        Confirm
+                        {t('common.confirm')}
                       </button>
                       <button
                         type="button"
@@ -200,7 +185,7 @@ export default function MyExercisesPage() {
                         disabled={busy}
                         onClick={() => setConfirmingId(null)}
                       >
-                        Cancel
+                        {t('common.cancel')}
                       </button>
                     </div>
                   ) : (
@@ -209,7 +194,7 @@ export default function MyExercisesPage() {
                       className="btn-secondary"
                       onClick={() => setConfirmingId(exercise.id)}
                     >
-                      Delete
+                      {t('common.delete')}
                     </button>
                   )}
                 </li>

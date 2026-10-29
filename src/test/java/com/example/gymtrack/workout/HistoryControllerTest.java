@@ -228,6 +228,9 @@ class HistoryControllerTest {
 		list(user, "size", "51").andExpect(status().isBadRequest()).andExpect(jsonPath("$.error", notNullValue()));
 		list(user, "size", "0").andExpect(status().isBadRequest()).andExpect(jsonPath("$.error", notNullValue()));
 		list(user, "page", "-1").andExpect(status().isBadRequest()).andExpect(jsonPath("$.error", notNullValue()));
+		list(user, "size", "51").andExpect(jsonPath("$.code", is("INVALID_HISTORY_SIZE")));
+		list(user, "size", "0").andExpect(jsonPath("$.code", is("INVALID_HISTORY_SIZE")));
+		list(user, "page", "-1").andExpect(jsonPath("$.code", is("INVALID_HISTORY_PAGE")));
 	}
 
 	@Test
@@ -235,6 +238,7 @@ class HistoryControllerTest {
 		User user = newUser();
 
 		list(user, "planId", UUID.randomUUID().toString(), "noPlan", "true").andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("INVALID_HISTORY_FILTER")))
 			.andExpect(jsonPath("$.error", notNullValue()));
 	}
 
@@ -243,12 +247,18 @@ class HistoryControllerTest {
 		User user = newUser();
 
 		list(user, "planId", "not-a-uuid").andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("INVALID_PARAMETER")))
+			.andExpect(jsonPath("$.field", is("planId")))
 			.andExpect(jsonPath("$.error", is("Invalid planId")));
 		list(user, "page", "abc").andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("INVALID_PARAMETER")))
+			.andExpect(jsonPath("$.field", is("page")))
 			.andExpect(jsonPath("$.error", is("Invalid page")));
 		detail(user, UUID.randomUUID()).andExpect(status().isNotFound());
 		mockMvc.perform(get(LIST_URL + "/not-a-uuid").header(HttpHeaders.AUTHORIZATION, bearer(user)))
 			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("INVALID_PARAMETER")))
+			.andExpect(jsonPath("$.field", is("id")))
 			.andExpect(jsonPath("$.error", is("Invalid id")));
 	}
 
@@ -360,6 +370,7 @@ class HistoryControllerTest {
 		WorkoutSession running = runningSession(user, null, set(exerciseId(), 10, "50"));
 
 		detail(user, running.getId()).andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.code", is("WORKOUT_NOT_FOUND")))
 			.andExpect(jsonPath("$.error", notNullValue()));
 	}
 

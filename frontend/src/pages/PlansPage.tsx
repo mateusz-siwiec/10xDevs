@@ -1,22 +1,26 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { deletePlan, listPlans } from '../api/client'
 import type { PlanSummary } from '../api/client'
 import '../styles/page.css'
 import '../styles/workout.css'
 import '../styles/plans.css'
+import { translateError } from '../utils/errors'
+import type { ErrorInfo } from '../utils/errors'
 
 export default function PlansPage() {
+  const { t } = useTranslation()
   const [plans, setPlans] = useState<PlanSummary[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<ErrorInfo | null>(null)
   const [confirmingId, setConfirmingId] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
 
   useEffect(() => {
     listPlans()
       .then(setPlans)
-      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load plans'))
+      .catch((err) => setError({ err, key: 'plans.loadFailed' }))
       .finally(() => setLoading(false))
   }, [])
 
@@ -27,7 +31,7 @@ export default function PlansPage() {
       await deletePlan(id)
       setPlans((list) => list.filter((p) => p.id !== id))
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete plan')
+      setError({ err, key: 'plans.deleteFailed' })
     } finally {
       setBusy(false)
       setConfirmingId(null)
@@ -38,16 +42,16 @@ export default function PlansPage() {
     <div className="page-shell">
       <main className="page-card plans-card">
         <div className="plans-header">
-          <h1>Plans</h1>
+          <h1>{t('plans.title')}</h1>
           <Link to="/plans/new" className="plans-link-button">
-            New plan
+            {t('plans.newPlan')}
           </Link>
         </div>
-        {error && <p className="error-text">{error}</p>}
+        {error && <p className="error-text">{translateError(error.err, error.key)}</p>}
         {loading ? (
-          <p className="page-subtext">Loading plans…</p>
+          <p className="page-subtext">{t('plans.loading')}</p>
         ) : plans.length === 0 ? (
-          <p className="page-subtext">You have no plans yet. Create one to get started.</p>
+          <p className="page-subtext">{t('plans.empty')}</p>
         ) : (
           <ul className="plan-list">
             {plans.map((plan) => (
@@ -55,7 +59,7 @@ export default function PlansPage() {
                 <div className="plan-item-info">
                   <span className="plan-item-name">{plan.name}</span>
                   <span>
-                    {plan.exerciseCount} {plan.exerciseCount === 1 ? 'exercise' : 'exercises'}
+                    {t('plans.exerciseCount', { count: plan.exerciseCount })}
                   </span>
                 </div>
                 {confirmingId === plan.id ? (
@@ -66,7 +70,7 @@ export default function PlansPage() {
                       disabled={busy}
                       onClick={() => handleDelete(plan.id)}
                     >
-                      Confirm
+                      {t('common.confirm')}
                     </button>
                     <button
                       type="button"
@@ -74,20 +78,20 @@ export default function PlansPage() {
                       disabled={busy}
                       onClick={() => setConfirmingId(null)}
                     >
-                      Cancel
+                      {t('common.cancel')}
                     </button>
                   </div>
                 ) : (
                   <div className="plan-item-actions">
                     <Link to={`/plans/${plan.id}`} className="btn-secondary">
-                      Edit
+                      {t('common.edit')}
                     </Link>
                     <button
                       type="button"
                       className="btn-secondary"
                       onClick={() => setConfirmingId(plan.id)}
                     >
-                      Delete
+                      {t('common.delete')}
                     </button>
                   </div>
                 )}

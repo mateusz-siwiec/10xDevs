@@ -1,7 +1,11 @@
+import { useTranslation } from 'react-i18next'
+import { exerciseName } from '../utils/exercises'
+
 export interface PlanEditorEntry {
   key: string
   exerciseId: string
   exerciseName: string
+  exerciseSlug: string
   sets: string
   reps: string
 }
@@ -23,33 +27,34 @@ export default function PlanExerciseList({
   onRemove,
   onTargetChange,
 }: PlanExerciseListProps) {
+  const { t } = useTranslation()
   if (entries.length === 0) {
-    return <p className="page-subtext">No exercises added yet.</p>
+    return <p className="page-subtext">{t('plans.editor.noExercises')}</p>
   }
 
   return (
     <ol className="plan-exercise-list">
       {entries.map((entry, index) => (
         <li key={entry.key} className="plan-exercise-item">
-          <span className="plan-exercise-name">{entry.exerciseName}</span>
+          <span className="plan-exercise-name">{exerciseName({ slug: entry.exerciseSlug, name: entry.exerciseName })}</span>
           <div className="plan-exercise-targets">
             <label className="plan-target-field">
-              <span>Sets</span>
+              <span>{t('plans.editor.sets')}</span>
               <input
                 type="text"
                 inputMode="numeric"
-                aria-label={`Sets for ${entry.exerciseName}`}
+                aria-label={t('plans.editor.setsFor', { name: exerciseName({ slug: entry.exerciseSlug, name: entry.exerciseName }) })}
                 value={entry.sets}
                 disabled={disabled}
                 onChange={(event) => onTargetChange(entry.key, 'sets', event.target.value)}
               />
             </label>
             <label className="plan-target-field">
-              <span>Reps</span>
+              <span>{t('plans.editor.reps')}</span>
               <input
                 type="text"
                 inputMode="numeric"
-                aria-label={`Reps for ${entry.exerciseName}`}
+                aria-label={t('plans.editor.repsFor', { name: exerciseName({ slug: entry.exerciseSlug, name: entry.exerciseName }) })}
                 value={entry.reps}
                 disabled={disabled}
                 onChange={(event) => onTargetChange(entry.key, 'reps', event.target.value)}
@@ -60,29 +65,29 @@ export default function PlanExerciseList({
             <button
               type="button"
               className="btn-secondary"
-              aria-label={`Move ${entry.exerciseName} up`}
+              aria-label={t('plans.editor.moveUpLabel', { name: exerciseName({ slug: entry.exerciseSlug, name: entry.exerciseName }) })}
               disabled={disabled || index === 0}
               onClick={() => onMove(index, -1)}
             >
-              Move up
+              {t('plans.editor.moveUp')}
             </button>
             <button
               type="button"
               className="btn-secondary"
-              aria-label={`Move ${entry.exerciseName} down`}
+              aria-label={t('plans.editor.moveDownLabel', { name: exerciseName({ slug: entry.exerciseSlug, name: entry.exerciseName }) })}
               disabled={disabled || index === entries.length - 1}
               onClick={() => onMove(index, 1)}
             >
-              Move down
+              {t('plans.editor.moveDown')}
             </button>
             <button
               type="button"
               className="btn-secondary"
-              aria-label={`Remove ${entry.exerciseName}`}
+              aria-label={t('plans.editor.removeLabel', { name: exerciseName({ slug: entry.exerciseSlug, name: entry.exerciseName }) })}
               disabled={disabled}
               onClick={() => onRemove(entry.key)}
             >
-              Remove
+              {t('plans.editor.remove')}
             </button>
           </div>
         </li>

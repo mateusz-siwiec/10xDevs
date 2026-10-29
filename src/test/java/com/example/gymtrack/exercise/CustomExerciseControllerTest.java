@@ -135,12 +135,24 @@ class CustomExerciseControllerTest {
 		String token = bearer(newUser());
 
 		create(token, body("   ", "BICEPS", null)).andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("VALIDATION_FAILED")))
+			.andExpect(jsonPath("$.field", is("name")))
+			.andExpect(jsonPath("$.rule", is("NotBlank")))
 			.andExpect(jsonPath("$.error", notNullValue()));
 		create(token, body("x".repeat(61), "BICEPS", null)).andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("VALIDATION_FAILED")))
+			.andExpect(jsonPath("$.field", is("name")))
+			.andExpect(jsonPath("$.rule", is("Size")))
 			.andExpect(jsonPath("$.error", notNullValue()));
 		create(token, body("No Group", null, null)).andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("VALIDATION_FAILED")))
+			.andExpect(jsonPath("$.field", is("primaryMuscleGroup")))
+			.andExpect(jsonPath("$.rule", is("NotNull")))
 			.andExpect(jsonPath("$.error", notNullValue()));
 		create(token, body("Same Group", "BICEPS", "BICEPS")).andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("VALIDATION_FAILED")))
+			.andExpect(jsonPath("$.field", is("secondaryMuscleGroupsExcludePrimary")))
+			.andExpect(jsonPath("$.rule", is("AssertTrue")))
 			.andExpect(jsonPath("$.error", notNullValue()));
 	}
 
@@ -150,10 +162,12 @@ class CustomExerciseControllerTest {
 		String name = "My Move " + System.nanoTime();
 
 		create(bearer(owner), body(" Barbell ROW ", "BACK", null)).andExpect(status().isConflict())
+			.andExpect(jsonPath("$.code", is("EXERCISE_NAME_TAKEN")))
 			.andExpect(jsonPath("$.error", notNullValue()));
 
 		create(bearer(owner), body(name, "BICEPS", null)).andExpect(status().isCreated());
 		create(bearer(owner), body(name.toUpperCase(), "BICEPS", null)).andExpect(status().isConflict())
+			.andExpect(jsonPath("$.code", is("EXERCISE_NAME_TAKEN")))
 			.andExpect(jsonPath("$.error", notNullValue()));
 
 		create(bearer(newUser()), body(name, "BICEPS", null)).andExpect(status().isCreated());
@@ -181,6 +195,7 @@ class CustomExerciseControllerTest {
 
 		mockMvc.perform(delete("/api/exercises/" + id).header(HttpHeaders.AUTHORIZATION, token))
 			.andExpect(status().isConflict())
+			.andExpect(jsonPath("$.code", is("EXERCISE_IN_USE")))
 			.andExpect(jsonPath("$.error", notNullValue()));
 		mockMvc.perform(get("/api/exercises").header(HttpHeaders.AUTHORIZATION, token))
 			.andExpect(jsonPath("$", hasSize(41)));
@@ -196,6 +211,7 @@ class CustomExerciseControllerTest {
 
 		mockMvc.perform(delete("/api/exercises/" + id).header(HttpHeaders.AUTHORIZATION, token))
 			.andExpect(status().isConflict())
+			.andExpect(jsonPath("$.code", is("EXERCISE_IN_USE")))
 			.andExpect(jsonPath("$.error", notNullValue()));
 	}
 

@@ -30,6 +30,7 @@ milestone_status: open
   - MS-02: When starting a workout from a training plan, the user sees what they lifted per set in their previous workout from the same plan.
   - MS-03: The user can browse a paginated list of all their past workouts and open a compact view of how a given workout went.
   - MS-05: On the dashboard, the user sees how their training is trending and how consistent they are — change vs the previous period, weekly volume, recent personal records, and a weekly streak against a goal they set.
+  - MS-06: The user can use the whole app in Polish or English — UI text, dates, server errors and the names of preloaded exercises — and switch between the two.
 
 ## Vision recap
 
@@ -55,7 +56,8 @@ An amateur-to-intermediate gym-goer currently tracks workouts in scattered notes
 | S-11 | workout-dashboard | see completed workouts, time spent and total volume for the last 7/30 days after logging in | S-01 | MS-01 | done |
 | S-12 | previous-workout-weight-hint | see, per exercise and per set, what they lifted last time when starting a workout from the same plan | S-01, S-02 | MS-02 | done |
 | S-13 | training-history | browse a paginated list of past workouts and open a compact view of each | S-01 | MS-03 | done |
-| S-15 | dashboard-insights | see on the dashboard period-over-period change, a 12-week volume chart, recent personal records and a weekly streak with a goal | S-11, S-08 | MS-05 | planning |
+| S-15 | dashboard-insights | see on the dashboard period-over-period change, a 12-week volume chart, recent personal records and a weekly streak with a goal | S-11, S-08 | MS-05 | done |
+| S-16 | i18n-pl-en | use the whole app in Polish or English, including server errors and preloaded exercise names, and switch between them | S-01 | MS-06 | in-progress |
 
 ## Streams
 
@@ -67,6 +69,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 | B | Catalog & planning | `F-02` → `S-02` → `S-05` | Joins Stream A at `S-01` (S-02 also needs F-01). Its former successor `S-07` (plan-template recommendation) is parked — see Parked. |
 | C | Session resilience | `S-04` | Joins Stream A at `S-01` and Stream B at `F-02`. Its former successor `S-10` (volume balance warning) is parked — see Parked. |
 | D | Training history | `S-13` | Joins Stream A at `S-01`; standalone slice. Its successor `S-14` (editing finished sessions) is deferred to the next milestone — see Parked. |
+| E | Localization | `S-16` | Joins Stream A at `S-01`; standalone slice, but it touches almost every frontend page, so land it after `S-15` (shares `DashboardPage.tsx`) to avoid conflicts. |
 
 ## Baseline
 
@@ -243,7 +246,20 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Not in the PRD — added to M-1 after the fact (MS-05), so it widens the milestone. It reuses the S-08 record rule across sessions (backend only, already committed) and adds the first stored user setting (`weekly_goal`); weeks are rolling 7-day blocks, so bars won't align with Monday–Sunday. Land the S-08 frontend first, since both touch `frontend/src/api/client.ts`.
-- **Status:** planning
+- **Status:** done
+
+### S-16: Polish/English internationalization
+
+- **Outcome:** user can use the whole app in Polish or English — labels, plurals, dates, server errors, muscle groups and the names of the 40 preloaded exercises — with the language taken from the browser by default and a switcher to change it.
+- **Change ID:** i18n-pl-en
+- **PRD refs:** MS-06
+- **Prerequisites:** S-01
+- **Parallel with:** S-15
+- **Blockers:** —
+- **Unknowns:**
+  - Polish names for the 40 preloaded exercises need a review by someone who trains. — Owner: user. Block: no (reviewed in Phase 4 of the plan).
+- **Risk:** Not in the PRD — added to M-1 after the fact (MS-06), so it widens the milestone. It touches almost every frontend file, so it conflicts with any in-flight UI change (`DashboardPage.tsx` with S-15). The backend only gains an error `code` and an `exerciseSlug`; there is no schema change, so nothing to apply by hand to the Flyway-off production DB.
+- **Status:** in-progress
 
 ## Backlog Handoff
 
@@ -262,6 +278,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-12 | previous-workout-weight-hint | Previous workout weight hint when starting from a plan | yes | Run `/10x-plan previous-workout-weight-hint` |
 | S-13 | training-history | Training history: paginated list + compact session view | yes | Run `/10x-plan training-history` |
 | S-15 | dashboard-insights | Dashboard insights: trends, PRs and weekly streak | yes | Planned — run `/10x-implement dashboard-insights phase 1` |
+| S-16 | i18n-pl-en | Polish/English internationalization: UI, errors and exercise names | yes | Planned — run `/10x-implement i18n-pl-en phase 1` |
 
 This table is the clean handoff to Jira/Linear or any MCP-backed backlog.
 
@@ -299,3 +316,4 @@ No roadmap-wide open questions at this milestone. The PRD `## Open Questions` ma
 - **S-05: user can add their own custom exercise, including its muscle group.** — Archived 2026-10-27 → `context/archive/2026-10-27-custom-exercise-entry/`. Lesson: —.
 - **S-06: user experiences a full guided session — sequential exercise navigation with skip/return — and sees a countdown rest timer between sets.** — Archived 2026-10-27 → `context/archive/2026-10-27-guided-session-navigation/`. Lesson: —.
 - **S-08: user sees a logged set flagged as a new personal record when it beats their estimated one-rep max for that exercise.** — Archived 2026-10-28 → `context/archive/2026-10-27-personal-record-flag/`. Lesson: —.
+- **S-15: user sees on the dashboard how their training is trending and how consistent they are: each tile compared with the previous equal period (7 / 30 / 90 days; All has no comparison), a 12-week volume chart, their 5 most recent personal records, and a weekly streak against a workout-per-week goal they set.** — Archived 2026-10-28 → `context/archive/2026-10-27-dashboard-insights/`. Lesson: —.

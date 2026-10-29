@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link, useSearchParams } from 'react-router'
 import { getHistory, listPlans } from '../api/client'
 import type { HistoryPage as HistoryPageData, PlanSummary } from '../api/client'
 import { formatDate, formatDuration, formatVolume } from '../utils/format'
 import '../styles/page.css'
 import '../styles/history.css'
+import { translateError } from '../utils/errors'
 
 interface FetchResult {
   key: string
   data: HistoryPageData | null
-  error: string | null
+  error: unknown
 }
 
 function parsePage(raw: string | null): number {
@@ -19,6 +21,7 @@ function parsePage(raw: string | null): number {
 }
 
 export default function HistoryPage() {
+  const { t } = useTranslation()
   const [searchParams, setSearchParams] = useSearchParams()
   const page = parsePage(searchParams.get('page'))
   const plan = searchParams.get('plan') ?? ''
@@ -54,7 +57,7 @@ export default function HistoryPage() {
           setResult({
             key,
             data: null,
-            error: err instanceof Error ? err.message : 'Failed to load history',
+            error: err,
           })
         }
       })
@@ -74,19 +77,19 @@ export default function HistoryPage() {
 
   let body
   if (shown === null) {
-    body = <p className="page-subtext">Loading history…</p>
+    body = <p className="page-subtext">{t('history.loading')}</p>
   } else if (shown.error || shown.data === null) {
     body = (
       <p className="error-text" role="alert">
-        {shown.error ?? 'Failed to load history'}
+        {translateError(shown.error, 'history.loadFailed')}
       </p>
     )
   } else if (shown.data.items.length === 0) {
     body = (
       <p className="page-subtext">
         {plan === '' && page === 1
-          ? 'No completed workouts yet.'
-          : 'No completed workouts for this filter.'}
+          ? t('history.empty')
+          : t('history.emptyFiltered')}
       </p>
     )
   } else {
@@ -104,7 +107,7 @@ export default function HistoryPage() {
                 <span className="history-row-meta">
                   <span>{formatDuration(item.durationSeconds)}</span>
                   <span>
-                    {item.setCount} {item.setCount === 1 ? 'set' : 'sets'}
+                    {t('history.sets', { count: item.setCount })}
                   </span>
                   <span>{formatVolume(item.volumeKg)}</span>
                 </span>
@@ -119,10 +122,10 @@ export default function HistoryPage() {
             disabled={page <= 1}
             onClick={() => updateParams(page - 1, plan)}
           >
-            Prev
+            {t('history.prev')}
           </button>
           <span className="history-pager-label">
-            Page {page} of {totalPages}
+            {t('history.pageOf', { page, total: totalPages })}
           </span>
           <button
             type="button"
@@ -130,7 +133,7 @@ export default function HistoryPage() {
             disabled={page >= totalPages}
             onClick={() => updateParams(page + 1, plan)}
           >
-            Next
+            {t('history.next')}
           </button>
         </div>
       </>
@@ -140,21 +143,21 @@ export default function HistoryPage() {
   return (
     <div className="page-shell">
       <main className="page-card history-card">
-        <h1>History</h1>
+        <h1>{t('history.title')}</h1>
         <div className="history-filter">
-          <label htmlFor="history-plan">Plan</label>
+          <label htmlFor="history-plan">{t('history.plan')}</label>
           <select
             id="history-plan"
             value={plan}
             onChange={(e) => updateParams(1, e.target.value)}
           >
-            <option value="">All workouts</option>
+            <option value="">{t('history.allWorkouts')}</option>
             {plans.map((p) => (
               <option key={p.id} value={p.id}>
                 {p.name}
               </option>
             ))}
-            <option value="none">No plan</option>
+            <option value="none">{t('history.noPlan')}</option>
           </select>
         </div>
         <div aria-live="polite">{body}</div>

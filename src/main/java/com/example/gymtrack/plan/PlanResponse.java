@@ -1,5 +1,6 @@
 package com.example.gymtrack.plan;
 
+import com.example.gymtrack.exercise.Exercise;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -8,12 +9,16 @@ import java.util.UUID;
 public record PlanResponse(UUID id, String name, Instant createdAt, Instant updatedAt,
 		List<PlanEntryResponse> exercises) {
 
-	static PlanResponse from(TrainingPlan plan, Map<UUID, String> exerciseNames) {
-		List<PlanEntryResponse> entries = plan.getEntries()
-			.stream()
-			.map(entry -> new PlanEntryResponse(entry.getExerciseId(), exerciseNames.get(entry.getExerciseId()),
-					entry.getPosition(), entry.getSets(), entry.getReps()))
-			.toList();
+	static PlanResponse from(TrainingPlan plan, Map<UUID, Exercise> exercises) {
+		List<PlanEntryResponse> entries = plan.getEntries().stream().map(entry -> {
+			Exercise exercise = exercises.get(entry.getExerciseId());
+			if (exercise == null) {
+				throw new IllegalStateException("Exercise " + entry.getExerciseId() + " of plan " + plan.getId()
+						+ " is missing from the exercise map");
+			}
+			return new PlanEntryResponse(entry.getExerciseId(), exercise.getName(), exercise.getSlug(),
+					entry.getPosition(), entry.getSets(), entry.getReps());
+		}).toList();
 		return new PlanResponse(plan.getId(), plan.getName(), plan.getCreatedAt(), plan.getUpdatedAt(), entries);
 	}
 

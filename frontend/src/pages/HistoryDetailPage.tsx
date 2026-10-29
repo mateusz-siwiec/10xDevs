@@ -1,20 +1,24 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link, useParams } from 'react-router'
 import { ApiError, getExercises, getHistorySession } from '../api/client'
 import type { Exercise, HistoryDetail } from '../api/client'
+import { exerciseName } from '../utils/exercises'
 import { formatDate, formatDuration, formatVolume } from '../utils/format'
 import '../styles/page.css'
 import '../styles/history.css'
+import { translateError } from '../utils/errors'
 
 interface FetchResult {
   id: string
   data: HistoryDetail | null
   exercises: Exercise[]
   notFound: boolean
-  error: string | null
+  error: unknown
 }
 
 export default function HistoryDetailPage() {
+  const { t } = useTranslation()
   const { id = '' } = useParams()
   const [result, setResult] = useState<FetchResult | null>(null)
 
@@ -33,7 +37,7 @@ export default function HistoryDetailPage() {
           data: null,
           exercises: [],
           notFound,
-          error: err instanceof Error ? err.message : 'Failed to load workout',
+          error: err,
         })
       })
     return () => {
@@ -44,17 +48,17 @@ export default function HistoryDetailPage() {
   const shown = result !== null && result.id === id ? result : null
   const backLink = (
     <Link to="/history" className="history-back">
-      Back to history
+      {t('history.detail.back')}
     </Link>
   )
 
   let body
   if (shown === null) {
-    body = <p className="page-subtext">Loading workout…</p>
+    body = <p className="page-subtext">{t('history.detail.loading')}</p>
   } else if (shown.notFound) {
     body = (
       <>
-        <p className="page-subtext">Workout not found</p>
+        <p className="page-subtext">{t('history.detail.notFound')}</p>
         {backLink}
       </>
     )
@@ -62,14 +66,18 @@ export default function HistoryDetailPage() {
     body = (
       <>
         <p className="error-text" role="alert">
-          {shown.error ?? 'Failed to load workout'}
+          {translateError(shown.error, 'history.detail.loadFailed')}
         </p>
         {backLink}
       </>
     )
   } else {
     const { data, exercises } = shown
-    const names = new Map(exercises.map((e) => [e.id, e.name]))
+    const byId = new Map(exercises.map((e) => [e.id, e]))
+    const nameOf = (exerciseId: string) => {
+      const exercise = byId.get(exerciseId)
+      return exercise ? exerciseName(exercise) : t('common.unknownExercise')
+    }
     const groups = data.exercises.filter((g) => g.sets.length > 0)
     body = (
       <>
@@ -83,17 +91,17 @@ export default function HistoryDetailPage() {
           <span>{formatVolume(data.volumeKg)}</span>
         </p>
         {groups.length === 0 ? (
-          <p className="page-subtext">No sets were logged in this workout.</p>
+          <p className="page-subtext">{t('history.detail.noSets')}</p>
         ) : (
           groups.map((group, gi) => (
             <section key={`${group.exerciseId}-${gi}`} className="history-detail-exercise">
-              <h2>{names.get(group.exerciseId) ?? 'Unknown exercise'}</h2>
+              <h2>{nameOf(group.exerciseId)}</h2>
               <ol>
                 {group.sets.map((set, index) => (
                   <li key={index}>
-                    Set {index + 1}: {set.reps} × {set.weightKg} kg
+                    {t('history.detail.setLine', { n: index + 1, reps: set.reps, weight: set.weightKg })}
                     {set.personalRecord && (
-                      <span className="pr-badge" role="img" aria-label="New personal record">
+                      <span className="pr-badge" role="img" aria-label={t('common.personalRecord')}>
                         PR
                       </span>
                     )}

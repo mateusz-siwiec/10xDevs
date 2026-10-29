@@ -1,5 +1,6 @@
 package com.example.gymtrack.workout;
 
+import com.example.gymtrack.common.ErrorCode;
 import com.example.gymtrack.plan.TrainingPlan;
 import com.example.gymtrack.plan.TrainingPlanRepository;
 import java.math.BigDecimal;
@@ -48,13 +49,13 @@ public class HistoryService {
 	@Transactional(readOnly = true)
 	public HistoryPageResponse list(UUID userId, int page, int size, UUID planId, boolean noPlan) {
 		if (page < 0) {
-			throw new InvalidHistoryQueryException("page must be 0 or greater");
+			throw new InvalidHistoryQueryException(ErrorCode.INVALID_HISTORY_PAGE, "page must be 0 or greater");
 		}
 		if (size < 1 || size > MAX_SIZE) {
-			throw new InvalidHistoryQueryException("size must be between 1 and " + MAX_SIZE);
+			throw new InvalidHistoryQueryException(ErrorCode.INVALID_HISTORY_SIZE, "size must be between 1 and " + MAX_SIZE);
 		}
 		if (planId != null && noPlan) {
-			throw new InvalidHistoryQueryException("planId and noPlan cannot be combined");
+			throw new InvalidHistoryQueryException(ErrorCode.INVALID_HISTORY_FILTER, "planId and noPlan cannot be combined");
 		}
 		Pageable pageable = PageRequest.of(page, size, NEWEST_FIRST);
 		Page<WorkoutSession> result;
@@ -88,7 +89,7 @@ public class HistoryService {
 	public HistoryDetailResponse detail(UUID userId, UUID sessionId) {
 		WorkoutSession session = sessionRepository.findByIdAndUserId(sessionId, userId)
 			.filter(found -> found.getEndedAt() != null)
-			.orElseThrow(() -> new WorkoutNotFoundException("Workout session not found"));
+			.orElseThrow(() -> new WorkoutNotFoundException(ErrorCode.WORKOUT_NOT_FOUND, "Workout session not found"));
 		Map<UUID, List<HistoryDetailResponse.SetEntry>> byExercise = new LinkedHashMap<>();
 		BigDecimal volume = BigDecimal.ZERO;
 		List<WorkoutSet> sets = setRepository.findBySessionIdOrderByLoggedAtAscIdAsc(session.getId());

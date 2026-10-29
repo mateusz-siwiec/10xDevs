@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useParams } from 'react-router'
 import { createPlan, getExercises, getPlan, updatePlan } from '../api/client'
 import type { Exercise } from '../api/client'
@@ -9,6 +10,8 @@ import type { PlanEditorEntry, PlanTargetField } from '../components/PlanExercis
 import '../styles/page.css'
 import '../styles/workout.css'
 import '../styles/plans.css'
+import { translateError } from '../utils/errors'
+import type { ErrorInfo } from '../utils/errors'
 
 // Empty or non-integer text becomes null (rejected by the server) so fractions like 3.5 are never truncated.
 function toTarget(value: string): number | null {
@@ -19,6 +22,7 @@ function toTarget(value: string): number | null {
 function PlanEditor() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const [name, setName] = useState('')
   const [entries, setEntries] = useState<PlanEditorEntry[]>([])
@@ -27,7 +31,7 @@ function PlanEditor() {
   const [loading, setLoading] = useState(true)
   const [loadFailed, setLoadFailed] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<ErrorInfo | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -44,6 +48,7 @@ function PlanEditor() {
                 key: crypto.randomUUID(),
                 exerciseId: e.exerciseId,
                 exerciseName: e.exerciseName,
+                exerciseSlug: e.exerciseSlug,
                 sets: String(e.sets),
                 reps: String(e.reps),
               })),
@@ -53,7 +58,7 @@ function PlanEditor() {
       .catch((err) => {
         if (cancelled) return
         setLoadFailed(true)
-        setError(err instanceof Error ? err.message : 'Failed to load plan')
+        setError({ err, key: 'plans.editor.loadFailed' })
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
@@ -72,6 +77,7 @@ function PlanEditor() {
         key: crypto.randomUUID(),
         exerciseId: exercise.id,
         exerciseName: exercise.name,
+        exerciseSlug: exercise.slug,
         sets: '3',
         reps: '10',
       },
@@ -116,7 +122,7 @@ function PlanEditor() {
       }
       navigate('/plans')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save plan')
+      setError({ err, key: 'plans.editor.saveFailed' })
       setSaving(false)
     }
   }
@@ -125,7 +131,7 @@ function PlanEditor() {
     return (
       <div className="page-shell">
         <main className="page-card plans-card">
-          <p className="page-subtext">Loading…</p>
+          <p className="page-subtext">{t('common.loading')}</p>
         </main>
       </div>
     )
@@ -135,10 +141,10 @@ function PlanEditor() {
     return (
       <div className="page-shell">
         <main className="page-card plans-card">
-          <h1>Edit plan</h1>
-          {error && <p className="error-text">{error}</p>}
+          <h1>{t('plans.editPlan')}</h1>
+          <p className="error-text">{error ? translateError(error.err, error.key) : t('plans.editor.loadFailed')}</p>
           <Link to="/plans" className="btn-secondary">
-            Back to plans
+            {t('plans.editor.backToPlans')}
           </Link>
         </main>
       </div>
@@ -150,11 +156,11 @@ function PlanEditor() {
   return (
     <div className="page-shell">
       <main className="page-card plans-card">
-        <h1>{id ? 'Edit plan' : 'New plan'}</h1>
-        {error && <p className="error-text">{error}</p>}
+        <h1>{id ? t('plans.editPlan') : t('plans.newPlan')}</h1>
+        {error && <p className="error-text">{translateError(error.err, error.key)}</p>}
         <form onSubmit={handleSubmit}>
           <div className="field">
-            <label htmlFor="plan-name">Plan name</label>
+            <label htmlFor="plan-name">{t('plans.editor.planName')}</label>
             <input
               id="plan-name"
               type="text"
@@ -173,10 +179,10 @@ function PlanEditor() {
             disabled={!selectedExercise || saving}
             onClick={handleAdd}
           >
-            Add exercise
+            {t('plans.editor.addExercise')}
           </button>
           <section className="workout-section">
-            <h2>Exercises</h2>
+            <h2>{t('plans.editor.exercises')}</h2>
             <PlanExerciseList
               entries={entries}
               disabled={saving}
@@ -187,10 +193,10 @@ function PlanEditor() {
           </section>
           <div className="plan-editor-footer">
             <button type="submit" className="btn-primary" disabled={!canSave}>
-              {saving ? 'Saving…' : 'Save'}
+              {saving ? t('common.saving') : t('common.save')}
             </button>
             <Link to="/plans" className="btn-secondary">
-              Cancel
+              {t('common.cancel')}
             </Link>
           </div>
         </form>

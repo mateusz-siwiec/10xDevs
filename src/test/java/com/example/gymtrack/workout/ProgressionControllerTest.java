@@ -185,6 +185,7 @@ class ProgressionControllerTest {
 	void unknownExerciseReturnsNotFound() throws Exception {
 		mockMvc.perform(get(progressionUrl(UUID.randomUUID())).header(HttpHeaders.AUTHORIZATION, bearerToken()))
 			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.code", is("EXERCISE_NOT_FOUND")))
 			.andExpect(jsonPath("$.error", notNullValue()));
 	}
 

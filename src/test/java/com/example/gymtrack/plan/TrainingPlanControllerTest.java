@@ -140,6 +140,8 @@ class TrainingPlanControllerTest {
 			.andExpect(jsonPath("$.exercises", hasSize(3)))
 			.andExpect(jsonPath("$.exercises[0].exerciseId", is(reordered.get(0).toString())))
 			.andExpect(jsonPath("$.exercises[0].exerciseName", notNullValue()))
+			.andExpect(jsonPath("$.exercises[0].exerciseSlug",
+				is(exerciseRepository.findById(reordered.get(0)).orElseThrow().getSlug())))
 			.andExpect(jsonPath("$.exercises[0].position", is(0)))
 			.andExpect(jsonPath("$.exercises[1].exerciseId", is(reordered.get(1).toString())))
 			.andExpect(jsonPath("$.exercises[1].position", is(1)))
@@ -222,6 +224,7 @@ class TrainingPlanControllerTest {
 
 		mockMvc.perform(get("/api/training-plans/" + planId).header(HttpHeaders.AUTHORIZATION, tokenB))
 			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.code", is("PLAN_NOT_FOUND")))
 			.andExpect(jsonPath("$.error", notNullValue()));
 		mockMvc.perform(put("/api/training-plans/" + planId)
 				.header(HttpHeaders.AUTHORIZATION, tokenB)
@@ -286,6 +289,7 @@ class TrainingPlanControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(json))
 				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.code", is("VALIDATION_FAILED")))
 				.andExpect(jsonPath("$.error", notNullValue()));
 		}
 	}
@@ -302,12 +306,14 @@ class TrainingPlanControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(body("Bad", unknown)))
 			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.code", is("EXERCISE_NOT_FOUND")))
 			.andExpect(jsonPath("$.error", is("Exercise not found")));
 		mockMvc.perform(put("/api/training-plans/" + planId)
 				.header(HttpHeaders.AUTHORIZATION, token)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(body("Bad", unknown)))
 			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.code", is("EXERCISE_NOT_FOUND")))
 			.andExpect(jsonPath("$.error", is("Exercise not found")));
 
 		mockMvc.perform(get("/api/training-plans/" + planId).header(HttpHeaders.AUTHORIZATION, token))

@@ -1,5 +1,6 @@
 package com.example.gymtrack.workout;
 
+import com.example.gymtrack.common.ErrorCode;
 import com.example.gymtrack.common.ResourceNotFoundException;
 import com.example.gymtrack.exercise.Exercise;
 import com.example.gymtrack.exercise.ExerciseRepository;
@@ -68,13 +69,13 @@ public class DashboardService {
 		Integer goal = null;
 		if (value != null) {
 			if (!(value instanceof Integer number) || number < MIN_WEEKLY_GOAL || number > MAX_WEEKLY_GOAL) {
-				throw new InvalidWeeklyGoalException(
+				throw new InvalidWeeklyGoalException(ErrorCode.INVALID_WEEKLY_GOAL,
 						"weeklyGoal must be an integer from " + MIN_WEEKLY_GOAL + " to " + MAX_WEEKLY_GOAL + " or null");
 			}
 			goal = number;
 		}
 		User user = userRepository.findById(userId)
-			.orElseThrow(() -> new ResourceNotFoundException("User not found"));
+			.orElseThrow(() -> new ResourceNotFoundException(ErrorCode.USER_NOT_FOUND, "User not found"));
 		user.setWeeklyGoal(goal);
 		userRepository.save(user);
 		return goal;
@@ -169,7 +170,7 @@ public class DashboardService {
 		catch (NumberFormatException ex) {
 			// falls through to the invalid-window error below
 		}
-		throw new InvalidDashboardWindowException("days must be 7, 30, 90 or all");
+		throw new InvalidDashboardWindowException(ErrorCode.INVALID_DASHBOARD_WINDOW, "days must be 7, 30, 90 or all");
 	}
 
 	/** Totals over sessions with {@code from <= endedAt < to}. */

@@ -1,5 +1,6 @@
 package com.example.gymtrack.workout;
 
+import com.example.gymtrack.common.ErrorCode;
 import com.example.gymtrack.auth.CurrentUser;
 import java.util.Map;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -37,7 +38,7 @@ public class DashboardController {
 	public WeeklyGoalResponse setWeeklyGoal(@AuthenticationPrincipal CurrentUser currentUser,
 			@RequestBody Map<String, Object> body) {
 		if (!body.containsKey("weeklyGoal")) {
-			throw new InvalidWeeklyGoalException("weeklyGoal is required (1-14 or null)");
+			throw new InvalidWeeklyGoalException(ErrorCode.INVALID_WEEKLY_GOAL, "weeklyGoal is required (1-14 or null)");
 		}
 		return new WeeklyGoalResponse(dashboardService.setWeeklyGoal(currentUser.id(), body.get("weeklyGoal")));
 	}

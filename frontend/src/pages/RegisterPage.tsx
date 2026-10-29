@@ -1,16 +1,21 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
+import { Trans, useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router'
 import { useAuth } from '../auth/AuthContext'
+import LanguageSwitcher from '../components/LanguageSwitcher'
 import '../styles/page.css'
+import { translateError } from '../utils/errors'
+import type { ErrorInfo } from '../utils/errors'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<ErrorInfo | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const { register } = useAuth()
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -20,7 +25,7 @@ export default function RegisterPage() {
       await register(email, password)
       navigate('/')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Registration failed')
+      setError({ err, key: 'auth.registrationFailed' })
     } finally {
       setSubmitting(false)
     }
@@ -28,11 +33,14 @@ export default function RegisterPage() {
 
   return (
     <div className="page-shell">
+      <div className="language-switcher-floating">
+        <LanguageSwitcher />
+      </div>
       <main className="page-card">
-        <h1>Register</h1>
+        <h1>{t('auth.registerTitle')}</h1>
         <form onSubmit={handleSubmit}>
           <div className="field">
-            <label htmlFor="register-email">Email</label>
+            <label htmlFor="register-email">{t('auth.email')}</label>
             <input
               id="register-email"
               type="email"
@@ -43,7 +51,7 @@ export default function RegisterPage() {
             />
           </div>
           <div className="field">
-            <label htmlFor="register-password">Password</label>
+            <label htmlFor="register-password">{t('auth.password')}</label>
             <input
               id="register-password"
               type="password"
@@ -54,13 +62,13 @@ export default function RegisterPage() {
               required
             />
           </div>
-          {error && <p className="error-text">{error}</p>}
+          {error && <p className="error-text">{translateError(error.err, error.key)}</p>}
           <button type="submit" disabled={submitting} className="btn-primary">
-            {submitting ? 'Registering…' : 'Register'}
+            {submitting ? t('auth.registering') : t('auth.register')}
           </button>
         </form>
         <p className="page-switch">
-          Already have an account? <Link to="/login">Log in</Link>
+          <Trans i18nKey="auth.haveAccount" components={{ authLink: <Link to="/login" /> }} />
         </p>
       </main>
     </div>

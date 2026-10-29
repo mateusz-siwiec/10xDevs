@@ -13,16 +13,60 @@ export interface CurrentUser {
   email: string
 }
 
-async function parseErrorMessage(res: Response): Promise<string> {
+/**
+ * Error from a non-OK API response. `message` is the server's English text; `code` (plus `field`
+ * and `rule` for validation failures) is the stable key the UI translates by.
+ */
+export class ApiError extends Error {
+  status: number
+  code?: string
+  field?: string
+  rule?: string
+  /** Constraint bounds for Size/Min/Max/DecimalMin/DecimalMax validation failures. */
+  min?: number | string
+  max?: number | string
+
+  constructor(
+    message: string,
+    status: number,
+    details: {
+      code?: string
+      field?: string
+      rule?: string
+      min?: number | string
+      max?: number | string
+    } = {},
+  ) {
+    super(message)
+    this.status = status
+    this.code = details.code
+    this.field = details.field
+    this.rule = details.rule
+    this.min = details.min
+    this.max = details.max
+  }
+}
+
+function bound(value: unknown): number | string | undefined {
+  return typeof value === 'number' || typeof value === 'string' ? value : undefined
+}
+
+async function parseError(res: Response): Promise<ApiError> {
   try {
     const body = await res.json()
     if (body && typeof body.error === 'string') {
-      return body.error
+      return new ApiError(body.error, res.status, {
+        code: typeof body.code === 'string' ? body.code : undefined,
+        field: typeof body.field === 'string' ? body.field : undefined,
+        rule: typeof body.rule === 'string' ? body.rule : undefined,
+        min: bound(body.min),
+        max: bound(body.max),
+      })
     }
   } catch {
     // response body wasn't JSON — fall through to the generic message
   }
-  return `Request failed with status ${res.status}`
+  return new ApiError(`Request failed with status ${res.status}`, res.status, { code: 'REQUEST_FAILED' })
 }
 
 export function getStoredToken(): string | null {
@@ -44,7 +88,7 @@ export async function register(email: string, password: string): Promise<AuthRes
     body: JSON.stringify({ email, password }),
   })
   if (!res.ok) {
-    throw new Error(await parseErrorMessage(res))
+    throw await parseError(res)
   }
   return res.json()
 }
@@ -56,7 +100,7 @@ export async function login(email: string, password: string): Promise<AuthRespon
     body: JSON.stringify({ email, password }),
   })
   if (!res.ok) {
-    throw new Error(await parseErrorMessage(res))
+    throw await parseError(res)
   }
   return res.json()
 }
@@ -66,19 +110,9 @@ export async function getMe(token: string): Promise<CurrentUser> {
     headers: { Authorization: `Bearer ${token}` },
   })
   if (!res.ok) {
-    throw new Error(await parseErrorMessage(res))
+    throw await parseError(res)
   }
   return res.json()
-}
-
-/** Error from a non-OK authFetch response; `status` lets callers tell e.g. a 404 apart. */
-export class ApiError extends Error {
-  status: number
-
-  constructor(message: string, status: number) {
-    super(message)
-    this.status = status
-  }
 }
 
 /**
@@ -94,7 +128,7 @@ export async function authFetch(path: string, options: RequestInit = {}): Promis
   }
   const res = await fetch(`${API_BASE_URL}${path}`, { ...options, headers })
   if (!res.ok) {
-    throw new Error(await parseErrorMessage(res))
+    throw await parseError(res)
   }
   return res
 }
@@ -327,6 +361,7 @@ export interface PlanSummary {
 export interface PlanEntry {
   exerciseId: string
   exerciseName: string
+  exerciseSlug: string
   position: number
   sets: number
   reps: number
