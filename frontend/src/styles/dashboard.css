@@ -55,6 +55,14 @@
   text-decoration: none;
 }
 
+/* Secondary action above "Start workout": same full width, with a gap before the primary button. */
+.dashboard-card .btn-secondary.dashboard-start {
+  display: block;
+  width: 100%;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
 .dashboard-delta {
   font-size: 0.8125rem;
   font-weight: 500;
