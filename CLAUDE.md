@@ -43,19 +43,19 @@ preferred.
   `Application.java` (entrypoint), `HealthController.java` (`GET /api/health`),
   and `config/WebConfig.java` (CORS, scoped to `/api/**`, allowing only the Vite
   dev origin `http://localhost:5173`).
-- Persistence: Spring Data JPA + PostgreSQL. Locally and in tests, Flyway migrations
-  (`src/main/resources/db/migration`) own the schema and Hibernate only validates it
-  (`spring.jpa.hibernate.ddl-auto=validate` in `application.properties`). Production
-  still uses `ddl-auto=update` with Flyway off (see below).
+- Persistence: Spring Data JPA + PostgreSQL. Flyway migrations
+  (`src/main/resources/db/migration`) own the schema everywhere (local, tests, production)
+  and Hibernate only validates it (`spring.jpa.hibernate.ddl-auto=validate` in
+  `application.properties`).
   DB connection is overridable via `DB_HOST`/`DB_PORT`/`DB_NAME`/`DB_USER`/`DB_PASSWORD`
   env vars, defaulting to the `podman-compose.yml` values above.
-- Flyway runs by default (local and tests). Production disables it via `fly.toml`
-  `[env]` (`SPRING_FLYWAY_ENABLED=false`, `SPRING_JPA_HIBERNATE_DDL_AUTO=update`).
-  Never point a local run at the Supabase DB while Flyway is enabled.
-  Because production skips Flyway, constraints and indexes that `ddl-auto=update` cannot create
-  (e.g. the FK/cascade and partial unique index in `V8__add_exercise_owner.sql`) must be applied
-  to the Supabase DB by hand. Plain nullable columns (e.g. `users.weekly_goal` in
-  `V9__add_user_weekly_goal.sql`) are created by `ddl-auto=update` and need no manual step.
+- Flyway also runs in production (`fly.toml` has no Flyway/ddl-auto overrides): every
+  deploy applies pending migrations to the Supabase DB on startup. The production schema was
+  first created by Hibernate `ddl-auto=update` and was then reset, so Flyway owns it from V1.
+  If the Supabase DB ever holds app tables without a `flyway_schema_history` table, drop those
+  tables first: `baseline-on-migrate` would otherwise baseline at V1 and skip migrations.
+  Never edit applied migrations; add a new `V<n>` (next is V10) instead.
+  Never point a local run at the Supabase DB (a local run would execute migrations there).
 - Frontend and backend are decoupled: the SPA under `frontend/` talks to the
   backend only via `/api/**` REST calls. There is no server-side templating.
 - Deployment: multi-stage `Dockerfile` (builds with `eclipse-temurin:21-jdk`,

@@ -1,20 +1,17 @@
 # fly.io config for gym-track.
 # Secrets expected at deploy time (set with `fly secrets set KEY=value`):
-#   DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
+#   DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD, JWT_SECRET
 # See src/main/resources/application.properties for the defaults these override.
 #
-# Flyway is disabled and Hibernate keeps ddl-auto=update in production for now:
-# Flyway must not run against the Supabase DB yet; Hibernate keeps managing
-# its schema. Local/test use Flyway (see application.properties).
+# Flyway migrations (src/main/resources/db/migration) run on startup and Hibernate only
+# validates the schema (ddl-auto=validate), same as locally and in CI. The Supabase DB must
+# either be empty or already have a flyway_schema_history table - never a schema that
+# Hibernate built without Flyway.
 
 app = "gym-track-mateusz"
 primary_region = "lhr"
 
 [build]
-
-[env]
-  SPRING_FLYWAY_ENABLED = "false"
-  SPRING_JPA_HIBERNATE_DDL_AUTO = "update"
 
 [http_service]
   internal_port = 8080
