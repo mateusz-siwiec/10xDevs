@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { API, PASSWORD, auth, exerciseId, registerViaApi } from './helpers'
+import { API, PASSWORD, auth, exerciseId, registerViaApi } from './helpers.js'
 
 // Test plan risk R2: the weight-increase suggestion must follow the documented rule.
 test('after two full workouts at 60 kg the workout screen suggests 61.5 kg', async ({ page, request }) => {

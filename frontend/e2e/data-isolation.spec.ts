@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { API, auth, exerciseId, registerViaApi, uniqueEmail, PASSWORD } from './helpers'
+import { API, auth, exerciseId, registerViaApi, uniqueEmail, PASSWORD } from './helpers.js'
 
 // Test plan risk R1: one user must never see another user's training data.
 test("a second user cannot see or reach the first user's plan and custom exercise", async ({ page, request }) => {
