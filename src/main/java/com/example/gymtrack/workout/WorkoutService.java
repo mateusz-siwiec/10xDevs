@@ -95,6 +95,13 @@ public class WorkoutService {
 		return toResponse(session);
 	}
 
+	/** Removes the session; its sets go with it (ON DELETE CASCADE). Everything derived from sets is recomputed on read. */
+	@Transactional
+	public void delete(UUID userId, UUID sessionId) {
+		sessionRepository.delete(findOwned(userId, sessionId));
+		sessionRepository.flush();
+	}
+
 	@Transactional
 	public SetResponse logSet(UUID userId, UUID sessionId, UUID exerciseId, int reps, BigDecimal weightKg) {
 		WorkoutSession session = findOwned(userId, sessionId);

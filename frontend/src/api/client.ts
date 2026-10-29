@@ -424,6 +424,11 @@ export async function updatePlan(id: string, input: PlanInput): Promise<Plan> {
   return res.json()
 }
 
+/** Deletes a workout together with its sets. Resolves on 204 No Content. */
+export async function deleteWorkout(id: string): Promise<void> {
+  await authFetch(`/api/workout-sessions/${id}`, { method: 'DELETE' })
+}
+
 /** Resolves on 204 No Content; there is no body to parse. */
 export async function deletePlan(id: string): Promise<void> {
   await authFetch(`/api/training-plans/${id}`, { method: 'DELETE' })

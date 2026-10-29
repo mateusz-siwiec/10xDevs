@@ -120,6 +120,16 @@ push a user to an unsafe weight.
 | `frontend/src/i18n/locales.test.ts` | Frontend unit | `en` and `pl` locale files have identical keys |
 | `frontend/src/utils/errors.test.ts` | Frontend unit | Server error codes map to translated messages |
 
+### R10. A workout is deleted by accident, or deletion leaves orphans or another user's data touched
+
+**Impact:** medium. Deleting is permanent (PRD: destructive actions need explicit confirmation).
+
+| Test | Level | Covers |
+| --- | --- | --- |
+| `e2e/delete-workout.spec.ts` | E2E | Delete needs a second click to confirm; Cancel keeps the workout; Confirm removes it from History and the API returns 404 |
+| `WorkoutSetControllerTest.deleteSessionRemovesItAndItsSetsFromHistory`, `deletingTheActiveSessionLetsTheUserStartANewOne` | Backend | The session and its sets are gone (including from progression data); deleting an active session frees the user to start a new one |
+| `WorkoutSetControllerTest.otherUserCannotDeleteSessionAndItSurvives`, `deleteSessionWithoutTokenReturnsUnauthorized` | Backend | Another user gets 404 and the workout survives; no token gives 401 |
+
 ## Not covered by automated tests (known gaps)
 
 - **Substitution suggestions in the browser.** Covered at API level (`ExerciseControllerTest`, `CustomExerciseVisibilityTest`), not through the UI.

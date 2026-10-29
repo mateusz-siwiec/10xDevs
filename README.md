@@ -17,7 +17,7 @@ transparent, rule-based suggestions for what to do next, with no black box: ever
 | Access | Register and log in; everyone sees only their own data |
 | Exercises | Browse a seeded catalog (tagged by muscle group); add, rename and delete custom exercises |
 | Plans | Create, edit, reorder and delete training plans (ordered exercises with target sets × reps) |
-| Workouts | Start a session (free-form or from a plan), log and delete sets, end it; guided navigation with skip/return and a rest timer |
+| Workouts | Start a session (free-form or from a plan), log and delete sets, end it; guided navigation with skip/return and a rest timer; delete a whole workout from its History page (with confirmation) |
 | Insight | Progression chart per exercise, history of past workouts, dashboard with totals, 12-week volume, streak and recent records |
 | Rules | Weight-increase recommendation, substitute suggestions, personal-record flag (see below) |
 
@@ -142,7 +142,7 @@ Streak = **2**. After one more workout this week it becomes **3**. With no goal 
 | Plan | name up to 60 characters; 1 to 50 entries; each entry 1 to 20 sets and 1 to 100 reps; the same exercise may repeat |
 | Custom exercise | name up to 60 characters, unique among catalog and your own; cannot be deleted while used in a plan or a logged set |
 | Password | 8 to 72 characters; emails are case-insensitive |
-| Workouts | one active workout per user; sets can be added or removed only while it is active |
+| Workouts | one active workout per user; sets can be added or removed only while it is active; deleting a workout removes its sets, and personal records, charts and recommendations recompute from what remains |
 
 ## Running locally
 

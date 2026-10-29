@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useParams } from 'react-router'
-import { ApiError, getExercises, getHistorySession } from '../api/client'
+import { Link, useNavigate, useParams } from 'react-router'
+import { ApiError, deleteWorkout, getExercises, getHistorySession } from '../api/client'
 import type { Exercise, HistoryDetail } from '../api/client'
 import { exerciseName } from '../utils/exercises'
 import { formatDate, formatDuration, formatVolume } from '../utils/format'
@@ -20,7 +20,24 @@ interface FetchResult {
 export default function HistoryDetailPage() {
   const { t } = useTranslation()
   const { id = '' } = useParams()
+  const navigate = useNavigate()
   const [result, setResult] = useState<FetchResult | null>(null)
+  const [confirming, setConfirming] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState<unknown>(null)
+
+  async function handleDelete() {
+    setDeleteError(null)
+    setDeleting(true)
+    try {
+      await deleteWorkout(id)
+      navigate('/history')
+    } catch (err) {
+      setDeleteError(err)
+      setDeleting(false)
+      setConfirming(false)
+    }
+  }
 
   // State is only set from async callbacks; a cancelled flag drops stale responses.
   useEffect(() => {
@@ -111,6 +128,28 @@ export default function HistoryDetailPage() {
             </section>
           ))
         )}
+        {deleteError !== null && (
+          <p className="error-text" role="alert">
+            {translateError(deleteError, 'history.detail.deleteFailed')}
+          </p>
+        )}
+        <div className="history-detail-actions">
+          {confirming ? (
+            <>
+              <span>{t('history.detail.deleteConfirm')}</span>
+              <button type="button" className="btn-danger" disabled={deleting} onClick={handleDelete}>
+                {t('common.confirm')}
+              </button>
+              <button type="button" className="btn-secondary" disabled={deleting} onClick={() => setConfirming(false)}>
+                {t('common.cancel')}
+              </button>
+            </>
+          ) : (
+            <button type="button" className="btn-secondary" onClick={() => setConfirming(true)}>
+              {t('history.detail.delete')}
+            </button>
+          )}
+        </div>
       </>
     )
   }

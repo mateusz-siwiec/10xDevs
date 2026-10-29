@@ -42,6 +42,12 @@ public class WorkoutController {
 		return workoutService.end(currentUser.id(), id);
 	}
 
+	@DeleteMapping("/api/workout-sessions/{id}")
+	public ResponseEntity<Void> delete(@AuthenticationPrincipal CurrentUser currentUser, @PathVariable UUID id) {
+		workoutService.delete(currentUser.id(), id);
+		return ResponseEntity.noContent().build();
+	}
+
 	@PostMapping("/api/workout-sessions/{id}/sets")
 	public ResponseEntity<SetResponse> logSet(@AuthenticationPrincipal CurrentUser currentUser,
 			@PathVariable UUID id, @Valid @RequestBody LogSetRequest request) {
