@@ -70,7 +70,8 @@
 }
 
 .topbar-toggle,
-.topbar-backdrop {
+.topbar-backdrop,
+.topbar-title {
   display: none;
 }
 
@@ -97,6 +98,17 @@
 
   .topbar-toggle:hover {
     border-color: var(--accent-border);
+  }
+
+  .topbar-title {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-h);
   }
 
   .topbar-backdrop {

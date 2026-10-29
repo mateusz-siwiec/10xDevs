@@ -35,6 +35,8 @@ test('on a phone the navigation lives in a left-side menu that opens, navigates 
   // Choosing a link navigates and closes the menu.
   await menu.getByRole('link', { name: 'Plans', exact: true }).click()
   await expect(page.getByRole('heading', { name: 'Plans' })).toBeVisible()
+  // The otherwise empty bar names the current page.
+  await expect(page.locator('.topbar-title')).toHaveText('Plans')
   await expect(menu.getByRole('link', { name: 'Plans', exact: true })).toBeHidden()
 
   // Escape closes it too.

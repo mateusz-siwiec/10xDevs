@@ -1,13 +1,27 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { NavLink, useNavigate } from 'react-router'
+import { NavLink, useLocation, useNavigate } from 'react-router'
 import { useAuth } from '../auth/AuthContext'
 import LanguageSwitcher from './LanguageSwitcher'
 import '../styles/topbar.css'
 
+/** Translation key of the page title shown next to the menu button on narrow screens. */
+function titleKey(
+  pathname: string,
+): 'nav.dashboard' | 'nav.workout' | 'nav.history' | 'nav.plans' | 'nav.exercises' | 'muscleStats.title' {
+  if (pathname === '/') return 'nav.dashboard'
+  if (pathname.startsWith('/workout')) return 'nav.workout'
+  if (pathname.startsWith('/history')) return 'nav.history'
+  if (pathname.startsWith('/plans')) return 'nav.plans'
+  if (pathname.startsWith('/exercises')) return 'nav.exercises'
+  if (pathname.startsWith('/muscle-groups')) return 'muscleStats.title'
+  return 'nav.dashboard'
+}
+
 export default function Topbar() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const { t } = useTranslation()
   // Only meaningful on narrow screens, where the panel becomes a left-side drawer.
   const [menuOpen, setMenuOpen] = useState(false)
@@ -51,6 +65,7 @@ export default function Topbar() {
           <path d="M4 6h16M4 12h16M4 18h16" />
         </svg>
       </button>
+      <span className="topbar-title">{t(titleKey(pathname))}</span>
       {menuOpen && <button type="button" className="topbar-backdrop" aria-label={t('nav.closeMenu')} onClick={closeMenu} />}
       <div id="topbar-panel" className={menuOpen ? 'topbar-panel open' : 'topbar-panel'}>
         <nav className="topbar-nav">
