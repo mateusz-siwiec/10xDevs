@@ -4,7 +4,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +31,7 @@ class CorsConfigTest {
 	private MockMvc mockMvc;
 
 	@ParameterizedTest
-	@ValueSource(strings = { "http://localhost:5173", "https://gym-track-mateusz.netlify.app",
-			"https://venerable-centaur-f5d823.netlify.app" })
+	@ValueSource(strings = { "http://localhost:5173", "https://gym-track-dev.netlify.app" })
 	void preflightFromAllowedOriginIsAccepted(String origin) throws Exception {
 		mockMvc.perform(options("/api/auth/login")
 				.header(HttpHeaders.ORIGIN, origin)
@@ -43,10 +41,11 @@ class CorsConfigTest {
 			.andExpect(header().string(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin));
 	}
 
-	@Test
-	void preflightFromUnknownOriginIsRejected() throws Exception {
+	@ParameterizedTest
+	@ValueSource(strings = { "https://evil.example.com", "https://gym-track-mateusz.netlify.app" })
+	void preflightFromUnknownOriginIsRejected(String origin) throws Exception {
 		mockMvc.perform(options("/api/auth/login")
-				.header(HttpHeaders.ORIGIN, "https://evil.example.com")
+				.header(HttpHeaders.ORIGIN, origin)
 				.header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "POST"))
 			.andExpect(status().isForbidden());
 	}
