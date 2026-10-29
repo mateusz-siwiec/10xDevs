@@ -110,3 +110,38 @@ jobs:
             frontend/playwright-report/
             frontend/test-results/
           retention-days: 7
+
+  deploy:
+    name: Deploy to Fly.io
+    # Runs only for pushes to main, after every check above has passed.
+    needs: [backend, frontend, e2e]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    env:
+      # Create with `fly tokens create deploy` and add it as a repository secret.
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+    steps:
+      - name: Check for Fly.io token
+        if: env.FLY_API_TOKEN == ''
+        run: echo "::warning::FLY_API_TOKEN secret is not set - skipping deploy."
+      - uses: actions/checkout@v4
+        if: env.FLY_API_TOKEN != ''
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+        if: env.FLY_API_TOKEN != ''
+      - name: Deploy
+        if: env.FLY_API_TOKEN != ''
+        run: flyctl deploy --remote-only
+      - name: Health check
+        if: env.FLY_API_TOKEN != ''
+        run: |
+          for i in $(seq 1 12); do
+            if curl -fsS https://gym-track-mateusz.fly.dev/api/health; then exit 0; fi
+            echo "Waiting for the app to come up ($i/12)..."
+            sleep 10
+          done
+          echo "::error::Health check failed after deploy"
+          exit 1
