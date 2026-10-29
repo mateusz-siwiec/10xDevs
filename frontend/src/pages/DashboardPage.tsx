@@ -244,6 +244,9 @@ export default function DashboardPage() {
         </div>
         <div aria-live="polite">{body}</div>
         {insightsBody}
+        <Link to="/muscle-groups" className="btn-secondary dashboard-start">
+          {t('dashboard.muscleStatsLink')}
+        </Link>
         <Link to="/workout" className="btn-primary dashboard-start">
           {t('dashboard.startWorkout')}
         </Link>

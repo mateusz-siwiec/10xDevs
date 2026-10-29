@@ -38,6 +38,16 @@ public interface WorkoutSetRepository extends JpaRepository<WorkoutSet, UUID> {
 			@Param("to") Instant to);
 
 	@Query("""
+			select new com.example.gymtrack.workout.MuscleGroupCount(e.primaryMuscleGroup, count(s))
+			from WorkoutSet s, Exercise e
+			where e.id = s.exerciseId and s.session.userId = :userId
+			and s.session.endedAt >= :from and s.session.endedAt < :to
+			group by e.primaryMuscleGroup
+			""")
+	List<MuscleGroupCount> countSetsByMuscleGroupBetween(@Param("userId") UUID userId, @Param("from") Instant from,
+			@Param("to") Instant to);
+
+	@Query("""
 			select new com.example.gymtrack.workout.SessionAggregate(s.session.id, count(s), coalesce(sum(s.reps * s.weightKg), 0))
 			from WorkoutSet s
 			where s.session.id in :sessionIds

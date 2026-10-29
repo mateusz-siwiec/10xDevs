@@ -35,3 +35,13 @@ export async function exerciseId(request: APIRequestContext, user: ApiUser, name
   }
   return match.id
 }
+
+export async function exerciseIdByGroup(request: APIRequestContext, user: ApiUser, group: string): Promise<string> {
+  const response = await request.get(`${API}/api/exercises`, auth(user))
+  const exercises: { id: string; primaryMuscleGroup: string }[] = await response.json()
+  const match = exercises.find((exercise) => exercise.primaryMuscleGroup === group)
+  if (!match) {
+    throw new Error(`no exercise for group: ${group}`)
+  }
+  return match.id
+}
