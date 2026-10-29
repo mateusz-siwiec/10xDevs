@@ -146,6 +146,7 @@ push a user to an unsafe weight.
 | Test | Level | Covers |
 | --- | --- | --- |
 | `e2e/mobile-menu.spec.ts` | E2E | At 375 px: only the menu button shows; opening it reveals every link, the logout button and the panel stays inside the screen; picking a link navigates and closes it; Escape closes it |
+| `e2e/mobile-layout.spec.ts` | E2E | At 390 px the Edit/Delete buttons of an exercise row sit under the name for short and long names alike |
 | The desktop navigation steps in the other e2e specs | E2E | The desktop top bar is unchanged (links stay directly clickable at 1280 px) |
 
 ## Not covered by automated tests (known gaps)
