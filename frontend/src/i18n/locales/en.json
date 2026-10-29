@@ -152,6 +152,10 @@
     "empty": "No custom exercises yet.",
     "loadFailed": "Failed to load exercises",
     "addFailed": "Failed to add exercise",
+    "updateFailed": "Failed to update exercise",
+    "editLabel": "Edit {{name}}",
+    "deleteLabel": "Delete {{name}}",
+    "editing": "Edit exercise",
     "deleteFailed": "Failed to delete exercise",
     "picker": {
       "label": "Exercise",

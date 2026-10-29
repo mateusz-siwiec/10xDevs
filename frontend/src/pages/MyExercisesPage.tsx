@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { createExercise, deleteExercise, getExercises } from '../api/client'
+import { createExercise, deleteExercise, getExercises, updateExercise } from '../api/client'
 import type { Exercise } from '../api/client'
 import '../styles/page.css'
 import '../styles/workout.css'
@@ -26,6 +26,7 @@ export default function MyExercisesPage() {
   const [saving, setSaving] = useState(false)
   const [confirmingId, setConfirmingId] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  const [editingId, setEditingId] = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -57,22 +58,47 @@ export default function MyExercisesPage() {
     )
   }
 
+  function resetForm() {
+    setEditingId(null)
+    setName('')
+    setPrimary('')
+    setSecondary([])
+  }
+
+  function startEdit(exercise: Exercise) {
+    setError(null)
+    setConfirmingId(null)
+    setEditingId(exercise.id)
+    setName(exercise.name)
+    setPrimary(exercise.primaryMuscleGroup)
+    setSecondary(exercise.secondaryMuscleGroups)
+  }
+
+  function cancelEdit() {
+    setError(null)
+    resetForm()
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setError(null)
     setSaving(true)
+    const payload = {
+      name: name.trim(),
+      primaryMuscleGroup: primary,
+      secondaryMuscleGroups: secondary,
+    }
     try {
-      const created = await createExercise({
-        name: name.trim(),
-        primaryMuscleGroup: primary,
-        secondaryMuscleGroups: secondary,
-      })
-      setExercises((list) => [...list, created])
-      setName('')
-      setPrimary('')
-      setSecondary([])
+      if (editingId) {
+        const updated = await updateExercise(editingId, payload)
+        setExercises((list) => list.map((e) => (e.id === updated.id ? updated : e)))
+      } else {
+        const created = await createExercise(payload)
+        setExercises((list) => [...list, created])
+      }
+      resetForm()
     } catch (err) {
-      setError({ err, key: 'exercises.addFailed' })
+      setError({ err, key: editingId ? 'exercises.updateFailed' : 'exercises.addFailed' })
     } finally {
       setSaving(false)
     }
@@ -84,6 +110,7 @@ export default function MyExercisesPage() {
     try {
       await deleteExercise(id)
       setExercises((list) => list.filter((e) => e.id !== id))
+      if (editingId === id) resetForm()
     } catch (err) {
       setError({ err, key: 'exercises.deleteFailed' })
     } finally {
@@ -98,6 +125,7 @@ export default function MyExercisesPage() {
     <div className="page-shell">
       <main className="page-card plans-card">
         <h1>{t('exercises.title')}</h1>
+        {editingId && <h2>{t('exercises.editing')}</h2>}
         <form onSubmit={handleSubmit}>
           <div className="field">
             <label htmlFor="exercise-name">{t('exercises.name')}</label>
@@ -147,9 +175,22 @@ export default function MyExercisesPage() {
               {translateError(error.err, error.key)}
             </p>
           )}
-          <button type="submit" className="btn-primary" disabled={!canSave}>
-            {saving ? t('exercises.adding') : t('exercises.add')}
-          </button>
+          <div className="plan-item-actions">
+            <button type="submit" className="btn-primary" disabled={!canSave}>
+              {editingId
+                ? saving
+                  ? t('common.saving')
+                  : t('common.save')
+                : saving
+                  ? t('exercises.adding')
+                  : t('exercises.add')}
+            </button>
+            {editingId && (
+              <button type="button" className="btn-secondary" disabled={saving} onClick={cancelEdit}>
+                {t('common.cancel')}
+              </button>
+            )}
+          </div>
         </form>
         <section className="workout-section" aria-live="polite">
           <h2>{t('exercises.yours')}</h2>
@@ -189,13 +230,25 @@ export default function MyExercisesPage() {
                       </button>
                     </div>
                   ) : (
-                    <button
-                      type="button"
-                      className="btn-secondary"
-                      onClick={() => setConfirmingId(exercise.id)}
-                    >
-                      {t('common.delete')}
-                    </button>
+                    <div className="plan-item-actions">
+                      <button
+                        type="button"
+                        className="btn-secondary"
+                        aria-label={t('exercises.editLabel', { name: exerciseName(exercise) })}
+                        disabled={saving}
+                        onClick={() => startEdit(exercise)}
+                      >
+                        {t('common.edit')}
+                      </button>
+                      <button
+                        type="button"
+                        className="btn-secondary"
+                        aria-label={t('exercises.deleteLabel', { name: exerciseName(exercise) })}
+                        onClick={() => setConfirmingId(exercise.id)}
+                      >
+                        {t('common.delete')}
+                      </button>
+                    </div>
                   )}
                 </li>
               ))}

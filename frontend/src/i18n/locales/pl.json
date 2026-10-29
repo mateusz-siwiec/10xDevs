@@ -160,6 +160,10 @@
     "empty": "Brak własnych ćwiczeń.",
     "loadFailed": "Nie udało się wczytać ćwiczeń",
     "addFailed": "Nie udało się dodać ćwiczenia",
+    "updateFailed": "Nie udało się zapisać ćwiczenia",
+    "editLabel": "Edytuj: {{name}}",
+    "deleteLabel": "Usuń: {{name}}",
+    "editing": "Edycja ćwiczenia",
     "deleteFailed": "Nie udało się usunąć ćwiczenia",
     "picker": {
       "label": "Ćwiczenie",

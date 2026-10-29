@@ -191,6 +191,15 @@ export async function createExercise(input: CreateExerciseInput): Promise<Exerci
   return res.json()
 }
 
+export async function updateExercise(id: string, input: CreateExerciseInput): Promise<Exercise> {
+  const res = await authFetch(`/api/exercises/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input),
+  })
+  return res.json()
+}
+
 /** Resolves on 204 No Content; there is no body to parse. */
 export async function deleteExercise(id: string): Promise<void> {
   await authFetch(`/api/exercises/${id}`, { method: 'DELETE' })

@@ -10,6 +10,7 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -103,6 +104,12 @@ class CustomExerciseControllerTest {
 			.getResponse()
 			.getContentAsString();
 		return UUID.fromString(com.jayway.jsonpath.JsonPath.read(json, "$.id"));
+	}
+
+	private ResultActions update(String token, UUID id, String json) throws Exception {
+		return mockMvc.perform(put("/api/exercises/" + id).header(HttpHeaders.AUTHORIZATION, token)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(json));
 	}
 
 	@Test
@@ -235,6 +242,109 @@ class CustomExerciseControllerTest {
 			.andExpect(status().isNotFound());
 		mockMvc.perform(delete("/api/exercises/not-a-uuid").header(HttpHeaders.AUTHORIZATION, token))
 			.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void updateChangesNameAndMuscleGroupsAndKeepsSlug() throws Exception {
+		User owner = newUser();
+		String token = bearer(owner);
+		String oldName = "Old Name " + System.nanoTime();
+		String newName = "New Name " + System.nanoTime();
+		String created = create(token, body(oldName, "BICEPS", null)).andExpect(status().isCreated())
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+		UUID id = UUID.fromString(com.jayway.jsonpath.JsonPath.read(created, "$.id"));
+		String slug = com.jayway.jsonpath.JsonPath.read(created, "$.slug");
+		TrainingPlan plan = new TrainingPlan(owner.getId(), "Plan");
+		plan.replaceEntries(List.of(new PlanEntryInput(id, 3, 10)));
+		UUID planId = planRepository.save(plan).getId();
+
+		update(token, id, body("  " + newName + "  ", "CORE", "BICEPS")).andExpect(status().isOk())
+			.andExpect(jsonPath("$.id", is(id.toString())))
+			.andExpect(jsonPath("$.custom", is(true)))
+			.andExpect(jsonPath("$.name", is(newName)))
+			.andExpect(jsonPath("$.slug", is(slug)))
+			.andExpect(jsonPath("$.primaryMuscleGroup", is("CORE")))
+			.andExpect(jsonPath("$.secondaryMuscleGroups", contains("BICEPS")));
+
+		mockMvc.perform(get("/api/exercises").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(jsonPath("$", hasSize(41)))
+			.andExpect(jsonPath("$[?(@.id == '" + id + "')].name", contains(newName)))
+			.andExpect(jsonPath("$[?(@.id == '" + id + "')].primaryMuscleGroup", contains("CORE")))
+			.andExpect(jsonPath("$[*].name", not(hasItem(oldName))));
+		mockMvc.perform(get("/api/training-plans/" + planId).header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.exercises[0].exerciseName", is(newName)));
+	}
+
+	@Test
+	void updateAllowsKeepingOrRecasingOwnName() throws Exception {
+		String token = bearer(newUser());
+		String name = "Same Name " + System.nanoTime();
+		UUID id = createdId(token, name);
+
+		update(token, id, body(name, "BACK", null)).andExpect(status().isOk())
+			.andExpect(jsonPath("$.name", is(name)))
+			.andExpect(jsonPath("$.primaryMuscleGroup", is("BACK")));
+		update(token, id, body(name.toUpperCase(), "BACK", null)).andExpect(status().isOk())
+			.andExpect(jsonPath("$.name", is(name.toUpperCase())));
+	}
+
+	@Test
+	void updateToTakenNameIsConflict() throws Exception {
+		String token = bearer(newUser());
+		String other = "Other " + System.nanoTime();
+		createdId(token, other);
+		UUID id = createdId(token, "Mine " + System.nanoTime());
+
+		update(token, id, body(other.toUpperCase(), "BICEPS", null)).andExpect(status().isConflict())
+			.andExpect(jsonPath("$.code", is("EXERCISE_NAME_TAKEN")))
+			.andExpect(jsonPath("$.error", notNullValue()));
+		update(token, id, body(" Barbell ROW ", "BACK", null)).andExpect(status().isConflict())
+			.andExpect(jsonPath("$.code", is("EXERCISE_NAME_TAKEN")));
+	}
+
+	@Test
+	void updateOfForeignPreloadedOrUnknownExerciseIsNotFound() throws Exception {
+		UUID foreignId = createdId(bearer(newUser()), "Foreign " + System.nanoTime());
+		UUID catalogId = exerciseRepository.findAllByOrderByNameAsc()
+			.stream()
+			.filter(e -> e.getOwnerId() == null)
+			.findFirst()
+			.orElseThrow()
+			.getId();
+		String token = bearer(newUser());
+
+		for (UUID id : List.of(foreignId, catalogId, UUID.randomUUID())) {
+			update(token, id, body("Renamed " + System.nanoTime(), "BICEPS", null)).andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.code", is("EXERCISE_NOT_FOUND")))
+				.andExpect(jsonPath("$.error", notNullValue()));
+		}
+	}
+
+	@Test
+	void updateWithInvalidBodyReturnsBadRequest() throws Exception {
+		String token = bearer(newUser());
+		UUID id = createdId(token, "Valid " + System.nanoTime());
+
+		update(token, id, body("   ", "BICEPS", null)).andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("VALIDATION_FAILED")))
+			.andExpect(jsonPath("$.field", is("name")))
+			.andExpect(jsonPath("$.rule", is("NotBlank")));
+		update(token, id, body("No Group", null, null)).andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("VALIDATION_FAILED")))
+			.andExpect(jsonPath("$.field", is("primaryMuscleGroup")))
+			.andExpect(jsonPath("$.rule", is("NotNull")));
+		update(token, id, body("Same Group", "BICEPS", "BICEPS")).andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.field", is("secondaryMuscleGroupsExcludePrimary")))
+			.andExpect(jsonPath("$.rule", is("AssertTrue")));
+	}
+
+	@Test
+	void updateWithoutTokenReturnsUnauthorized() throws Exception {
+		mockMvc.perform(put("/api/exercises/" + UUID.randomUUID()).contentType(MediaType.APPLICATION_JSON)
+			.content(body("Anon", "BICEPS", null))).andExpect(status().isUnauthorized());
 	}
 
 	@Test

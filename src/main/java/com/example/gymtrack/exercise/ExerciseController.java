@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +35,12 @@ public class ExerciseController {
 	public ResponseEntity<ExerciseResponse> create(@AuthenticationPrincipal CurrentUser currentUser,
 			@Valid @RequestBody CreateExerciseRequest request) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(exerciseService.create(currentUser.id(), request));
+	}
+
+	@PutMapping("/api/exercises/{id}")
+	public ExerciseResponse update(@AuthenticationPrincipal CurrentUser currentUser, @PathVariable UUID id,
+			@Valid @RequestBody CreateExerciseRequest request) {
+		return exerciseService.update(currentUser.id(), id, request);
 	}
 
 	@DeleteMapping("/api/exercises/{id}")

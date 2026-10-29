@@ -63,6 +63,25 @@ public class ExerciseService {
 	}
 
 	@Transactional
+	public ExerciseResponse update(UUID userId, UUID id, CreateExerciseRequest request) {
+		Exercise exercise = exerciseRepository.findByIdAndOwnerId(id, userId)
+				.orElseThrow(() -> new ResourceNotFoundException(ErrorCode.EXERCISE_NOT_FOUND, "Exercise not found"));
+		String name = request.name().trim();
+		if (exerciseRepository.existsVisibleByNameExcludingId(name, userId, id)) {
+			throw new ExerciseConflictException(ErrorCode.EXERCISE_NAME_TAKEN, "An exercise with this name already exists");
+		}
+
+		try {
+			exercise.update(name, request.primaryMuscleGroup(), request.secondaryMuscleGroups());
+			return ExerciseResponse.from(exerciseRepository.saveAndFlush(exercise));
+		}
+		catch (DataIntegrityViolationException e) {
+			// A concurrent create/rename with the same name won the race past the check above.
+			throw new ExerciseConflictException(ErrorCode.EXERCISE_NAME_TAKEN, "An exercise with this name already exists");
+		}
+	}
+
+	@Transactional
 	public void delete(UUID userId, UUID id) {
 		Exercise exercise = exerciseRepository.findByIdAndOwnerId(id, userId)
 				.orElseThrow(() -> new ResourceNotFoundException(ErrorCode.EXERCISE_NOT_FOUND, "Exercise not found"));
