@@ -3,7 +3,7 @@ project: "GymTrack"
 version: 1
 status: draft
 created: 2026-10-21
-updated: 2026-10-28
+updated: 2026-10-29
 prd_version: 1
 main_goal: learn
 top_blocker: skills
@@ -57,7 +57,7 @@ An amateur-to-intermediate gym-goer currently tracks workouts in scattered notes
 | S-12 | previous-workout-weight-hint | see, per exercise and per set, what they lifted last time when starting a workout from the same plan | S-01, S-02 | MS-02 | done |
 | S-13 | training-history | browse a paginated list of past workouts and open a compact view of each | S-01 | MS-03 | done |
 | S-15 | dashboard-insights | see on the dashboard period-over-period change, a 12-week volume chart, recent personal records and a weekly streak with a goal | S-11, S-08 | MS-05 | done |
-| S-16 | i18n-pl-en | use the whole app in Polish or English, including server errors and preloaded exercise names, and switch between them | S-01 | MS-06 | in-progress |
+| S-16 | i18n-pl-en | use the whole app in Polish or English, including server errors and preloaded exercise names, and switch between them | S-01 | MS-06 | done |
 
 ## Streams
 
@@ -259,7 +259,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - Polish names for the 40 preloaded exercises need a review by someone who trains. — Owner: user. Block: no (reviewed in Phase 4 of the plan).
 - **Risk:** Not in the PRD — added to M-1 after the fact (MS-06), so it widens the milestone. It touches almost every frontend file, so it conflicts with any in-flight UI change (`DashboardPage.tsx` with S-15). The backend only gains an error `code` and an `exerciseSlug`; there is no schema change, so nothing to apply by hand to the Flyway-off production DB.
-- **Status:** in-progress
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -317,3 +317,4 @@ No roadmap-wide open questions at this milestone. The PRD `## Open Questions` ma
 - **S-06: user experiences a full guided session — sequential exercise navigation with skip/return — and sees a countdown rest timer between sets.** — Archived 2026-10-27 → `context/archive/2026-10-27-guided-session-navigation/`. Lesson: —.
 - **S-08: user sees a logged set flagged as a new personal record when it beats their estimated one-rep max for that exercise.** — Archived 2026-10-28 → `context/archive/2026-10-27-personal-record-flag/`. Lesson: —.
 - **S-15: user sees on the dashboard how their training is trending and how consistent they are: each tile compared with the previous equal period (7 / 30 / 90 days; All has no comparison), a 12-week volume chart, their 5 most recent personal records, and a weekly streak against a workout-per-week goal they set.** — Archived 2026-10-28 → `context/archive/2026-10-27-dashboard-insights/`. Lesson: —.
+- **S-16: user can use the whole app in Polish or English — labels, plurals, dates, server errors, muscle groups and the names of the 40 preloaded exercises — with the language taken from the browser by default and a switcher to change it.** — Archived 2026-10-29 → `context/archive/2026-10-28-i18n-pl-en/`. Lesson: —.
