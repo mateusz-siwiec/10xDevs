@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { Streak } from '../api/client'
+import { translateError } from '../utils/errors'
+import type { ErrorInfo } from '../utils/errors'
 
 interface ConsistencyCardProps {
   streak: Streak
   saving: boolean
-  error: string | null
+  error: ErrorInfo | null
   onSaveGoal: (goal: number | null) => void
 }
 
@@ -70,7 +72,7 @@ export default function ConsistencyCard({ streak, saving, error, onSaveGoal }: C
       </form>
       {error && (
         <p className="error-text" role="alert">
-          {error}
+          {translateError(error.err, error.key)}
         </p>
       )}
     </section>

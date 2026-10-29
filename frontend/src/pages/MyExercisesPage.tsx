@@ -8,6 +8,7 @@ import '../styles/workout.css'
 import '../styles/plans.css'
 import '../styles/exercises.css'
 import { translateError } from '../utils/errors'
+import type { ErrorInfo } from '../utils/errors'
 import { exerciseName, sortExercisesByName } from '../utils/exercises'
 import { MUSCLE_GROUPS, muscleGroupLabel } from '../utils/muscleGroups'
 
@@ -18,7 +19,7 @@ export default function MyExercisesPage() {
   const [exercises, setExercises] = useState<Exercise[]>([])
   const [loading, setLoading] = useState(true)
   const [loadFailed, setLoadFailed] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<ErrorInfo | null>(null)
   const [name, setName] = useState('')
   const [primary, setPrimary] = useState('')
   const [secondary, setSecondary] = useState<string[]>([])
@@ -35,7 +36,7 @@ export default function MyExercisesPage() {
       .catch((err) => {
         if (cancelled) return
         setLoadFailed(true)
-        setError(translateError(err, 'exercises.loadFailed'))
+        setError({ err, key: 'exercises.loadFailed' })
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
@@ -71,7 +72,7 @@ export default function MyExercisesPage() {
       setPrimary('')
       setSecondary([])
     } catch (err) {
-      setError(translateError(err, 'exercises.addFailed'))
+      setError({ err, key: 'exercises.addFailed' })
     } finally {
       setSaving(false)
     }
@@ -84,7 +85,7 @@ export default function MyExercisesPage() {
       await deleteExercise(id)
       setExercises((list) => list.filter((e) => e.id !== id))
     } catch (err) {
-      setError(translateError(err, 'exercises.deleteFailed'))
+      setError({ err, key: 'exercises.deleteFailed' })
     } finally {
       setBusy(false)
       setConfirmingId(null)
@@ -143,7 +144,7 @@ export default function MyExercisesPage() {
           </fieldset>
           {error && (
             <p role="alert" className="error-text">
-              {error}
+              {translateError(error.err, error.key)}
             </p>
           )}
           <button type="submit" className="btn-primary" disabled={!canSave}>

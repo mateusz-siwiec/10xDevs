@@ -15,7 +15,7 @@ interface SubstituteSuggestionsProps {
 interface FetchResult {
   key: string
   items: Exercise[]
-  error: string | null
+  error: unknown
 }
 
 const MAX_SUGGESTIONS = 3
@@ -40,7 +40,7 @@ export default function SubstituteSuggestions({
           setResult({
             key: exerciseId,
             items: [],
-            error: translateError(err) ?? '',
+            error: err,
           })
         }
       })
@@ -57,7 +57,7 @@ export default function SubstituteSuggestions({
   } else if (current.error !== null) {
     body = (
       <p className="error-text" role="alert">
-        {current.error || t('workout.substitutes.loadFailed')}
+        {translateError(current.error, 'workout.substitutes.loadFailed')}
       </p>
     )
   } else if (current.items.length === 0) {

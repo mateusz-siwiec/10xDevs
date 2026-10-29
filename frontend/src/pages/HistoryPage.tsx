@@ -11,7 +11,7 @@ import { translateError } from '../utils/errors'
 interface FetchResult {
   key: string
   data: HistoryPageData | null
-  error: string | null
+  error: unknown
 }
 
 function parsePage(raw: string | null): number {
@@ -57,7 +57,7 @@ export default function HistoryPage() {
           setResult({
             key,
             data: null,
-            error: translateError(err),
+            error: err,
           })
         }
       })
@@ -81,7 +81,7 @@ export default function HistoryPage() {
   } else if (shown.error || shown.data === null) {
     body = (
       <p className="error-text" role="alert">
-        {shown.error ?? t('history.loadFailed')}
+        {translateError(shown.error, 'history.loadFailed')}
       </p>
     )
   } else if (shown.data.items.length === 0) {

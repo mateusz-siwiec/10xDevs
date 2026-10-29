@@ -41,7 +41,7 @@ export default function SessionSetList({ sets, exercisesById, onDelete }: Sessio
               {set.reps} × {set.weightKg} kg
               {set.personalRecord && (
                 <span className="pr-badge" role="img" aria-label={t('common.personalRecord')}>
-                  PR
+                  {t('common.prBadge')}
                 </span>
               )}
             </span>

@@ -11,6 +11,7 @@ import '../styles/page.css'
 import '../styles/workout.css'
 import '../styles/plans.css'
 import { translateError } from '../utils/errors'
+import type { ErrorInfo } from '../utils/errors'
 
 // Empty or non-integer text becomes null (rejected by the server) so fractions like 3.5 are never truncated.
 function toTarget(value: string): number | null {
@@ -30,7 +31,7 @@ function PlanEditor() {
   const [loading, setLoading] = useState(true)
   const [loadFailed, setLoadFailed] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<ErrorInfo | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -57,7 +58,7 @@ function PlanEditor() {
       .catch((err) => {
         if (cancelled) return
         setLoadFailed(true)
-        setError(translateError(err))
+        setError({ err, key: 'plans.editor.loadFailed' })
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
@@ -121,7 +122,7 @@ function PlanEditor() {
       }
       navigate('/plans')
     } catch (err) {
-      setError(translateError(err, 'plans.editor.saveFailed'))
+      setError({ err, key: 'plans.editor.saveFailed' })
       setSaving(false)
     }
   }
@@ -141,7 +142,7 @@ function PlanEditor() {
       <div className="page-shell">
         <main className="page-card plans-card">
           <h1>{t('plans.editPlan')}</h1>
-          <p className="error-text">{error ?? t('plans.editor.loadFailed')}</p>
+          <p className="error-text">{error ? translateError(error.err, error.key) : t('plans.editor.loadFailed')}</p>
           <Link to="/plans" className="btn-secondary">
             {t('plans.editor.backToPlans')}
           </Link>
@@ -156,7 +157,7 @@ function PlanEditor() {
     <div className="page-shell">
       <main className="page-card plans-card">
         <h1>{id ? t('plans.editPlan') : t('plans.newPlan')}</h1>
-        {error && <p className="error-text">{error}</p>}
+        {error && <p className="error-text">{translateError(error.err, error.key)}</p>}
         <form onSubmit={handleSubmit}>
           <div className="field">
             <label htmlFor="plan-name">{t('plans.editor.planName')}</label>

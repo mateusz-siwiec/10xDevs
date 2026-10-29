@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
-import { getDashboardInsights, getDashboardStats, setWeeklyGoal } from '../api/client'
-import type { DashboardInsights, DashboardStats, StatsWindow } from '../api/client'
+import { getDashboardInsights, getDashboardStats, getExercises, setWeeklyGoal } from '../api/client'
+import type { DashboardInsights, DashboardStats, Exercise, StatsWindow } from '../api/client'
 import ConsistencyCard from '../components/ConsistencyCard'
 import RecentRecords from '../components/RecentRecords'
 import WeeklyVolumeChart from '../components/WeeklyVolumeChart'
@@ -10,16 +10,17 @@ import { formatDuration, formatVolume } from '../utils/format'
 import '../styles/page.css'
 import '../styles/dashboard.css'
 import { translateError } from '../utils/errors'
+import type { ErrorInfo } from '../utils/errors'
 
 interface FetchResult {
   days: StatsWindow
   stats: DashboardStats | null
-  error: string | null
+  error: unknown
 }
 
 interface InsightsResult {
   insights: DashboardInsights | null
-  error: string | null
+  error: unknown
 }
 
 const WINDOW_OPTIONS: { value: StatsWindow; label: string | null }[] = [
@@ -57,8 +58,9 @@ export default function DashboardPage() {
   const [result, setResult] = useState<FetchResult | null>(null)
   const [insightsResult, setInsightsResult] = useState<InsightsResult | null>(null)
   const [saving, setSaving] = useState(false)
-  const [goalError, setGoalError] = useState<string | null>(null)
+  const [goalError, setGoalError] = useState<ErrorInfo | null>(null)
   const [insightsAttempt, setInsightsAttempt] = useState(0)
+  const [exercises, setExercises] = useState<Exercise[]>([])
 
   // State is only set from async callbacks; a cancelled flag drops stale responses.
   useEffect(() => {
@@ -72,7 +74,7 @@ export default function DashboardPage() {
           setResult({
             days,
             stats: null,
-            error: translateError(err),
+            error: err,
           })
         }
       })
@@ -92,7 +94,7 @@ export default function DashboardPage() {
         if (!cancelled) {
           setInsightsResult({
             insights: null,
-            error: translateError(err),
+            error: err,
           })
         }
       })
@@ -100,6 +102,19 @@ export default function DashboardPage() {
       cancelled = true
     }
   }, [insightsAttempt])
+
+  // Only used to show translated exercise names in recent records; on failure the stored names are shown.
+  useEffect(() => {
+    let cancelled = false
+    getExercises()
+      .then((list) => {
+        if (!cancelled) setExercises(list)
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   async function handleSaveGoal(goal: number | null) {
     setSaving(true)
@@ -125,7 +140,7 @@ export default function DashboardPage() {
         )
       }
     } catch (err) {
-      setGoalError(translateError(err, 'dashboard.goalSaveFailed'))
+      setGoalError({ err, key: 'dashboard.goalSaveFailed' })
     } finally {
       setSaving(false)
     }
@@ -139,7 +154,7 @@ export default function DashboardPage() {
   } else if (shown.error || shown.stats === null) {
     body = (
       <p className="error-text" role="alert">
-        {shown.error ?? t('dashboard.loadFailed')}
+        {translateError(shown.error, 'dashboard.loadFailed')}
       </p>
     )
   } else if (shown.stats.workoutCount === 0) {
@@ -179,7 +194,7 @@ export default function DashboardPage() {
     insightsBody = (
       <>
         <p className="error-text" role="alert">
-          {insightsResult.error ?? t('dashboard.insightsFailed')}
+          {translateError(insightsResult.error, 'dashboard.insightsFailed')}
         </p>
         <button
           type="button"
@@ -205,7 +220,7 @@ export default function DashboardPage() {
           error={goalError}
           onSaveGoal={handleSaveGoal}
         />
-        <RecentRecords records={insights.recentPersonalRecords} />
+        <RecentRecords records={insights.recentPersonalRecords} exercises={exercises} />
       </>
     )
   }

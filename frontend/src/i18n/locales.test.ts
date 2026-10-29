@@ -76,3 +76,33 @@ describe('seeded exercise names', () => {
     expect(seededSlugs.filter((slug) => typeof names[slug] !== 'string')).toEqual([])
   })
 })
+
+describe('backend error codes', () => {
+  const source = readFileSync(
+    resolve(__dirname, '../../../src/main/java/com/example/gymtrack/common/ErrorCode.java'),
+    'utf8',
+  )
+  const body = source.slice(source.indexOf('{', source.indexOf('enum ErrorCode')) + 1)
+  const codes = [...body.matchAll(/^\s*([A-Z][A-Z0-9_]*)\s*[,;]?\s*$/gm)].map((match) => match[1])
+
+  it('finds the enum constants', () => {
+    expect(codes.length).toBeGreaterThanOrEqual(19)
+  })
+
+  it.each([
+    ['en', en],
+    ['pl', pl],
+  ])('has an errors.<CODE> entry in %s for every ErrorCode', (_lang, resource) => {
+    const errors = resource.errors as Record<string, unknown>
+    expect(codes.filter((code) => typeof errors[code] !== 'string')).toEqual([])
+  })
+
+  it.each([
+    ['en', en],
+    ['pl', pl],
+  ])('has a validation.<rule> entry in %s for every rule the backend emits', (_lang, resource) => {
+    const validation = resource.validation as Record<string, unknown>
+    const rules = ['NotBlank', 'NotNull', 'Email', 'Size', 'Min', 'Max', 'DecimalMin', 'DecimalMax', 'AssertTrue', 'HalfKgStep']
+    expect(rules.filter((rule) => typeof validation[rule] !== 'string')).toEqual([])
+  })
+})

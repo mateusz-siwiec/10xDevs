@@ -14,7 +14,7 @@ interface FetchResult {
   data: HistoryDetail | null
   exercises: Exercise[]
   notFound: boolean
-  error: string | null
+  error: unknown
 }
 
 export default function HistoryDetailPage() {
@@ -37,7 +37,7 @@ export default function HistoryDetailPage() {
           data: null,
           exercises: [],
           notFound,
-          error: translateError(err),
+          error: err,
         })
       })
     return () => {
@@ -66,7 +66,7 @@ export default function HistoryDetailPage() {
     body = (
       <>
         <p className="error-text" role="alert">
-          {shown.error ?? t('history.detail.loadFailed')}
+          {translateError(shown.error, 'history.detail.loadFailed')}
         </p>
         {backLink}
       </>

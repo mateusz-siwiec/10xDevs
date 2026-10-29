@@ -19,6 +19,7 @@
     "clear": "Wyczyść",
     "retry": "Spróbuj ponownie",
     "personalRecord": "Nowy rekord życiowy",
+    "prBadge": "PR",
     "unknownExercise": "Nieznane ćwiczenie",
     "cancel": "Anuluj",
     "delete": "Usuń",
@@ -265,6 +266,7 @@
     "CORE": "Brzuch"
   },
   "errors": {
+    "REQUEST_FAILED": "Żądanie nie powiodło się (status {{status}}).",
     "EXERCISE_NOT_FOUND": "Nie znaleziono ćwiczenia.",
     "PLAN_NOT_FOUND": "Nie znaleziono planu treningowego.",
     "WORKOUT_NOT_FOUND": "Nie znaleziono treningu.",
@@ -289,11 +291,11 @@
     "NotBlank": "Pole „{{field}}” jest wymagane.",
     "NotNull": "Pole „{{field}}” jest wymagane.",
     "Email": "Podaj prawidłowy adres e-mail.",
-    "Size": "Pole „{{field}}” ma nieprawidłową długość.",
-    "Min": "Wartość pola „{{field}}” jest za mała.",
-    "Max": "Wartość pola „{{field}}” jest za duża.",
-    "DecimalMin": "Wartość pola „{{field}}” jest za mała.",
-    "DecimalMax": "Wartość pola „{{field}}” jest za duża.",
+    "Size": "Pole „{{field}}” ma nieprawidłową długość (dozwolone: od {{min}} do {{max}}).",
+    "Min": "Wartość pola „{{field}}” jest za mała (minimum: {{min}}).",
+    "Max": "Wartość pola „{{field}}” jest za duża (maksimum: {{max}}).",
+    "DecimalMin": "Wartość pola „{{field}}” jest za mała (granica: {{min}}).",
+    "DecimalMax": "Wartość pola „{{field}}” jest za duża (maksimum: {{max}}).",
     "AssertTrue": "Dodatkowe partie mięśniowe nie mogą zawierać partii głównej.",
     "HalfKgStep": "Pole „{{field}}” musi być wielokrotnością 0,5.",
     "fields": {

@@ -19,6 +19,7 @@
     "clear": "Clear",
     "retry": "Retry",
     "personalRecord": "New personal record",
+    "prBadge": "PR",
     "unknownExercise": "Unknown exercise",
     "cancel": "Cancel",
     "delete": "Delete",
@@ -255,6 +256,7 @@
     "CORE": "Core"
   },
   "errors": {
+    "REQUEST_FAILED": "Request failed (status {{status}}).",
     "EXERCISE_NOT_FOUND": "Exercise not found.",
     "PLAN_NOT_FOUND": "Training plan not found.",
     "WORKOUT_NOT_FOUND": "Workout not found.",
@@ -279,11 +281,11 @@
     "NotBlank": "{{field}} is required.",
     "NotNull": "{{field}} is required.",
     "Email": "Enter a valid email address.",
-    "Size": "{{field}} has an invalid length.",
-    "Min": "{{field}} is too small.",
-    "Max": "{{field}} is too large.",
-    "DecimalMin": "{{field}} is too small.",
-    "DecimalMax": "{{field}} is too large.",
+    "Size": "{{field}} has an invalid length (allowed: {{min}} to {{max}}).",
+    "Min": "{{field}} is too small (minimum: {{min}}).",
+    "Max": "{{field}} is too large (maximum: {{max}}).",
+    "DecimalMin": "{{field}} is too small (limit: {{min}}).",
+    "DecimalMax": "{{field}} is too large (maximum: {{max}}).",
     "AssertTrue": "Secondary muscle groups must not include the primary muscle group.",
     "HalfKgStep": "{{field}} must be a multiple of 0.5.",
     "fields": {

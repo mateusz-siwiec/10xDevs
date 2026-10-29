@@ -6,11 +6,12 @@ import { useAuth } from '../auth/AuthContext'
 import LanguageSwitcher from '../components/LanguageSwitcher'
 import '../styles/page.css'
 import { translateError } from '../utils/errors'
+import type { ErrorInfo } from '../utils/errors'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<ErrorInfo | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const { register } = useAuth()
   const navigate = useNavigate()
@@ -24,7 +25,7 @@ export default function RegisterPage() {
       await register(email, password)
       navigate('/')
     } catch (err) {
-      setError(translateError(err, 'auth.registrationFailed'))
+      setError({ err, key: 'auth.registrationFailed' })
     } finally {
       setSubmitting(false)
     }
@@ -61,7 +62,7 @@ export default function RegisterPage() {
               required
             />
           </div>
-          {error && <p className="error-text">{error}</p>}
+          {error && <p className="error-text">{translateError(error.err, error.key)}</p>}
           <button type="submit" disabled={submitting} className="btn-primary">
             {submitting ? t('auth.registering') : t('auth.register')}
           </button>

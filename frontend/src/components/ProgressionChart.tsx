@@ -14,7 +14,7 @@ interface ProgressionChartProps {
 interface FetchResult {
   key: string
   points: ProgressionPoint[]
-  error: string | null
+  error: unknown
 }
 
 function formatDate(value: string): string {
@@ -41,7 +41,7 @@ export default function ProgressionChart({ exerciseId, refreshKey }: Progression
           setResult({
             key: requestKey,
             points: [],
-            error: translateError(err) ?? '',
+            error: err,
           })
         }
       })
@@ -60,7 +60,7 @@ export default function ProgressionChart({ exerciseId, refreshKey }: Progression
   if (shown === null) {
     body = <p className="page-subtext">{t('progression.loading')}</p>
   } else if (shown.error !== null) {
-    body = <p className="error-text">{shown.error || t('progression.loadFailed')}</p>
+    body = <p className="error-text">{translateError(shown.error, 'progression.loadFailed')}</p>
   } else if (shown.points.length === 0) {
     body = <p className="page-subtext">{t('progression.empty')}</p>
   } else {

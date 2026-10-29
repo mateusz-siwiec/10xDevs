@@ -70,6 +70,8 @@ class AuthControllerRegisterTest {
 			.andExpect(jsonPath("$.code", is("VALIDATION_FAILED")))
 			.andExpect(jsonPath("$.field", is("password")))
 			.andExpect(jsonPath("$.rule", is("Size")))
+			.andExpect(jsonPath("$.min", is(8)))
+			.andExpect(jsonPath("$.max", is(72)))
 			.andExpect(jsonPath("$.error").exists());
 	}
 

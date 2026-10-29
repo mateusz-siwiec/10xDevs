@@ -12,6 +12,10 @@ public record PlanResponse(UUID id, String name, Instant createdAt, Instant upda
 	static PlanResponse from(TrainingPlan plan, Map<UUID, Exercise> exercises) {
 		List<PlanEntryResponse> entries = plan.getEntries().stream().map(entry -> {
 			Exercise exercise = exercises.get(entry.getExerciseId());
+			if (exercise == null) {
+				throw new IllegalStateException("Exercise " + entry.getExerciseId() + " of plan " + plan.getId()
+						+ " is missing from the exercise map");
+			}
 			return new PlanEntryResponse(entry.getExerciseId(), exercise.getName(), exercise.getSlug(),
 					entry.getPosition(), entry.getSets(), entry.getReps());
 		}).toList();

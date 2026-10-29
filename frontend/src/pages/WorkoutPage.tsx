@@ -25,6 +25,7 @@ import SubstituteSuggestions from '../components/SubstituteSuggestions'
 import '../styles/page.css'
 import '../styles/workout.css'
 import { translateError } from '../utils/errors'
+import type { ErrorInfo } from '../utils/errors'
 
 export default function WorkoutPage() {
   const { t } = useTranslation()
@@ -44,7 +45,7 @@ export default function WorkoutPage() {
   const [restDuration, setRestDuration] = useState(loadRestDuration)
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<ErrorInfo | null>(null)
   const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
@@ -54,7 +55,7 @@ export default function WorkoutPage() {
         setSession(current)
         setPlans(planList)
       })
-      .catch((err) => setError(translateError(err, 'workout.loadFailed')))
+      .catch((err) => setError({ err, key: 'workout.loadFailed' }))
       .finally(() => setLoading(false))
   }, [])
 
@@ -123,7 +124,7 @@ export default function WorkoutPage() {
       setSkipped(new Set())
       setRestEndsAt(null)
     } catch (err) {
-      setError(translateError(err, 'workout.startFailed'))
+      setError({ err, key: 'workout.startFailed' })
     } finally {
       setBusy(false)
     }
@@ -141,7 +142,7 @@ export default function WorkoutPage() {
       setSkipped(new Set())
       setRestEndsAt(null)
     } catch (err) {
-      setError(translateError(err, 'workout.endFailed'))
+      setError({ err, key: 'workout.endFailed' })
     } finally {
       setBusy(false)
     }
@@ -169,7 +170,7 @@ export default function WorkoutPage() {
       setRestEndsAt(Date.now() + restDuration * 1000)
       setRefreshKey((k) => k + 1)
     } catch (err) {
-      setError(translateError(err, 'workout.logFailed'))
+      setError({ err, key: 'workout.logFailed' })
       throw err
     } finally {
       setBusy(false)
@@ -203,7 +204,7 @@ export default function WorkoutPage() {
       }
       setRefreshKey((k) => k + 1)
     } catch (err) {
-      setError(translateError(err, 'workout.deleteFailed'))
+      setError({ err, key: 'workout.deleteFailed' })
     } finally {
       setBusy(false)
     }
@@ -217,7 +218,7 @@ export default function WorkoutPage() {
     <div className="page-shell">
       <main className="page-card workout-card">
         <h1>{t('workout.title')}</h1>
-        {error && <p className="error-text">{error}</p>}
+        {error && <p className="error-text">{translateError(error.err, error.key)}</p>}
         {session === null ? (
           <div className="workout-start">
             {plans.length > 0 && (

@@ -152,6 +152,21 @@ class WorkoutSetControllerTest {
 	}
 
 	@Test
+	void logSetWithNonHalfKgWeightReportsHalfKgStepRule() throws Exception {
+		String token = bearerToken();
+		String sessionId = startSession(token);
+
+		mockMvc.perform(post("/api/workout-sessions/" + sessionId + "/sets")
+				.header(HttpHeaders.AUTHORIZATION, token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(setBody(exerciseId(), 5, "60.3")))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("VALIDATION_FAILED")))
+			.andExpect(jsonPath("$.field", is("weightKg")))
+			.andExpect(jsonPath("$.rule", is("HalfKgStep")));
+	}
+
+	@Test
 	void logSetWithUnknownExerciseReturnsNotFound() throws Exception {
 		String token = bearerToken();
 		String sessionId = startSession(token);

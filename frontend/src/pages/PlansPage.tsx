@@ -7,19 +7,20 @@ import '../styles/page.css'
 import '../styles/workout.css'
 import '../styles/plans.css'
 import { translateError } from '../utils/errors'
+import type { ErrorInfo } from '../utils/errors'
 
 export default function PlansPage() {
   const { t } = useTranslation()
   const [plans, setPlans] = useState<PlanSummary[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<ErrorInfo | null>(null)
   const [confirmingId, setConfirmingId] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
 
   useEffect(() => {
     listPlans()
       .then(setPlans)
-      .catch((err) => setError(translateError(err, 'plans.loadFailed')))
+      .catch((err) => setError({ err, key: 'plans.loadFailed' }))
       .finally(() => setLoading(false))
   }, [])
 
@@ -30,7 +31,7 @@ export default function PlansPage() {
       await deletePlan(id)
       setPlans((list) => list.filter((p) => p.id !== id))
     } catch (err) {
-      setError(translateError(err, 'plans.deleteFailed'))
+      setError({ err, key: 'plans.deleteFailed' })
     } finally {
       setBusy(false)
       setConfirmingId(null)
@@ -46,7 +47,7 @@ export default function PlansPage() {
             {t('plans.newPlan')}
           </Link>
         </div>
-        {error && <p className="error-text">{error}</p>}
+        {error && <p className="error-text">{translateError(error.err, error.key)}</p>}
         {loading ? (
           <p className="page-subtext">{t('plans.loading')}</p>
         ) : plans.length === 0 ? (

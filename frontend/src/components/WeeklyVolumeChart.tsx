@@ -1,20 +1,10 @@
 import { useTranslation } from 'react-i18next'
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import type { WeeklyVolume } from '../api/client'
+import { formatNumber, formatShortDate } from '../utils/format'
 
 interface WeeklyVolumeChartProps {
   weeks: WeeklyVolume[]
-}
-
-function formatDate(value: string): string {
-  const date = new Date(value)
-  return Number.isNaN(date.getTime())
-    ? value
-    : date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
-}
-
-function formatKg(value: number): string {
-  return value.toLocaleString(undefined, { maximumFractionDigits: 1 })
 }
 
 export default function WeeklyVolumeChart({ weeks }: WeeklyVolumeChartProps) {
@@ -24,8 +14,8 @@ export default function WeeklyVolumeChart({ weeks }: WeeklyVolumeChartProps) {
   const bestKg = Math.max(0, ...weeks.map((week) => week.volumeKg))
   const summary = t('dashboard.weeklyVolume.summary', {
     count: weeks.length,
-    total: formatKg(totalKg),
-    best: formatKg(bestKg),
+    total: formatNumber(totalKg),
+    best: formatNumber(bestKg),
   })
 
   return (
@@ -36,12 +26,12 @@ export default function WeeklyVolumeChart({ weeks }: WeeklyVolumeChartProps) {
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={weeks} margin={{ top: 8, right: 16, bottom: 4, left: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-              <XAxis dataKey="weekStart" tickFormatter={formatDate} tick={{ fontSize: 12 }} />
+              <XAxis dataKey="weekStart" tickFormatter={formatShortDate} tick={{ fontSize: 12 }} />
               <YAxis width={56} tick={{ fontSize: 12 }} allowDecimals={false} />
               <Tooltip
-                labelFormatter={(label) => t('dashboard.weeklyVolume.weekOf', { date: formatDate(String(label)) })}
+                labelFormatter={(label) => t('dashboard.weeklyVolume.weekOf', { date: formatShortDate(String(label)) })}
                 formatter={(value) => [
-                  `${Number(value).toLocaleString(undefined, { maximumFractionDigits: 1 })} kg`,
+                  `${formatNumber(Number(value))} kg`,
                   t('dashboard.weeklyVolume.volume'),
                 ]}
               />

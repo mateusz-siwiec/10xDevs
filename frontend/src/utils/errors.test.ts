@@ -26,9 +26,11 @@ describe('translateError', () => {
       code: 'VALIDATION_FAILED',
       field: 'password',
       rule: 'Size',
+      min: 8,
+      max: 72,
     })
     await i18n.changeLanguage('pl')
-    expect(translateError(size)).toBe('Pole „Hasło” ma nieprawidłową długość.')
+    expect(translateError(size)).toBe('Pole „Hasło” ma nieprawidłową długość (dozwolone: od 8 do 72).')
   })
 
   it('falls back to the English message for unknown codes and rules', () => {
@@ -38,8 +40,24 @@ describe('translateError', () => {
     ).toBe('x is odd')
   })
 
-  it('uses the translated fallback for non-errors and null without one', () => {
+  it('does not render namespace objects for rules or codes that name a locale group', () => {
+    expect(
+      translateError(new ApiError('bad', 400, { code: 'VALIDATION_FAILED', field: 'x', rule: 'fields' })),
+    ).toBe('bad')
+    expect(translateError(new ApiError('bad', 400, { code: 'validation' }))).toBe('bad')
+  })
+
+  it('maps a bodiless API failure to the translated generic message', async () => {
+    const err = new ApiError('Request failed with status 502', 502, { code: 'REQUEST_FAILED' })
+    expect(translateError(err)).toBe('Request failed (status 502).')
+    await i18n.changeLanguage('pl')
+    expect(translateError(err)).toBe('Żądanie nie powiodło się (status 502).')
+  })
+
+  it('uses the translated fallback for non-API errors and null without one', () => {
     expect(translateError('nope', 'common.retry')).toBe('Retry')
+    expect(translateError(new TypeError('Failed to fetch'), 'common.retry')).toBe('Retry')
+    expect(translateError(new TypeError('Failed to fetch'))).toBe('Failed to fetch')
     expect(translateError('nope')).toBeNull()
   })
 })

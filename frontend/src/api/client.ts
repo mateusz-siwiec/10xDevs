@@ -22,18 +22,33 @@ export class ApiError extends Error {
   code?: string
   field?: string
   rule?: string
+  /** Constraint bounds for Size/Min/Max/DecimalMin/DecimalMax validation failures. */
+  min?: number | string
+  max?: number | string
 
   constructor(
     message: string,
     status: number,
-    details: { code?: string; field?: string; rule?: string } = {},
+    details: {
+      code?: string
+      field?: string
+      rule?: string
+      min?: number | string
+      max?: number | string
+    } = {},
   ) {
     super(message)
     this.status = status
     this.code = details.code
     this.field = details.field
     this.rule = details.rule
+    this.min = details.min
+    this.max = details.max
   }
+}
+
+function bound(value: unknown): number | string | undefined {
+  return typeof value === 'number' || typeof value === 'string' ? value : undefined
 }
 
 async function parseError(res: Response): Promise<ApiError> {
@@ -44,12 +59,14 @@ async function parseError(res: Response): Promise<ApiError> {
         code: typeof body.code === 'string' ? body.code : undefined,
         field: typeof body.field === 'string' ? body.field : undefined,
         rule: typeof body.rule === 'string' ? body.rule : undefined,
+        min: bound(body.min),
+        max: bound(body.max),
       })
     }
   } catch {
     // response body wasn't JSON — fall through to the generic message
   }
-  return new ApiError(`Request failed with status ${res.status}`, res.status)
+  return new ApiError(`Request failed with status ${res.status}`, res.status, { code: 'REQUEST_FAILED' })
 }
 
 export function getStoredToken(): string | null {
