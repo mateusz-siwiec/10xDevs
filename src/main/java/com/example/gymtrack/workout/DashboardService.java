@@ -4,12 +4,15 @@ import com.example.gymtrack.common.ErrorCode;
 import com.example.gymtrack.common.ResourceNotFoundException;
 import com.example.gymtrack.exercise.Exercise;
 import com.example.gymtrack.exercise.ExerciseRepository;
+import com.example.gymtrack.exercise.MuscleGroup;
 import com.example.gymtrack.user.User;
 import com.example.gymtrack.user.UserRepository;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -158,6 +161,30 @@ public class DashboardService {
 		DashboardPeriodTotals previous = totals(userId, now.minus(length.multipliedBy(2)), now.minus(length));
 		return new DashboardStatsResponse(days, current.workoutCount(), current.totalDurationSeconds(),
 				current.totalVolumeKg(), previous);
+	}
+
+	/**
+	 * Sets per primary muscle group over ended workouts with {@code endedAt} in the window, one entry for
+	 * every group (zeros included) in enum order. A set counts once, for its exercise's primary group only.
+	 */
+	@Transactional(readOnly = true)
+	public MuscleGroupStatsResponse muscleGroupStats(UUID userId, String window) {
+		Instant now = Instant.now();
+		Integer days = null;
+		Instant from = Instant.EPOCH;
+		if (!ALL.equals(window)) {
+			days = parseDays(window);
+			from = now.minus(Duration.ofDays(days));
+		}
+		Map<MuscleGroup, Long> counts = new EnumMap<>(MuscleGroup.class);
+		for (MuscleGroupCount count : setRepository.countSetsByMuscleGroupBetween(userId, from, now)) {
+			counts.put(count.muscleGroup(), count.sets());
+		}
+		List<MuscleGroupStatsResponse.Group> groups = Arrays.stream(MuscleGroup.values())
+			.map(group -> new MuscleGroupStatsResponse.Group(group, counts.getOrDefault(group, 0L)))
+			.toList();
+		return new MuscleGroupStatsResponse(days, groups.stream().mapToLong(MuscleGroupStatsResponse.Group::sets).sum(),
+				groups);
 	}
 
 	private static int parseDays(String window) {

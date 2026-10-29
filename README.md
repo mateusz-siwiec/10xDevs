@@ -18,7 +18,7 @@ transparent, rule-based suggestions for what to do next, with no black box: ever
 | Exercises | Browse a seeded catalog (tagged by muscle group); add, rename and delete custom exercises |
 | Plans | Create, edit, reorder and delete training plans (ordered exercises with target sets × reps) |
 | Workouts | Start a session (free-form or from a plan), log and delete sets, end it; guided navigation with skip/return and a rest timer; delete a whole workout from its History page (with confirmation) |
-| Insight | Progression chart per exercise, history of past workouts, dashboard with totals, 12-week volume, streak and recent records |
+| Insight | Progression chart per exercise, history of past workouts, dashboard with totals, 12-week volume, streak and recent records, sets per muscle group |
 | Rules | Weight-increase recommendation, substitute suggestions, personal-record flag (see below) |
 
 ## Business logic
@@ -132,6 +132,27 @@ of the same exercise. Rules of the road:
 | 3 weeks ago | 1 | no, the streak stops |
 
 Streak = **2**. After one more workout this week it becomes **3**. With no goal set, the streak is 0.
+
+### 5. Sets per muscle group
+
+*Code: `workout/DashboardService.muscleGroupStats`, `GET /api/dashboard/muscle-groups`; page `/muscle-groups`, opened from the dashboard.*
+Shows how many sets you have done for each muscle group, so an imbalance is easy to spot.
+
+**Rule.** Over your **finished** workouts that ended in the chosen window (**7, 30 or 90 days, or all time**, default 30), every set
+counts **once**, for the **primary** muscle group of its exercise. Secondary groups are not counted, so the numbers add up to
+your real set count. Every group is listed, with zero for the ones you haven't trained, and the page sorts the most-trained first.
+Custom exercises count towards the group you gave them. Sets of a workout you are still doing are not counted, and a deleted workout stops counting.
+
+**Example.** In the last 30 days you finished two workouts: 3 sets of Barbell Bench Press (primary: chest) and, in another,
+2 sets of a back exercise.
+
+| Muscle group | Sets |
+| --- | --- |
+| Chest | 3 |
+| Back | 2 |
+| Shoulders, Biceps, Triceps, Quads, Hamstrings, Glutes, Calves, Core | 0 each |
+
+The page shows "5 sets in total". Bench press also works the triceps and shoulders, but those groups stay at 0 here because only the primary group counts.
 
 ### Input rules enforced by the API
 

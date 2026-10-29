@@ -25,6 +25,12 @@ public class DashboardController {
 		return dashboardService.stats(currentUser.id(), days);
 	}
 
+	@GetMapping("/api/dashboard/muscle-groups")
+	public MuscleGroupStatsResponse muscleGroups(@AuthenticationPrincipal CurrentUser currentUser,
+			@RequestParam(defaultValue = "30") String days) {
+		return dashboardService.muscleGroupStats(currentUser.id(), days);
+	}
+
 	@GetMapping("/api/dashboard/insights")
 	public DashboardInsightsResponse insights(@AuthenticationPrincipal CurrentUser currentUser) {
 		return dashboardService.insights(currentUser.id());

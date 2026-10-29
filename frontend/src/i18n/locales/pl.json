@@ -58,6 +58,7 @@
     "insightsFailed": "Nie udało się wczytać analiz",
     "goalSaveFailed": "Nie udało się zapisać celu",
     "startWorkout": "Rozpocznij trening",
+    "muscleStatsLink": "Serie na partie mięśniowe",
     "consistency": {
       "title": "Regularność",
       "setGoalPrompt": "Ustaw tygodniowy cel treningowy, aby zacząć serię.",
@@ -259,6 +260,24 @@
       "useThis": "Użyj",
       "useLabel": "Użyj: {{name}}"
     }
+  },
+  "muscleStats": {
+    "title": "Serie na partie mięśniowe",
+    "back": "Wróć do pulpitu",
+    "loading": "Wczytywanie statystyk…",
+    "loadFailed": "Nie udało się wczytać statystyk partii mięśniowych",
+    "emptyAll": "Brak serii w zakończonych treningach.",
+    "emptyWindow": "Brak serii w zakończonych treningach z ostatnich {{days}} dni.",
+    "startHint": "Zakończ trening, aby zobaczyć tutaj swoje statystyki.",
+    "total_one": "Łącznie {{count}} seria",
+    "total_few": "Łącznie {{count}} serie",
+    "total_many": "Łącznie {{count}} serii",
+    "total_other": "Łącznie {{count}} serii",
+    "setsCount_one": "{{count}} seria",
+    "setsCount_few": "{{count}} serie",
+    "setsCount_many": "{{count}} serii",
+    "setsCount_other": "{{count}} serii",
+    "note": "Każda seria liczy się do głównej partii mięśniowej ćwiczenia. Uwzględniane są tylko zakończone treningi."
   },
   "muscle": {
     "CHEST": "Klatka piersiowa",

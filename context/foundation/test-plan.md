@@ -130,6 +130,15 @@ push a user to an unsafe weight.
 | `WorkoutSetControllerTest.deleteSessionRemovesItAndItsSetsFromHistory`, `deletingTheActiveSessionLetsTheUserStartANewOne` | Backend | The session and its sets are gone (including from progression data); deleting an active session frees the user to start a new one |
 | `WorkoutSetControllerTest.otherUserCannotDeleteSessionAndItSurvives`, `deleteSessionWithoutTokenReturnsUnauthorized` | Backend | Another user gets 404 and the workout survives; no token gives 401 |
 
+### R11. Per-muscle-group set counts are wrong or leak another user's data
+
+**Impact:** medium. The page exists to reveal training imbalance; a wrong count misleads the user.
+
+| Test | Level | Covers |
+| --- | --- | --- |
+| `e2e/muscle-group-stats.spec.ts` | E2E | From the dashboard link, 3 chest and 2 back sets show as "5 sets in total", Chest 3, Back 2, Core 0, most-trained first |
+| `MuscleGroupStatsControllerTest` (10 cases) | Backend | All groups listed with zeros; each set counted once under its exercise's primary group (also within one session across groups); active sessions excluded; 7/30/all window by end time; custom exercises counted; other users never leak; a deleted workout stops counting; invalid window gives 400; no token gives 401 |
+
 ## Not covered by automated tests (known gaps)
 
 - **Substitution suggestions in the browser.** Covered at API level (`ExerciseControllerTest`, `CustomExerciseVisibilityTest`), not through the UI.

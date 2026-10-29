@@ -316,6 +316,19 @@ export async function getDashboardStats(days: StatsWindow): Promise<DashboardSta
   return res.json()
 }
 
+export interface MuscleGroupStats {
+  /** null for the unbounded "all" window. */
+  days: number | null
+  totalSets: number
+  /** Every muscle group, zeros included. */
+  groups: { muscleGroup: string; sets: number }[]
+}
+
+export async function getMuscleGroupStats(days: StatsWindow): Promise<MuscleGroupStats> {
+  const res = await authFetch(`/api/dashboard/muscle-groups?days=${days}`)
+  return res.json()
+}
+
 export interface WeeklyVolume {
   weekStart: string
   workoutCount: number

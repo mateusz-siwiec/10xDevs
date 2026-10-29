@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router'
 import { AuthProvider } from './auth/AuthContext'
 import { RequireAuth } from './auth/RequireAuth'
 import DashboardPage from './pages/DashboardPage'
+import MuscleGroupStatsPage from './pages/MuscleGroupStatsPage'
 import WorkoutPage from './pages/WorkoutPage'
 import HistoryPage from './pages/HistoryPage'
 import HistoryDetailPage from './pages/HistoryDetailPage'
@@ -23,6 +24,14 @@ function App() {
             element={
               <RequireAuth>
                 <DashboardPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/muscle-groups"
+            element={
+              <RequireAuth>
+                <MuscleGroupStatsPage />
               </RequireAuth>
             }
           />

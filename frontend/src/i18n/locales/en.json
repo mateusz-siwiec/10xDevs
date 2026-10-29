@@ -58,6 +58,7 @@
     "insightsFailed": "Failed to load insights",
     "goalSaveFailed": "Failed to save goal",
     "startWorkout": "Start workout",
+    "muscleStatsLink": "Sets per muscle group",
     "consistency": {
       "title": "Consistency",
       "setGoalPrompt": "Set a weekly workout goal to start a streak.",
@@ -249,6 +250,20 @@
       "useThis": "Use this",
       "useLabel": "Use {{name}}"
     }
+  },
+  "muscleStats": {
+    "title": "Sets per muscle group",
+    "back": "Back to dashboard",
+    "loading": "Loading stats…",
+    "loadFailed": "Failed to load muscle group stats",
+    "emptyAll": "No sets logged in completed workouts yet.",
+    "emptyWindow": "No sets logged in completed workouts in the last {{days}} days.",
+    "startHint": "Finish a workout to see your stats here.",
+    "total_one": "{{count}} set in total",
+    "total_other": "{{count}} sets in total",
+    "setsCount_one": "{{count}} set",
+    "setsCount_other": "{{count}} sets",
+    "note": "Each set counts for the primary muscle group of its exercise. Only finished workouts are included."
   },
   "muscle": {
     "CHEST": "Chest",

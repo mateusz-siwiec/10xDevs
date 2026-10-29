@@ -143,3 +143,49 @@
     grid-template-columns: 1fr;
   }
 }
+
+.muscle-total {
+  margin: 0 0 1rem;
+  color: var(--text-h);
+  font-weight: 600;
+}
+
+.muscle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.muscle-row {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr 2.5rem;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.muscle-name {
+  color: var(--text-h);
+}
+
+.muscle-bar {
+  display: block;
+  height: 0.75rem;
+  overflow: hidden;
+  background: var(--accent-bg);
+  border-radius: 999px;
+}
+
+.muscle-bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+}
+
+.muscle-count {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
