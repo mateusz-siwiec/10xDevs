@@ -16,6 +16,13 @@ test('on a phone the navigation lives in a left-side menu that opens, navigates 
 
   const menu = page.locator('#topbar-panel')
 
+  // The bar follows the page: still at the top of the screen after scrolling to the bottom.
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0)
+  await expect(page.locator('.topbar')).toBeInViewport({ ratio: 1 })
+  expect((await page.locator('.topbar').boundingBox())!.y).toBe(0)
+  await page.evaluate(() => window.scrollTo(0, 0))
+
   // Closed: only the hamburger is shown, the links are not reachable.
   const toggle = page.getByRole('button', { name: 'Menu', exact: true })
   await expect(toggle).toBeVisible()
