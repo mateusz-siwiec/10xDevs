@@ -51,6 +51,13 @@ public interface ExerciseRepository extends JpaRepository<Exercise, UUID> {
 			""")
 	boolean existsVisibleByName(@Param("name") String name, @Param("userId") UUID userId);
 
+	@Query("""
+			select count(e) > 0 from Exercise e
+			where lower(e.name) = lower(:name) and e.id <> :excludeId and (e.ownerId is null or e.ownerId = :userId)
+			""")
+	boolean existsVisibleByNameExcludingId(@Param("name") String name, @Param("userId") UUID userId,
+			@Param("excludeId") UUID excludeId);
+
 	List<Exercise> findByOwnerIdOrderByNameAsc(UUID ownerId);
 
 	Optional<Exercise> findByIdAndOwnerId(UUID id, UUID ownerId);

@@ -55,6 +55,17 @@ public class Exercise {
 		}
 	}
 
+	public void update(String name, MuscleGroup primaryMuscleGroup, Set<MuscleGroup> secondaryMuscleGroups) {
+		this.name = name;
+		this.primaryMuscleGroup = primaryMuscleGroup;
+		Set<MuscleGroup> updated = EnumSet.noneOf(MuscleGroup.class);
+		if (secondaryMuscleGroups != null) {
+			updated.addAll(secondaryMuscleGroups);
+		}
+		this.secondaryMuscleGroups.clear();
+		this.secondaryMuscleGroups.addAll(updated);
+	}
+
 	public UUID getOwnerId() {
 		return ownerId;
 	}
