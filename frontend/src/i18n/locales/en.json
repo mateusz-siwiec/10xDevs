@@ -5,7 +5,9 @@
     "history": "History",
     "plans": "Plans",
     "exercises": "Exercises",
-    "logout": "Log out"
+    "logout": "Log out",
+    "menu": "Menu",
+    "closeMenu": "Close menu"
   },
   "common": {
     "language": "Language",

@@ -139,11 +139,20 @@ push a user to an unsafe weight.
 | `e2e/muscle-group-stats.spec.ts` | E2E | From the dashboard link, 3 chest and 2 back sets show as "5 sets in total", Chest 3, Back 2, Core 0, most-trained first |
 | `MuscleGroupStatsControllerTest` (10 cases) | Backend | All groups listed with zeros; each set counted once under its exercise's primary group (also within one session across groups); active sessions excluded; 7/30/all window by end time; custom exercises counted; other users never leak; a deleted workout stops counting; invalid window gives 400; no token gives 401 |
 
+### R12. On a phone, part of the navigation is unreachable
+
+**Impact:** medium. The PRD requires the product to be fully usable on a phone-sized screen; the old top bar overflowed there.
+
+| Test | Level | Covers |
+| --- | --- | --- |
+| `e2e/mobile-menu.spec.ts` | E2E | At 375 px: only the menu button shows; opening it reveals every link, the logout button and the panel stays inside the screen; picking a link navigates and closes it; Escape closes it |
+| The desktop navigation steps in the other e2e specs | E2E | The desktop top bar is unchanged (links stay directly clickable at 1280 px) |
+
 ## Not covered by automated tests (known gaps)
 
 - **Substitution suggestions in the browser.** Covered at API level (`ExerciseControllerTest`, `CustomExerciseVisibilityTest`), not through the UI.
 - **Guided navigation and rest timer** (skip/return, countdown): frontend behaviour with no automated test.
-- **Mobile layout.** The PRD requires phone-usable logging; this is checked by hand.
+- **Mobile layout beyond the navigation.** The menu is tested at phone width; the rest of the phone layout (logging forms, charts) is checked by hand.
 - **Load/performance.** The "log a set feels immediate" guardrail is not measured.
 
 ## Manual release checklist (before a demo or review)
