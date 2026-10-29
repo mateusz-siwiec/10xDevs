@@ -1,4 +1,7 @@
 .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -64,10 +67,116 @@
   min-width: 0;
 }
 
-@media (max-width: 480px) {
+/* Desktop: the panel is transparent to layout, so its children sit directly in the bar. */
+.topbar-panel {
+  display: contents;
+}
+
+.topbar-toggle,
+.topbar-backdrop,
+.topbar-title {
+  display: none;
+}
+
+/* Narrow screens: the links, email, language switch and logout move into a left-side drawer. */
+@media (max-width: 768px) {
   .topbar {
-    flex-wrap: wrap;
+    justify-content: flex-start;
     padding: 0.5rem 1rem;
+  }
+
+  .topbar-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    color: var(--text-h);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .topbar-toggle:hover {
+    border-color: var(--accent-border);
+  }
+
+  .topbar-title {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-h);
+  }
+
+  .topbar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    cursor: pointer;
+  }
+
+  .topbar-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 30;
+    box-sizing: border-box;
+    width: min(280px, 85vw);
+    padding: 1rem;
+    overflow-y: auto;
+    background: var(--bg);
+    border-right: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition:
+      transform 0.2s ease,
+      visibility 0.2s;
+  }
+
+  .topbar-panel.open {
+    transform: none;
+    visibility: visible;
+  }
+
+  .topbar-nav {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .topbar-link {
+    border-bottom: none;
+    border-left: 3px solid transparent;
+  }
+
+  .topbar-link.active {
+    border-left-color: var(--accent);
+  }
+
+  .topbar-user {
+    order: -1;
+    margin-left: 0;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .topbar-logout {
+    margin-top: auto;
   }
 }
 

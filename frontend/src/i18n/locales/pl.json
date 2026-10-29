@@ -5,7 +5,9 @@
     "history": "Historia",
     "plans": "Plany",
     "exercises": "Ćwiczenia",
-    "logout": "Wyloguj"
+    "logout": "Wyloguj",
+    "menu": "Menu",
+    "closeMenu": "Zamknij menu"
   },
   "common": {
     "language": "Język",
