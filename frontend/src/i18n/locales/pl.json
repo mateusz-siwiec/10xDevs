@@ -105,6 +105,9 @@
       "loadFailed": "Nie udało się wczytać treningu",
       "back": "Wróć do historii",
       "noSets": "W tym treningu nie zapisano żadnych serii.",
+      "delete": "Usuń trening",
+      "deleteConfirm": "Usunąć ten trening i wszystkie jego serie? Tej operacji nie można cofnąć.",
+      "deleteFailed": "Nie udało się usunąć treningu",
       "setLine": "Seria {{n}}: {{reps}} × {{weight}} kg"
     }
   },

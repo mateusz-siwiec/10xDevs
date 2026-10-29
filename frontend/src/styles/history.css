@@ -128,3 +128,11 @@
   line-height: 44px;
   color: var(--accent);
 }
+
+.history-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin-top: 1.5rem;
+}

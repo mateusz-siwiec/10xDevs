@@ -94,6 +94,59 @@ class WorkoutSetControllerTest {
 	}
 
 	@Test
+	void deleteSessionRemovesItAndItsSetsFromHistory() throws Exception {
+		String token = bearerToken();
+		String sessionId = startSession(token);
+		logSet(token, sessionId, setBody(exerciseId(), 5, "60"));
+		endSession(token, sessionId);
+
+		mockMvc.perform(delete("/api/workout-sessions/" + sessionId).header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isNoContent());
+
+		mockMvc.perform(get("/api/workout-sessions/" + sessionId).header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isNotFound());
+		mockMvc.perform(get("/api/exercises/" + exerciseId() + "/progression").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(jsonPath("$", hasSize(0)));
+		mockMvc.perform(delete("/api/workout-sessions/" + sessionId).header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.code", is("WORKOUT_NOT_FOUND")));
+	}
+
+	@Test
+	void deletingTheActiveSessionLetsTheUserStartANewOne() throws Exception {
+		String token = bearerToken();
+		String sessionId = startSession(token);
+
+		mockMvc.perform(delete("/api/workout-sessions/" + sessionId).header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isNoContent());
+
+		mockMvc.perform(get("/api/workout-sessions/current").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isNoContent());
+		mockMvc.perform(post("/api/workout-sessions").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isCreated());
+	}
+
+	@Test
+	void otherUserCannotDeleteSessionAndItSurvives() throws Exception {
+		String ownerToken = bearerToken();
+		String sessionId = startSession(ownerToken);
+		logSet(ownerToken, sessionId, setBody(exerciseId(), 5, "60"));
+		endSession(ownerToken, sessionId);
+
+		mockMvc.perform(delete("/api/workout-sessions/" + sessionId).header(HttpHeaders.AUTHORIZATION, bearerToken()))
+			.andExpect(status().isNotFound());
+
+		mockMvc.perform(get("/api/workout-sessions/" + sessionId).header(HttpHeaders.AUTHORIZATION, ownerToken))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.exercises[0].sets", hasSize(1)));
+	}
+
+	@Test
+	void deleteSessionWithoutTokenReturnsUnauthorized() throws Exception {
+		mockMvc.perform(delete("/api/workout-sessions/" + UUID.randomUUID())).andExpect(status().isUnauthorized());
+	}
+
+	@Test
 	void setRoutesWithoutTokenReturnUnauthorized() throws Exception {
 		UUID id = UUID.randomUUID();
 		mockMvc.perform(post("/api/workout-sessions/" + id + "/sets")

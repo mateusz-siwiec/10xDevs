@@ -99,6 +99,9 @@
       "loadFailed": "Failed to load workout",
       "back": "Back to history",
       "noSets": "No sets were logged in this workout.",
+      "delete": "Delete workout",
+      "deleteConfirm": "Delete this workout and all its sets? This cannot be undone.",
+      "deleteFailed": "Failed to delete workout",
       "setLine": "Set {{n}}: {{reps}} × {{weight}} kg"
     }
   },
