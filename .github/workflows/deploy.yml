@@ -1,0 +1,48 @@
+name: Deploy
+
+# Manual only: run it from the Actions tab ("Run workflow") when you want to release.
+# main is protected by the required CI checks, so what is on main has already passed them.
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Branch, tag or commit SHA to deploy
+        default: main
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to Fly.io
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      # Create with `fly tokens create deploy` and add it as a repository secret.
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+    steps:
+      - name: Check for Fly.io token
+        if: env.FLY_API_TOKEN == ''
+        run: |
+          echo "::error::FLY_API_TOKEN secret is not set."
+          exit 1
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Deploy
+        run: flyctl deploy --remote-only
+      - name: Health check
+        run: |
+          for i in $(seq 1 12); do
+            if curl -fsS https://gym-track-mateusz.fly.dev/api/health; then exit 0; fi
+            echo "Waiting for the app to come up ($i/12)..."
+            sleep 10
+          done
+          echo "::error::Health check failed after deploy"
+          exit 1
