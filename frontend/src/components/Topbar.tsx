@@ -9,13 +9,17 @@ export default function Topbar() {
   const navigate = useNavigate()
   const { t } = useTranslation()
 
-  if (!user) {
-    return null
-  }
-
   function handleLogout() {
     logout()
     navigate('/login')
+  }
+
+  if (!user) {
+    return (
+      <header className="topbar topbar-guest">
+        <LanguageSwitcher />
+      </header>
+    )
   }
 
   return (

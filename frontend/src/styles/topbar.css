@@ -70,3 +70,11 @@
     padding: 0.5rem 1rem;
   }
 }
+
+.topbar-guest {
+  justify-content: flex-end;
+}
+
+.topbar-guest + .page-shell {
+  min-height: calc(100svh - 61px);
+}
