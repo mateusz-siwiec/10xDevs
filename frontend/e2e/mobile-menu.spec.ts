@@ -27,10 +27,13 @@ test('on a phone the navigation lives in a left-side menu that opens, navigates 
     await expect(menu.getByRole('link', { name, exact: true })).toBeVisible()
   }
   await expect(menu.getByRole('button', { name: 'Log out' })).toBeVisible()
-  const panel = await menu.boundingBox()
-  expect(panel).not.toBeNull()
-  expect(panel!.x).toBeGreaterThanOrEqual(0)
-  expect(panel!.x + panel!.width).toBeLessThanOrEqual(375)
+  // The drawer slides in, so wait for the animation to settle before measuring it.
+  await expect
+    .poll(async () => {
+      const box = await menu.boundingBox()
+      return box !== null && box.x >= 0 && box.x + box.width <= 375
+    })
+    .toBe(true)
 
   // Choosing a link navigates and closes the menu.
   await menu.getByRole('link', { name: 'Plans', exact: true }).click()
