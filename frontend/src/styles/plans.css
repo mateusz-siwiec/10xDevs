@@ -146,3 +146,18 @@
   font-size: 1rem;
   box-sizing: border-box;
 }
+
+/* Phones: always put a row's actions under its name, so short and long names line up the same way. */
+@media (max-width: 480px) {
+  .plan-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .plan-item .plan-item-actions .btn-secondary,
+  .plan-item .plan-item-actions .btn-danger {
+    flex: 1 1 0;
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+  }
+}
