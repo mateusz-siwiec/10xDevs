@@ -29,6 +29,7 @@ background (Polish) is in `idea-notes.md`; the derived PRD/shaping docs live in
 - Build: `npm run build` (`tsc -b && vite build`)
 - Lint: `npm run lint` (oxlint)
 - Preview built output: `npm run preview`
+- End-to-end tests (Playwright, Chromium): `npm run test:e2e`. Needs Postgres running (`podman-compose up -d` or `docker-compose up -d`); the config starts the backend (`local` profile) and Vite itself, or reuses them if already running. Unset `CI` locally, otherwise server reuse is disabled. Specs live in `frontend/e2e/`.
 
 ### Local database
 `podman-compose up -d` starts a local Postgres container with connection
