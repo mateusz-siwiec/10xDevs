@@ -329,14 +329,14 @@ None (no data or API change). Rollback is a revert of the CSS/TSX commits; the a
 
 #### Automated
 
-- [x] 4.1 New spec passes with baselines: `npm run test:e2e -- dashboard-ui.spec.ts`
-- [x] 4.2 Full e2e suite passes: `npm run test:e2e`
-- [x] 4.3 Guard passes on cleaned files: `npm run check:tokens`
-- [x] 4.4 Guard fails when a literal is introduced (temporary `#123456` in `dashboard.css`, then reverted)
-- [x] 4.5 Build, lint and unit tests pass: `npm run build && npm run lint && npm test`
+- [x] 4.1 New spec passes with baselines: `npm run test:e2e -- dashboard-ui.spec.ts` — 0752fab
+- [x] 4.2 Full e2e suite passes: `npm run test:e2e` — 0752fab
+- [x] 4.3 Guard passes on cleaned files: `npm run check:tokens` — 0752fab
+- [x] 4.4 Guard fails when a literal is introduced (temporary `#123456` in `dashboard.css`, then reverted) — 0752fab
+- [x] 4.5 Build, lint and unit tests pass: `npm run build && npm run lint && npm test` — 0752fab
 
 #### Manual
 
-- [x] 4.6 Four baseline screenshots reviewed (desktop/mobile, light/dark) for overlap, clipping, readable axis labels
-- [x] 4.7 Each of the 7 states is shown or marked N/A with a reason in the spec comments
-- [x] 4.8 `CLAUDE.md` UI section reads correctly and sits outside any generated block
+- [x] 4.6 Four baseline screenshots reviewed (desktop/mobile, light/dark) for overlap, clipping, readable axis labels — 0752fab
+- [x] 4.7 Each of the 7 states is shown or marked N/A with a reason in the spec comments — 0752fab
+- [x] 4.8 `CLAUDE.md` UI section reads correctly and sits outside any generated block — 0752fab
