@@ -1,4 +1,4 @@
-// Guard for the dashboard UI contract: no literal colours or arbitrary values outside the tokens.
+// Guard for the dashboard and workout UI contracts: no literal colours or arbitrary values outside the tokens.
 // Token source frontend/src/index.css is intentionally never scanned.
 // Run: npm run check:tokens (from frontend/). Exits 1 and prints file:line for every hit.
 import { readFileSync } from 'node:fs'
@@ -15,6 +15,16 @@ const FILES = [
   'src/components/chartTheme.ts',
   'src/styles/dashboard.css',
   'src/styles/page.css',
+  'src/pages/WorkoutPage.tsx',
+  'src/components/SetLogger.tsx',
+  'src/components/SessionSetList.tsx',
+  'src/components/RestTimer.tsx',
+  'src/components/PlanWalkthrough.tsx',
+  'src/components/PreviousWorkoutHint.tsx',
+  'src/components/ProgressionRecommendation.tsx',
+  'src/components/SubstituteSuggestions.tsx',
+  'src/components/ExercisePicker.tsx',
+  'src/styles/workout.css',
 ]
 
 const PALETTES =

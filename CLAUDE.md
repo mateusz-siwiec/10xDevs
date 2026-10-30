@@ -29,7 +29,7 @@ background (Polish) is in `idea-notes.md`; the derived PRD/shaping docs live in
 - Build: `npm run build` (`tsc -b && vite build`)
 - Lint: `npm run lint` (oxlint)
 - Preview built output: `npm run preview`
-- Hard-coded value guard: `npm run check:tokens` (fails on literal colours / arbitrary values in the dashboard files)
+- Hard-coded value guard: `npm run check:tokens` (fails on literal colours / arbitrary values in the dashboard and workout files)
 - End-to-end tests (Playwright, Chromium): `npm run test:e2e`. Needs Postgres running (`podman-compose up -d` or `docker-compose up -d`); the config starts the backend (`local` profile) and Vite itself, or reuses them if already running. Unset `CI` locally, otherwise server reuse is disabled. Specs live in `frontend/e2e/`.
 
 ### Local database
@@ -74,11 +74,12 @@ preferred.
 - Design tokens (colours, radii, chart colours, shadow) live in `frontend/src/index.css`; the value record is
   `context/changes/dashboard-ui-contract/tokens.md`.
 - Shared classes (buttons, `.card`, `.stat-*`, `.skeleton`, fields) live in `frontend/src/styles/page.css`.
+  Shared primitives such as `.btn-danger` and `.workout-select` also live in `page.css`.
   Check there before adding a new button, card or field style.
 - No literal colours, radii or arbitrary values (`[12px]`, hex, `rgb()`, Tailwind palette classes) in views or
-  component CSS; use tokens. `npm run check:tokens` (from `frontend/`) scans the dashboard files and fails on hits.
+  component CSS; use tokens. `npm run check:tokens` (from `frontend/`) scans the dashboard and workout files and fails on hits.
 - Any new interactive control needs hover, focus-visible and disabled states.
-- Visual and state spec: `frontend/e2e/dashboard-ui.spec.ts` (baselines are platform-specific; never refresh
+- Visual and state specs: `frontend/e2e/dashboard-ui.spec.ts` and `frontend/e2e/workout-ui.spec.ts` (baselines are platform-specific; never refresh
   them without an explained visual delta).
 
 <!-- BEGIN @przeprogramowani/10x-cli -->

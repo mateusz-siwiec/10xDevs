@@ -316,29 +316,29 @@ None (no data or API change). Rollback is a revert of the CSS/TSX commits; the o
 
 #### Automated
 
-- [x] 3.1 Build, lint and unit tests pass: `npm run build && npm run lint && npm test`
-- [x] 3.2 Hard-coded scan on the workout files returns 0 hits
-- [x] 3.3 Existing e2e specs pass: `npm run test:e2e`
+- [x] 3.1 Build, lint and unit tests pass: `npm run build && npm run lint && npm test` — 52929d0
+- [x] 3.2 Hard-coded scan on the workout files returns 0 hits — 52929d0
+- [x] 3.3 Existing e2e specs pass: `npm run test:e2e` — 52929d0
 
 #### Manual
 
-- [x] 3.4 Slow network: skeleton card appears instead of a blank page, no big jump when content renders
-- [x] 3.5 Dark mode: panels, walkthrough rows and delete buttons look correct
-- [x] 3.6 Tabbing through the walkthrough rows and bottom buttons shows the ring on each
-- [x] 3.7 `/plans` and `/exercises` still look as before
+- [x] 3.4 Slow network: skeleton card appears instead of a blank page, no big jump when content renders — 52929d0
+- [x] 3.5 Dark mode: panels, walkthrough rows and delete buttons look correct — 52929d0
+- [x] 3.6 Tabbing through the walkthrough rows and bottom buttons shows the ring on each — 52929d0
+- [x] 3.7 `/plans` and `/exercises` still look as before — 52929d0
 
 ### Phase 4: 7-state matrix, visual gate and guard
 
 #### Automated
 
-- [ ] 4.1 New spec passes with baselines: `npm run test:e2e -- workout-ui.spec.ts`
-- [ ] 4.2 Full e2e suite passes: `npm run test:e2e`
-- [ ] 4.3 Guard passes on cleaned files: `npm run check:tokens`
-- [ ] 4.4 Guard fails when a literal is introduced (temporary `#123456` in `workout.css`, then reverted)
-- [ ] 4.5 Build, lint and unit tests pass: `npm run build && npm run lint && npm test`
+- [x] 4.1 New spec passes with baselines: `npm run test:e2e -- workout-ui.spec.ts`
+- [x] 4.2 Full e2e suite passes: `npm run test:e2e`
+- [x] 4.3 Guard passes on cleaned files: `npm run check:tokens`
+- [x] 4.4 Guard fails when a literal is introduced (temporary `#123456` in `workout.css`, then reverted)
+- [x] 4.5 Build, lint and unit tests pass: `npm run build && npm run lint && npm test`
 
 #### Manual
 
-- [ ] 4.6 Four baseline screenshots reviewed (desktop/mobile, light/dark) for overlap, clipping, readable text
-- [ ] 4.7 Each of the 7 states is shown or marked N/A with a reason in the spec comments
-- [ ] 4.8 `CLAUDE.md` UI section reads correctly and sits outside any generated block
+- [x] 4.6 Four baseline screenshots reviewed (desktop/mobile, light/dark) for overlap, clipping, readable text
+- [x] 4.7 Each of the 7 states is shown or marked N/A with a reason in the spec comments
+- [x] 4.8 `CLAUDE.md` UI section reads correctly and sits outside any generated block
