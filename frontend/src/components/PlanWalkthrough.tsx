@@ -48,7 +48,7 @@ export default function PlanWalkthrough({
                 </span>
               </span>
               <span className="walkthrough-entry-progress">
-                {isSkipped && <span className="pr-badge">{t('workout.skipped')}</span>}
+                {isSkipped && <span className="badge">{t('workout.skipped')}</span>}
                 {done ? '✓ ' : ''}
                 {logged}/{entry.sets}
               </span>

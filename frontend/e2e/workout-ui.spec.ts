@@ -99,7 +99,7 @@ test.describe('workout ui', () => {
           fullPage: true,
           maxDiffPixels: 150,
           animations: 'disabled',
-          mask: [page.locator('.recharts-responsive-container')],
+          mask: [page.locator('.recharts-responsive-container'), page.locator('.previous-workout-hint')],
         })
       })
     }
@@ -191,8 +191,8 @@ test.describe('workout ui', () => {
     await expect(page.locator('.skeleton')).toHaveCount(0)
     await expect(page.getByRole('button', { name: 'Start workout' })).toBeVisible()
     const after = (await card.boundingBox())!.height
-    // The skeleton is a generic card, not pixel-tuned to the start screen (measured ~97px taller than the
-    // plan start screen); bound the difference so it cannot collapse to nothing or balloon.
-    expect(Math.abs(after - before)).toBeLessThanOrEqual(120)
+    // The skeleton is sized to the fullest start screen (saved plan: plan select + two buttons); the
+    // card height must stay within a small tolerance when the content replaces it.
+    expect(Math.abs(after - before)).toBeLessThanOrEqual(24)
   })
 })

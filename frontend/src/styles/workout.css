@@ -227,7 +227,7 @@
   transition: border-color 0.15s ease;
 }
 
-.walkthrough-entry:hover:not(:disabled) {
+.walkthrough-entry:hover:not(:disabled):not(.walkthrough-entry-selected) {
   border-color: var(--accent-border);
 }
 
@@ -292,5 +292,5 @@
 }
 
 .skeleton-block {
-  min-height: 8rem;
+  min-height: 2rem;
 }
