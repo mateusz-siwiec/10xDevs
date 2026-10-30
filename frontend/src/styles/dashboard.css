@@ -162,10 +162,6 @@
   min-height: 4rem;
 }
 
-.dashboard-section .skeleton + .skeleton {
-  margin-top: 0.75rem;
-}
-
 @keyframes skeleton-pulse {
   0%,
   100% {

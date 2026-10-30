@@ -24,7 +24,7 @@ const PATTERNS = [
   { name: 'hex colour', re: /#[0-9a-fA-F]{3,8}\b/ },
   { name: 'colour function', re: /\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch)\s*\(/i },
   { name: 'arbitrary value', re: /\[-?\d*\.?\d+(?:px|rem|em|%|vh|vw|svh)\]/ },
-  { name: 'palette class', re: new RegExp(`\b[a-z-]+-(?:${PALETTES})-(?:50|[1-9]00|950)\b`) },
+  { name: 'palette class', re: new RegExp(String.raw`\b[a-z-]+-(?:${PALETTES})-(?:50|[1-9]00|950)\b`) },
 ]
 
 let hits = 0

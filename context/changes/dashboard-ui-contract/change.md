@@ -1,7 +1,7 @@
 ---
 change_id: dashboard-ui-contract
 title: Dashboard UI design-system contract
-status: implemented
+status: impl_reviewed
 created: 2026-10-30
 updated: 2026-10-30
 archived_at: null
