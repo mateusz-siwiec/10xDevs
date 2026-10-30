@@ -300,30 +300,30 @@ None (no data or API change). Rollback is a revert of the CSS/TSX commits; the a
 
 #### Automated
 
-- [x] 2.1 Build and lint pass: `npm run build && npm run lint`
-- [x] 2.2 Existing e2e specs still pass: `npm run test:e2e`
+- [x] 2.1 Build and lint pass: `npm run build && npm run lint` — 0dbb3fd
+- [x] 2.2 Existing e2e specs still pass: `npm run test:e2e` — 0dbb3fd
 
 #### Manual
 
-- [x] 2.3 Tabbing through the dashboard shows the ring on the toggle, Save/Clear and both bottom links
-- [x] 2.4 Save and Clear look disabled while saving or with an empty/invalid goal
-- [x] 2.5 Spot-check History and Plans pages: buttons consistent, no regressions
+- [x] 2.3 Tabbing through the dashboard shows the ring on the toggle, Save/Clear and both bottom links — 0dbb3fd
+- [x] 2.4 Save and Clear look disabled while saving or with an empty/invalid goal — 0dbb3fd
+- [x] 2.5 Spot-check History and Plans pages: buttons consistent, no regressions — 0dbb3fd
 
 ### Phase 3: Dashboard view
 
 #### Automated
 
-- [ ] 3.1 Build, lint and unit tests pass: `npm run build && npm run lint && npm test`
-- [ ] 3.2 Hard-coded scan on the dashboard view files returns 0 hits
-- [ ] 3.3 Existing e2e specs pass, including `muscle-group-stats.spec.ts`
+- [x] 3.1 Build, lint and unit tests pass: `npm run build && npm run lint && npm test`
+- [x] 3.2 Hard-coded scan on the dashboard view files returns 0 hits
+- [x] 3.3 Existing e2e specs pass, including `muscle-group-stats.spec.ts`
 
 #### Manual
 
-- [ ] 3.4 Dark mode: chart axis labels and tooltip follow the theme
-- [ ] 3.5 Slow network: skeleton appears and the page does not jump when data arrives
-- [ ] 3.6 "Start workout" is visible without scrolling on a 375px-wide screen
-- [ ] 3.7 History progression chart looks right in both themes
-- [ ] 3.8 Muscle stats page still looks as before
+- [x] 3.4 Dark mode: chart axis labels and tooltip follow the theme
+- [x] 3.5 Slow network: skeleton appears and the page does not jump when data arrives
+- [x] 3.6 "Start workout" is visible without scrolling on a 375px-wide screen
+- [x] 3.7 History progression chart looks right in both themes
+- [x] 3.8 Muscle stats page still looks as before
 
 ### Phase 4: 7-state matrix, visual gate and guard
 

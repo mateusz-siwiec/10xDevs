@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import type { WeeklyVolume } from '../api/client'
 import { formatNumber, formatShortDate } from '../utils/format'
+import { axisProps, gridProps, seriesColor, tooltipProps } from './chartTheme'
 
 interface WeeklyVolumeChartProps {
   weeks: WeeklyVolume[]
@@ -25,17 +26,18 @@ export default function WeeklyVolumeChart({ weeks }: WeeklyVolumeChartProps) {
         <div role="img" aria-label={summary}>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={weeks} margin={{ top: 8, right: 16, bottom: 4, left: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-              <XAxis dataKey="weekStart" tickFormatter={formatShortDate} tick={{ fontSize: 12 }} />
-              <YAxis width={56} tick={{ fontSize: 12 }} allowDecimals={false} />
+              <CartesianGrid {...gridProps} />
+              <XAxis dataKey="weekStart" tickFormatter={formatShortDate} {...axisProps} />
+              <YAxis width={56} allowDecimals={false} {...axisProps} />
               <Tooltip
+                {...tooltipProps}
                 labelFormatter={(label) => t('dashboard.weeklyVolume.weekOf', { date: formatShortDate(String(label)) })}
                 formatter={(value) => [
                   `${formatNumber(Number(value))} kg`,
                   t('dashboard.weeklyVolume.volume'),
                 ]}
               />
-              <Bar dataKey="volumeKg" fill="var(--accent)" isAnimationActive={false} />
+              <Bar dataKey="volumeKg" fill={seriesColor} isAnimationActive={false} />
             </BarChart>
           </ResponsiveContainer>
         </div>

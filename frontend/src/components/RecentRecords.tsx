@@ -24,7 +24,7 @@ export default function RecentRecords({ records, exercises }: RecentRecordsProps
       ) : (
         <ul className="recent-records">
           {records.slice(0, 5).map((record) => (
-            <li key={`${record.sessionId}:${record.exerciseId}:${record.achievedAt}`}>
+            <li className="card" key={`${record.sessionId}:${record.exerciseId}:${record.achievedAt}`}>
               <span className="recent-record-name">
                 {displayName(byId.get(record.exerciseId), record.exerciseName)}{' '}
                 <span className="pr-badge" role="img" aria-label={t('common.personalRecord')}>
