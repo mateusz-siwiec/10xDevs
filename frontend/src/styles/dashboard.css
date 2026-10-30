@@ -20,6 +20,10 @@
   font-weight: 600;
 }
 
+.dashboard-toggle .btn-secondary[aria-pressed='true']:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
 .dashboard-tiles {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -143,7 +147,6 @@
 
 .consistency-label input {
   width: 6rem;
-  box-sizing: border-box;
 }
 
 @media (max-width: 480px) {

@@ -286,28 +286,28 @@ None (no data or API change). Rollback is a revert of the CSS/TSX commits; the a
 
 #### Automated
 
-- [x] 1.1 Build and type check pass: `npm run build` (in `frontend/`)
-- [x] 1.2 Lint passes: `npm run lint`
-- [x] 1.3 No `#fff` left in `page.css`
-- [x] 1.4 Contrast of `--on-accent` on `--accent` is at least 4.5:1 in both themes (computed in `tokens.md`)
+- [x] 1.1 Build and type check pass: `npm run build` (in `frontend/`) — 59cf0df
+- [x] 1.2 Lint passes: `npm run lint` — 59cf0df
+- [x] 1.3 No `#fff` left in `page.css` — 59cf0df
+- [x] 1.4 Contrast of `--on-accent` on `--accent` is at least 4.5:1 in both themes (computed in `tokens.md`) — 59cf0df
 
 #### Manual
 
-- [x] 1.5 Login page and one other page look unchanged apart from the deeper purple in light mode
-- [x] 1.6 Dark mode shows dark text on the lighter purple button
+- [x] 1.5 Login page and one other page look unchanged apart from the deeper purple in light mode — 59cf0df
+- [x] 1.6 Dark mode shows dark text on the lighter purple button — 59cf0df
 
 ### Phase 2: Shared button and input states
 
 #### Automated
 
-- [ ] 2.1 Build and lint pass: `npm run build && npm run lint`
-- [ ] 2.2 Existing e2e specs still pass: `npm run test:e2e`
+- [x] 2.1 Build and lint pass: `npm run build && npm run lint`
+- [x] 2.2 Existing e2e specs still pass: `npm run test:e2e`
 
 #### Manual
 
-- [ ] 2.3 Tabbing through the dashboard shows the ring on the toggle, Save/Clear and both bottom links
-- [ ] 2.4 Save and Clear look disabled while saving or with an empty/invalid goal
-- [ ] 2.5 Spot-check History and Plans pages: buttons consistent, no regressions
+- [x] 2.3 Tabbing through the dashboard shows the ring on the toggle, Save/Clear and both bottom links
+- [x] 2.4 Save and Clear look disabled while saving or with an empty/invalid goal
+- [x] 2.5 Spot-check History and Plans pages: buttons consistent, no regressions
 
 ### Phase 3: Dashboard view
 
