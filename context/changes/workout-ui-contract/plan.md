@@ -303,29 +303,29 @@ None (no data or API change). Rollback is a revert of the CSS/TSX commits; the o
 
 #### Automated
 
-- [x] 2.1 Build and lint pass: `npm run build && npm run lint`
-- [x] 2.2 `.btn-danger` and `.workout-select` no longer defined in `workout.css`
-- [x] 2.3 Existing e2e specs still pass: `npm run test:e2e`
+- [x] 2.1 Build and lint pass: `npm run build && npm run lint` — 59ef197
+- [x] 2.2 `.btn-danger` and `.workout-select` no longer defined in `workout.css` — 59ef197
+- [x] 2.3 Existing e2e specs still pass: `npm run test:e2e` — 59ef197
 
 #### Manual
 
-- [x] 2.4 Tab to a delete button shows the ring; history detail delete looks disabled while the request runs
-- [x] 2.5 Spot-check `/plans`, `/exercises`, `/history/:id`: delete buttons and selects consistent, no regressions
+- [x] 2.4 Tab to a delete button shows the ring; history detail delete looks disabled while the request runs — 59ef197
+- [x] 2.5 Spot-check `/plans`, `/exercises`, `/history/:id`: delete buttons and selects consistent, no regressions — 59ef197
 
 ### Phase 3: Workout view
 
 #### Automated
 
-- [ ] 3.1 Build, lint and unit tests pass: `npm run build && npm run lint && npm test`
-- [ ] 3.2 Hard-coded scan on the workout files returns 0 hits
-- [ ] 3.3 Existing e2e specs pass: `npm run test:e2e`
+- [x] 3.1 Build, lint and unit tests pass: `npm run build && npm run lint && npm test`
+- [x] 3.2 Hard-coded scan on the workout files returns 0 hits
+- [x] 3.3 Existing e2e specs pass: `npm run test:e2e`
 
 #### Manual
 
-- [ ] 3.4 Slow network: skeleton card appears instead of a blank page, no big jump when content renders
-- [ ] 3.5 Dark mode: panels, walkthrough rows and delete buttons look correct
-- [ ] 3.6 Tabbing through the walkthrough rows and bottom buttons shows the ring on each
-- [ ] 3.7 `/plans` and `/exercises` still look as before
+- [x] 3.4 Slow network: skeleton card appears instead of a blank page, no big jump when content renders
+- [x] 3.5 Dark mode: panels, walkthrough rows and delete buttons look correct
+- [x] 3.6 Tabbing through the walkthrough rows and bottom buttons shows the ring on each
+- [x] 3.7 `/plans` and `/exercises` still look as before
 
 ### Phase 4: 7-state matrix, visual gate and guard
 

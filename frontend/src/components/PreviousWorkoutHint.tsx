@@ -48,7 +48,7 @@ export default function PreviousWorkoutHint({ exerciseId, planId, setNumber }: P
   return (
     <div aria-live="polite">
       {previous && previous.sets.length > 0 && (
-        <section className="workout-section previous-workout-hint">
+        <section className="workout-section card previous-workout-hint">
           <p>{t('workout.lastTime', { date: dateFormat.format(new Date(previous.endedAt)) })}</p>
           <ol>
             {previous.sets.map((set, index) => (

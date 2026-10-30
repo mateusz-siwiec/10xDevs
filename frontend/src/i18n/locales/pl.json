@@ -218,6 +218,7 @@
   },
   "workout": {
     "title": "Trening",
+    "loading": "Wczytywanie treningu…",
     "startFromPlan": "Rozpocznij z planu…",
     "startFromPlanLabel": "Rozpocznij z planu",
     "startPlan": "Rozpocznij plan",

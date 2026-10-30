@@ -39,9 +39,9 @@ function Countdown({ endsAt, onChange }: CountdownProps) {
   }, [over])
 
   return (
-    <div className="rest-timer">
+    <div className="rest-timer card">
       <p className="rest-timer-display">{over ? t('workout.rest.over') : formatRemaining(remaining)}</p>
-      <p className="rest-timer-live" aria-live="polite">
+      <p className="visually-hidden" aria-live="polite">
         {over ? t('workout.rest.over') : ''}
       </p>
       <div className="rest-timer-actions">
@@ -65,7 +65,7 @@ export default function RestTimer({ endsAt, onChange, durationSec, onDurationCha
   }
 
   return (
-    <div className="rest-timer">
+    <div className="rest-timer card">
       <label htmlFor="rest-duration">{t('workout.rest.between')}</label>
       <select
         id="rest-duration"

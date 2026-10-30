@@ -86,7 +86,7 @@ export default function SubstituteSuggestions({
   }
 
   return (
-    <section className="workout-section substitute-panel" aria-labelledby="substitute-heading">
+    <section className="workout-section card substitute-panel" aria-labelledby="substitute-heading">
       <div className="substitute-header">
         <h2 id="substitute-heading">{t('workout.substitutes.title')}</h2>
         <button type="button" className="btn-secondary" onClick={onDismiss}>

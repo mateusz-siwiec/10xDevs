@@ -61,7 +61,7 @@ export default function ProgressionChart({ exerciseId, refreshKey }: Progression
   if (shown === null) {
     body = <p className="page-subtext">{t('progression.loading')}</p>
   } else if (shown.error !== null) {
-    body = <p className="error-text">{translateError(shown.error, 'progression.loadFailed')}</p>
+    body = <p className="error-text" role="alert">{translateError(shown.error, 'progression.loadFailed')}</p>
   } else if (shown.points.length === 0) {
     body = <p className="page-subtext">{t('progression.empty')}</p>
   } else {
