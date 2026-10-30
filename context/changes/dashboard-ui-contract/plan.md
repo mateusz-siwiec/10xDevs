@@ -313,30 +313,30 @@ None (no data or API change). Rollback is a revert of the CSS/TSX commits; the a
 
 #### Automated
 
-- [x] 3.1 Build, lint and unit tests pass: `npm run build && npm run lint && npm test`
-- [x] 3.2 Hard-coded scan on the dashboard view files returns 0 hits
-- [x] 3.3 Existing e2e specs pass, including `muscle-group-stats.spec.ts`
+- [x] 3.1 Build, lint and unit tests pass: `npm run build && npm run lint && npm test` — 80e975d
+- [x] 3.2 Hard-coded scan on the dashboard view files returns 0 hits — 80e975d
+- [x] 3.3 Existing e2e specs pass, including `muscle-group-stats.spec.ts` — 80e975d
 
 #### Manual
 
-- [x] 3.4 Dark mode: chart axis labels and tooltip follow the theme
-- [x] 3.5 Slow network: skeleton appears and the page does not jump when data arrives
-- [x] 3.6 "Start workout" is visible without scrolling on a 375px-wide screen
-- [x] 3.7 History progression chart looks right in both themes
-- [x] 3.8 Muscle stats page still looks as before
+- [x] 3.4 Dark mode: chart axis labels and tooltip follow the theme — 80e975d
+- [x] 3.5 Slow network: skeleton appears and the page does not jump when data arrives — 80e975d
+- [x] 3.6 "Start workout" is visible without scrolling on a 375px-wide screen — 80e975d
+- [x] 3.7 History progression chart looks right in both themes — 80e975d
+- [x] 3.8 Muscle stats page still looks as before — 80e975d
 
 ### Phase 4: 7-state matrix, visual gate and guard
 
 #### Automated
 
-- [ ] 4.1 New spec passes with baselines: `npm run test:e2e -- dashboard-ui.spec.ts`
-- [ ] 4.2 Full e2e suite passes: `npm run test:e2e`
-- [ ] 4.3 Guard passes on cleaned files: `npm run check:tokens`
-- [ ] 4.4 Guard fails when a literal is introduced (temporary `#123456` in `dashboard.css`, then reverted)
-- [ ] 4.5 Build, lint and unit tests pass: `npm run build && npm run lint && npm test`
+- [x] 4.1 New spec passes with baselines: `npm run test:e2e -- dashboard-ui.spec.ts`
+- [x] 4.2 Full e2e suite passes: `npm run test:e2e`
+- [x] 4.3 Guard passes on cleaned files: `npm run check:tokens`
+- [x] 4.4 Guard fails when a literal is introduced (temporary `#123456` in `dashboard.css`, then reverted)
+- [x] 4.5 Build, lint and unit tests pass: `npm run build && npm run lint && npm test`
 
 #### Manual
 
-- [ ] 4.6 Four baseline screenshots reviewed (desktop/mobile, light/dark) for overlap, clipping, readable axis labels
-- [ ] 4.7 Each of the 7 states is shown or marked N/A with a reason in the spec comments
-- [ ] 4.8 `CLAUDE.md` UI section reads correctly and sits outside any generated block
+- [x] 4.6 Four baseline screenshots reviewed (desktop/mobile, light/dark) for overlap, clipping, readable axis labels
+- [x] 4.7 Each of the 7 states is shown or marked N/A with a reason in the spec comments
+- [x] 4.8 `CLAUDE.md` UI section reads correctly and sits outside any generated block
