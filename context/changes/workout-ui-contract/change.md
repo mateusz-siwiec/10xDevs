@@ -1,7 +1,7 @@
 ---
 change_id: workout-ui-contract
 title: Workout UI design-system contract
-status: implementing
+status: implemented
 created: 2026-10-30
 updated: 2026-10-30
 archived_at: null
