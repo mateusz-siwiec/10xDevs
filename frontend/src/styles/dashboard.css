@@ -143,13 +143,6 @@
   }
 }
 
-.skeleton {
-  background: var(--accent-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  animation: skeleton-pulse 1.4s ease-in-out infinite;
-}
-
 .skeleton-tile {
   min-height: 5.15rem;
 }
@@ -160,20 +153,4 @@
 
 .skeleton-card {
   min-height: 4rem;
-}
-
-@keyframes skeleton-pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .skeleton {
-    animation: none;
-  }
 }

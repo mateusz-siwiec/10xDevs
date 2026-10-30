@@ -211,14 +211,25 @@ export default function WorkoutPage() {
   }
 
   if (loading) {
-    return null
+    return (
+      <div className="page-shell">
+        <main className="page-card workout-card">
+          <h1>{t('workout.title')}</h1>
+          <div role="status">
+            <span className="visually-hidden">{t('workout.loading')}</span>
+            <div className="skeleton skeleton-button" aria-hidden="true" />
+            <div className="skeleton skeleton-block" aria-hidden="true" />
+          </div>
+        </main>
+      </div>
+    )
   }
 
   return (
     <div className="page-shell">
       <main className="page-card workout-card">
         <h1>{t('workout.title')}</h1>
-        {error && <p className="error-text">{translateError(error.err, error.key)}</p>}
+        {error && <p className="error-text" role="alert">{translateError(error.err, error.key)}</p>}
         {session === null ? (
           <div className="workout-start">
             {plans.length > 0 && (

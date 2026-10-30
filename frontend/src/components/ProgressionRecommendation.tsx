@@ -38,7 +38,7 @@ export default function ProgressionRecommendation({ exerciseId }: ProgressionRec
   return (
     <div aria-live="polite">
       {recommendation !== null && (
-        <section className="workout-section progression-recommendation">
+        <section className="workout-section card progression-recommendation">
           <p>
             {t('workout.recommendation', {
               weight: recommendation.recommendedWeightKg,
