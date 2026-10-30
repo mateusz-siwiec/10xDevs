@@ -1,10 +1,10 @@
 ---
 change_id: workout-ui-contract
 title: Workout UI design-system contract
-status: impl_reviewed
+status: archived
 created: 2026-10-30
 updated: 2026-10-30
-archived_at: null
+archived_at: 2026-10-30T12:07:23Z
 ---
 
 ## Notes
