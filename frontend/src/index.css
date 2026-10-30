@@ -1,12 +1,22 @@
 :root {
+  /* Token values are recorded in context/changes/dashboard-ui-contract/tokens.md */
   --text: #6b6375;
   --text-h: #08060d;
   --bg: #fff;
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
+  --accent: #9d2ff5;
+  --on-accent: #fff;
+  --accent-bg: rgba(157, 47, 245, 0.1);
+  --accent-border: rgba(157, 47, 245, 0.5);
+  --ring: #9d2ff5;
+  --radius: 8px;
+  --radius-card: 12px;
+  --chart-tick: var(--text);
+  --chart-grid: var(--border);
+  --chart-tooltip-bg: var(--bg);
+  --chart-tooltip-border: var(--border);
+  --chart-bar: var(--accent);
   --social-bg: rgba(244, 243, 236, 0.5);
   --danger: #c0255d;
   --success: #1a7f37;
@@ -40,6 +50,8 @@
     --border: #2e303a;
     --code-bg: #1f2028;
     --accent: #c084fc;
+    --on-accent: #16171d;
+    --ring: #c084fc;
     --accent-bg: rgba(192, 132, 252, 0.15);
     --accent-border: rgba(192, 132, 252, 0.5);
     --social-bg: rgba(47, 48, 58, 0.5);
