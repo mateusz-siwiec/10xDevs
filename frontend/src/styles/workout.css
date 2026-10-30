@@ -16,7 +16,7 @@
   color: var(--text-h);
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius);
   box-sizing: border-box;
 }
 
@@ -80,10 +80,10 @@
   font-size: 1rem;
   font-weight: 500;
   font-family: inherit;
-  color: #fff;
+  color: var(--on-danger);
   background: var(--danger);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius);
   cursor: pointer;
 }
 
@@ -113,7 +113,7 @@
 .substitute-panel {
   padding: 0.75rem;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius);
 }
 
 .substitute-header {
@@ -166,7 +166,7 @@
 .previous-workout-hint {
   padding: 0.75rem;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius);
 }
 
 .progression-recommendation p,
@@ -184,7 +184,7 @@
 
 .previous-workout-hint li {
   padding: 0.25rem 0.5rem;
-  border-radius: 6px;
+  border-radius: var(--radius);
 }
 
 .previous-workout-hint .previous-workout-hint-current {
@@ -197,7 +197,7 @@
   margin: 1rem 0;
   padding: 0.75rem;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius);
 }
 
 .rest-timer label {
@@ -273,7 +273,7 @@
   color: var(--text);
   background: transparent;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius);
   cursor: pointer;
   box-sizing: border-box;
 }
@@ -303,7 +303,7 @@
   color: var(--accent);
   background: var(--accent-bg);
   border: 1px solid var(--accent);
-  border-radius: 999px;
+  border-radius: var(--radius-card);
 }
 
 .walkthrough-skip-btn {
@@ -318,7 +318,7 @@
   color: var(--text-h);
   background: var(--accent-bg);
   border: 1px solid var(--accent);
-  border-radius: 8px;
+  border-radius: var(--radius);
 }
 
 .walkthrough-entry-info {

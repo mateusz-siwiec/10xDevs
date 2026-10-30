@@ -7,6 +7,7 @@
   --code-bg: #f4f3ec;
   --accent: #9d2ff5;
   --on-accent: #fff;
+  --on-danger: #fff;
   --accent-bg: rgba(157, 47, 245, 0.1);
   --accent-border: rgba(157, 47, 245, 0.5);
   --ring: #9d2ff5;
@@ -51,6 +52,7 @@
     --code-bg: #1f2028;
     --accent: #c084fc;
     --on-accent: #16171d;
+    --on-danger: #16171d;
     --ring: #c084fc;
     --accent-bg: rgba(192, 132, 252, 0.15);
     --accent-border: rgba(192, 132, 252, 0.5);
