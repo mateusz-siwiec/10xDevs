@@ -149,8 +149,58 @@
   cursor: default;
 }
 
+.btn-danger {
+  display: inline-block;
+  padding: 0.65rem 1.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--on-danger);
+  background: var(--danger);
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.btn-danger:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.btn-danger:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.workout-select {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  padding: 0.65rem 0.75rem;
+  font-size: 1rem;
+  font-family: inherit;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-sizing: border-box;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.workout-select:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+.workout-select:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 .btn-primary:focus-visible,
 .btn-secondary:focus-visible,
+.btn-danger:focus-visible,
 .page-switch a:focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;

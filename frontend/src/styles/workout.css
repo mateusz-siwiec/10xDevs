@@ -6,26 +6,6 @@
   margin-top: 1.5rem;
 }
 
-.workout-select {
-  display: block;
-  width: 100%;
-  min-height: 48px;
-  padding: 0.65rem 0.75rem;
-  font-size: 1rem;
-  font-family: inherit;
-  color: var(--text-h);
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-sizing: border-box;
-}
-
-.workout-select:focus-visible {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-bg);
-}
-
 .set-logger-fields {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -72,19 +52,6 @@
 .set-item-actions {
   display: flex;
   gap: 0.5rem;
-}
-
-.btn-danger {
-  display: inline-block;
-  padding: 0.65rem 1.25rem;
-  font-size: 1rem;
-  font-weight: 500;
-  font-family: inherit;
-  color: var(--on-danger);
-  background: var(--danger);
-  border: none;
-  border-radius: var(--radius);
-  cursor: pointer;
 }
 
 .progression-chart-body {

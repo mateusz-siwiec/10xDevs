@@ -289,28 +289,28 @@ None (no data or API change). Rollback is a revert of the CSS/TSX commits; the o
 
 #### Automated
 
-- [x] 1.1 Build and type check pass: `npm run build` (in `frontend/`)
-- [x] 1.2 Lint passes: `npm run lint`
-- [x] 1.3 No `#fff` and no radius `px` literal left in `workout.css`
-- [x] 1.4 Contrast of `--on-danger` on `--danger` is at least 4.5:1 in both themes (computed in `tokens.md`)
+- [x] 1.1 Build and type check pass: `npm run build` (in `frontend/`) — ee759ae
+- [x] 1.2 Lint passes: `npm run lint` — ee759ae
+- [x] 1.3 No `#fff` and no radius `px` literal left in `workout.css` — ee759ae
+- [x] 1.4 Contrast of `--on-danger` on `--danger` is at least 4.5:1 in both themes (computed in `tokens.md`) — ee759ae
 
 #### Manual
 
-- [x] 1.5 Delete button on a logged set shows dark text in dark mode and white text in light mode
-- [x] 1.6 Workout page looks otherwise unchanged
+- [x] 1.5 Delete button on a logged set shows dark text in dark mode and white text in light mode — ee759ae
+- [x] 1.6 Workout page looks otherwise unchanged — ee759ae
 
 ### Phase 2: Shared button and select states
 
 #### Automated
 
-- [ ] 2.1 Build and lint pass: `npm run build && npm run lint`
-- [ ] 2.2 `.btn-danger` and `.workout-select` no longer defined in `workout.css`
-- [ ] 2.3 Existing e2e specs still pass: `npm run test:e2e`
+- [x] 2.1 Build and lint pass: `npm run build && npm run lint`
+- [x] 2.2 `.btn-danger` and `.workout-select` no longer defined in `workout.css`
+- [x] 2.3 Existing e2e specs still pass: `npm run test:e2e`
 
 #### Manual
 
-- [ ] 2.4 Tab to a delete button shows the ring; history detail delete looks disabled while the request runs
-- [ ] 2.5 Spot-check `/plans`, `/exercises`, `/history/:id`: delete buttons and selects consistent, no regressions
+- [x] 2.4 Tab to a delete button shows the ring; history detail delete looks disabled while the request runs
+- [x] 2.5 Spot-check `/plans`, `/exercises`, `/history/:id`: delete buttons and selects consistent, no regressions
 
 ### Phase 3: Workout view
 
