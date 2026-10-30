@@ -150,7 +150,16 @@ export default function DashboardPage() {
 
   let body
   if (shown === null) {
-    body = <p className="page-subtext">{t('dashboard.loading')}</p>
+    body = (
+      <div role="status">
+        <span className="visually-hidden">{t('dashboard.loading')}</span>
+        <div className="dashboard-tiles" aria-hidden="true">
+          <div className="skeleton skeleton-tile" />
+          <div className="skeleton skeleton-tile" />
+          <div className="skeleton skeleton-tile" />
+        </div>
+      </div>
+    )
   } else if (shown.error || shown.stats === null) {
     body = (
       <p className="error-text" role="alert">
@@ -168,19 +177,19 @@ export default function DashboardPage() {
     const { stats } = shown
     body = (
       <div className="dashboard-tiles">
-        <div className="dashboard-tile">
-          <span className="dashboard-tile-label">{t('dashboard.tileWorkouts')}</span>
-          <span className="dashboard-tile-value">{stats.workoutCount}</span>
+        <div className="dashboard-tile card">
+          <span className="stat-label">{t('dashboard.tileWorkouts')}</span>
+          <span className="stat-value">{stats.workoutCount}</span>
           <Delta current={stats.workoutCount} previous={stats.previous?.workoutCount} />
         </div>
-        <div className="dashboard-tile">
-          <span className="dashboard-tile-label">{t('dashboard.tileTime')}</span>
-          <span className="dashboard-tile-value">{formatDuration(stats.totalDurationSeconds)}</span>
+        <div className="dashboard-tile card">
+          <span className="stat-label">{t('dashboard.tileTime')}</span>
+          <span className="stat-value">{formatDuration(stats.totalDurationSeconds)}</span>
           <Delta current={stats.totalDurationSeconds} previous={stats.previous?.totalDurationSeconds} />
         </div>
-        <div className="dashboard-tile">
-          <span className="dashboard-tile-label">{t('dashboard.tileVolume')}</span>
-          <span className="dashboard-tile-value">{formatVolume(stats.totalVolumeKg)}</span>
+        <div className="dashboard-tile card">
+          <span className="stat-label">{t('dashboard.tileVolume')}</span>
+          <span className="stat-value">{formatVolume(stats.totalVolumeKg)}</span>
           <Delta current={stats.totalVolumeKg} previous={stats.previous?.totalVolumeKg} />
         </div>
       </div>
@@ -189,7 +198,20 @@ export default function DashboardPage() {
 
   let insightsBody
   if (insightsResult === null) {
-    insightsBody = <p className="page-subtext">{t('dashboard.insightsLoading')}</p>
+    insightsBody = (
+      <div role="status">
+        <span className="visually-hidden">{t('dashboard.insightsLoading')}</span>
+        <div className="dashboard-section" aria-hidden="true">
+          <div className="skeleton skeleton-chart" />
+        </div>
+        <div className="dashboard-section" aria-hidden="true">
+          <div className="skeleton skeleton-card" />
+        </div>
+        <div className="dashboard-section" aria-hidden="true">
+          <div className="skeleton skeleton-card" />
+        </div>
+      </div>
+    )
   } else if (insightsResult.error || insightsResult.insights === null) {
     insightsBody = (
       <>
@@ -229,6 +251,9 @@ export default function DashboardPage() {
     <div className="page-shell">
       <main className="page-card dashboard-card">
         <h1>{t('dashboard.title')}</h1>
+        <Link to="/workout" className="btn-primary dashboard-start">
+          {t('dashboard.startWorkout')}
+        </Link>
         <div className="dashboard-toggle" role="group" aria-label={t('dashboard.windowLabel')}>
           {WINDOW_OPTIONS.map((option) => (
             <button
@@ -246,9 +271,6 @@ export default function DashboardPage() {
         {insightsBody}
         <Link to="/muscle-groups" className="btn-secondary dashboard-start">
           {t('dashboard.muscleStatsLink')}
-        </Link>
-        <Link to="/workout" className="btn-primary dashboard-start">
-          {t('dashboard.startWorkout')}
         </Link>
       </main>
     </div>

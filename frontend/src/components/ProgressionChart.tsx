@@ -5,6 +5,7 @@ import { getProgression } from '../api/client'
 import type { ProgressionPoint } from '../api/client'
 import i18n from '../i18n'
 import { translateError } from '../utils/errors'
+import { axisProps, gridProps, seriesColor, tooltipProps } from './chartTheme'
 
 interface ProgressionChartProps {
   exerciseId: string
@@ -68,23 +69,24 @@ export default function ProgressionChart({ exerciseId, refreshKey }: Progression
       <div className="progression-chart-body">
         <ResponsiveContainer width="100%" height={240}>
           <LineChart data={shown.points} margin={{ top: 8, right: 16, bottom: 4, left: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-            <XAxis dataKey="date" tickFormatter={formatDate} tick={{ fontSize: 12 }} />
+            <CartesianGrid {...gridProps} />
+            <XAxis dataKey="date" tickFormatter={formatDate} {...axisProps} />
             <YAxis
               unit=" kg"
               width={56}
-              tick={{ fontSize: 12 }}
               domain={['auto', 'auto']}
               allowDecimals
+              {...axisProps}
             />
             <Tooltip
+              {...tooltipProps}
               labelFormatter={(label) => formatDate(String(label))}
               formatter={(value) => [`${value} kg`, t('progression.topWeight')]}
             />
             <Line
               type="monotone"
               dataKey="topWeightKg"
-              stroke="var(--accent)"
+              stroke={seriesColor}
               strokeWidth={2}
               dot={{ r: 4 }}
               activeDot={{ r: 6 }}

@@ -6,6 +6,7 @@ import type { MuscleGroupStats, StatsWindow } from '../api/client'
 import { muscleGroupLabel } from '../utils/muscleGroups'
 import '../styles/page.css'
 import '../styles/dashboard.css'
+import '../styles/muscle-groups.css'
 import { translateError } from '../utils/errors'
 
 interface FetchResult {

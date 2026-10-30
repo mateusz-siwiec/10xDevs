@@ -25,10 +25,10 @@ export default function ConsistencyCard({ streak, saving, error, onSaveGoal }: C
         <p className="page-subtext">{t('dashboard.consistency.setGoalPrompt')}</p>
       ) : (
         <div className="consistency-summary">
-          <span className="dashboard-tile-value">
+          <span className="stat-value">
             {t('dashboard.consistency.streak', { count: streak.weeks })}
           </span>
-          <span className="dashboard-tile-label">
+          <span className="stat-label">
             {t('dashboard.consistency.thisWeek', { done: streak.currentWeekWorkouts, goal: streak.goal })}
           </span>
         </div>
