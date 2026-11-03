@@ -195,25 +195,25 @@ None; no schema or API changes. Old `/exercises` bookmarks now land on the list.
 
 #### Automated
 
-- [x] 2.1 Build, lint and token guard pass
-- [x] 2.2 Unit and locale tests pass
+- [x] 2.1 Build, lint and token guard pass — 872b249
+- [x] 2.2 Unit and locale tests pass — 872b249
 
 #### Manual
 
-- [x] 2.3 Add returns to the list with the new exercise
-- [x] 2.4 Edit pre-fills, saves, and Cancel leaves it unchanged
-- [x] 2.5 Bad id or built-in edit URL shows not-found
+- [x] 2.3 Add returns to the list with the new exercise — 872b249
+- [x] 2.4 Edit pre-fills, saves, and Cancel leaves it unchanged — 872b249
+- [x] 2.5 Bad id or built-in edit URL shows not-found — 872b249
 
 ### Phase 3: Tests and strings
 
 #### Automated
 
-- [ ] 3.1 New exercises-list e2e spec passes
-- [ ] 3.2 Existing isolation and mobile specs pass
-- [ ] 3.3 Full e2e passes
-- [ ] 3.4 Unit tests, build, lint and token guard pass
+- [x] 3.1 New exercises-list e2e spec passes
+- [x] 3.2 Existing isolation and mobile specs pass
+- [x] 3.3 Full e2e passes
+- [x] 3.4 Unit tests, build, lint and token guard pass
 
 #### Manual
 
-- [ ] 3.5 Polish and English strings read correctly
-- [ ] 3.6 Keyboard focus is visible on filters and buttons
+- [x] 3.5 Polish and English strings read correctly
+- [x] 3.6 Keyboard focus is visible on filters and buttons
