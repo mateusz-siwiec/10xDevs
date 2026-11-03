@@ -191,38 +191,38 @@ None; no schema or API changes.
 
 #### Automated
 
-- [ ] 1.1 Mapping tests pass
-- [ ] 1.2 Type checking and build pass
-- [ ] 1.3 Linting passes
+- [x] 1.1 Mapping tests pass — bc8435c
+- [x] 1.2 Type checking and build pass — bc8435c
+- [x] 1.3 Linting passes — bc8435c
 
 #### Manual
 
-- [ ] 1.4 Util behavior matches the agreed rules
+- [x] 1.4 Util behavior matches the agreed rules — bc8435c
 
 ### Phase 2: Save-as-plan component and history integration
 
 #### Automated
 
-- [ ] 2.1 Unit and locale tests pass
-- [ ] 2.2 Build and lint pass
-- [ ] 2.3 Token guard passes
+- [x] 2.1 Unit and locale tests pass — fa98b2c
+- [x] 2.2 Build and lint pass — fa98b2c
+- [x] 2.3 Token guard passes — fa98b2c
 
 #### Manual
 
-- [ ] 2.4 History detail save creates the matching plan
-- [ ] 2.5 Error state is shown and form stays usable
-- [ ] 2.6 Hover, focus-visible and disabled states are visible
+- [x] 2.4 History detail save creates the matching plan — fa98b2c
+- [x] 2.5 Error state is shown and form stays usable — fa98b2c
+- [x] 2.6 Hover, focus-visible and disabled states are visible — fa98b2c
 
 ### Phase 3: Post-"End workout" prompt and e2e
 
 #### Automated
 
-- [ ] 3.1 New e2e spec passes
-- [ ] 3.2 Existing e2e specs still pass
-- [ ] 3.3 Unit tests, build, lint and token guard pass
+- [x] 3.1 New e2e spec passes — a22283d
+- [x] 3.2 Existing e2e specs still pass — a22283d
+- [x] 3.3 Unit tests, build, lint and token guard pass — a22283d
 
 #### Manual
 
-- [ ] 3.4 Post-End panel appears, saves, and hides on new workout
-- [ ] 3.5 No panel for a workout with no sets
-- [ ] 3.6 Existing visual specs unchanged
+- [x] 3.4 Post-End panel appears, saves, and hides on new workout — a22283d
+- [x] 3.5 No panel for a workout with no sets — a22283d
+- [x] 3.6 Existing visual specs unchanged — a22283d

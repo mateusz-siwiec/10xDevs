@@ -3,7 +3,9 @@ import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useParams } from 'react-router'
 import { ApiError, deleteWorkout, getExercises, getHistorySession } from '../api/client'
 import type { Exercise, HistoryDetail } from '../api/client'
+import SaveAsPlan from '../components/SaveAsPlan'
 import { exerciseName } from '../utils/exercises'
+import { defaultPlanName } from '../utils/workoutToPlan'
 import { formatDate, formatDuration, formatVolume } from '../utils/format'
 import '../styles/page.css'
 import '../styles/history.css'
@@ -134,6 +136,10 @@ export default function HistoryDetailPage() {
           </p>
         )}
         <div className="history-detail-actions">
+          <SaveAsPlan
+            sets={data.exercises.flatMap((g) => g.sets.map((s) => ({ exerciseId: g.exerciseId, reps: s.reps })))}
+            defaultName={defaultPlanName(data.planName, data.startedAt)}
+          />
           {confirming ? (
             <>
               <span>{t('history.detail.deleteConfirm')}</span>

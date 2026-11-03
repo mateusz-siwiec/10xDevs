@@ -149,6 +149,33 @@
   cursor: default;
 }
 
+.save-as-plan {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+}
+
+.save-as-plan-form {
+  flex-basis: 100%;
+}
+
+.save-as-plan-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+
+.save-as-plan .btn-primary {
+  display: inline-block;
+  width: auto;
+  padding: 0.65rem 1.5rem;
+}
+
+.save-as-plan-link {
+  color: var(--accent);
+}
+
 .btn-danger {
   display: inline-block;
   padding: 0.65rem 1.25rem;

@@ -114,6 +114,17 @@
       "setLine": "Seria {{n}}: {{reps}} × {{weight}} kg"
     }
   },
+  "saveAsPlan": {
+    "button": "Zapisz jako plan",
+    "nameLabel": "Nazwa planu",
+    "save": "Zapisz plan",
+    "saving": "Zapisywanie…",
+    "cancel": "Anuluj",
+    "success": "Plan zapisany.",
+    "viewPlan": "Zobacz plan",
+    "failed": "Nie udało się zapisać planu",
+    "truncated": "Ten trening jest większy, niż mieści plan (maks. 50 ćwiczeń, po 20 serii), więc nadmiar zostanie pominięty."
+  },
   "progression": {
     "title": "Progresja",
     "loading": "Wczytywanie progresji…",
@@ -219,6 +230,8 @@
   },
   "workout": {
     "title": "Trening",
+    "endedSaved": "Trening zapisany.",
+    "dismiss": "Zamknij",
     "loading": "Wczytywanie treningu…",
     "startFromPlan": "Rozpocznij z planu…",
     "startFromPlanLabel": "Rozpocznij z planu",
