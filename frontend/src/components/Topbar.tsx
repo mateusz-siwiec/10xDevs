@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { NavLink, useLocation, useNavigate } from 'react-router'
 import { useAuth } from '../auth/AuthContext'
@@ -26,11 +26,15 @@ export default function Topbar() {
   const { t } = useTranslation()
   // Only meaningful on narrow screens, where the panel becomes a left-side drawer.
   const [menuOpen, setMenuOpen] = useState(false)
+  const toggleRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     if (!menuOpen) return
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') setMenuOpen(false)
+      if (event.key !== 'Escape') return
+      setMenuOpen(false)
+      // The drawer is hidden once closed, so hand focus back to the button that opened it.
+      toggleRef.current?.focus()
     }
     document.addEventListener('keydown', onKeyDown)
     return () => document.removeEventListener('keydown', onKeyDown)
@@ -56,6 +60,7 @@ export default function Topbar() {
     <header className="topbar">
       <button
         type="button"
+        ref={toggleRef}
         className="topbar-toggle"
         aria-label={t(menuOpen ? 'nav.closeMenu' : 'nav.menu')}
         aria-expanded={menuOpen}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { deleteExercise, getExercises } from '../api/client'
@@ -7,7 +7,6 @@ import '../styles/page.css'
 import '../styles/workout.css'
 import '../styles/plans.css'
 import '../styles/exercises.css'
-import '../styles/dashboard.css'
 import { translateError } from '../utils/errors'
 import type { ErrorInfo } from '../utils/errors'
 import { exerciseName, sortExercisesByName } from '../utils/exercises'
@@ -30,6 +29,9 @@ export default function ExercisesPage() {
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS)
   const [confirmingId, setConfirmingId] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  const headingRef = useRef<HTMLHeadingElement>(null)
+  // Where focus goes once the confirm buttons (or the deleted row) have unmounted.
+  const pendingFocus = useRef<{ kind: 'row'; id: string } | { kind: 'heading' } | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -50,18 +52,35 @@ export default function ExercisesPage() {
     }
   }, [])
 
+  // Without this focus would fall to <body> when the focused button unmounts.
+  useEffect(() => {
+    const target = pendingFocus.current
+    if (!target) return
+    pendingFocus.current = null
+    if (target.kind === 'row') document.getElementById(`delete-${target.id}`)?.focus()
+    else headingRef.current?.focus()
+  }, [confirmingId, exercises])
+
   async function handleDelete(id: string) {
     setError(null)
     setBusy(true)
     try {
       await deleteExercise(id)
+      pendingFocus.current = { kind: 'heading' }
       setExercises((list) => list.filter((e) => e.id !== id))
     } catch (err) {
+      pendingFocus.current = { kind: 'row', id }
       setError({ err, key: 'exercises.deleteFailed' })
     } finally {
       setBusy(false)
-      setConfirmingId(null)
+      // Only close this row's confirmation: another row may have opened its own while the request ran.
+      setConfirmingId((current) => (current === id ? null : current))
     }
+  }
+
+  function cancelDelete(id: string) {
+    pendingFocus.current = { kind: 'row', id }
+    setConfirmingId(null)
   }
 
   const visible = sortExercisesByName(
@@ -78,7 +97,9 @@ export default function ExercisesPage() {
   return (
     <div className="page-shell">
       <main className="page-card plans-card">
-        <h1>{t('exercises.title')}</h1>
+        <h1 ref={headingRef} tabIndex={-1}>
+          {t('exercises.title')}
+        </h1>
         <div className="dashboard-toggle" role="group" aria-label={t('exercises.scopeLabel')}>
           {(['all', 'mine'] as const).map((scope) => (
             <button
@@ -115,7 +136,10 @@ export default function ExercisesPage() {
             {translateError(error.err, error.key)}
           </p>
         )}
-        <section className="workout-section" aria-live="polite">
+        <p className="visually-hidden" aria-live="polite">
+          {loading || loadFailed ? '' : t('exercises.resultCount', { count: visible.length })}
+        </p>
+        <section className="workout-section">
           {loading ? (
             <p className="page-subtext">{t('exercises.loading')}</p>
           ) : loadFailed ? null : exercises.length === 0 ? (
@@ -163,7 +187,7 @@ export default function ExercisesPage() {
                           type="button"
                           className="btn-secondary"
                           disabled={busy}
-                          onClick={() => setConfirmingId(null)}
+                          onClick={() => cancelDelete(exercise.id)}
                         >
                           {t('common.cancel')}
                         </button>
@@ -179,8 +203,10 @@ export default function ExercisesPage() {
                         </Link>
                         <button
                           type="button"
+                          id={`delete-${exercise.id}`}
                           className="btn-secondary"
                           aria-label={t('exercises.deleteLabel', { name: exerciseName(exercise) })}
+                          disabled={busy}
                           onClick={() => {
                             setError(null)
                             setConfirmingId(exercise.id)

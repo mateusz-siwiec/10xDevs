@@ -13,11 +13,18 @@ import { MUSCLE_GROUPS, muscleGroupLabel } from '../utils/muscleGroups'
 
 const NAME_MAX_LENGTH = 60
 
+/**
+ * /exercises/new and /exercises/:id/edit render this same component at the same place in the tree, so React would
+ * keep the previous form's state when navigating between them. Keying the form by the route starts each one fresh.
+ */
 export default function ExerciseFormPage() {
+  const { id } = useParams()
+  return <ExerciseForm key={id ?? 'new'} editingId={id ?? null} />
+}
+
+function ExerciseForm({ editingId }: { editingId: string | null }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const { id } = useParams()
-  const editingId = id ?? null
   const [loading, setLoading] = useState(editingId !== null)
   const [loadFailed, setLoadFailed] = useState(false)
   const [notFound, setNotFound] = useState(false)
@@ -103,11 +110,14 @@ export default function ExerciseFormPage() {
             <Link to="/exercises">{t('exercises.backToList')}</Link>
           </>
         ) : loadFailed ? (
-          error && (
-            <p role="alert" className="error-text">
-              {translateError(error.err, error.key)}
-            </p>
-          )
+          <>
+            {error && (
+              <p role="alert" className="error-text">
+                {translateError(error.err, error.key)}
+              </p>
+            )}
+            <Link to="/exercises">{t('exercises.backToList')}</Link>
+          </>
         ) : (
           <form onSubmit={handleSubmit}>
             <div className="field">
