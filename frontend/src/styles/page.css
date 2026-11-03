@@ -290,3 +290,26 @@
     animation: none;
   }
 }
+
+/* Segmented All/Mine/window toggle shared by the dashboard, muscle stats and exercises pages. */
+.dashboard-toggle {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-toggle .btn-secondary {
+  flex: 1 1 0;
+  padding: 0.65rem 0.75rem;
+}
+
+.dashboard-toggle .btn-secondary[aria-pressed='true'] {
+  color: var(--text-h);
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.dashboard-toggle .btn-secondary[aria-pressed='true']:hover:not(:disabled) {
+  border-color: var(--accent);
+}

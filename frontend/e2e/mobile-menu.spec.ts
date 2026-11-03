@@ -65,3 +65,46 @@ test('on a phone the navigation lives in a left-side menu that opens, navigates 
   await page.keyboard.press('Escape')
   await expect(menu.getByRole('link', { name: 'History', exact: true })).toBeHidden()
 })
+
+test('on a phone the Exercises group is expanded on an exercises page, survives outside taps, and the drawer closes with focus returned', async ({
+  page,
+  request,
+}) => {
+  const user = await registerViaApi(request, 'mobile-ex')
+  await page.addInitScript(() => localStorage.setItem('gymtrack.lang', 'en'))
+  await page.goto('/login')
+  await page.getByLabel('Email').fill(user.email)
+  await page.getByLabel('Password').fill(PASSWORD)
+  await page.getByRole('button', { name: 'Log in', exact: true }).click()
+  await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible()
+
+  const menu = page.locator('#topbar-panel')
+  const toggle = page.getByRole('button', { name: 'Menu', exact: true })
+  const group = menu.getByRole('button', { name: 'Exercises', exact: true })
+  const addLink = menu.getByRole('link', { name: 'New exercise', exact: true })
+
+  // Collapsed by default, and aria-expanded follows the state.
+  await toggle.click()
+  await expect(group).toHaveAttribute('aria-expanded', 'false')
+  await group.click()
+  await expect(group).toHaveAttribute('aria-expanded', 'true')
+
+  // Tapping elsewhere in the drawer does not collapse the group.
+  await menu.locator('.topbar-user').click()
+  await expect(addLink).toBeVisible()
+
+  // Choosing an item navigates and closes the drawer.
+  await addLink.click()
+  await expect(page).toHaveURL(/\/exercises\/new$/)
+  await expect(menu).toBeHidden()
+
+  // Reopening the drawer on an exercises page shows the group already expanded.
+  await toggle.click()
+  await expect(group).toHaveAttribute('aria-expanded', 'true')
+  await expect(addLink).toBeVisible()
+
+  // Escape closes the whole drawer and returns focus to the menu button.
+  await page.keyboard.press('Escape')
+  await expect(menu).toBeHidden()
+  await expect(toggle).toBeFocused()
+})

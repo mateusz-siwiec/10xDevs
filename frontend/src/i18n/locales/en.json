@@ -173,6 +173,8 @@
     "allMuscles": "All muscle groups",
     "custom": "Custom",
     "noMatches": "No exercises match these filters.",
+    "resultCount_one": "{{count}} exercise",
+    "resultCount_other": "{{count}} exercises",
     "clearFilters": "Clear filters",
     "loading": "Loading exercises…",
     "empty": "No exercises yet.",

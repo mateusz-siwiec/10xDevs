@@ -182,3 +182,104 @@ test('the top-bar Exercises menu opens the list and the add form and closes on E
   await expect(page).toHaveURL(/\/exercises\/new$/)
   await expect(page.getByRole('heading', { name: 'Add exercise' })).toBeVisible()
 })
+
+test('opening New exercise after editing one starts with an empty form', async ({ page, request }) => {
+  const user = await registerViaApi(request, 'exlist-carry')
+  const name = `Carry Curl ${Date.now()}`
+  await seedCustom(request, user, name)
+  await openList(page, user)
+
+  await page.getByRole('link', { name: `Edit ${name}` }).click()
+  await expect(page.getByLabel('Name')).toHaveValue(name)
+
+  await page.getByRole('button', { name: 'Exercises', exact: true }).click()
+  await page.getByRole('link', { name: 'New exercise', exact: true }).click()
+  await expect(page).toHaveURL(/\/exercises\/new$/)
+  await expect(page.getByRole('heading', { name: 'Add exercise' })).toBeVisible()
+  await expect(page.getByLabel('Name')).toHaveValue('')
+  await expect(page.getByLabel('Primary muscle group')).toHaveValue('')
+})
+
+test('an exercise used in a plan cannot be deleted: an error is shown and the row stays', async ({ page, request }) => {
+  const user = await registerViaApi(request, 'exlist-inuse')
+  const name = `Used Curl ${Date.now()}`
+  await seedCustom(request, user, name)
+  const exercises: { id: string; name: string }[] = await (await request.get(`${API}/api/exercises`, auth(user))).json()
+  const custom = exercises.find((e) => e.name === name)!
+  const plan = await request.post(`${API}/api/training-plans`, {
+    ...auth(user),
+    data: { name: 'Uses custom', entries: [{ exerciseId: custom.id, sets: 3, reps: 8 }] },
+  })
+  expect(plan.status()).toBe(201)
+  await openList(page, user)
+
+  await page.getByRole('button', { name: `Delete ${name}` }).click()
+  await page.getByRole('button', { name: 'Confirm' }).click()
+
+  await expect(page.getByRole('alert')).toContainText('cannot be deleted')
+  await expect(row(page, name)).toBeVisible()
+  // The confirmation closed and focus returned to the row's Delete button.
+  await expect(page.getByRole('button', { name: 'Confirm' })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: `Delete ${name}` })).toBeFocused()
+})
+
+test('Cancel on a delete confirmation returns focus to that row, and a successful delete focuses the heading', async ({
+  page,
+  request,
+}) => {
+  const user = await registerViaApi(request, 'exlist-focus')
+  const name = `Focus Curl ${Date.now()}`
+  await seedCustom(request, user, name)
+  await openList(page, user)
+
+  await page.getByRole('button', { name: `Delete ${name}` }).click()
+  await page.getByRole('button', { name: 'Cancel' }).click()
+  await expect(page.getByRole('button', { name: `Delete ${name}` })).toBeFocused()
+
+  await page.getByRole('button', { name: `Delete ${name}` }).click()
+  await page.getByRole('button', { name: 'Confirm' }).click()
+  await expect(row(page, name)).toHaveCount(0)
+  await expect(page.getByRole('heading', { name: 'Exercises', exact: true })).toBeFocused()
+})
+
+test('while one delete is in flight the other rows cannot start a delete', async ({ page, request }) => {
+  const user = await registerViaApi(request, 'exlist-busy')
+  const first = `Busy Curl A ${Date.now()}`
+  const second = `Busy Curl B ${Date.now()}`
+  await seedCustom(request, user, first)
+  await seedCustom(request, user, second)
+  await openList(page, user)
+
+  let release!: () => void
+  const gate = new Promise<void>((resolve) => (release = resolve))
+  await page.route('**/api/exercises/*', async (route) => {
+    if (route.request().method() !== 'DELETE') return route.continue()
+    await gate
+    return route.continue()
+  })
+
+  await page.getByRole('button', { name: `Delete ${first}` }).click()
+  await page.getByRole('button', { name: 'Confirm' }).click()
+  await expect(page.getByRole('button', { name: `Delete ${second}` })).toBeDisabled()
+
+  release()
+  await expect(row(page, first)).toHaveCount(0)
+  await expect(page.getByRole('button', { name: `Delete ${second}` })).toBeEnabled()
+})
+
+test('creating an exercise with a name you already use shows an error and keeps the form', async ({ page, request }) => {
+  const user = await registerViaApi(request, 'exlist-taken')
+  const name = `Taken Curl ${Date.now()}`
+  await seedCustom(request, user, name)
+  await login(page, user)
+  await page.goto('/exercises/new')
+
+  await page.getByLabel('Name').fill(name)
+  await page.getByLabel('Primary muscle group').selectOption('BICEPS')
+  await page.getByRole('button', { name: 'Add exercise' }).click()
+
+  await expect(page.getByRole('alert')).toContainText('already have an exercise with this name')
+  await expect(page).toHaveURL(/\/exercises\/new$/)
+  await expect(page.getByLabel('Name')).toHaveValue(name)
+  await expect(page.getByRole('button', { name: 'Add exercise' })).toBeEnabled()
+})
