@@ -302,15 +302,19 @@
   },
   "muscle": {
     "CHEST": "Chest",
-    "BACK": "Back",
+    "LATS": "Lats",
+    "TRAPS": "Traps",
+    "LOWER_BACK": "Lower back",
     "SHOULDERS": "Shoulders",
     "BICEPS": "Biceps",
     "TRICEPS": "Triceps",
+    "FOREARMS": "Forearms",
     "QUADS": "Quads",
     "HAMSTRINGS": "Hamstrings",
     "GLUTES": "Glutes",
     "CALVES": "Calves",
-    "CORE": "Core"
+    "ABS": "Abs",
+    "OBLIQUES": "Obliques"
   },
   "errors": {
     "REQUEST_FAILED": "Request failed (status {{status}}).",

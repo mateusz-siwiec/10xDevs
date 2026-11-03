@@ -18,7 +18,7 @@ async function login(page: Page, user: ApiUser) {
 async function seedCustom(request: APIRequestContext, user: ApiUser, name: string) {
   const response = await request.post(`${API}/api/exercises`, {
     ...auth(user),
-    data: { name, primaryMuscleGroup: 'BICEPS', secondaryMuscleGroups: ['CORE'] },
+    data: { name, primaryMuscleGroup: 'BICEPS', secondaryMuscleGroups: ['ABS'] },
   })
   expect(response.ok()).toBe(true)
 }
@@ -63,8 +63,8 @@ test('Mine hides built-in exercises and the muscle filter matches primary or sec
   await expect(row(page, name)).toBeVisible()
   await expect(row(page, 'Barbell Bench Press')).toHaveCount(0)
 
-  // Secondary match: the custom exercise has CORE as a secondary group.
-  await page.getByLabel('Muscle group').selectOption('CORE')
+  // Secondary match: the custom exercise has ABS as a secondary group.
+  await page.getByLabel('Muscle group').selectOption('ABS')
   await expect(row(page, name)).toBeVisible()
   // Primary match.
   await page.getByLabel('Muscle group').selectOption('BICEPS')
@@ -95,7 +95,7 @@ test('an exercise can be added, edited and deleted from the list', async ({ page
   await expect(page).toHaveURL(/\/exercises\/new$/)
   await page.getByLabel('Name').fill(name)
   await page.getByLabel('Primary muscle group').selectOption('BICEPS')
-  await page.getByLabel('Core').check()
+  await page.getByLabel('Abs').check()
   await page.getByRole('button', { name: 'Add exercise' }).click()
 
   await expect(page).toHaveURL(/\/exercises$/)

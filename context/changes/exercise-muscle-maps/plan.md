@@ -352,29 +352,29 @@ The figure is a small inline SVG rendered only while the panel is open, so there
 
 #### Automated
 
-- [x] 1.1 Backend tests pass, including Flyway applying V10 on a clean database: `./mvnw test`
-- [x] 1.2 Seed and stats tests pass: `./mvnw test -Dtest=ExerciseSeedTest,MuscleGroupStatsControllerTest`
+- [x] 1.1 Backend tests pass, including Flyway applying V10 on a clean database: `./mvnw test` — 35d9a01
+- [x] 1.2 Seed and stats tests pass: `./mvnw test -Dtest=ExerciseSeedTest,MuscleGroupStatsControllerTest` — 35d9a01
 
 #### Manual
 
-- [x] 1.3 On a local database at V9, custom exercises with BACK as primary and as secondary become LATS after V10 and other groups are untouched
-- [x] 1.4 The remap table matches the seeded rows after V10 (spot-check deadlift, barbell-row, face-pull)
+- [x] 1.3 On a local database at V9, custom exercises with BACK as primary and as secondary become LATS after V10 and other groups are untouched — 35d9a01
+- [x] 1.4 The remap table matches the seeded rows after V10 (spot-check deadlift, barbell-row, face-pull) — 35d9a01
 
 ### Phase 2: Frontend groups
 
 #### Automated
 
-- [ ] 2.1 Unit tests pass: `npm test`
-- [ ] 2.2 Type check and build pass: `npm run build`
-- [ ] 2.3 Lint passes: `npm run lint`
-- [ ] 2.4 No hard-coded values: `npm run check:tokens`
-- [ ] 2.5 Updated specs pass (Postgres running): `npx playwright test e2e/muscle-group-stats.spec.ts e2e/exercises-list.spec.ts e2e/workout-ui.spec.ts`
+- [x] 2.1 Unit tests pass: `npm test`
+- [x] 2.2 Type check and build pass: `npm run build`
+- [x] 2.3 Lint passes: `npm run lint`
+- [x] 2.4 No hard-coded values: `npm run check:tokens`
+- [x] 2.5 Updated specs pass (Postgres running): `npx playwright test e2e/muscle-group-stats.spec.ts e2e/exercises-list.spec.ts e2e/workout-ui.spec.ts`
 
 #### Manual
 
-- [ ] 2.6 The create form offers all 14 groups and a custom exercise can be saved with TRAPS or FOREARMS
-- [ ] 2.7 The list filter shows 14 groups and Lats lists Barbell Row, Lat Pulldown and Pull-Up
-- [ ] 2.8 The stats page shows 14 bars in both languages without layout problems
+- [x] 2.6 The create form offers all 14 groups and a custom exercise can be saved with TRAPS or FOREARMS
+- [x] 2.7 The list filter shows 14 groups and Lats lists Barbell Row, Lat Pulldown and Pull-Up
+- [x] 2.8 The stats page shows 14 bars in both languages without layout problems
 
 ### Phase 3: Muscle map component and tokens
 

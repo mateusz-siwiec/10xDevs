@@ -318,15 +318,19 @@
   },
   "muscle": {
     "CHEST": "Klatka piersiowa",
-    "BACK": "Plecy",
+    "LATS": "Najszersze grzbietu",
+    "TRAPS": "Kaptury",
+    "LOWER_BACK": "Dolny odcinek pleców",
     "SHOULDERS": "Barki",
     "BICEPS": "Biceps",
     "TRICEPS": "Triceps",
+    "FOREARMS": "Przedramiona",
     "QUADS": "Czworogłowe",
     "HAMSTRINGS": "Dwugłowe uda",
     "GLUTES": "Pośladki",
     "CALVES": "Łydki",
-    "CORE": "Brzuch"
+    "ABS": "Brzuch",
+    "OBLIQUES": "Mięśnie skośne"
   },
   "errors": {
     "REQUEST_FAILED": "Żądanie nie powiodło się (status {{status}}).",
