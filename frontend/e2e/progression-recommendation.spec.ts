@@ -35,7 +35,7 @@ test('after two full workouts at 60 kg the workout screen suggests 61.5 kg', asy
 
   await page.goto('/workout')
   await page.getByRole('button', { name: 'Start workout' }).click()
-  await page.getByLabel('Exercise').selectOption({ label: 'Barbell Bench Press' })
+  await page.getByLabel('Exercise').selectOption({ label: 'Barbell Bench Press — Chest' })
 
   await expect(page.getByText('Try 61.5 kg — you completed 3×8 at 60 kg in your last 2 workouts.')).toBeVisible()
 })

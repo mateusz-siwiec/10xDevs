@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import type { Exercise } from '../api/client'
 import { exerciseName, sortExercisesByName } from '../utils/exercises'
+import { muscleGroupLabel } from '../utils/muscleGroups'
 
 interface ExercisePickerProps {
   exercises: Exercise[]
@@ -24,7 +25,7 @@ export default function ExercisePicker({ exercises, selectedId, onChange }: Exer
         </option>
         {sortExercisesByName(exercises).map((exercise) => (
           <option key={exercise.id} value={exercise.id}>
-            {exerciseName(exercise)}
+            {exerciseName(exercise)} — {muscleGroupLabel(exercise.primaryMuscleGroup)}
           </option>
         ))}
       </select>

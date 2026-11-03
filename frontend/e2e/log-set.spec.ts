@@ -17,7 +17,7 @@ test('register, log a set in a workout, and see it in history', async ({ page })
   await page.getByRole('button', { name: 'Start workout' }).click()
 
   // Log one set on a preloaded exercise.
-  await page.getByLabel('Exercise').selectOption({ label: 'Barbell Bench Press' })
+  await page.getByLabel('Exercise').selectOption({ label: 'Barbell Bench Press — Chest' })
   await page.getByLabel('Reps').fill('8')
   await page.getByLabel('Weight (kg)').fill('60')
   await page.getByRole('button', { name: 'Log set' }).click()
@@ -27,6 +27,7 @@ test('register, log a set in a workout, and see it in history', async ({ page })
 
   // End the session.
   await page.getByRole('button', { name: 'End workout' }).click()
+  await page.getByRole('button', { name: 'Confirm' }).click()
   await expect(page.getByRole('button', { name: 'Start workout' })).toBeVisible()
 
   // The set shows up in history.

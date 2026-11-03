@@ -81,6 +81,10 @@ test.describe('dashboard ui', () => {
         await page.locator('.topbar-user').evaluate((el) => {
           el.textContent = 'user@example.com'
         })
+        // The date text changes daily and so does the masked box's width; pin it to what the baselines were captured with (seed: 65 kg x 8, 2026-10-30).
+        await page.locator('.recent-record-detail').evaluateAll((els) => {
+          for (const el of els) el.textContent = '65 kg x 8 · Oct 30'
+        })
         await expect(page).toHaveScreenshot(`dashboard-${label}-${scheme}.png`, {
           fullPage: true,
           maxDiffPixels: 150,

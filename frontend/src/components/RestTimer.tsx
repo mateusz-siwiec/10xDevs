@@ -75,7 +75,7 @@ export default function RestTimer({ endsAt, onChange, durationSec, onDurationCha
       >
         {REST_PRESETS.map((sec) => (
           <option key={sec} value={sec}>
-            {t('workout.rest.seconds', { sec })}
+            {sec === 0 ? t('workout.rest.off') : t('workout.rest.seconds', { sec })}
           </option>
         ))}
       </select>
