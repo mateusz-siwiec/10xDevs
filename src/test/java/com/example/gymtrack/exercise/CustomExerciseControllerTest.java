@@ -118,12 +118,12 @@ class CustomExerciseControllerTest {
 		User other = newUser();
 		String name = "Cable Wrist Curl " + System.nanoTime();
 
-		create(bearer(owner), body("  " + name + "  ", "BICEPS", "CORE")).andExpect(status().isCreated())
+		create(bearer(owner), body("  " + name + "  ", "BICEPS", "ABS")).andExpect(status().isCreated())
 			.andExpect(jsonPath("$.custom", is(true)))
 			.andExpect(jsonPath("$.name", is(name)))
 			.andExpect(jsonPath("$.slug", startsWith("custom-")))
 			.andExpect(jsonPath("$.primaryMuscleGroup", is("BICEPS")))
-			.andExpect(jsonPath("$.secondaryMuscleGroups", contains("CORE")));
+			.andExpect(jsonPath("$.secondaryMuscleGroups", contains("ABS")));
 
 		mockMvc.perform(get("/api/exercises").header(HttpHeaders.AUTHORIZATION, bearer(owner)))
 			.andExpect(status().isOk())
@@ -168,7 +168,7 @@ class CustomExerciseControllerTest {
 		User owner = newUser();
 		String name = "My Move " + System.nanoTime();
 
-		create(bearer(owner), body(" Barbell ROW ", "BACK", null)).andExpect(status().isConflict())
+		create(bearer(owner), body(" Barbell ROW ", "LATS", null)).andExpect(status().isConflict())
 			.andExpect(jsonPath("$.code", is("EXERCISE_NAME_TAKEN")))
 			.andExpect(jsonPath("$.error", notNullValue()));
 
@@ -260,18 +260,18 @@ class CustomExerciseControllerTest {
 		plan.replaceEntries(List.of(new PlanEntryInput(id, 3, 10)));
 		UUID planId = planRepository.save(plan).getId();
 
-		update(token, id, body("  " + newName + "  ", "CORE", "BICEPS")).andExpect(status().isOk())
+		update(token, id, body("  " + newName + "  ", "ABS", "BICEPS")).andExpect(status().isOk())
 			.andExpect(jsonPath("$.id", is(id.toString())))
 			.andExpect(jsonPath("$.custom", is(true)))
 			.andExpect(jsonPath("$.name", is(newName)))
 			.andExpect(jsonPath("$.slug", is(slug)))
-			.andExpect(jsonPath("$.primaryMuscleGroup", is("CORE")))
+			.andExpect(jsonPath("$.primaryMuscleGroup", is("ABS")))
 			.andExpect(jsonPath("$.secondaryMuscleGroups", contains("BICEPS")));
 
 		mockMvc.perform(get("/api/exercises").header(HttpHeaders.AUTHORIZATION, token))
 			.andExpect(jsonPath("$", hasSize(41)))
 			.andExpect(jsonPath("$[?(@.id == '" + id + "')].name", contains(newName)))
-			.andExpect(jsonPath("$[?(@.id == '" + id + "')].primaryMuscleGroup", contains("CORE")))
+			.andExpect(jsonPath("$[?(@.id == '" + id + "')].primaryMuscleGroup", contains("ABS")))
 			.andExpect(jsonPath("$[*].name", not(hasItem(oldName))));
 		mockMvc.perform(get("/api/training-plans/" + planId).header(HttpHeaders.AUTHORIZATION, token))
 			.andExpect(status().isOk())
@@ -284,10 +284,10 @@ class CustomExerciseControllerTest {
 		String name = "Same Name " + System.nanoTime();
 		UUID id = createdId(token, name);
 
-		update(token, id, body(name, "BACK", null)).andExpect(status().isOk())
+		update(token, id, body(name, "LATS", null)).andExpect(status().isOk())
 			.andExpect(jsonPath("$.name", is(name)))
-			.andExpect(jsonPath("$.primaryMuscleGroup", is("BACK")));
-		update(token, id, body(name.toUpperCase(), "BACK", null)).andExpect(status().isOk())
+			.andExpect(jsonPath("$.primaryMuscleGroup", is("LATS")));
+		update(token, id, body(name.toUpperCase(), "LATS", null)).andExpect(status().isOk())
 			.andExpect(jsonPath("$.name", is(name.toUpperCase())));
 	}
 
@@ -301,7 +301,7 @@ class CustomExerciseControllerTest {
 		update(token, id, body(other.toUpperCase(), "BICEPS", null)).andExpect(status().isConflict())
 			.andExpect(jsonPath("$.code", is("EXERCISE_NAME_TAKEN")))
 			.andExpect(jsonPath("$.error", notNullValue()));
-		update(token, id, body(" Barbell ROW ", "BACK", null)).andExpect(status().isConflict())
+		update(token, id, body(" Barbell ROW ", "LATS", null)).andExpect(status().isConflict())
 			.andExpect(jsonPath("$.code", is("EXERCISE_NAME_TAKEN")));
 	}
 

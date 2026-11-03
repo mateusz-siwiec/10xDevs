@@ -55,7 +55,7 @@ preferred.
   first created by Hibernate `ddl-auto=update` and was then reset, so Flyway owns it from V1.
   If the Supabase DB ever holds app tables without a `flyway_schema_history` table, drop those
   tables first: `baseline-on-migrate` would otherwise baseline at V1 and skip migrations.
-  Never edit applied migrations; add a new `V<n>` (next is V10) instead.
+  Never edit applied migrations; add a new `V<n>` (next is V11) instead.
   Never point a local run at the Supabase DB (a local run would execute migrations there).
 - Frontend and backend are decoupled: the SPA under `frontend/` talks to the
   backend only via `/api/**` REST calls. There is no server-side templating.

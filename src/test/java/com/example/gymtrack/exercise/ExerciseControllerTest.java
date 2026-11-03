@@ -136,11 +136,11 @@ class ExerciseControllerTest {
 
 	@Test
 	void deadliftReturnsItsSecondaryMuscleGroups() throws Exception {
-		mockMvc.perform(get("/api/exercises").param("muscleGroup", "BACK")
+		mockMvc.perform(get("/api/exercises").param("muscleGroup", "LOWER_BACK")
 				.header(HttpHeaders.AUTHORIZATION, bearerToken()))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$[?(@.slug == 'deadlift')].secondaryMuscleGroups[*]",
-					containsInAnyOrder("HAMSTRINGS", "GLUTES")));
+					containsInAnyOrder("HAMSTRINGS", "GLUTES", "TRAPS", "FOREARMS")));
 	}
 
 }

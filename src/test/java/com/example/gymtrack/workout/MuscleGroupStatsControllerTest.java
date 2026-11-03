@@ -129,14 +129,14 @@ class MuscleGroupStatsControllerTest {
 	void countsEverySetUnderItsExercisesPrimaryMuscleGroup() throws Exception {
 		String token = bearerToken();
 		endedSession(token, catalogExercise(MuscleGroup.CHEST), 3, 1);
-		endedSession(token, catalogExercise(MuscleGroup.BACK), 2, 2);
+		endedSession(token, catalogExercise(MuscleGroup.LATS), 2, 2);
 
 		mockMvc.perform(get("/api/dashboard/muscle-groups").header(HttpHeaders.AUTHORIZATION, token))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.totalSets", is(5)))
 			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'CHEST')].sets", contains(3)))
-			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'BACK')].sets", contains(2)))
-			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'CORE')].sets", contains(0)));
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'LATS')].sets", contains(2)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'ABS')].sets", contains(0)));
 	}
 
 	@Test

@@ -2,13 +2,17 @@ package com.example.gymtrack.exercise;
 
 public enum MuscleGroup {
 	CHEST,
-	BACK,
+	LATS,
+	TRAPS,
+	LOWER_BACK,
 	SHOULDERS,
 	BICEPS,
 	TRICEPS,
+	FOREARMS,
 	QUADS,
 	HAMSTRINGS,
 	GLUTES,
 	CALVES,
-	CORE
+	ABS,
+	OBLIQUES
 }
