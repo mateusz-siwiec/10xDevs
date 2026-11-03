@@ -8,7 +8,7 @@ import HistoryPage from './pages/HistoryPage'
 import HistoryDetailPage from './pages/HistoryDetailPage'
 import PlansPage from './pages/PlansPage'
 import PlanEditorPage from './pages/PlanEditorPage'
-import MyExercisesPage from './pages/MyExercisesPage'
+import ExercisesPage from './pages/ExercisesPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 
@@ -87,7 +87,7 @@ function App() {
             path="/exercises"
             element={
               <RequireAuth>
-                <MyExercisesPage />
+                <ExercisesPage />
               </RequireAuth>
             }
           />
