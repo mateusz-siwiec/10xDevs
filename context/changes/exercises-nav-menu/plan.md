@@ -208,12 +208,12 @@ None; no schema or API changes. Old `/exercises` bookmarks now land on the list.
 
 #### Automated
 
-- [x] 3.1 New exercises-list e2e spec passes
-- [x] 3.2 Existing isolation and mobile specs pass
-- [x] 3.3 Full e2e passes
-- [x] 3.4 Unit tests, build, lint and token guard pass
+- [x] 3.1 New exercises-list e2e spec passes — 116f29a
+- [x] 3.2 Existing isolation and mobile specs pass — 116f29a
+- [x] 3.3 Full e2e passes — 116f29a
+- [x] 3.4 Unit tests, build, lint and token guard pass — 116f29a
 
 #### Manual
 
-- [x] 3.5 Polish and English strings read correctly
-- [x] 3.6 Keyboard focus is visible on filters and buttons
+- [x] 3.5 Polish and English strings read correctly — 116f29a
+- [x] 3.6 Keyboard focus is visible on filters and buttons — 116f29a
