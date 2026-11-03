@@ -158,7 +158,7 @@ export default function ExercisesPage() {
               )}
             </>
           ) : (
-            <ul className="plan-list">
+            <ul className="plan-list exercise-list">
               {visible.map((exercise) => (
                 <li key={exercise.id} className="plan-item">
                   <div className="plan-item-info">
