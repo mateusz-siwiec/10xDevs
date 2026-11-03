@@ -116,7 +116,8 @@
     "cancel": "Cancel",
     "success": "Plan saved.",
     "viewPlan": "View plan",
-    "failed": "Failed to save plan"
+    "failed": "Failed to save plan",
+    "truncated": "This workout is larger than a plan can hold (max 50 exercises, 20 sets each), so the extra part will be left out."
   },
   "progression": {
     "title": "Progression",
@@ -222,7 +223,7 @@
   "workout": {
     "title": "Workout",
     "endedSaved": "Workout saved.",
-    "dismiss": "Dismiss",
+    "dismiss": "Close",
     "loading": "Loading workout…",
     "startFromPlan": "Start from plan…",
     "startFromPlanLabel": "Start from plan",

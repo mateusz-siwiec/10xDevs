@@ -28,19 +28,30 @@ function mostCommon(values: number[]): number {
   return best
 }
 
-/**
- * Turns a workout's sets (in logged order) into plan entries: one entry per consecutive run of the same
- * exercise, so an exercise revisited later stays a separate entry. Sets = run length (capped), reps = the
- * most common rep count in the run, at most 50 entries.
- */
-export function workoutToPlanEntries(sets: readonly LoggedSet[]): PlanEntryInput[] {
+/** Consecutive runs of the same exercise, in logged order (before any plan limit is applied). */
+function groupRuns(sets: readonly LoggedSet[]): LoggedSet[][] {
   const runs: LoggedSet[][] = []
   for (const set of sets) {
     const last = runs[runs.length - 1]
     if (last && last[0].exerciseId === set.exerciseId) last.push(set)
     else runs.push([set])
   }
-  return runs.slice(0, MAX_ENTRIES).map((run) => ({
+  return runs
+}
+
+/** True when saving would drop data: more than 50 exercise runs, or a run of more than 20 sets. */
+export function exceedsPlanLimits(sets: readonly LoggedSet[]): boolean {
+  const runs = groupRuns(sets)
+  return runs.length > MAX_ENTRIES || runs.some((run) => run.length > MAX_SETS)
+}
+
+/**
+ * Turns a workout's sets (in logged order) into plan entries: one entry per consecutive run of the same
+ * exercise, so an exercise revisited later stays a separate entry. Sets = run length (capped), reps = the
+ * most common rep count in the run, at most 50 entries.
+ */
+export function workoutToPlanEntries(sets: readonly LoggedSet[]): PlanEntryInput[] {
+  return groupRuns(sets).slice(0, MAX_ENTRIES).map((run) => ({
     exerciseId: run[0].exerciseId,
     sets: Math.min(run.length, MAX_SETS),
     reps: Math.min(Math.max(mostCommon(run.map((s) => s.reps)), MIN_REPS), MAX_REPS),

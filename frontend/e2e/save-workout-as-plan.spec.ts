@@ -108,3 +108,94 @@ test('a workout can be saved as a plan from the panel shown after ending it', as
   await page.goto('/plans')
   await expect(page.getByText('Push and squat after end')).toBeVisible()
 })
+
+async function seedEndedWorkout(request: APIRequestContext, user: ApiUser) {
+  const bench = await exerciseId(request, user, 'Barbell Bench Press')
+  const squat = await exerciseId(request, user, 'Back Squat')
+  const session = await request.post(`${API}/api/workout-sessions`, auth(user))
+  const sessionId = (await session.json()).id
+  await seedSets(request, user, sessionId, bench, squat)
+  await request.post(`${API}/api/workout-sessions/${sessionId}/end`, auth(user))
+}
+
+async function openHistoryDetail(page: Page, user: ApiUser) {
+  await login(page, user)
+  await page.getByRole('link', { name: 'History' }).click()
+  await page.locator('a.history-row').first().click()
+  await expect(page.getByText('Set 1: 8 × 60 kg')).toBeVisible()
+}
+
+test('the name field is prefilled with the date, limited to 60 characters, and Cancel returns focus', async ({
+  page,
+  request,
+}) => {
+  const user = await registerViaApi(request, 'saveplan-name')
+  await seedEndedWorkout(request, user)
+  await openHistoryDetail(page, user)
+
+  await page.getByRole('button', { name: 'Save as plan' }).click()
+  const name = page.getByLabel('Plan name')
+  await expect(name).toHaveValue(/^\d{1,2} \p{L}+\.? \d{4}$/u)
+  // The prefilled text is selected, so typing replaces it.
+  await expect(name).toBeFocused()
+  await name.fill('x'.repeat(80))
+  await expect(name).toHaveValue('x'.repeat(60))
+
+  await page.getByRole('button', { name: 'Cancel' }).click()
+  await expect(page.getByLabel('Plan name')).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Save as plan' })).toBeFocused()
+})
+
+test('a failed save shows an error, keeps the form usable, and a retry succeeds', async ({ page, request }) => {
+  const user = await registerViaApi(request, 'saveplan-fail')
+  await seedEndedWorkout(request, user)
+  await openHistoryDetail(page, user)
+
+  await page.route('**/api/training-plans', (route) =>
+    route.request().method() === 'POST' ? route.fulfill({ status: 500, body: '{}' }) : route.continue(),
+  )
+  await page.getByRole('button', { name: 'Save as plan' }).click()
+  await page.getByLabel('Plan name').fill('Retry plan')
+  await page.getByRole('button', { name: 'Save plan' }).click()
+  await expect(page.getByRole('alert')).toBeVisible()
+  await expect(page.getByLabel('Plan name')).toHaveValue('Retry plan')
+
+  await page.unroute('**/api/training-plans')
+  await page.getByRole('button', { name: 'Save plan' }).click()
+  await expect(page.getByText('Plan saved.')).toBeVisible()
+  await expect(page.getByRole('status').filter({ hasText: 'Plan saved.' })).toBeFocused()
+  await findPlan(request, user, 'Retry plan')
+})
+
+test('ending a workout with no sets discards it and shows no save-as-plan panel', async ({ page, request }) => {
+  const user = await registerViaApi(request, 'saveplan-empty')
+  await login(page, user)
+  await page.goto('/workout')
+  await page.getByRole('button', { name: 'Start workout' }).click()
+  await expect(page.getByText('This workout has no exercises yet.')).toBeVisible()
+
+  await page.getByRole('button', { name: 'End workout' }).click()
+  await page.getByRole('button', { name: 'Confirm' }).click()
+
+  await expect(page.getByRole('button', { name: 'Start workout' })).toBeVisible()
+  await expect(page.getByText('Workout saved.')).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Save as plan' })).toHaveCount(0)
+})
+
+test('the panel after ending a workout can be closed', async ({ page, request }) => {
+  const user = await registerViaApi(request, 'saveplan-close')
+  const bench = await exerciseId(request, user, 'Barbell Bench Press')
+  const squat = await exerciseId(request, user, 'Back Squat')
+  const session = await request.post(`${API}/api/workout-sessions`, auth(user))
+  await seedSets(request, user, (await session.json()).id, bench, squat)
+
+  await login(page, user)
+  await page.goto('/workout')
+  await page.getByRole('button', { name: 'End workout' }).click()
+  await page.getByRole('button', { name: 'Confirm' }).click()
+  await expect(page.getByText('Workout saved.')).toBeVisible()
+
+  await page.getByRole('button', { name: 'Close' }).click()
+  await expect(page.getByText('Workout saved.')).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Start workout' })).toBeVisible()
+})

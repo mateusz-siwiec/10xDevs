@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import i18n from '../i18n'
-import { defaultPlanName, workoutToPlanEntries } from './workoutToPlan'
+import { formatDate } from './format'
+import { defaultPlanName, exceedsPlanLimits, workoutToPlanEntries } from './workoutToPlan'
 
 const set = (exerciseId: string, reps: number) => ({ exerciseId, reps })
 
@@ -55,11 +56,28 @@ describe('defaultPlanName', () => {
   })
 
   it('falls back to the workout date', () => {
-    expect(defaultPlanName(null, '2026-11-03T10:00:00Z')).toBe('3 Nov 2026')
-    expect(defaultPlanName('  ', '2026-11-03T10:00:00Z')).toBe('3 Nov 2026')
+    // Compared with formatDate itself: the rendered day depends on the runner's timezone.
+    const expected = formatDate('2026-11-03T12:00:00Z')
+    expect(defaultPlanName(null, '2026-11-03T12:00:00Z')).toBe(expected)
+    expect(defaultPlanName('  ', '2026-11-03T12:00:00Z')).toBe(expected)
   })
 
   it('truncates to the 60 character plan name limit', () => {
     expect(defaultPlanName('x'.repeat(80), '2026-11-03T10:00:00Z')).toHaveLength(60)
+  })
+})
+
+describe('exceedsPlanLimits', () => {
+  it('is false for a workout within the plan limits', () => {
+    expect(exceedsPlanLimits([set('a', 10), set('b', 8)])).toBe(false)
+    expect(exceedsPlanLimits([])).toBe(false)
+  })
+
+  it('is true when a run has more than 20 sets', () => {
+    expect(exceedsPlanLimits(Array.from({ length: 21 }, () => set('a', 10)))).toBe(true)
+  })
+
+  it('is true when there are more than 50 exercise runs', () => {
+    expect(exceedsPlanLimits(Array.from({ length: 51 }, (_, i) => set(`ex-${i}`, 10)))).toBe(true)
   })
 })

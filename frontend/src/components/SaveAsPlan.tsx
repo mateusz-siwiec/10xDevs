@@ -3,7 +3,7 @@ import type { FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { createPlan } from '../api/client'
-import { PLAN_NAME_MAX_LENGTH, workoutToPlanEntries } from '../utils/workoutToPlan'
+import { PLAN_NAME_MAX_LENGTH, exceedsPlanLimits, workoutToPlanEntries } from '../utils/workoutToPlan'
 import type { LoggedSet } from '../utils/workoutToPlan'
 import { translateError } from '../utils/errors'
 import '../styles/page.css'
@@ -21,21 +21,35 @@ export default function SaveAsPlan({ sets, defaultName }: Props) {
   const [error, setError] = useState<unknown>(null)
   const [savedId, setSavedId] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const openButtonRef = useRef<HTMLButtonElement>(null)
+  const statusRef = useRef<HTMLDivElement>(null)
+  // Set synchronously so two submit events before a re-render cannot both create a plan.
+  const inFlight = useRef(false)
+  const restoreFocus = useRef(false)
 
   // Focus and select the prefilled name so typing replaces it straight away.
   useEffect(() => {
     if (open) {
       inputRef.current?.focus()
       inputRef.current?.select()
+    } else if (restoreFocus.current) {
+      // The form (and the focused Cancel button) is gone: hand focus back to the button that opened it.
+      restoreFocus.current = false
+      openButtonRef.current?.focus()
     }
   }, [open])
+
+  // Focusing the status element makes screen readers read the result and keeps keyboard users in place.
+  useEffect(() => {
+    if (savedId !== null) statusRef.current?.focus()
+  }, [savedId])
 
   const entries = workoutToPlanEntries(sets)
   if (entries.length === 0) return null
 
   if (savedId !== null) {
     return (
-      <div className="save-as-plan" role="status">
+      <div className="save-as-plan" role="status" tabIndex={-1} ref={statusRef}>
         <span>{t('saveAsPlan.success')}</span>
         <Link to={`/plans/${savedId}`} className="save-as-plan-link">
           {t('saveAsPlan.viewPlan')}
@@ -50,10 +64,16 @@ export default function SaveAsPlan({ sets, defaultName }: Props) {
     setOpen(true)
   }
 
+  function cancel() {
+    restoreFocus.current = true
+    setOpen(false)
+  }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     const trimmed = name.trim()
-    if (submitting || trimmed === '') return
+    if (inFlight.current || trimmed === '') return
+    inFlight.current = true
     setError(null)
     setSubmitting(true)
     try {
@@ -62,13 +82,15 @@ export default function SaveAsPlan({ sets, defaultName }: Props) {
     } catch (err) {
       setError(err)
       setSubmitting(false)
+    } finally {
+      inFlight.current = false
     }
   }
 
   if (!open) {
     return (
       <div className="save-as-plan">
-        <button type="button" className="btn-secondary" onClick={openForm}>
+        <button type="button" className="btn-secondary" ref={openButtonRef} onClick={openForm}>
           {t('saveAsPlan.button')}
         </button>
       </div>
@@ -90,6 +112,7 @@ export default function SaveAsPlan({ sets, defaultName }: Props) {
             onChange={(e) => setName(e.target.value)}
           />
         </div>
+        {exceedsPlanLimits(sets) && <p className="page-subtext">{t('saveAsPlan.truncated')}</p>}
         {error !== null && (
           <p className="error-text" role="alert">
             {translateError(error, 'saveAsPlan.failed')}
@@ -99,7 +122,7 @@ export default function SaveAsPlan({ sets, defaultName }: Props) {
           <button type="submit" className="btn-primary" disabled={submitting || name.trim() === ''}>
             {submitting ? t('saveAsPlan.saving') : t('saveAsPlan.save')}
           </button>
-          <button type="button" className="btn-secondary" disabled={submitting} onClick={() => setOpen(false)}>
+          <button type="button" className="btn-secondary" disabled={submitting} onClick={cancel}>
             {t('saveAsPlan.cancel')}
           </button>
         </div>
