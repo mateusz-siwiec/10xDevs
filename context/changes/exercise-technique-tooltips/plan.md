@@ -271,27 +271,27 @@ None. No data or API changes; custom exercises are unaffected.
 
 #### Automated
 
-- [x] 1.1 Unit tests pass: `npm test` (from `frontend/`)
-- [x] 1.2 Type checking and build pass: `npm run build`
-- [x] 1.3 Linting passes: `npm run lint`
+- [x] 1.1 Unit tests pass: `npm test` (from `frontend/`) — 25a716a
+- [x] 1.2 Type checking and build pass: `npm run build` — 25a716a
+- [x] 1.3 Linting passes: `npm run lint` — 25a716a
 
 #### Manual
 
-- [x] 1.4 Technique wording in English reviewed for all 40 exercises
-- [x] 1.5 Technique wording in Polish reviewed for all 40 exercises
+- [x] 1.4 Technique wording in English reviewed for all 40 exercises — 25a716a
+- [x] 1.5 Technique wording in Polish reviewed for all 40 exercises — 25a716a
 
 ### Phase 2: TechniqueTooltip component
 
 #### Automated
 
-- [ ] 2.1 Token guard passes: `npm run check:tokens`
-- [ ] 2.2 Type checking and build pass: `npm run build`
-- [ ] 2.3 Linting passes: `npm run lint`
+- [x] 2.1 Token guard passes: `npm run check:tokens`
+- [x] 2.2 Type checking and build pass: `npm run build`
+- [x] 2.3 Linting passes: `npm run lint`
 
 #### Manual
 
-- [ ] 2.4 Hover, focus, tap, Escape and outside click behave as specified in light and dark mode
-- [ ] 2.5 Panel stays inside the viewport on a 390px-wide screen
+- [x] 2.4 Hover, focus, tap, Escape and outside click behave as specified in light and dark mode
+- [x] 2.5 Panel stays inside the viewport on a 390px-wide screen
 
 ### Phase 3: Placements
 
