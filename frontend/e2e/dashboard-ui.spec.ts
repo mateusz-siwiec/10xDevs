@@ -81,6 +81,10 @@ test.describe('dashboard ui', () => {
         await page.locator('.topbar-user').evaluate((el) => {
           el.textContent = 'user@example.com'
         })
+        // The record's date text changes daily and so does the masked box's width; pin it too.
+        await page.locator('.recent-record-detail').evaluateAll((els) => {
+          for (const el of els) el.textContent = '1000 kg x 1 · Jan 1'
+        })
         await expect(page).toHaveScreenshot(`dashboard-${label}-${scheme}.png`, {
           fullPage: true,
           maxDiffPixels: 150,
