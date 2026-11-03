@@ -217,12 +217,12 @@ None; no schema or API changes.
 
 #### Automated
 
-- [x] 3.1 New e2e spec passes
-- [x] 3.2 Existing e2e specs still pass
-- [x] 3.3 Unit tests, build, lint and token guard pass
+- [x] 3.1 New e2e spec passes — a22283d
+- [x] 3.2 Existing e2e specs still pass — a22283d
+- [x] 3.3 Unit tests, build, lint and token guard pass — a22283d
 
 #### Manual
 
-- [x] 3.4 Post-End panel appears, saves, and hides on new workout
-- [x] 3.5 No panel for a workout with no sets
-- [x] 3.6 Existing visual specs unchanged
+- [x] 3.4 Post-End panel appears, saves, and hides on new workout — a22283d
+- [x] 3.5 No panel for a workout with no sets — a22283d
+- [x] 3.6 Existing visual specs unchanged — a22283d
