@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getSubstitutes } from '../api/client'
 import type { Exercise } from '../api/client'
+import TechniqueTooltip from './TechniqueTooltip'
 import { translateError } from '../utils/errors'
 import { exerciseName, sortExercisesByName } from '../utils/exercises'
 import { muscleGroupLabel } from '../utils/muscleGroups'
@@ -68,7 +69,10 @@ export default function SubstituteSuggestions({
         {sortExercisesByName(current.items.slice(0, MAX_SUGGESTIONS)).map((exercise) => (
           <li key={exercise.id} className="substitute-item">
             <div className="substitute-item-info">
-              <span className="substitute-item-name">{exerciseName(exercise)}</span>
+              <span className="substitute-item-name">
+                {exerciseName(exercise)}
+                <TechniqueTooltip exercise={exercise} />
+              </span>
               <span className="page-subtext">{muscleGroupLabel(exercise.primaryMuscleGroup)}</span>
             </div>
             <button

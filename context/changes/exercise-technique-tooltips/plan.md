@@ -284,29 +284,29 @@ None. No data or API changes; custom exercises are unaffected.
 
 #### Automated
 
-- [x] 2.1 Token guard passes: `npm run check:tokens`
-- [x] 2.2 Type checking and build pass: `npm run build`
-- [x] 2.3 Linting passes: `npm run lint`
+- [x] 2.1 Token guard passes: `npm run check:tokens` — be2792b
+- [x] 2.2 Type checking and build pass: `npm run build` — be2792b
+- [x] 2.3 Linting passes: `npm run lint` — be2792b
 
 #### Manual
 
-- [x] 2.4 Hover, focus, tap, Escape and outside click behave as specified in light and dark mode
-- [x] 2.5 Panel stays inside the viewport on a 390px-wide screen
+- [x] 2.4 Hover, focus, tap, Escape and outside click behave as specified in light and dark mode — be2792b
+- [x] 2.5 Panel stays inside the viewport on a 390px-wide screen — be2792b
 
 ### Phase 3: Placements
 
 #### Automated
 
-- [ ] 3.1 Token guard passes: `npm run check:tokens`
-- [ ] 3.2 Type checking and build pass: `npm run build`
-- [ ] 3.3 Linting passes: `npm run lint`
-- [ ] 3.4 Existing e2e specs still pass: `npm run test:e2e`
+- [x] 3.1 Token guard passes: `npm run check:tokens`
+- [x] 3.2 Type checking and build pass: `npm run build`
+- [x] 3.3 Linting passes: `npm run lint`
+- [x] 3.4 Existing e2e specs still pass: `npm run test:e2e`
 
 #### Manual
 
-- [ ] 3.5 Tooltip visible and readable in all three places in en and pl
-- [ ] 3.6 Custom exercises show no tooltip anywhere
-- [ ] 3.7 Row layout on the list unchanged on a phone width
+- [x] 3.5 Tooltip visible and readable in all three places in en and pl
+- [x] 3.6 Custom exercises show no tooltip anywhere
+- [x] 3.7 Row layout on the list unchanged on a phone width
 
 ### Phase 4: Playwright coverage
 

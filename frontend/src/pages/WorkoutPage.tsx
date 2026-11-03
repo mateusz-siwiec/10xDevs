@@ -24,6 +24,7 @@ import { loadRestDuration, saveRestDuration } from '../components/restDuration'
 import SessionSetList from '../components/SessionSetList'
 import SetLogger from '../components/SetLogger'
 import SubstituteSuggestions from '../components/SubstituteSuggestions'
+import TechniqueTooltip from '../components/TechniqueTooltip'
 import '../styles/page.css'
 import '../styles/workout.css'
 import { translateError } from '../utils/errors'
@@ -312,14 +313,19 @@ export default function WorkoutPage() {
                 selectedId={selectedExercise}
                 onChange={handleSelect}
               />
-              <button
-                type="button"
-                className="btn-secondary find-substitute-btn"
-                disabled={!selectedExercise}
-                onClick={() => setSubstituteFor(selectedExercise)}
-              >
-                {t('workout.findSubstitute')}
-              </button>
+              <div className="exercise-picker-actions">
+                {selectedExercise && exercisesById.get(selectedExercise) && (
+                  <TechniqueTooltip exercise={exercisesById.get(selectedExercise)!} />
+                )}
+                <button
+                  type="button"
+                  className="btn-secondary find-substitute-btn"
+                  disabled={!selectedExercise}
+                  onClick={() => setSubstituteFor(selectedExercise)}
+                >
+                  {t('workout.findSubstitute')}
+                </button>
+              </div>
             </div>
             {selectedExercise && substituteFor === selectedExercise && (
               <SubstituteSuggestions

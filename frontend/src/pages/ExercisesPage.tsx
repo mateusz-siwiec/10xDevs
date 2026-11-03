@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { deleteExercise, getExercises } from '../api/client'
 import type { Exercise } from '../api/client'
+import TechniqueTooltip from '../components/TechniqueTooltip'
 import '../styles/page.css'
 import '../styles/workout.css'
 import '../styles/plans.css'
@@ -165,6 +166,7 @@ export default function ExercisesPage() {
                     <span className="plan-item-name">
                       {exerciseName(exercise)}
                       {exercise.custom && <span className="badge">{t('exercises.custom')}</span>}
+                      <TechniqueTooltip exercise={exercise} />
                     </span>
                     <span>
                       {muscleGroupLabel(exercise.primaryMuscleGroup)}
