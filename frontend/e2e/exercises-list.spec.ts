@@ -86,7 +86,8 @@ test('an exercise can be added, edited and deleted from the list', async ({ page
   const renamed = `${name} edited`
   await openList(page, user)
 
-  await page.getByRole('link', { name: 'Add exercise' }).click()
+  await page.getByRole('button', { name: 'Exercises', exact: true }).click()
+  await page.getByRole('link', { name: 'New exercise', exact: true }).click()
   await expect(page).toHaveURL(/\/exercises\/new$/)
   await page.getByLabel('Name').fill(name)
   await page.getByLabel('Primary muscle group').selectOption('BICEPS')
@@ -131,4 +132,53 @@ test('the edit URL of a built-in or unknown exercise shows the not-found state',
   await expect(page.getByText('Exercise not found')).toBeVisible()
   await page.getByRole('link', { name: 'Back to exercises' }).click()
   await expect(page).toHaveURL(/\/exercises$/)
+})
+
+test('the top-bar Exercises menu opens the list and the add form and closes on Escape or outside click', async ({
+  page,
+  request,
+}) => {
+  const user = await registerViaApi(request, 'exmenu')
+  await page.addInitScript(() => localStorage.setItem('gymtrack.lang', 'en'))
+  await page.goto('/login')
+  await page.getByLabel('Email').fill(user.email)
+  await page.getByLabel('Password').fill(PASSWORD)
+  await page.getByRole('button', { name: 'Log in', exact: true }).click()
+  await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible()
+
+  const button = page.getByRole('button', { name: 'Exercises', exact: true })
+  const list = page.getByRole('link', { name: 'Exercises', exact: true })
+  const add = page.getByRole('link', { name: 'New exercise', exact: true })
+  await expect(button).toHaveAttribute('aria-expanded', 'false')
+  await button.click()
+  await expect(button).toHaveAttribute('aria-expanded', 'true')
+  await expect(list).toBeVisible()
+  await expect(add).toBeVisible()
+
+  // Arrow keys move between the items; Escape closes the menu and returns focus to the button.
+  await page.keyboard.press('ArrowDown')
+  await expect(list).toBeFocused()
+  await page.keyboard.press('ArrowDown')
+  await expect(add).toBeFocused()
+  await page.keyboard.press('Escape')
+  await expect(add).toHaveCount(0)
+  await expect(button).toBeFocused()
+
+  // Clicking elsewhere closes it too.
+  await button.click()
+  await expect(add).toBeVisible()
+  await page.getByRole('heading', { name: 'Dashboard' }).click()
+  await expect(add).toHaveCount(0)
+
+  // The list has the All / Mine filter and no Add button; the add form is its own page.
+  await button.click()
+  await list.click()
+  await expect(page).toHaveURL(/\/exercises$/)
+  await expect(page.getByRole('button', { name: 'Mine', exact: true })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Add exercise' })).toHaveCount(0)
+
+  await button.click()
+  await add.click()
+  await expect(page).toHaveURL(/\/exercises\/new$/)
+  await expect(page.getByRole('heading', { name: 'Add exercise' })).toBeVisible()
 })

@@ -1,6 +1,8 @@
 # Unified exercises list Implementation Plan
 
 > Note: the change id is `exercises-nav-menu` from the original idea (a top-bar dropdown). During planning the design changed to a single filtered list with a plain nav link; the id is kept because change ids are not renamed.
+>
+> Follow-up after phase 3 (2026-11-03): the top bar now has an "Exercises ▾" click-to-open menu with two entries, "Exercises" (`/exercises`, the list with the All / Mine and muscle filters, no Add button) and "New exercise" (`/exercises/new`); on phones it is an expandable group in the drawer. Added `ExercisesMenu.tsx`, topbar styles, `nav.newExercise` strings, e2e coverage, and refreshed the four desktop screenshot baselines (visual delta: the caret after "Exercises").
 
 ## Overview
 

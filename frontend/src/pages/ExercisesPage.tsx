@@ -78,12 +78,7 @@ export default function ExercisesPage() {
   return (
     <div className="page-shell">
       <main className="page-card plans-card">
-        <div className="plans-header">
-          <h1>{t('exercises.title')}</h1>
-          <Link to="/exercises/new" className="plans-link-button">
-            {t('exercises.add')}
-          </Link>
-        </div>
+        <h1>{t('exercises.title')}</h1>
         <div className="dashboard-toggle" role="group" aria-label={t('exercises.scopeLabel')}>
           {(['all', 'mine'] as const).map((scope) => (
             <button

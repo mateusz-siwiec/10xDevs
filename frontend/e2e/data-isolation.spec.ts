@@ -32,7 +32,8 @@ test("a second user cannot see or reach the first user's plan and custom exercis
   await expect(page.getByText('You have no plans yet')).toBeVisible()
   await expect(page.getByText(planName)).toHaveCount(0)
 
-  await page.getByRole('link', { name: 'Exercises' }).click()
+  await page.getByRole('button', { name: 'Exercises' }).click()
+  await page.getByRole('link', { name: 'Exercises', exact: true }).click()
   await expect(page.getByText(customName)).toHaveCount(0)
 
   // Guessing the owner's plan id directly is also refused.
