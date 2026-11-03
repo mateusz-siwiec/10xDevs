@@ -114,6 +114,16 @@
       "setLine": "Seria {{n}}: {{reps}} × {{weight}} kg"
     }
   },
+  "saveAsPlan": {
+    "button": "Zapisz jako plan",
+    "nameLabel": "Nazwa planu",
+    "save": "Zapisz plan",
+    "saving": "Zapisywanie…",
+    "cancel": "Anuluj",
+    "success": "Plan zapisany.",
+    "viewPlan": "Zobacz plan",
+    "failed": "Nie udało się zapisać planu"
+  },
   "progression": {
     "title": "Progresja",
     "loading": "Wczytywanie progresji…",

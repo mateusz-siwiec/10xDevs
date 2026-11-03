@@ -108,6 +108,16 @@
       "setLine": "Set {{n}}: {{reps}} × {{weight}} kg"
     }
   },
+  "saveAsPlan": {
+    "button": "Save as plan",
+    "nameLabel": "Plan name",
+    "save": "Save plan",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "success": "Plan saved.",
+    "viewPlan": "View plan",
+    "failed": "Failed to save plan"
+  },
   "progression": {
     "title": "Progression",
     "loading": "Loading progression…",

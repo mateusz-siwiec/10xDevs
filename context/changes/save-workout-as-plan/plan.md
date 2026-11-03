@@ -191,27 +191,27 @@ None; no schema or API changes.
 
 #### Automated
 
-- [x] 1.1 Mapping tests pass
-- [x] 1.2 Type checking and build pass
-- [x] 1.3 Linting passes
+- [x] 1.1 Mapping tests pass — bc8435c
+- [x] 1.2 Type checking and build pass — bc8435c
+- [x] 1.3 Linting passes — bc8435c
 
 #### Manual
 
-- [x] 1.4 Util behavior matches the agreed rules
+- [x] 1.4 Util behavior matches the agreed rules — bc8435c
 
 ### Phase 2: Save-as-plan component and history integration
 
 #### Automated
 
-- [ ] 2.1 Unit and locale tests pass
-- [ ] 2.2 Build and lint pass
-- [ ] 2.3 Token guard passes
+- [x] 2.1 Unit and locale tests pass
+- [x] 2.2 Build and lint pass
+- [x] 2.3 Token guard passes
 
 #### Manual
 
-- [ ] 2.4 History detail save creates the matching plan
-- [ ] 2.5 Error state is shown and form stays usable
-- [ ] 2.6 Hover, focus-visible and disabled states are visible
+- [x] 2.4 History detail save creates the matching plan
+- [x] 2.5 Error state is shown and form stays usable
+- [x] 2.6 Hover, focus-visible and disabled states are visible
 
 ### Phase 3: Post-"End workout" prompt and e2e
 
