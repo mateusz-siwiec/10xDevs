@@ -294,3 +294,11 @@
 .skeleton-block {
   min-height: 2rem;
 }
+
+.workout-end-confirm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin-top: 2rem;
+}

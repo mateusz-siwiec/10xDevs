@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   deleteSet,
+  deleteWorkout,
   endSession,
   getCurrentSession,
   getExercises,
@@ -43,6 +44,7 @@ export default function WorkoutPage() {
   // Absolute end time of the running rest countdown; null when no rest is active.
   const [restEndsAt, setRestEndsAt] = useState<number | null>(null)
   const [restDuration, setRestDuration] = useState(loadRestDuration)
+  const [confirmingEnd, setConfirmingEnd] = useState(false)
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<ErrorInfo | null>(null)
@@ -121,6 +123,7 @@ export default function WorkoutPage() {
     setBusy(true)
     try {
       setSession(await startSession(planId))
+      setConfirmingEnd(false)
       setSkipped(new Set())
       setRestEndsAt(null)
     } catch (err) {
@@ -135,8 +138,11 @@ export default function WorkoutPage() {
     setError(null)
     setBusy(true)
     try {
-      await endSession(session.id)
+      // A workout with no sets is discarded instead of being saved to history.
+      if (session.sets.length === 0) await deleteWorkout(session.id)
+      else await endSession(session.id)
       setSession(null)
+      setConfirmingEnd(false)
       setManual(null)
       setSubstituteFor(null)
       setSkipped(new Set())
@@ -167,7 +173,7 @@ export default function WorkoutPage() {
           })
         }
       }
-      setRestEndsAt(Date.now() + restDuration * 1000)
+      if (restDuration > 0) setRestEndsAt(Date.now() + restDuration * 1000)
       setRefreshKey((k) => k + 1)
     } catch (err) {
       setError({ err, key: 'workout.logFailed' })
@@ -324,14 +330,36 @@ export default function WorkoutPage() {
                 onDelete={handleDelete}
               />
             </section>
-            <button
-              type="button"
-              className="btn-secondary workout-end"
-              disabled={busy}
-              onClick={handleEnd}
-            >
-              {t('workout.endWorkout')}
-            </button>
+            {session.sets.length === 0 && (
+              <p className="page-subtext" role="status">
+                {t('workout.emptyNotice')}
+              </p>
+            )}
+            {confirmingEnd ? (
+              <div className="workout-end-confirm">
+                <span>{session.sets.length === 0 ? t('workout.endEmptyConfirm') : t('workout.endConfirm')}</span>
+                <button type="button" className="btn-danger" disabled={busy} onClick={handleEnd}>
+                  {t('common.confirm')}
+                </button>
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  disabled={busy}
+                  onClick={() => setConfirmingEnd(false)}
+                >
+                  {t('common.cancel')}
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="btn-secondary workout-end"
+                disabled={busy}
+                onClick={() => setConfirmingEnd(true)}
+              >
+                {t('workout.endWorkout')}
+              </button>
+            )}
           </>
         )}
       </main>
