@@ -283,3 +283,26 @@ test('creating an exercise with a name you already use shows an error and keeps 
   await expect(page.getByLabel('Name')).toHaveValue(name)
   await expect(page.getByRole('button', { name: 'Add exercise' })).toBeEnabled()
 })
+
+test('on a phone Edit and Delete stay to the right of every row, however long the name is', async ({ page, request }) => {
+  await page.setViewportSize({ width: 390, height: 900 })
+  const user = await registerViaApi(request, 'exlist-rows')
+  const names = [
+    `Leg curl`,
+    `Prostowanie ramion na wyciągu z linką`,
+    `Bardzo długa nazwa własnego ćwiczenia na plecy z dodatkami`,
+  ]
+  for (const name of names) await seedCustom(request, user, name)
+  await openList(page, user)
+  await page.getByRole('button', { name: 'Mine', exact: true }).click()
+
+  const rows = page.locator('.plan-list .plan-item')
+  await expect(rows).toHaveCount(3)
+  for (let i = 0; i < 3; i++) {
+    const info = (await rows.nth(i).locator('.plan-item-info').boundingBox())!
+    const actions = (await rows.nth(i).locator('.plan-item-actions').boundingBox())!
+    // The buttons start where the text column ends (same line), never below it.
+    expect(actions.x).toBeGreaterThanOrEqual(info.x + info.width - 1)
+    expect(actions.y).toBeLessThan(info.y + info.height)
+  }
+})

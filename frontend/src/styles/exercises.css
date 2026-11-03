@@ -32,3 +32,20 @@
   margin: 0;
 }
 
+
+/* Keep Edit/Delete on the right of the row however long the name and muscles are; the text wraps instead. */
+.exercise-list .plan-item {
+  flex-wrap: nowrap;
+}
+
+.exercise-list .plan-item-info {
+  flex: 1 1 0;
+}
+
+.exercise-list .plan-item-actions {
+  flex-shrink: 0;
+}
+
+.exercise-list .plan-item-actions .btn-secondary {
+  padding-inline: 0.875rem;
+}
