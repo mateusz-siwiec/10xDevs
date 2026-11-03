@@ -191,13 +191,13 @@ None; no schema or API changes.
 
 #### Automated
 
-- [ ] 1.1 Mapping tests pass
-- [ ] 1.2 Type checking and build pass
-- [ ] 1.3 Linting passes
+- [x] 1.1 Mapping tests pass
+- [x] 1.2 Type checking and build pass
+- [x] 1.3 Linting passes
 
 #### Manual
 
-- [ ] 1.4 Util behavior matches the agreed rules
+- [x] 1.4 Util behavior matches the agreed rules
 
 ### Phase 2: Save-as-plan component and history integration
 
