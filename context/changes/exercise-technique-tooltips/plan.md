@@ -297,25 +297,25 @@ None. No data or API changes; custom exercises are unaffected.
 
 #### Automated
 
-- [x] 3.1 Token guard passes: `npm run check:tokens`
-- [x] 3.2 Type checking and build pass: `npm run build`
-- [x] 3.3 Linting passes: `npm run lint`
-- [x] 3.4 Existing e2e specs still pass: `npm run test:e2e`
+- [x] 3.1 Token guard passes: `npm run check:tokens` — c62433f
+- [x] 3.2 Type checking and build pass: `npm run build` — c62433f
+- [x] 3.3 Linting passes: `npm run lint` — c62433f
+- [x] 3.4 Existing e2e specs still pass: `npm run test:e2e` — c62433f
 
 #### Manual
 
-- [x] 3.5 Tooltip visible and readable in all three places in en and pl
-- [x] 3.6 Custom exercises show no tooltip anywhere
-- [x] 3.7 Row layout on the list unchanged on a phone width
+- [x] 3.5 Tooltip visible and readable in all three places in en and pl — c62433f
+- [x] 3.6 Custom exercises show no tooltip anywhere — c62433f
+- [x] 3.7 Row layout on the list unchanged on a phone width — c62433f
 
 ### Phase 4: Playwright coverage
 
 #### Automated
 
-- [ ] 4.1 E2E suite passes (Postgres running): `npm run test:e2e`
-- [ ] 4.2 Unit tests pass: `npm test`
-- [ ] 4.3 Token guard and lint pass: `npm run check:tokens && npm run lint`
+- [x] 4.1 E2E suite passes (Postgres running): `npm run test:e2e`
+- [x] 4.2 Unit tests pass: `npm test`
+- [x] 4.3 Token guard and lint pass: `npm run check:tokens && npm run lint`
 
 #### Manual
 
-- [ ] 4.4 Smoke test on a real phone viewport via the dev server, including tap behaviour
+- [x] 4.4 Smoke test on a real phone viewport via the dev server, including tap behaviour
