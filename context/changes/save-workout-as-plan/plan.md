@@ -203,26 +203,26 @@ None; no schema or API changes.
 
 #### Automated
 
-- [x] 2.1 Unit and locale tests pass
-- [x] 2.2 Build and lint pass
-- [x] 2.3 Token guard passes
+- [x] 2.1 Unit and locale tests pass — fa98b2c
+- [x] 2.2 Build and lint pass — fa98b2c
+- [x] 2.3 Token guard passes — fa98b2c
 
 #### Manual
 
-- [x] 2.4 History detail save creates the matching plan
-- [x] 2.5 Error state is shown and form stays usable
-- [x] 2.6 Hover, focus-visible and disabled states are visible
+- [x] 2.4 History detail save creates the matching plan — fa98b2c
+- [x] 2.5 Error state is shown and form stays usable — fa98b2c
+- [x] 2.6 Hover, focus-visible and disabled states are visible — fa98b2c
 
 ### Phase 3: Post-"End workout" prompt and e2e
 
 #### Automated
 
-- [ ] 3.1 New e2e spec passes
-- [ ] 3.2 Existing e2e specs still pass
-- [ ] 3.3 Unit tests, build, lint and token guard pass
+- [x] 3.1 New e2e spec passes
+- [x] 3.2 Existing e2e specs still pass
+- [x] 3.3 Unit tests, build, lint and token guard pass
 
 #### Manual
 
-- [ ] 3.4 Post-End panel appears, saves, and hides on new workout
-- [ ] 3.5 No panel for a workout with no sets
-- [ ] 3.6 Existing visual specs unchanged
+- [x] 3.4 Post-End panel appears, saves, and hides on new workout
+- [x] 3.5 No panel for a workout with no sets
+- [x] 3.6 Existing visual specs unchanged

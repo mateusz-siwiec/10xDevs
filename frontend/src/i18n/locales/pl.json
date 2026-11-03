@@ -229,6 +229,8 @@
   },
   "workout": {
     "title": "Trening",
+    "endedSaved": "Trening zapisany.",
+    "dismiss": "Zamknij",
     "loading": "Wczytywanie treningu…",
     "startFromPlan": "Rozpocznij z planu…",
     "startFromPlanLabel": "Rozpocznij z planu",

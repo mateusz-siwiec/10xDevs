@@ -193,6 +193,13 @@
   gap: 0.75rem;
 }
 
+.workout-ended {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+}
+
 .workout-start-plan {
   display: grid;
   grid-template-columns: 1fr auto;

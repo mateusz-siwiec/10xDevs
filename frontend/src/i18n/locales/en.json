@@ -221,6 +221,8 @@
   },
   "workout": {
     "title": "Workout",
+    "endedSaved": "Workout saved.",
+    "dismiss": "Dismiss",
     "loading": "Loading workout…",
     "startFromPlan": "Start from plan…",
     "startFromPlanLabel": "Start from plan",

@@ -18,6 +18,7 @@ import { computeProgress, currentIndex, selectedIndex } from '../components/plan
 import ProgressionChart from '../components/ProgressionChart'
 import PreviousWorkoutHint from '../components/PreviousWorkoutHint'
 import ProgressionRecommendation from '../components/ProgressionRecommendation'
+import SaveAsPlan from '../components/SaveAsPlan'
 import RestTimer from '../components/RestTimer'
 import { loadRestDuration, saveRestDuration } from '../components/restDuration'
 import SessionSetList from '../components/SessionSetList'
@@ -27,6 +28,8 @@ import '../styles/page.css'
 import '../styles/workout.css'
 import { translateError } from '../utils/errors'
 import type { ErrorInfo } from '../utils/errors'
+import { defaultPlanName } from '../utils/workoutToPlan'
+import type { LoggedSet } from '../utils/workoutToPlan'
 
 export default function WorkoutPage() {
   const { t } = useTranslation()
@@ -45,6 +48,8 @@ export default function WorkoutPage() {
   const [restEndsAt, setRestEndsAt] = useState<number | null>(null)
   const [restDuration, setRestDuration] = useState(loadRestDuration)
   const [confirmingEnd, setConfirmingEnd] = useState(false)
+  // Sets of the workout just ended, kept so it can be saved as a plan; cleared on start or dismiss.
+  const [endedSummary, setEndedSummary] = useState<{ sets: LoggedSet[]; defaultName: string } | null>(null)
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<ErrorInfo | null>(null)
@@ -123,6 +128,7 @@ export default function WorkoutPage() {
     setBusy(true)
     try {
       setSession(await startSession(planId))
+      setEndedSummary(null)
       setConfirmingEnd(false)
       setSkipped(new Set())
       setRestEndsAt(null)
@@ -141,6 +147,18 @@ export default function WorkoutPage() {
       // A workout with no sets is discarded instead of being saved to history.
       if (session.sets.length === 0) await deleteWorkout(session.id)
       else await endSession(session.id)
+      // Keep the ended sets (in logged order) so the user can save them as a plan.
+      setEndedSummary(
+        session.sets.length === 0
+          ? null
+          : {
+              sets: session.sets.map((s) => ({ exerciseId: s.exerciseId, reps: s.reps })),
+              defaultName: defaultPlanName(
+                plan?.name ?? plans.find((p) => p.id === session.planId)?.name ?? null,
+                session.startedAt,
+              ),
+            },
+      )
       setSession(null)
       setConfirmingEnd(false)
       setManual(null)
@@ -238,6 +256,15 @@ export default function WorkoutPage() {
         {error && <p className="error-text" role="alert">{translateError(error.err, error.key)}</p>}
         {session === null ? (
           <div className="workout-start">
+            {endedSummary && (
+              <div className="workout-ended">
+                <p role="status">{t('workout.endedSaved')}</p>
+                <SaveAsPlan sets={endedSummary.sets} defaultName={endedSummary.defaultName} />
+                <button type="button" className="btn-secondary" onClick={() => setEndedSummary(null)}>
+                  {t('workout.dismiss')}
+                </button>
+              </div>
+            )}
             {plans.length > 0 && (
               <div className="workout-start-plan">
                 <select
