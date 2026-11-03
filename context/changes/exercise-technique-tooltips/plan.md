@@ -312,10 +312,10 @@ None. No data or API changes; custom exercises are unaffected.
 
 #### Automated
 
-- [x] 4.1 E2E suite passes (Postgres running): `npm run test:e2e`
-- [x] 4.2 Unit tests pass: `npm test`
-- [x] 4.3 Token guard and lint pass: `npm run check:tokens && npm run lint`
+- [x] 4.1 E2E suite passes (Postgres running): `npm run test:e2e` — 1547a80
+- [x] 4.2 Unit tests pass: `npm test` — 1547a80
+- [x] 4.3 Token guard and lint pass: `npm run check:tokens && npm run lint` — 1547a80
 
 #### Manual
 
-- [x] 4.4 Smoke test on a real phone viewport via the dev server, including tap behaviour
+- [x] 4.4 Smoke test on a real phone viewport via the dev server, including tap behaviour — 1547a80

@@ -1,7 +1,7 @@
 ---
 change_id: exercise-technique-tooltips
 title: Technique tooltips for predefined exercises
-status: implementing
+status: implemented
 created: 2026-11-03
 updated: 2026-11-03
 archived_at: null
