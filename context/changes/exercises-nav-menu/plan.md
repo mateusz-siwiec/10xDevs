@@ -1,6 +1,8 @@
 # Unified exercises list Implementation Plan
 
 > Note: the change id is `exercises-nav-menu` from the original idea (a top-bar dropdown). During planning the design changed to a single filtered list with a plain nav link; the id is kept because change ids are not renamed.
+>
+> Follow-up after phase 3 (2026-11-03): the top bar now has an "Exercises ▾" click-to-open menu with two entries, "Exercises" (`/exercises`, the list with the All / Mine and muscle filters, no Add button) and "New exercise" (`/exercises/new`); on phones it is an expandable group in the drawer. Added `ExercisesMenu.tsx`, topbar styles, `nav.newExercise` strings, e2e coverage, and refreshed the four desktop screenshot baselines (visual delta: the caret after "Exercises").
 
 ## Overview
 
@@ -180,40 +182,40 @@ None; no schema or API changes. Old `/exercises` bookmarks now land on the list.
 
 #### Automated
 
-- [ ] 1.1 Build passes
-- [ ] 1.2 Lint passes
-- [ ] 1.3 Token guard passes
-- [ ] 1.4 Unit and locale tests pass
+- [x] 1.1 Build passes — d7de0db
+- [x] 1.2 Lint passes — d7de0db
+- [x] 1.3 Token guard passes — d7de0db
+- [x] 1.4 Unit and locale tests pass — d7de0db
 
 #### Manual
 
-- [ ] 1.5 List shows built-in and custom exercises with Custom tag and actions
-- [ ] 1.6 All / Mine and muscle filters combine; empty states work
-- [ ] 1.7 Delete still asks for confirmation
+- [x] 1.5 List shows built-in and custom exercises with Custom tag and actions — d7de0db
+- [x] 1.6 All / Mine and muscle filters combine; empty states work — d7de0db
+- [x] 1.7 Delete still asks for confirmation — d7de0db
 
 ### Phase 2: Form page
 
 #### Automated
 
-- [ ] 2.1 Build, lint and token guard pass
-- [ ] 2.2 Unit and locale tests pass
+- [x] 2.1 Build, lint and token guard pass — 872b249
+- [x] 2.2 Unit and locale tests pass — 872b249
 
 #### Manual
 
-- [ ] 2.3 Add returns to the list with the new exercise
-- [ ] 2.4 Edit pre-fills, saves, and Cancel leaves it unchanged
-- [ ] 2.5 Bad id or built-in edit URL shows not-found
+- [x] 2.3 Add returns to the list with the new exercise — 872b249
+- [x] 2.4 Edit pre-fills, saves, and Cancel leaves it unchanged — 872b249
+- [x] 2.5 Bad id or built-in edit URL shows not-found — 872b249
 
 ### Phase 3: Tests and strings
 
 #### Automated
 
-- [ ] 3.1 New exercises-list e2e spec passes
-- [ ] 3.2 Existing isolation and mobile specs pass
-- [ ] 3.3 Full e2e passes
-- [ ] 3.4 Unit tests, build, lint and token guard pass
+- [x] 3.1 New exercises-list e2e spec passes — 116f29a
+- [x] 3.2 Existing isolation and mobile specs pass — 116f29a
+- [x] 3.3 Full e2e passes — 116f29a
+- [x] 3.4 Unit tests, build, lint and token guard pass — 116f29a
 
 #### Manual
 
-- [ ] 3.5 Polish and English strings read correctly
-- [ ] 3.6 Keyboard focus is visible on filters and buttons
+- [x] 3.5 Polish and English strings read correctly — 116f29a
+- [x] 3.6 Keyboard focus is visible on filters and buttons — 116f29a

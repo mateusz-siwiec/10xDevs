@@ -30,9 +30,19 @@ test('on a phone the navigation lives in a left-side menu that opens, navigates 
 
   // Open: every link plus language switch and logout are inside the screen.
   await toggle.click()
-  for (const name of ['Dashboard', 'Workout', 'History', 'Plans', 'Exercises']) {
+  for (const name of ['Dashboard', 'Workout', 'History', 'Plans']) {
     await expect(menu.getByRole('link', { name, exact: true })).toBeVisible()
   }
+  // Exercises is an expandable group: collapsed until tapped, then it lists its two pages inline.
+  const exercises = menu.getByRole('button', { name: 'Exercises', exact: true })
+  await expect(exercises).toBeVisible()
+  await expect(menu.getByRole('link', { name: 'New exercise', exact: true })).toBeHidden()
+  await exercises.click()
+  for (const name of ['Exercises', 'New exercise']) {
+    await expect(menu.getByRole('link', { name, exact: true })).toBeVisible()
+  }
+  await exercises.click()
+  await expect(menu.getByRole('link', { name: 'New exercise', exact: true })).toBeHidden()
   await expect(menu.getByRole('button', { name: 'Log out' })).toBeVisible()
   // The drawer slides in, so wait for the animation to settle before measuring it.
   await expect

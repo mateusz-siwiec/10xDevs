@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { NavLink, useLocation, useNavigate } from 'react-router'
 import { useAuth } from '../auth/AuthContext'
+import ExercisesMenu from './ExercisesMenu'
 import LanguageSwitcher from './LanguageSwitcher'
 import '../styles/topbar.css'
 
@@ -81,9 +82,7 @@ export default function Topbar() {
           <NavLink to="/plans" className="topbar-link" onClick={closeMenu}>
             {t('nav.plans')}
           </NavLink>
-          <NavLink to="/exercises" className="topbar-link" onClick={closeMenu}>
-            {t('nav.exercises')}
-          </NavLink>
+          <ExercisesMenu onNavigate={closeMenu} />
         </nav>
         <span className="topbar-user">{user.email}</span>
         <LanguageSwitcher />

@@ -8,7 +8,8 @@ import HistoryPage from './pages/HistoryPage'
 import HistoryDetailPage from './pages/HistoryDetailPage'
 import PlansPage from './pages/PlansPage'
 import PlanEditorPage from './pages/PlanEditorPage'
-import MyExercisesPage from './pages/MyExercisesPage'
+import ExercisesPage from './pages/ExercisesPage'
+import ExerciseFormPage from './pages/ExerciseFormPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 
@@ -87,7 +88,23 @@ function App() {
             path="/exercises"
             element={
               <RequireAuth>
-                <MyExercisesPage />
+                <ExercisesPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/exercises/new"
+            element={
+              <RequireAuth>
+                <ExerciseFormPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/exercises/:id/edit"
+            element={
+              <RequireAuth>
+                <ExerciseFormPage />
               </RequireAuth>
             }
           />
