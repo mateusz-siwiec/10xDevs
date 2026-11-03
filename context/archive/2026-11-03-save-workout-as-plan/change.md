@@ -1,10 +1,10 @@
 ---
 change_id: save-workout-as-plan
 title: Save workout as plan
-status: impl_reviewed
+status: archived
 created: 2026-11-03
 updated: 2026-11-03
-archived_at: null
+archived_at: 2026-11-03T13:17:06Z
 ---
 
 ## Notes
