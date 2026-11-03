@@ -53,17 +53,44 @@ describe('locale parity', () => {
   })
 })
 
-describe('seeded exercise names', () => {
-  const dir = resolve(__dirname, '../../../src/main/resources/db/migration')
-  const seededSlugs = readdirSync(dir)
-    .filter((file) => file.endsWith('.sql'))
-    .flatMap((file) => {
-      const sql = readFileSync(resolve(dir, file), 'utf8')
-      return [...sql.matchAll(/insert\s+into\s+exercises\b[^;]*;/gi)].flatMap((statement) =>
-        [...statement[0].matchAll(/\(\s*'([^']+)'\s*,\s*'/g)].map((row) => row[1]),
+const migrationsDir = resolve(__dirname, '../../../src/main/resources/db/migration')
+const seededSlugs = readdirSync(migrationsDir)
+  .filter((file) => file.endsWith('.sql'))
+  .flatMap((file) => {
+    const sql = readFileSync(resolve(migrationsDir, file), 'utf8')
+    return [...sql.matchAll(/insert\s+into\s+exercises\b[^;]*;/gi)].flatMap((statement) =>
+      [...statement[0].matchAll(/\(\s*'([^']+)'\s*,\s*'/g)].map((row) => row[1]),
+    )
+  })
+
+describe('seeded exercise technique', () => {
+  it.each([
+    ['en', en],
+    ['pl', pl],
+  ])('has 3-4 non-empty cues in %s for every seeded slug', (_lang, resource) => {
+    const technique = (resource as { exerciseTechnique: Record<string, unknown> }).exerciseTechnique
+    const invalid = seededSlugs.filter((slug) => {
+      const cues = technique[slug]
+      return (
+        !Array.isArray(cues) ||
+        cues.length < 3 ||
+        cues.length > 4 ||
+        !cues.every((cue) => typeof cue === 'string' && cue.trim() !== '')
       )
     })
+    expect(invalid).toEqual([])
+  })
 
+  it.each([
+    ['en', en],
+    ['pl', pl],
+  ])('has no exerciseTechnique key in %s that is not a seeded slug', (_lang, resource) => {
+    const technique = (resource as { exerciseTechnique: Record<string, unknown> }).exerciseTechnique
+    expect(Object.keys(technique).filter((slug) => !seededSlugs.includes(slug))).toEqual([])
+  })
+})
+
+describe('seeded exercise names', () => {
   it('finds the seeded slugs in the migrations', () => {
     expect(seededSlugs.length).toBeGreaterThanOrEqual(40)
   })

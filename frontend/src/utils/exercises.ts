@@ -18,6 +18,20 @@ export function exerciseName({ slug, name }: NamedExercise): string {
   return i18n.exists(key) ? translate(key) : name
 }
 
+const translateObject = i18n.t.bind(i18n) as unknown as (key: string, options: { returnObjects: true }) => unknown
+
+/**
+ * Technique cues of a seeded exercise in the active language, or null when the slug has no
+ * `exerciseTechnique.<slug>` entry (custom exercises, slug `custom-<uuid>`).
+ * Reads the i18n instance at call time, so callers must re-render on language change.
+ */
+export function exerciseTechnique({ slug }: { slug: string }): string[] | null {
+  const key = `exerciseTechnique.${slug}`
+  if (!i18n.exists(key)) return null
+  const cues = translateObject(key, { returnObjects: true })
+  return Array.isArray(cues) && cues.every((cue) => typeof cue === 'string') ? cues : null
+}
+
 /** Returns a copy sorted alphabetically by display name under the active language's rules. */
 export function sortExercisesByName<T extends NamedExercise>(list: readonly T[]): T[] {
   return [...list].sort((a, b) => exerciseName(a).localeCompare(exerciseName(b), i18n.language))
