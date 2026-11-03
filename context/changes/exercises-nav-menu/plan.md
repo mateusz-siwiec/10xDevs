@@ -180,29 +180,29 @@ None; no schema or API changes. Old `/exercises` bookmarks now land on the list.
 
 #### Automated
 
-- [x] 1.1 Build passes
-- [x] 1.2 Lint passes
-- [x] 1.3 Token guard passes
-- [x] 1.4 Unit and locale tests pass
+- [x] 1.1 Build passes — d7de0db
+- [x] 1.2 Lint passes — d7de0db
+- [x] 1.3 Token guard passes — d7de0db
+- [x] 1.4 Unit and locale tests pass — d7de0db
 
 #### Manual
 
-- [x] 1.5 List shows built-in and custom exercises with Custom tag and actions
-- [x] 1.6 All / Mine and muscle filters combine; empty states work
-- [x] 1.7 Delete still asks for confirmation
+- [x] 1.5 List shows built-in and custom exercises with Custom tag and actions — d7de0db
+- [x] 1.6 All / Mine and muscle filters combine; empty states work — d7de0db
+- [x] 1.7 Delete still asks for confirmation — d7de0db
 
 ### Phase 2: Form page
 
 #### Automated
 
-- [ ] 2.1 Build, lint and token guard pass
-- [ ] 2.2 Unit and locale tests pass
+- [x] 2.1 Build, lint and token guard pass
+- [x] 2.2 Unit and locale tests pass
 
 #### Manual
 
-- [ ] 2.3 Add returns to the list with the new exercise
-- [ ] 2.4 Edit pre-fills, saves, and Cancel leaves it unchanged
-- [ ] 2.5 Bad id or built-in edit URL shows not-found
+- [x] 2.3 Add returns to the list with the new exercise
+- [x] 2.4 Edit pre-fills, saves, and Cancel leaves it unchanged
+- [x] 2.5 Bad id or built-in edit URL shows not-found
 
 ### Phase 3: Tests and strings
 

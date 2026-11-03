@@ -165,7 +165,6 @@
     "secondaryGroups": "Secondary muscle groups (optional)",
     "adding": "Adding…",
     "add": "Add exercise",
-    "yours": "Your exercises",
     "scopeLabel": "Show exercises",
     "scopeAll": "All",
     "scopeMine": "Mine",
@@ -182,6 +181,8 @@
     "editLabel": "Edit {{name}}",
     "deleteLabel": "Delete {{name}}",
     "editing": "Edit exercise",
+    "notFound": "Exercise not found",
+    "backToList": "Back to exercises",
     "deleteFailed": "Failed to delete exercise",
     "picker": {
       "label": "Exercise",

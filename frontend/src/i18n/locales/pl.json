@@ -173,7 +173,6 @@
     "secondaryGroups": "Dodatkowe partie mięśniowe (opcjonalnie)",
     "adding": "Dodawanie…",
     "add": "Dodaj ćwiczenie",
-    "yours": "Twoje ćwiczenia",
     "scopeLabel": "Pokaż ćwiczenia",
     "scopeAll": "Wszystkie",
     "scopeMine": "Moje",
@@ -190,6 +189,8 @@
     "editLabel": "Edytuj: {{name}}",
     "deleteLabel": "Usuń: {{name}}",
     "editing": "Edycja ćwiczenia",
+    "notFound": "Nie znaleziono ćwiczenia",
+    "backToList": "Wróć do ćwiczeń",
     "deleteFailed": "Nie udało się usunąć ćwiczenia",
     "picker": {
       "label": "Ćwiczenie",
