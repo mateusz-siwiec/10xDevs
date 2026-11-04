@@ -1,7 +1,7 @@
 ---
 change_id: exercise-muscle-maps
 title: Muscle maps and finer back muscle groups
-status: implementing
+status: implemented
 created: 2026-11-03
 updated: 2026-11-04
 archived_at: null

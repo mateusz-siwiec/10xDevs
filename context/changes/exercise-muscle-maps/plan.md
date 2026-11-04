@@ -411,15 +411,15 @@ The figure is a small inline SVG rendered only while the panel is open, so there
 
 #### Automated
 
-- [x] 5.1 Playwright specs pass (Postgres running, `CI` unset): `npm run test:e2e`
-- [x] 5.2 Backend tests pass: `./mvnw test`
-- [x] 5.3 Unit tests pass: `npm test`
-- [x] 5.4 Build passes: `npm run build`
-- [x] 5.5 Lint passes: `npm run lint`
-- [x] 5.6 No hard-coded values: `npm run check:tokens`
+- [x] 5.1 Playwright specs pass (Postgres running, `CI` unset): `npm run test:e2e` — dc88e97
+- [x] 5.2 Backend tests pass: `./mvnw test` — dc88e97
+- [x] 5.3 Unit tests pass: `npm test` — dc88e97
+- [x] 5.4 Build passes: `npm run build` — dc88e97
+- [x] 5.5 Lint passes: `npm run lint` — dc88e97
+- [x] 5.6 No hard-coded values: `npm run check:tokens` — dc88e97
 
 #### Manual
 
-- [x] 5.7 Hover, keyboard focus and tap still open and close the panel as before
-- [x] 5.8 No visual regression in the exercises list row layout, workout screen or substitutes panel
+- [x] 5.7 Hover, keyboard focus and tap still open and close the panel as before — dc88e97
+- [x] 5.8 No visual regression in the exercises list row layout, workout screen or substitutes panel — dc88e97
 - [ ] 5.9 Deploy order confirmed (backend with V10 first, then frontend) and a Supabase backup or snapshot exists before the deploy
