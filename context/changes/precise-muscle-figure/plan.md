@@ -264,33 +264,33 @@ None. No schema, API or stored data changes. Rollback is reverting the commit (t
 
 #### Automated
 
-- [x] 2.1 Unit tests pass: `npm test`
-- [x] 2.2 Type check and build pass: `npm run build`
-- [x] 2.3 Lint passes: `npm run lint`
-- [x] 2.4 No hard-coded values: `npm run check:tokens`
-- [x] 2.5 No leftover reference to the old data: `grep -rn "muscleRegions\|react-body-highlighter" src ../THIRD_PARTY_NOTICES.md` returns nothing
+- [x] 2.1 Unit tests pass: `npm test` — efdd78c
+- [x] 2.2 Type check and build pass: `npm run build` — efdd78c
+- [x] 2.3 Lint passes: `npm run lint` — efdd78c
+- [x] 2.4 No hard-coded values: `npm run check:tokens` — efdd78c
+- [x] 2.5 No leftover reference to the old data: `grep -rn "muscleRegions\|react-body-highlighter" src ../THIRD_PARTY_NOTICES.md` returns nothing — efdd78c
 
 #### Manual
 
-- [x] 2.6 List, workout picker and substitutes panel show the new figure for a built-in exercise, and a map-only panel for a custom one
-- [x] 2.7 The panel does not visibly jump in size when the figure appears and stays inside the viewport on a 390px-wide screen
-- [x] 2.8 Light and dark themes look right; Polish and English legends are correct
-- [x] 2.9 All 14 groups highlight the expected area (temporary preview grid)
+- [x] 2.6 List, workout picker and substitutes panel show the new figure for a built-in exercise, and a map-only panel for a custom one — efdd78c
+- [x] 2.7 The panel does not visibly jump in size when the figure appears and stays inside the viewport on a 390px-wide screen — efdd78c
+- [x] 2.8 Light and dark themes look right; Polish and English legends are correct — efdd78c
+- [x] 2.9 All 14 groups highlight the expected area (temporary preview grid) — efdd78c
 
 ### Phase 3: Playwright and verification
 
 #### Automated
 
-- [ ] 3.1 Playwright suite passes (Postgres and servers available, `CI` unset): `npm run test:e2e`
-- [ ] 3.2 Backend tests pass: `./mvnw test`
-- [ ] 3.3 Unit tests pass: `npm test`
-- [ ] 3.4 Build passes and emits a separate figure chunk with the main bundle not growing by more than 1 KB gzipped: `npm run build`
-- [ ] 3.5 Lint passes: `npm run lint`
-- [ ] 3.6 No hard-coded values: `npm run check:tokens`
-- [ ] 3.7 No preview leftovers: `git status --porcelain` lists none of the four temporary files
+- [x] 3.1 Playwright suite passes (Postgres and servers available, `CI` unset): `npm run test:e2e`
+- [x] 3.2 Backend tests pass: `./mvnw test`
+- [x] 3.3 Unit tests pass: `npm test`
+- [x] 3.4 Build passes and emits a separate figure chunk with the main bundle not growing by more than 1 KB gzipped: `npm run build`
+- [x] 3.5 Lint passes: `npm run lint`
+- [x] 3.6 No hard-coded values: `npm run check:tokens`
+- [x] 3.7 No preview leftovers: `git status --porcelain` lists none of the four temporary files
 
 #### Manual
 
-- [ ] 3.8 Hover, keyboard focus and tap still open and close the panel as before
-- [ ] 3.9 With the network throttled the first open shows the placeholder briefly, then the figure; later opens are instant
+- [x] 3.8 Hover, keyboard focus and tap still open and close the panel as before
+- [x] 3.9 With the network throttled the first open shows the placeholder briefly, then the figure; later opens are instant
 - [ ] 3.10 Linux CI passes, including the `workout-mobile-dark` baseline unchanged

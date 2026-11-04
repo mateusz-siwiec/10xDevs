@@ -57,6 +57,28 @@ test('Barbell Row highlights its primary and secondary groups and leaves the che
   await expect(panel.locator('.technique-list')).toBeVisible()
 })
 
+test('a failed figure load keeps the panel, legend and cues and draws no figure', async ({ page, request }) => {
+  const user = await registerViaApi(request, 'mmap-blocked')
+  // Dev serves /src/components/MuscleFigure.tsx, the build a MuscleFigure-<hash>.js chunk. Registered before any
+  // panel opens: the module is cached after its first successful load.
+  await page.route('**/MuscleFigure*', (route) => route.abort())
+  await openList(page, user)
+
+  const item = row(page, 'Barbell Row')
+  await item.getByRole('button', { name: 'How to do Barbell Row' }).click()
+  const panel = item.getByRole('tooltip')
+  await expect(panel).toBeVisible()
+  await expect(panel).toContainText('Muscles worked')
+  await expect(panel.locator('.muscle-legend')).toBeVisible()
+  await expect(panel).toContainText('Primary')
+  await expect(panel).toContainText('Secondary')
+  await expect(panel.locator('.technique-list li').first()).toBeVisible()
+  expect(await panel.locator('.technique-list li').count()).toBeGreaterThanOrEqual(3)
+  await expect(panel.locator('[data-muscle]')).toHaveCount(0)
+  await expect(page.getByRole('heading', { name: 'Exercises' })).toBeVisible()
+  await expect(item).toBeVisible()
+})
+
 test('a custom exercise shows its muscle map and no technique cues', async ({ page, request }) => {
   const user = await registerViaApi(request, 'mmap-custom')
   const name = `Map Custom ${Date.now()}`
