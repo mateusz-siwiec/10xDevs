@@ -1,14 +1,14 @@
 # Third-party notices
 
-## react-body-highlighter
+## @musclemap/assets
 
-The body figure polygons in `frontend/src/components/muscleRegions.ts` are adapted from
-[react-body-highlighter](https://github.com/GV79/react-body-highlighter) 2.0.5, distributed under the MIT License:
+The body figure paths in `frontend/src/components/muscleFigureData.ts` are adapted from
+[@musclemap/assets](https://github.com/Jsplice/MuscleMap) 1.1.0, distributed under the MIT License:
 
 ```
 MIT License
 
-Copyright (c) 2020 GV79
+Copyright (c) 2026 Jsplice / MuscleMap contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
