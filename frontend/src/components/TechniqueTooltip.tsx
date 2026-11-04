@@ -12,6 +12,9 @@ interface TechniqueTooltipProps {
 /** Minimum gap kept between the panel and the viewport edge, in px (1rem at the default font size). */
 const EDGE_GAP = 16
 
+/** Must match the phone breakpoint of the bottom-sheet layout in page.css. */
+const PHONE_QUERY = '(max-width: 40rem)'
+
 /**
  * Info button that reveals the form cues for an exercise. Opens on hover and keyboard focus, toggles on tap/click;
  * closes on Escape (focus returns to the button), outside mousedown or focus leaving. Shows the muscle map and, for
@@ -43,6 +46,21 @@ export default function TechniqueTooltip({ exercise }: TechniqueTooltipProps) {
     return () => {
       document.removeEventListener('mousedown', onMouseDown)
       document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [open])
+
+  // On phones the open panel is a bottom sheet over a dimmed backdrop: lock page scrolling so the user can't lose
+  // track of which exercise it belongs to (the title in the sheet names it).
+  useEffect(() => {
+    if (!open || !window.matchMedia(PHONE_QUERY).matches) return
+    const { overflow, paddingRight } = document.body.style
+    // Hiding the page scrollbar would widen the layout and make the page jump; pad by its width to keep it put.
+    const scrollbar = window.innerWidth - document.documentElement.clientWidth
+    document.body.style.overflow = 'hidden'
+    if (scrollbar > 0) document.body.style.paddingRight = `${scrollbar}px`
+    return () => {
+      document.body.style.overflow = overflow
+      document.body.style.paddingRight = paddingRight
     }
   }, [open])
 
@@ -88,7 +106,9 @@ export default function TechniqueTooltip({ exercise }: TechniqueTooltipProps) {
   }
 
   function onPointerEnter(event: PointerEvent) {
-    if (event.pointerType !== 'touch') setOpen(true)
+    // In the phone layout the panel is a modal sheet whose backdrop covers the trigger, so hovering must not open it
+    // (the next click would land on the backdrop and close it again): there it opens on click/tap only.
+    if (event.pointerType !== 'touch' && !window.matchMedia(PHONE_QUERY).matches) setOpen(true)
   }
 
   function onPointerLeave(event: PointerEvent) {
@@ -152,6 +172,7 @@ export default function TechniqueTooltip({ exercise }: TechniqueTooltipProps) {
           <path d="M8 4.75h.01" />
         </svg>
       </button>
+      {open && <span className="technique-backdrop" aria-hidden="true" onClick={() => setOpen(false)} />}
       {open && (
         <div
           id={panelId}
@@ -160,6 +181,20 @@ export default function TechniqueTooltip({ exercise }: TechniqueTooltipProps) {
           className="technique-panel"
           style={shift ? { left: `${shift}px` } : undefined}
         >
+          <div className="technique-panel-head">
+            <span className="technique-panel-title">{exerciseName(exercise)}</span>
+            <button
+              type="button"
+              className="technique-close"
+              aria-label={t('exercises.closeInfo')}
+              onClick={() => {
+                setOpen(false)
+                buttonRef.current?.focus()
+              }}
+            >
+              ×
+            </button>
+          </div>
           {exercise.primaryMuscleGroup && (
             <>
               <p className="technique-heading">{t('exercises.musclesHeading')}</p>

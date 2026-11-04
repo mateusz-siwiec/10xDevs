@@ -201,6 +201,7 @@
     "techniqueLabel": "How to do {{name}}",
     "techniqueHeading": "Proper technique",
     "musclesHeading": "Muscles worked",
+    "closeInfo": "Close",
     "musclePrimary": "Primary",
     "muscleSecondary": "Secondary",
     "musclesLabel": "Muscles worked: {{name}}",

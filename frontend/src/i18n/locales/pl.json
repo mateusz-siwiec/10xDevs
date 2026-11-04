@@ -211,6 +211,7 @@
     "techniqueLabel": "Jak wykonać: {{name}}",
     "techniqueHeading": "Poprawna technika",
     "musclesHeading": "Pracujące mięśnie",
+    "closeInfo": "Zamknij",
     "musclePrimary": "Główne",
     "muscleSecondary": "Pomocnicze",
     "musclesLabel": "Mięśnie: {{name}}",
