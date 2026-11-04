@@ -328,6 +328,66 @@
   line-height: 1.2;
   white-space: nowrap;
   vertical-align: middle;
+.muscle-map {
+  margin-top: 0.5rem;
+}
+
+.muscle-map-figures {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.muscle-map-figures svg {
+  width: 7rem;
+  height: auto;
+}
+
+.muscle-region {
+  fill: var(--muscle-idle);
+  stroke: var(--bg);
+  stroke-width: 0.5;
+}
+
+.muscle-region[data-state='primary'] {
+  fill: var(--muscle-primary);
+}
+
+.muscle-region[data-state='secondary'] {
+  fill: var(--muscle-secondary);
+}
+
+.muscle-legend {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+}
+
+.muscle-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.muscle-swatch--primary,
+.muscle-swatch--secondary {
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.muscle-swatch--primary {
+  background: var(--muscle-primary);
+}
+
+.muscle-swatch--secondary {
+  background: var(--muscle-secondary);
+}
+
   color: var(--accent);
   background: var(--accent-bg);
   border: 1px solid var(--accent-border);

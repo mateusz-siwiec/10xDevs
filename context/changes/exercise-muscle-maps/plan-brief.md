@@ -26,7 +26,7 @@ Every exercise already has `primaryMuscleGroup` and `secondaryMuscleGroups` in t
 | Seed rule | Exempt LOWER_BACK, TRAPS, FOREARMS, OBLIQUES from the "3 primary exercises" test; new exercises later | Keeps this change free of new catalog content | Plan |
 | Placement | Inside the existing tooltip panel | Reuses open/close behaviour and all three placements | Plan |
 | Shading | Primary strong, secondary light, with legend | Uses data we already have and shows secondary muscles | Plan |
-| Figure source | Hand-drawn SVG, front + back | No licence risk, tiny, styled with tokens | Plan |
+| Figure source | Vendored polygons from react-body-highlighter (MIT, no npm dependency), front + back, mapped to our 14 groups | Hand-drawn attempts looked unnatural; the MIT figure has clean, non-overlapping muscles and the licence is recorded in THIRD_PARTY_NOTICES.md | Plan (changed in Phase 3) |
 | Custom tooltip | Map-only, trigger label "Muscles worked: …" | Custom exercises have muscle data; the label must not claim "How to do" | Plan |
 | Tests | Backend and unit tests, Playwright, no new screenshot baselines | Guards the remap and real screens without platform-specific baselines | Plan |
 
@@ -34,7 +34,7 @@ Every exercise already has `primaryMuscleGroup` and `secondaryMuscleGroups` in t
 
 **In scope:** V10 migration, `MuscleGroup` enum, backend tests, frontend group constants and labels, form/filter/stats alignment, `MuscleMap` component, colour tokens, tooltip integration, Playwright specs, `check:tokens` coverage.
 
-**Out of scope:** splitting shoulders or core, new built-in exercises, roll-up to a coarse "back", name-based guessing for custom exercises, images/GIFs/video, imported anatomy SVG, list thumbnails, visual baselines, a down migration.
+**Out of scope:** splitting shoulders or core, new built-in exercises, roll-up to a coarse "back", name-based guessing for custom exercises, images/GIFs/video, list thumbnails, visual baselines, a down migration.
 
 ## Architecture / Approach
 
@@ -46,7 +46,7 @@ Land the data change first (migration, enum, backend tests), then align the fron
 | --- | --- | --- |
 | 1. Data and backend | V10 remap (BACK and CORE splits), new enum, updated backend tests | Production migration; custom BACK defaults to LATS |
 | 2. Frontend groups | 14 groups in constants, labels (pl/en), form, filter, stats, e2e fixes | Stats chart and filter layout with 4 more groups |
-| 3. Muscle map and tokens | `MuscleMap` SVG, tokens, CSS, unit tests | A hand-drawn figure that is hard to read at small size |
+| 3. Muscle map and tokens | `MuscleMap` SVG, tokens, CSS, unit tests | Figure legibility at small size; third-party licence notice must stay in the repo |
 | 4. Tooltip integration | Map in the panel, map-only for custom exercises | Panel overflow on 390px screens; row layout with new triggers |
 | 5. Playwright and verification | Updated and new specs, full sweep, deploy checks | Old spec asserted "no trigger for custom" |
 
@@ -58,7 +58,7 @@ Land the data change first (migration, enum, backend tests), then align the fron
 - V10 runs on production at deploy and Flyway cannot undo it; a backup is the rollback. Deploy backend then frontend right after, because an old frontend sending `BACK` gets a 400.
 - Deadlift becomes primary LOWER_BACK with no built-in substitutes; the Traps, Forearms and Obliques filters show no built-in results until a follow-up adds exercises.
 - Custom exercises that really were lower back or traps become LATS until edited; custom CORE exercises become ABS.
-- Drawing a readable 14-group silhouette by hand is the main craft risk and may take a couple of iterations.
+- The figure is third-party (MIT) data: angular low-poly style with no hands or feet, and `THIRD_PARTY_NOTICES.md` must be kept.
 - Assumes all three tooltip call sites already pass full `Exercise` objects; confirmed from the code, to be confirmed by the type check.
 
 ## Success Criteria (Summary)

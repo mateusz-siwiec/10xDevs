@@ -32,7 +32,7 @@ The 14 muscle groups are available in the API, the form, the list filter and the
 - Adding new built-in exercises (shrugs, back extension, wrist curls); a follow-up change can fill the new groups.
 - A roll-up from fine groups to a coarse "back" for substitutes or stats.
 - Guessing custom exercises' new groups from their names.
-- Per-exercise image files, GIFs/video, an imported anatomy SVG, list-row thumbnails, or a second info button.
+- Per-exercise image files, GIFs/video, list-row thumbnails, or a second info button. (The hand-drawn figure was replaced during Phase 3 by vendored MIT-licensed polygons from react-body-highlighter, with the licence kept in `THIRD_PARTY_NOTICES.md`; user-approved deviation, see change.md.)
 - New Playwright visual-regression baselines.
 - A down migration (Flyway Community has none; rollback is a restore or a forward fix).
 
@@ -364,31 +364,31 @@ The figure is a small inline SVG rendered only while the panel is open, so there
 
 #### Automated
 
-- [x] 2.1 Unit tests pass: `npm test`
-- [x] 2.2 Type check and build pass: `npm run build`
-- [x] 2.3 Lint passes: `npm run lint`
-- [x] 2.4 No hard-coded values: `npm run check:tokens`
-- [x] 2.5 Updated specs pass (Postgres running): `npx playwright test e2e/muscle-group-stats.spec.ts e2e/exercises-list.spec.ts e2e/workout-ui.spec.ts`
+- [x] 2.1 Unit tests pass: `npm test` — fbe2371
+- [x] 2.2 Type check and build pass: `npm run build` — fbe2371
+- [x] 2.3 Lint passes: `npm run lint` — fbe2371
+- [x] 2.4 No hard-coded values: `npm run check:tokens` — fbe2371
+- [x] 2.5 Updated specs pass (Postgres running): `npx playwright test e2e/muscle-group-stats.spec.ts e2e/exercises-list.spec.ts e2e/workout-ui.spec.ts` — fbe2371
 
 #### Manual
 
-- [x] 2.6 The create form offers all 14 groups and a custom exercise can be saved with TRAPS or FOREARMS
-- [x] 2.7 The list filter shows 14 groups and Lats lists Barbell Row, Lat Pulldown and Pull-Up
-- [x] 2.8 The stats page shows 14 bars in both languages without layout problems
+- [x] 2.6 The create form offers all 14 groups and a custom exercise can be saved with TRAPS or FOREARMS — fbe2371
+- [x] 2.7 The list filter shows 14 groups and Lats lists Barbell Row, Lat Pulldown and Pull-Up — fbe2371
+- [x] 2.8 The stats page shows 14 bars in both languages without layout problems — fbe2371
 
 ### Phase 3: Muscle map component and tokens
 
 #### Automated
 
-- [ ] 3.1 Unit tests pass: `npm test`
-- [ ] 3.2 Type check and build pass: `npm run build`
-- [ ] 3.3 Lint passes: `npm run lint`
-- [ ] 3.4 No hard-coded values: `npm run check:tokens`
+- [x] 3.1 Unit tests pass: `npm test`
+- [x] 3.2 Type check and build pass: `npm run build`
+- [x] 3.3 Lint passes: `npm run lint`
+- [x] 3.4 No hard-coded values: `npm run check:tokens`
 
 #### Manual
 
-- [ ] 3.5 The figure reads as a front and back body and all 14 groups are distinguishable
-- [ ] 3.6 Primary and secondary shades are distinguishable in light and dark themes
+- [x] 3.5 The figure reads as a front and back body and all 14 groups are distinguishable
+- [x] 3.6 Primary and secondary shades are distinguishable in light and dark themes
 
 ### Phase 4: Tooltip integration
 

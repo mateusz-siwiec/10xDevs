@@ -18,6 +18,8 @@ Values live in `frontend/src/index.css`.
 | `--radius` | 8px | 8px |
 | `--radius-card` | 12px | 12px |
 
+Muscle map aliases (in `:root`, resolve per theme): `--muscle-primary` = `var(--accent)`, `--muscle-secondary` = `var(--accent-border)`, `--muscle-idle` = `var(--border)`.
+
 Chart aliases (in `:root`, resolve per theme): `--chart-tick` = `var(--text)`, `--chart-grid` = `var(--border)`, `--chart-tooltip-bg` = `var(--bg)`, `--chart-tooltip-border` = `var(--border)`, `--chart-bar` = `var(--accent)`.
 
 ## Contrast (WCAG, computed)
