@@ -313,6 +313,28 @@
   height: 0.25rem;
 }
 
+/* Phones: pin the panel to the viewport so it can never widen or lengthen the page (which made the screen drift while
+   scrolling). The inline `left` shift from TechniqueTooltip only matters for the absolute layout, hence !important. */
+@media (max-width: 40rem) {
+  .technique-panel {
+    position: fixed;
+    top: auto;
+    right: 1rem;
+    bottom: 1rem;
+    left: 1rem !important;
+    width: auto;
+    max-width: none;
+    max-height: calc(100dvh - 2rem);
+    margin-top: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .technique-panel::before {
+    display: none;
+  }
+}
+
 .technique-heading {
   margin: 0 0 0.35rem;
   font-weight: 600;
