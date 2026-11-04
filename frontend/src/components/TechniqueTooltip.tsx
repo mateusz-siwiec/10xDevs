@@ -1,10 +1,12 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import type { FocusEvent, PointerEvent } from 'react'
 import { useTranslation } from 'react-i18next'
+import type { Exercise } from '../api/client'
 import { exerciseName, exerciseTechnique } from '../utils/exercises'
+import MuscleMap from './MuscleMap'
 
 interface TechniqueTooltipProps {
-  exercise: { slug: string; name: string }
+  exercise: Pick<Exercise, 'slug' | 'name' | 'primaryMuscleGroup' | 'secondaryMuscleGroups'>
 }
 
 /** Minimum gap kept between the panel and the viewport edge, in px (1rem at the default font size). */
@@ -12,8 +14,8 @@ const EDGE_GAP = 16
 
 /**
  * Info button that reveals the form cues for an exercise. Opens on hover and keyboard focus, toggles on tap/click;
- * closes on Escape (focus returns to the button), outside mousedown or focus leaving. Renders nothing for exercises
- * without technique content.
+ * closes on Escape (focus returns to the button), outside mousedown or focus leaving. Shows the muscle map and, for
+ * seeded exercises, the cues; renders nothing when there is neither.
  */
 export default function TechniqueTooltip({ exercise }: TechniqueTooltipProps) {
   const { t } = useTranslation()
@@ -58,7 +60,7 @@ export default function TechniqueTooltip({ exercise }: TechniqueTooltipProps) {
   }, [open])
 
   const cues = exerciseTechnique(exercise)
-  if (!cues) return null
+  if (!cues && !exercise.primaryMuscleGroup) return null
 
   function onFocus(event: FocusEvent) {
     // Only keyboard focus opens it; a tap or click also focuses the button and then toggles via onClick.
@@ -101,7 +103,11 @@ export default function TechniqueTooltip({ exercise }: TechniqueTooltipProps) {
         type="button"
         ref={buttonRef}
         className="technique-trigger"
-        aria-label={t('exercises.techniqueLabel', { name: exerciseName(exercise) })}
+        aria-label={
+          cues
+            ? t('exercises.techniqueLabel', { name: exerciseName(exercise) })
+            : t('exercises.musclesLabel', { name: exerciseName(exercise) })
+        }
         aria-expanded={open}
         aria-describedby={open ? panelId : undefined}
         onPointerDown={(event) => {
@@ -134,12 +140,22 @@ export default function TechniqueTooltip({ exercise }: TechniqueTooltipProps) {
           className="technique-panel"
           style={shift ? { left: `${shift}px` } : undefined}
         >
-          <p className="technique-heading">{t('exercises.techniqueHeading')}</p>
-          <ul className="technique-list">
-            {cues.map((cue) => (
-              <li key={cue}>{cue}</li>
-            ))}
-          </ul>
+          {exercise.primaryMuscleGroup && (
+            <>
+              <p className="technique-heading">{t('exercises.musclesHeading')}</p>
+              <MuscleMap primary={exercise.primaryMuscleGroup} secondary={exercise.secondaryMuscleGroups} />
+            </>
+          )}
+          {cues && (
+            <div className={exercise.primaryMuscleGroup ? 'technique-cues' : undefined}>
+              <p className="technique-heading">{t('exercises.techniqueHeading')}</p>
+              <ul className="technique-list">
+                {cues.map((cue) => (
+                  <li key={cue}>{cue}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
     </span>

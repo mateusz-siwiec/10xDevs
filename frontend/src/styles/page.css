@@ -318,6 +318,10 @@
   margin-top: 0.25rem;
 }
 
+.technique-cues {
+  margin-top: 0.75rem;
+}
+
 .pr-badge,
 .badge {
   display: inline-block;

@@ -380,32 +380,32 @@ The figure is a small inline SVG rendered only while the panel is open, so there
 
 #### Automated
 
-- [x] 3.1 Unit tests pass: `npm test`
-- [x] 3.2 Type check and build pass: `npm run build`
-- [x] 3.3 Lint passes: `npm run lint`
-- [x] 3.4 No hard-coded values: `npm run check:tokens`
+- [x] 3.1 Unit tests pass: `npm test` — d7e51c2
+- [x] 3.2 Type check and build pass: `npm run build` — d7e51c2
+- [x] 3.3 Lint passes: `npm run lint` — d7e51c2
+- [x] 3.4 No hard-coded values: `npm run check:tokens` — d7e51c2
 
 #### Manual
 
-- [x] 3.5 The figure reads as a front and back body and all 14 groups are distinguishable
-- [x] 3.6 Primary and secondary shades are distinguishable in light and dark themes
+- [x] 3.5 The figure reads as a front and back body and all 14 groups are distinguishable — d7e51c2
+- [x] 3.6 Primary and secondary shades are distinguishable in light and dark themes — d7e51c2
 
 ### Phase 4: Tooltip integration
 
 #### Automated
 
-- [ ] 4.1 Unit tests pass: `npm test`
-- [ ] 4.2 Type check and build pass: `npm run build`
-- [ ] 4.3 Lint passes: `npm run lint`
-- [ ] 4.4 No hard-coded values (now scanning `MuscleMap.tsx`): `npm run check:tokens`
+- [x] 4.1 Unit tests pass: `npm test`
+- [x] 4.2 Type check and build pass: `npm run build`
+- [x] 4.3 Lint passes: `npm run lint`
+- [x] 4.4 No hard-coded values (now scanning `MuscleMap.tsx`): `npm run check:tokens`
 
 #### Manual
 
-- [ ] 4.5 List, workout picker area and substitutes panel show the map above the cues for a built-in exercise
-- [ ] 4.6 A custom exercise shows a trigger and a map-only panel in every place that lists it
-- [ ] 4.7 Switching language changes the legend, heading and aria-label
-- [ ] 4.8 The panel stays inside the viewport on a 390px-wide screen
-- [ ] 4.9 Dark theme looks right
+- [x] 4.5 List, workout picker area and substitutes panel show the map above the cues for a built-in exercise
+- [x] 4.6 A custom exercise shows a trigger and a map-only panel in every place that lists it
+- [x] 4.7 Switching language changes the legend, heading and aria-label
+- [x] 4.8 The panel stays inside the viewport on a 390px-wide screen
+- [x] 4.9 Dark theme looks right
 
 ### Phase 5: Playwright and verification
 
