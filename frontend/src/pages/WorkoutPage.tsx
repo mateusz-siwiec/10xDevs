@@ -24,6 +24,7 @@ import { loadRestDuration, saveRestDuration } from '../components/restDuration'
 import SessionSetList from '../components/SessionSetList'
 import SetLogger from '../components/SetLogger'
 import SubstituteSuggestions from '../components/SubstituteSuggestions'
+import TechniqueTooltip from '../components/TechniqueTooltip'
 import '../styles/page.css'
 import '../styles/workout.css'
 import { translateError } from '../utils/errors'
@@ -92,6 +93,7 @@ export default function WorkoutPage() {
   // Once every entry is done, stay on the last one so extra sets can still be logged.
   const autoId = progress && progress.length > 0 ? progress[autoIndex >= 0 ? autoIndex : progress.length - 1].entry.exerciseId : ''
   const selectedExercise = manual && manual.autoId === autoId ? manual.exerciseId : autoId
+  const selectedItem = selectedExercise ? exercisesById.get(selectedExercise) : undefined
   // Only skipped entries are left to do: the walkthrough has fallen back to the first of them.
   const showReturnHint =
     progress !== null &&
@@ -312,14 +314,17 @@ export default function WorkoutPage() {
                 selectedId={selectedExercise}
                 onChange={handleSelect}
               />
-              <button
-                type="button"
-                className="btn-secondary find-substitute-btn"
-                disabled={!selectedExercise}
-                onClick={() => setSubstituteFor(selectedExercise)}
-              >
-                {t('workout.findSubstitute')}
-              </button>
+              <div className="exercise-picker-actions">
+                {selectedItem && <TechniqueTooltip exercise={selectedItem} />}
+                <button
+                  type="button"
+                  className="btn-secondary find-substitute-btn"
+                  disabled={!selectedExercise}
+                  onClick={() => setSubstituteFor(selectedExercise)}
+                >
+                  {t('workout.findSubstitute')}
+                </button>
+              </div>
             </div>
             {selectedExercise && substituteFor === selectedExercise && (
               <SubstituteSuggestions

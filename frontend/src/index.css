@@ -18,6 +18,9 @@
   --chart-tooltip-bg: var(--bg);
   --chart-tooltip-border: var(--border);
   --chart-bar: var(--accent);
+  --muscle-primary: var(--accent);
+  --muscle-secondary: var(--accent-border);
+  --muscle-idle: var(--border);
   --social-bg: rgba(244, 243, 236, 0.5);
   --danger: #c0255d;
   --success: #1a7f37;

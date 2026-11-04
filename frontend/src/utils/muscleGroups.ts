@@ -2,15 +2,19 @@ import i18n from '../i18n'
 
 export const MUSCLE_GROUPS = [
   'CHEST',
-  'BACK',
+  'LATS',
+  'TRAPS',
+  'LOWER_BACK',
   'SHOULDERS',
   'BICEPS',
   'TRICEPS',
+  'FOREARMS',
   'QUADS',
   'HAMSTRINGS',
   'GLUTES',
   'CALVES',
-  'CORE',
+  'ABS',
+  'OBLIQUES',
 ] as const
 
 export type MuscleGroup = (typeof MUSCLE_GROUPS)[number]

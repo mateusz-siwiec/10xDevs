@@ -4,7 +4,10 @@ import { API, PASSWORD, auth, exerciseId, registerViaApi } from './helpers.js'
 import type { ApiUser } from './helpers.js'
 
 async function login(page: Page, user: ApiUser) {
-  await page.addInitScript(() => localStorage.setItem('gymtrack.lang', 'en'))
+  // Only seeds English when no language is stored yet, so a later switch to Polish survives reloads.
+  await page.addInitScript(() => {
+    if (!localStorage.getItem('gymtrack.lang')) localStorage.setItem('gymtrack.lang', 'en')
+  })
   await page.goto('/login')
   await page.getByLabel('Email').fill(user.email)
   await page.getByLabel('Password').fill(PASSWORD)
@@ -15,7 +18,7 @@ async function login(page: Page, user: ApiUser) {
 async function seedCustom(request: APIRequestContext, user: ApiUser, name: string) {
   const response = await request.post(`${API}/api/exercises`, {
     ...auth(user),
-    data: { name, primaryMuscleGroup: 'BICEPS', secondaryMuscleGroups: ['CORE'] },
+    data: { name, primaryMuscleGroup: 'BICEPS', secondaryMuscleGroups: ['ABS'] },
   })
   expect(response.ok()).toBe(true)
 }
@@ -24,10 +27,11 @@ function row(page: Page, name: string) {
   return page.getByRole('listitem').filter({ hasText: name })
 }
 
-async function openList(page: Page, user: ApiUser) {
+async function openList(page: Page, user: ApiUser, lang: 'en' | 'pl' = 'en') {
   await login(page, user)
+  if (lang === 'pl') await page.evaluate(() => localStorage.setItem('gymtrack.lang', 'pl'))
   await page.goto('/exercises')
-  await expect(page.getByRole('heading', { name: 'Exercises' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: lang === 'pl' ? 'Ćwiczenia' : 'Exercises' })).toBeVisible()
 }
 
 test('the list shows built-in and custom exercises, with a Custom tag on the custom one', async ({ page, request }) => {
@@ -59,8 +63,8 @@ test('Mine hides built-in exercises and the muscle filter matches primary or sec
   await expect(row(page, name)).toBeVisible()
   await expect(row(page, 'Barbell Bench Press')).toHaveCount(0)
 
-  // Secondary match: the custom exercise has CORE as a secondary group.
-  await page.getByLabel('Muscle group').selectOption('CORE')
+  // Secondary match: the custom exercise has ABS as a secondary group.
+  await page.getByLabel('Muscle group').selectOption('ABS')
   await expect(row(page, name)).toBeVisible()
   // Primary match.
   await page.getByLabel('Muscle group').selectOption('BICEPS')
@@ -91,7 +95,7 @@ test('an exercise can be added, edited and deleted from the list', async ({ page
   await expect(page).toHaveURL(/\/exercises\/new$/)
   await page.getByLabel('Name').fill(name)
   await page.getByLabel('Primary muscle group').selectOption('BICEPS')
-  await page.getByLabel('Core').check()
+  await page.getByLabel('Abs').check()
   await page.getByRole('button', { name: 'Add exercise' }).click()
 
   await expect(page).toHaveURL(/\/exercises$/)
@@ -282,6 +286,162 @@ test('creating an exercise with a name you already use shows an error and keeps 
   await expect(page).toHaveURL(/\/exercises\/new$/)
   await expect(page.getByLabel('Name')).toHaveValue(name)
   await expect(page.getByRole('button', { name: 'Add exercise' })).toBeEnabled()
+})
+
+test.describe('technique tooltip', () => {
+  const trigger = (page: Page) =>
+    row(page, 'Barbell Bench Press').getByRole('button', { name: 'How to do Barbell Bench Press' })
+
+  test('a built-in row opens its cues on hover and on click, and a custom row has a muscles-only trigger', async ({
+    page,
+    request,
+  }) => {
+    const user = await registerViaApi(request, 'extech-open')
+    const name = `Tech Curl ${Date.now()}`
+    await seedCustom(request, user, name)
+    await openList(page, user)
+
+    const button = trigger(page)
+    const panel = row(page, 'Barbell Bench Press').getByRole('tooltip')
+    await expect(button).toHaveAttribute('aria-expanded', 'false')
+    await expect(panel).toHaveCount(0)
+
+    await button.hover()
+    await expect(panel).toBeVisible()
+    await expect(panel).toContainText('Proper technique')
+    await expect(panel).toContainText('Lie back with your eyes under the bar')
+    await expect(button).toHaveAttribute('aria-expanded', 'true')
+
+    // Moving away closes it; a click then opens it.
+    await page.mouse.move(0, 0)
+    await expect(panel).toHaveCount(0)
+    await button.click()
+    await expect(panel).toBeVisible()
+
+    await expect(row(page, name)).toBeVisible()
+    await expect(row(page, name).getByRole('button', { name: /^How to do/ })).toHaveCount(0)
+    const customButton = row(page, name).getByRole('button', { name: `Muscles worked: ${name}` })
+    await expect(customButton).toBeVisible()
+    await customButton.click()
+    const customPanel = row(page, name).getByRole('tooltip')
+    await expect(customPanel).toBeVisible()
+    await expect(customPanel).toContainText('Muscles worked')
+    await expect(customPanel.locator('.technique-list')).toHaveCount(0)
+    await expect(customPanel).not.toContainText('Proper technique')
+  })
+
+  test('keyboard focus opens the cues, Escape closes them and returns focus to the trigger', async ({
+    page,
+    request,
+  }) => {
+    const user = await registerViaApi(request, 'extech-key')
+    await openList(page, user)
+
+    const button = trigger(page)
+    const panel = row(page, 'Barbell Bench Press').getByRole('tooltip')
+    await button.focus()
+    await page.keyboard.press('Shift+Tab')
+    await page.keyboard.press('Tab')
+    await expect(button).toBeFocused()
+    await expect(panel).toBeVisible()
+
+    await page.keyboard.press('Escape')
+    await expect(panel).toHaveCount(0)
+    await expect(button).toBeFocused()
+    await expect(button).toHaveAttribute('aria-expanded', 'false')
+  })
+
+  test('an outside click closes the cues', async ({ page, request }) => {
+    const user = await registerViaApi(request, 'extech-outside')
+    await openList(page, user)
+
+    const panel = row(page, 'Barbell Bench Press').getByRole('tooltip')
+    await trigger(page).click()
+    await expect(panel).toBeVisible()
+    await page.getByRole('heading', { name: 'Exercises', exact: true }).click()
+    await expect(panel).toHaveCount(0)
+  })
+
+  test('Enter on a focus-opened panel keeps it open, and tabbing away closes it', async ({ page, request }) => {
+    const user = await registerViaApi(request, 'extech-enter')
+    await openList(page, user)
+
+    const button = trigger(page)
+    const panel = row(page, 'Barbell Bench Press').getByRole('tooltip')
+    await button.focus()
+    await page.keyboard.press('Shift+Tab')
+    await page.keyboard.press('Tab')
+    await expect(panel).toBeVisible()
+
+    await page.keyboard.press('Enter')
+    await expect(panel).toBeVisible()
+    await expect(button).toHaveAttribute('aria-expanded', 'true')
+    await page.keyboard.press('Space')
+    await expect(panel).toBeVisible()
+
+    await page.keyboard.press('Tab')
+    await expect(button).not.toBeFocused()
+    await expect(panel).toHaveCount(0)
+  })
+
+  test('blurring to nowhere (no new focus target) closes a focus-opened panel', async ({ page, request }) => {
+    const user = await registerViaApi(request, 'extech-blur')
+    await openList(page, user)
+
+    const button = trigger(page)
+    const panel = row(page, 'Barbell Bench Press').getByRole('tooltip')
+    await button.focus()
+    await page.keyboard.press('Shift+Tab')
+    await page.keyboard.press('Tab')
+    await expect(panel).toBeVisible()
+
+    // blur() leaves no related target, like focus moving to the browser chrome or another window.
+    await button.evaluate((element) => (element as HTMLElement).blur())
+    await expect(panel).toHaveCount(0)
+  })
+
+  test('Escape on a hover-opened panel closes it without stealing focus', async ({ page, request }) => {
+    const user = await registerViaApi(request, 'extech-hoverkey')
+    await openList(page, user)
+
+    const select = page.getByLabel('Muscle group')
+    await select.focus()
+    const panel = row(page, 'Barbell Bench Press').getByRole('tooltip')
+    await trigger(page).hover()
+    await expect(panel).toBeVisible()
+    await expect(select).toBeFocused()
+
+    await page.keyboard.press('Escape')
+    await expect(panel).toHaveCount(0)
+    await expect(select).toBeFocused()
+  })
+
+  test('an outside click closes a keyboard-opened panel', async ({ page, request }) => {
+    const user = await registerViaApi(request, 'extech-kbdoutside')
+    await openList(page, user)
+
+    const panel = row(page, 'Barbell Bench Press').getByRole('tooltip')
+    await trigger(page).focus()
+    await page.keyboard.press('Shift+Tab')
+    await page.keyboard.press('Tab')
+    await expect(panel).toBeVisible()
+
+    await page.getByRole('heading', { name: 'Exercises', exact: true }).click()
+    await expect(panel).toHaveCount(0)
+  })
+
+  test('in Polish the label, heading and cues are translated', async ({ page, request }) => {
+    const user = await registerViaApi(request, 'extech-pl')
+    await openList(page, user, 'pl')
+
+    const button = page.getByRole('button', { name: /^Jak wykonać: / }).first()
+    await expect(button).toBeVisible()
+    await button.click()
+    const panel = page.getByRole('tooltip')
+    await expect(panel).toBeVisible()
+    await expect(panel).toContainText('Poprawna technika')
+    await expect(panel).not.toContainText('Proper technique')
+  })
 })
 
 test('on a phone Edit and Delete stay to the right of every row, however long the name is', async ({ page, request }) => {

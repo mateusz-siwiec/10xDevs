@@ -233,6 +233,165 @@
   outline-offset: 2px;
 }
 
+.technique-tooltip {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.technique-trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.125rem;
+  color: var(--text);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+/* Enlarges the touch target to 44px without growing the row. */
+.technique-trigger::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+}
+
+.technique-trigger:hover {
+  color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.technique-trigger:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.technique-trigger:disabled {
+  opacity: 0.6;
+  cursor: default;
+  color: var(--text);
+  background: transparent;
+}
+
+.technique-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 10;
+  width: max-content;
+  max-width: min(20rem, calc(100vw - 2rem));
+  margin-top: 0.25rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1.4;
+  text-align: left;
+  white-space: normal;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow);
+  box-sizing: border-box;
+}
+
+/* Bridges the visual gap above the panel so the pointer never leaves the component while moving onto it. */
+.technique-panel::before {
+  content: '';
+  position: absolute;
+  top: -0.25rem;
+  left: 0;
+  right: 0;
+  height: 0.25rem;
+}
+
+.technique-heading {
+  margin: 0 0 0.35rem;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.technique-list {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.technique-list li + li {
+  margin-top: 0.25rem;
+}
+
+.technique-cues {
+  margin-top: 0.75rem;
+}
+
+.muscle-map {
+  margin-top: 0.5rem;
+}
+
+.muscle-map-figures {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.muscle-map-figures svg {
+  width: 7rem;
+  height: auto;
+}
+
+.muscle-region {
+  fill: var(--muscle-idle);
+  stroke: var(--bg);
+  stroke-width: 0.5;
+}
+
+.muscle-region[data-state='primary'] {
+  fill: var(--muscle-primary);
+}
+
+.muscle-region[data-state='secondary'] {
+  fill: var(--muscle-secondary);
+}
+
+.muscle-legend {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+}
+
+.muscle-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.muscle-swatch--primary,
+.muscle-swatch--secondary {
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.muscle-swatch--primary {
+  background: var(--muscle-primary);
+}
+
+.muscle-swatch--secondary {
+  background: var(--muscle-secondary);
+}
+
 .pr-badge,
 .badge {
   display: inline-block;

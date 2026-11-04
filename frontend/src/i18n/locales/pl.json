@@ -201,6 +201,12 @@
       "label": "Ćwiczenie",
       "choose": "Wybierz ćwiczenie…"
     },
+    "techniqueLabel": "Jak wykonać: {{name}}",
+    "techniqueHeading": "Poprawna technika",
+    "musclesHeading": "Pracujące mięśnie",
+    "musclePrimary": "Główne",
+    "muscleSecondary": "Pomocnicze",
+    "musclesLabel": "Mięśnie: {{name}}",
     "barbell-bench-press": "Wyciskanie sztangi leżąc",
     "incline-dumbbell-press": "Wyciskanie hantli na ławce skośnej",
     "chest-fly": "Rozpiętki",
@@ -316,15 +322,19 @@
   },
   "muscle": {
     "CHEST": "Klatka piersiowa",
-    "BACK": "Plecy",
+    "LATS": "Najszersze grzbietu",
+    "TRAPS": "Kaptury",
+    "LOWER_BACK": "Dolny odcinek pleców",
     "SHOULDERS": "Barki",
     "BICEPS": "Biceps",
     "TRICEPS": "Triceps",
+    "FOREARMS": "Przedramiona",
     "QUADS": "Czworogłowe",
     "HAMSTRINGS": "Dwugłowe uda",
     "GLUTES": "Pośladki",
     "CALVES": "Łydki",
-    "CORE": "Brzuch"
+    "ABS": "Brzuch",
+    "OBLIQUES": "Mięśnie skośne"
   },
   "errors": {
     "REQUEST_FAILED": "Żądanie nie powiodło się (status {{status}}).",
@@ -371,5 +381,247 @@
       "reps": "Powtórzenia",
       "weightKg": "Ciężar"
     }
+  },
+  "exerciseTechnique": {
+    "barbell-bench-press": [
+      "Połóż się z oczami pod gryfem i stopami płasko na podłodze.",
+      "Ściągnij łopatki i utrzymuj je przyklejone do ławki.",
+      "Opuszczaj sztangę kontrolowanie do środka klatki, łokcie pod kątem ok. 45 stopni do tułowia.",
+      "Wyciskaj do pełnego wyprostu ramion, bez odbijania sztangi od klatki."
+    ],
+    "incline-dumbbell-press": [
+      "Ustaw ławkę pod kątem 30-45 stopni i oprzyj plecy mocno o oparcie.",
+      "Zacznij z hantlami na wysokości klatki, nadgarstki nad łokciami.",
+      "Wyciskaj w górę i lekko do środka, aż do wyprostu ramion.",
+      "Opuszczaj powoli, aż poczujesz rozciąganie w klatce piersiowej."
+    ],
+    "chest-fly": [
+      "Utrzymuj lekkie ugięcie łokci i nie zmieniaj go podczas ruchu.",
+      "Rozchylaj ramiona szeroko, aż poczujesz rozciąganie klatki piersiowej.",
+      "Zbliżaj ciężary łukiem, napinając klatkę piersiową.",
+      "Trzymaj łopatki ściągnięte i nie sięgaj po zbyt duży ciężar."
+    ],
+    "push-up": [
+      "Ustaw dłonie nieco szerzej niż barki i utrzymuj prostą linię od głowy do pięt.",
+      "Napnij brzuch i pośladki, aby biodra nie opadały.",
+      "Opuść klatkę tuż nad podłogę, łokcie pod kątem ok. 45 stopni.",
+      "Odepchnij się od podłogi do pełnego wyprostu ramion."
+    ],
+    "deadlift": [
+      "Stań ze sztangą nad środkiem stopy i chwyć ją tuż na zewnątrz nóg.",
+      "Przed ruchem utrzymaj neutralny kręgosłup, klatkę wypchniętą i napięte mięśnie najszersze grzbietu.",
+      "Odpychaj podłogę nogami, trzymając sztangę blisko ciała.",
+      "Wyprostuj się, napinając pośladki, i kontrolowanie opuść sztangę."
+    ],
+    "pull-up": [
+      "Chwyć drążek nieco szerzej niż barki i zawiśnij.",
+      "Zacznij od ściągnięcia łopatek w dół, potem prowadź łokcie do bioder.",
+      "Podciągaj się, aż broda znajdzie się nad drążkiem, bez bujania.",
+      "Opuszczaj się powoli do pełnego zwisu."
+    ],
+    "barbell-row": [
+      "Pochyl tułów w biodrach z prostymi plecami, ok. 45 stopni względem podłogi.",
+      "Chwyć sztangę tuż na zewnątrz kolan i pozwól jej zwisać na prostych ramionach.",
+      "Przyciągaj sztangę do dolnych żeber, prowadząc łokcie.",
+      "Opuszczaj kontrolowanie, bez zaokrąglania pleców i szarpania tułowiem."
+    ],
+    "lat-pulldown": [
+      "Usiądź z udami zablokowanymi pod wałkami i chwyć drążek nieco szerzej niż barki.",
+      "Odchyl się lekko do tyłu i trzymaj klatkę wypchniętą.",
+      "Przyciągnij drążek do górnej części klatki, prowadząc łokcie w dół i do tyłu.",
+      "Wracaj powoli do pełnego wyprostu ramion."
+    ],
+    "overhead-press": [
+      "Trzymaj sztangę na wysokości barków, chwyt tuż na zewnątrz barków.",
+      "Napnij pośladki i brzuch, aby nie wyginać dolnego odcinka pleców.",
+      "Wyciskaj sztangę pionowo w górę, lekko cofając głowę, by ją przepuścić.",
+      "Zablokuj ramiona nad głową ze sztangą nad środkiem stopy i kontrolowanie opuść."
+    ],
+    "lateral-raise": [
+      "Stań prosto, z lekko ugiętymi łokciami i hantlami przy bokach.",
+      "Unoś ramiona na boki do wysokości barków.",
+      "Prowadź ruch łokciami i nie unoś barków do uszu.",
+      "Opuszczaj powoli i nie rozhuśtuj ciała, aby podnieść ciężar."
+    ],
+    "face-pull": [
+      "Ustaw wyciąg na wysokości górnej części klatki lub twarzy i użyj linki.",
+      "Przyciągaj linkę do twarzy, rozchylając jej końce na boki.",
+      "Trzymaj łokcie wysoko i ściągaj łopatki.",
+      "Wracaj powoli, używaj lekkiego ciężaru i nie odchylaj się do tyłu."
+    ],
+    "arnold-press": [
+      "Zacznij z hantlami przed klatką, dłonie zwrócone do siebie.",
+      "Wyciskaj w górę, obracając dłonie do przodu.",
+      "Zakończ z prostymi ramionami nad głową, bez wyginania pleców.",
+      "Opuszczaj ciężary kontrolowanie, odwracając rotację dłoni."
+    ],
+    "barbell-curl": [
+      "Stań prosto z łokciami przyciśniętymi do boków.",
+      "Uginaj ramiona ze sztangą, pracując tylko w łokciach.",
+      "Napnij bicepsy w górnym punkcie, bez bujania tułowiem.",
+      "Opuszczaj powoli do pełnego wyprostu ramion."
+    ],
+    "dumbbell-curl": [
+      "Stań prosto z hantlem w każdej dłoni i łokciami blisko boków.",
+      "Uginaj ramiona, obracając dłonie w stronę barków.",
+      "Utrzymuj nieruchome ramiona i rozluźnione barki.",
+      "Opuszczaj powoli do pełnego rozciągnięcia."
+    ],
+    "hammer-curl": [
+      "Chwyć hantle tak, aby dłonie były zwrócone do siebie.",
+      "Trzymaj łokcie przy bokach przez cały ruch.",
+      "Uginaj ramiona bez skręcania nadgarstków.",
+      "Opuszczaj powoli i nie bujaj tułowiem."
+    ],
+    "preacher-curl": [
+      "Wyreguluj siedzisko tak, aby ramiona leżały płasko na modlitewniku.",
+      "Uginaj ramiona, nie odrywając łokci od oparcia.",
+      "Napnij mięsień na szczycie, potem opuszczaj powoli.",
+      "Nie prostuj ramion do końca, aby odciążyć łokcie."
+    ],
+    "triceps-pushdown": [
+      "Stań blisko wyciągu z łokciami przyciśniętymi do boków.",
+      "Dociskaj uchwyt w dół do pełnego wyprostu ramion.",
+      "Utrzymuj nieruchome ramiona, aby pracowały tylko przedramiona.",
+      "Wracaj powoli, aż przedramiona miną poziom równoległy do podłogi."
+    ],
+    "skull-crusher": [
+      "Połóż się na ławce z ramionami wyprostowanymi nad barkami.",
+      "Zginaj tylko łokcie, opuszczając ciężar w stronę czoła lub tuż za głowę.",
+      "Łokcie kieruj do przodu, nie rozchylaj ich na boki.",
+      "Prostuj ręce do góry, nie ruszając ramionami."
+    ],
+    "close-grip-bench-press": [
+      "Chwyć sztangę na szerokość barków, nie węziej.",
+      "Trzymaj łokcie blisko ciała podczas opuszczania sztangi.",
+      "Delikatnie dotknij dolnej części klatki, potem mocno wyciskaj w górę.",
+      "Utrzymuj proste nadgarstki i ściągnięte łopatki."
+    ],
+    "overhead-triceps-extension": [
+      "Trzymaj jeden hantel nad głową oburącz, łokcie skierowane do przodu.",
+      "Opuszczaj ciężar za głowę, zginając tylko łokcie.",
+      "Napnij brzuch i nie wyginaj pleców.",
+      "Prostuj ręce, wracając w górę do pełnego wyprostu."
+    ],
+    "back-squat": [
+      "Połóż sztangę na górnej części pleców i napnij brzuch przed zdjęciem ze stojaków.",
+      "Ustaw stopy na szerokość barków, palce lekko na zewnątrz.",
+      "Schodź w dół i do tyłu, kolana prowadź nad palcami, klatka wypchnięta.",
+      "Zejdź co najmniej do równoległości ud, potem wstań, dociskając całą stopę."
+    ],
+    "front-squat": [
+      "Oprzyj sztangę na przednich partiach barków z wysoko uniesionymi łokciami.",
+      "Utrzymuj pionowy tułów i napięty brzuch.",
+      "Schodź w dół, prowadząc kolana nad palcami.",
+      "Wstawaj, trzymając łokcie wysoko, aby sztanga nie osunęła się."
+    ],
+    "leg-press": [
+      "Ustaw stopy na szerokość barków na środku platformy.",
+      "Trzymaj dolny odcinek pleców i biodra płasko na oparciu.",
+      "Opuszczaj platformę, aż kolana osiągną ok. 90 stopni.",
+      "Wypychaj ciężar, nie blokując całkowicie kolan."
+    ],
+    "leg-extension": [
+      "Wyreguluj siedzisko tak, aby kolana były na wysokości osi maszyny.",
+      "Prostuj nogi do końca, napinając czworogłowe na szczycie.",
+      "Trzymaj biodra na siedzisku i nie rozhuśtuj ciężaru.",
+      "Opuszczaj powoli, nie pozwalając ciężarowi opaść."
+    ],
+    "romanian-deadlift": [
+      "Stań ze sztangą na wysokości bioder i lekko ugiętymi kolanami.",
+      "Wypychaj biodra do tyłu, trzymając sztangę blisko nóg.",
+      "Opuszczaj, aż poczujesz mocne rozciągnięcie dwugłowych, z prostymi plecami.",
+      "Wypchnij biodra do przodu i wyprostuj się."
+    ],
+    "lying-leg-curl": [
+      "Połóż się na brzuchu z wałkiem tuż nad piętami.",
+      "Uginaj nogi, przyciągając pięty do pośladków i nie unosząc bioder.",
+      "Napnij mięśnie dwugłowe na szczycie ruchu.",
+      "Opuszczaj powoli, aż nogi będą prawie wyprostowane."
+    ],
+    "good-morning": [
+      "Połóż sztangę na górnej części pleców i lekko ugnij kolana.",
+      "Wypchnij biodra do tyłu i pochyl się z prostymi plecami.",
+      "Opuszczaj tułów prawie do poziomu lub do wyczucia rozciągnięcia dwugłowych.",
+      "Wypchnij biodra do przodu i wstań, używając lekkiego ciężaru."
+    ],
+    "seated-leg-curl": [
+      "Wyreguluj maszynę tak, aby kolana były na wysokości osi, a wałek leżał nad piętami.",
+      "Uginaj nogi, przyciągając wałek w dół i do tyłu.",
+      "Trzymaj plecy przy oparciu i napnij mięśnie w dolnym punkcie.",
+      "Wracaj powoli i kontrolowanie."
+    ],
+    "hip-thrust": [
+      "Oprzyj górną część pleców o ławkę, sztanga leży na biodrach.",
+      "Ustaw stopy płasko na szerokość bioder, tak, by golenie były pionowo w górnym punkcie.",
+      "Odpychaj się piętami i napinaj pośladki, unosząc biodra.",
+      "Przyciągnij brodę i nie wyginaj nadmiernie odcinka lędźwiowego."
+    ],
+    "bulgarian-split-squat": [
+      "Oprzyj tylną stopę na ławce za sobą, a przednią wysuń do przodu.",
+      "Utrzymuj pionowy tułów i płasko ustawioną przednią stopę.",
+      "Opuszczaj się pionowo, aż przednie udo będzie w przybliżeniu równoległe do podłogi.",
+      "Wstań, odpychając się przednią piętą."
+    ],
+    "walking-lunge": [
+      "Zrób długi krok do przodu i utrzymuj pionowy tułów.",
+      "Opuść się, aż oba kolana będą ugięte pod kątem ok. 90 stopni.",
+      "Trzymaj przednie kolano nad kostką, nie pozwalając mu uciekać do środka.",
+      "Odepchnij się przednią stopą i przejdź do kolejnego wykroku."
+    ],
+    "glute-bridge": [
+      "Połóż się na plecach z ugiętymi kolanami i stopami płasko na podłodze.",
+      "Napnij brzuch i dociśnij pięty do podłogi.",
+      "Unieś biodra, aż ciało utworzy prostą linię od barków do kolan.",
+      "Napnij pośladki na szczycie, potem opuszczaj powoli."
+    ],
+    "standing-calf-raise": [
+      "Stań, opierając przednią część stóp na stopniu lub podwyższeniu.",
+      "Unieś się na palce tak wysoko, jak to możliwe.",
+      "Zatrzymaj się na chwilę na szczycie, napinając łydki.",
+      "Opuszczaj powoli, aż poczujesz pełne rozciągnięcie."
+    ],
+    "seated-calf-raise": [
+      "Usiądź z wałkami opartymi na dolnej części ud i przodem stóp na platformie.",
+      "Opuść pięty, aby w pełni rozciągnąć łydki.",
+      "Unieś się na palce tak wysoko, jak to możliwe.",
+      "Zatrzymaj się na szczycie i opuszczaj powoli."
+    ],
+    "donkey-calf-raise": [
+      "Pochyl się w biodrach, przód stóp oprzyj na podwyższeniu.",
+      "Trzymaj proste nogi i płaskie plecy.",
+      "Unieś się na palce tak wysoko, jak to możliwe.",
+      "Opuszczaj powoli do głębokiego rozciągnięcia."
+    ],
+    "leg-press-calf-raise": [
+      "Usiądź na suwnicy, opierając na dolnej krawędzi platformy tylko przód stóp.",
+      "Wyprostuj nogi, nie blokując całkowicie kolan.",
+      "Dociskaj platformę palcami tak daleko, jak to możliwe.",
+      "Opuszczaj powoli, aby poczuć pełne rozciągnięcie łydek."
+    ],
+    "plank": [
+      "Oprzyj przedramiona na podłodze, łokcie pod barkami.",
+      "Utrzymuj prostą linię od głowy do pięt.",
+      "Napnij brzuch i pośladki, aby biodra nie opadały ani nie unosiły się.",
+      "Oddychaj równomiernie i trzymaj szyję w neutralnej pozycji."
+    ],
+    "hanging-leg-raise": [
+      "Zawiśnij na drążku ze ściągniętymi barkami i nieruchomym ciałem.",
+      "Unoś nogi, podwijając miednicę, a nie tylko machając nogami.",
+      "Unieś nogi co najmniej do poziomu równoległego do podłogi.",
+      "Opuszczaj powoli, bez bujania."
+    ],
+    "cable-crunch": [
+      "Uklęknij pod wyciągiem górnym, trzymając linkę przy głowie.",
+      "Zwijaj tułów, przybliżając żebra do bioder.",
+      "Trzymaj biodra nieruchomo, nie siadaj na pięty.",
+      "Wracaj powoli, utrzymując napięcie w brzuchu."
+    ],
+    "ab-wheel-rollout": [
+      "Uklęknij z kółkiem pod barkami i napiętym brzuchem.",
+      "Rolluj kółko do przodu powoli, z płaskimi plecami.",
+      "Rozwijaj tylko tak daleko, by biodra nie opadały.",
+      "Przyciągnij kółko z powrotem, napinając mięśnie brzucha."
+    ]
   }
 }

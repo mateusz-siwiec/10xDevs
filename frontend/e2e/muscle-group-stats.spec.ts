@@ -5,7 +5,7 @@ import { API, PASSWORD, auth, exerciseIdByGroup, registerViaApi } from './helper
 test('the muscle group page, opened from the dashboard, shows sets per group', async ({ page, request }) => {
   const user = await registerViaApi(request, 'muscles')
   const chest = await exerciseIdByGroup(request, user, 'CHEST')
-  const back = await exerciseIdByGroup(request, user, 'BACK')
+  const back = await exerciseIdByGroup(request, user, 'LATS')
 
   const session = await request.post(`${API}/api/workout-sessions`, auth(user))
   const sessionId = (await session.json()).id
@@ -30,8 +30,8 @@ test('the muscle group page, opened from the dashboard, shows sets per group', a
   await expect(page.getByRole('heading', { name: 'Sets per muscle group' })).toBeVisible()
   await expect(page.getByText('5 sets in total')).toBeVisible()
   await expect(page.locator('.muscle-row', { hasText: 'Chest' })).toContainText('3')
-  await expect(page.locator('.muscle-row', { hasText: 'Back' })).toContainText('2')
-  await expect(page.locator('.muscle-row', { hasText: 'Core' })).toContainText('0')
+  await expect(page.locator('.muscle-row', { hasText: 'Lats' })).toContainText('2')
+  await expect(page.locator('.muscle-row', { hasText: 'Abs' })).toContainText('0')
 
   // Most-trained group is listed first.
   await expect(page.locator('.muscle-row').first()).toContainText('Chest')

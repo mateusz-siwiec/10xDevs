@@ -25,7 +25,7 @@ import type { ApiUser } from './helpers.js'
  */
 
 async function seedPlanSession(request: APIRequestContext, user: ApiUser) {
-  const groups = ['CHEST', 'BACK', 'QUADS']
+  const groups = ['CHEST', 'LATS', 'QUADS']
   const ids: string[] = []
   for (const group of groups) {
     ids.push(await exerciseIdByGroup(request, user, group))
