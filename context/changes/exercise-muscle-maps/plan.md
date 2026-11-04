@@ -394,32 +394,32 @@ The figure is a small inline SVG rendered only while the panel is open, so there
 
 #### Automated
 
-- [x] 4.1 Unit tests pass: `npm test`
-- [x] 4.2 Type check and build pass: `npm run build`
-- [x] 4.3 Lint passes: `npm run lint`
-- [x] 4.4 No hard-coded values (now scanning `MuscleMap.tsx`): `npm run check:tokens`
+- [x] 4.1 Unit tests pass: `npm test` — d3fc222
+- [x] 4.2 Type check and build pass: `npm run build` — d3fc222
+- [x] 4.3 Lint passes: `npm run lint` — d3fc222
+- [x] 4.4 No hard-coded values (now scanning `MuscleMap.tsx`): `npm run check:tokens` — d3fc222
 
 #### Manual
 
-- [x] 4.5 List, workout picker area and substitutes panel show the map above the cues for a built-in exercise
-- [x] 4.6 A custom exercise shows a trigger and a map-only panel in every place that lists it
-- [x] 4.7 Switching language changes the legend, heading and aria-label
-- [x] 4.8 The panel stays inside the viewport on a 390px-wide screen
-- [x] 4.9 Dark theme looks right
+- [x] 4.5 List, workout picker area and substitutes panel show the map above the cues for a built-in exercise — d3fc222
+- [x] 4.6 A custom exercise shows a trigger and a map-only panel in every place that lists it — d3fc222
+- [x] 4.7 Switching language changes the legend, heading and aria-label — d3fc222
+- [x] 4.8 The panel stays inside the viewport on a 390px-wide screen — d3fc222
+- [x] 4.9 Dark theme looks right — d3fc222
 
 ### Phase 5: Playwright and verification
 
 #### Automated
 
-- [ ] 5.1 Playwright specs pass (Postgres running, `CI` unset): `npm run test:e2e`
-- [ ] 5.2 Backend tests pass: `./mvnw test`
-- [ ] 5.3 Unit tests pass: `npm test`
-- [ ] 5.4 Build passes: `npm run build`
-- [ ] 5.5 Lint passes: `npm run lint`
-- [ ] 5.6 No hard-coded values: `npm run check:tokens`
+- [x] 5.1 Playwright specs pass (Postgres running, `CI` unset): `npm run test:e2e`
+- [x] 5.2 Backend tests pass: `./mvnw test`
+- [x] 5.3 Unit tests pass: `npm test`
+- [x] 5.4 Build passes: `npm run build`
+- [x] 5.5 Lint passes: `npm run lint`
+- [x] 5.6 No hard-coded values: `npm run check:tokens`
 
 #### Manual
 
-- [ ] 5.7 Hover, keyboard focus and tap still open and close the panel as before
-- [ ] 5.8 No visual regression in the exercises list row layout, workout screen or substitutes panel
+- [x] 5.7 Hover, keyboard focus and tap still open and close the panel as before
+- [x] 5.8 No visual regression in the exercises list row layout, workout screen or substitutes panel
 - [ ] 5.9 Deploy order confirmed (backend with V10 first, then frontend) and a Supabase backup or snapshot exists before the deploy

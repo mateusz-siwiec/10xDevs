@@ -20,7 +20,7 @@ async function startFreeForm(page: Page, request: APIRequestContext, user: ApiUs
   await expect(page.getByLabel('Exercise')).toBeVisible()
 }
 
-test('the picker-area trigger follows the selected exercise and disappears for a custom one', async ({
+test('the picker-area trigger follows the selected exercise and is muscles-only for a custom one', async ({
   page,
   request,
 }) => {
@@ -55,7 +55,14 @@ test('the picker-area trigger follows the selected exercise and disappears for a
 
   await page.getByLabel('Exercise').selectOption(customId)
   await expect(anyTrigger).toHaveCount(0)
-  await expect(page.getByRole('tooltip')).toHaveCount(0)
+  const customTrigger = page.getByRole('button', { name: `Muscles worked: ${custom}` })
+  await expect(customTrigger).toBeVisible()
+  // The tooltip stays mounted across the switch, so the panel opened for the previous exercise may still be open;
+  // clicking with a mouse keeps it open. Either way it must now show the custom exercise's map and no built-in cues.
+  await customTrigger.click()
+  await expect(page.getByRole('tooltip')).toBeVisible()
+  await expect(page.getByRole('tooltip')).not.toContainText('Proper technique')
+  await expect(page.getByRole('tooltip').locator('.technique-list')).toHaveCount(0)
 })
 
 test('substitute suggestions expose the trigger for built-in exercises', async ({ page, request }) => {

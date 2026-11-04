@@ -292,7 +292,7 @@ test.describe('technique tooltip', () => {
   const trigger = (page: Page) =>
     row(page, 'Barbell Bench Press').getByRole('button', { name: 'How to do Barbell Bench Press' })
 
-  test('a built-in row opens its cues on hover and on click, and a custom row has no trigger', async ({
+  test('a built-in row opens its cues on hover and on click, and a custom row has a muscles-only trigger', async ({
     page,
     request,
   }) => {
@@ -320,6 +320,14 @@ test.describe('technique tooltip', () => {
 
     await expect(row(page, name)).toBeVisible()
     await expect(row(page, name).getByRole('button', { name: /^How to do/ })).toHaveCount(0)
+    const customButton = row(page, name).getByRole('button', { name: `Muscles worked: ${name}` })
+    await expect(customButton).toBeVisible()
+    await customButton.click()
+    const customPanel = row(page, name).getByRole('tooltip')
+    await expect(customPanel).toBeVisible()
+    await expect(customPanel).toContainText('Muscles worked')
+    await expect(customPanel.locator('.technique-list')).toHaveCount(0)
+    await expect(customPanel).not.toContainText('Proper technique')
   })
 
   test('keyboard focus opens the cues, Escape closes them and returns focus to the trigger', async ({
