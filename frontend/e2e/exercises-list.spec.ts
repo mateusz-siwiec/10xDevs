@@ -362,6 +362,74 @@ test.describe('technique tooltip', () => {
     await expect(panel).toHaveCount(0)
   })
 
+  test('Enter on a focus-opened panel keeps it open, and tabbing away closes it', async ({ page, request }) => {
+    const user = await registerViaApi(request, 'extech-enter')
+    await openList(page, user)
+
+    const button = trigger(page)
+    const panel = row(page, 'Barbell Bench Press').getByRole('tooltip')
+    await button.focus()
+    await page.keyboard.press('Shift+Tab')
+    await page.keyboard.press('Tab')
+    await expect(panel).toBeVisible()
+
+    await page.keyboard.press('Enter')
+    await expect(panel).toBeVisible()
+    await expect(button).toHaveAttribute('aria-expanded', 'true')
+    await page.keyboard.press('Space')
+    await expect(panel).toBeVisible()
+
+    await page.keyboard.press('Tab')
+    await expect(button).not.toBeFocused()
+    await expect(panel).toHaveCount(0)
+  })
+
+  test('blurring to nowhere (no new focus target) closes a focus-opened panel', async ({ page, request }) => {
+    const user = await registerViaApi(request, 'extech-blur')
+    await openList(page, user)
+
+    const button = trigger(page)
+    const panel = row(page, 'Barbell Bench Press').getByRole('tooltip')
+    await button.focus()
+    await page.keyboard.press('Shift+Tab')
+    await page.keyboard.press('Tab')
+    await expect(panel).toBeVisible()
+
+    // blur() leaves no related target, like focus moving to the browser chrome or another window.
+    await button.evaluate((element) => (element as HTMLElement).blur())
+    await expect(panel).toHaveCount(0)
+  })
+
+  test('Escape on a hover-opened panel closes it without stealing focus', async ({ page, request }) => {
+    const user = await registerViaApi(request, 'extech-hoverkey')
+    await openList(page, user)
+
+    const select = page.getByLabel('Muscle group')
+    await select.focus()
+    const panel = row(page, 'Barbell Bench Press').getByRole('tooltip')
+    await trigger(page).hover()
+    await expect(panel).toBeVisible()
+    await expect(select).toBeFocused()
+
+    await page.keyboard.press('Escape')
+    await expect(panel).toHaveCount(0)
+    await expect(select).toBeFocused()
+  })
+
+  test('an outside click closes a keyboard-opened panel', async ({ page, request }) => {
+    const user = await registerViaApi(request, 'extech-kbdoutside')
+    await openList(page, user)
+
+    const panel = row(page, 'Barbell Bench Press').getByRole('tooltip')
+    await trigger(page).focus()
+    await page.keyboard.press('Shift+Tab')
+    await page.keyboard.press('Tab')
+    await expect(panel).toBeVisible()
+
+    await page.getByRole('heading', { name: 'Exercises', exact: true }).click()
+    await expect(panel).toHaveCount(0)
+  })
+
   test('in Polish the label, heading and cues are translated', async ({ page, request }) => {
     const user = await registerViaApi(request, 'extech-pl')
     await openList(page, user, 'pl')

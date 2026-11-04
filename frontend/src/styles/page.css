@@ -248,7 +248,7 @@
   color: var(--text);
   background: transparent;
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--radius);
   cursor: pointer;
   transition: color 0.15s, background-color 0.15s;
 }
@@ -303,6 +303,16 @@
   box-sizing: border-box;
 }
 
+/* Bridges the visual gap above the panel so the pointer never leaves the component while moving onto it. */
+.technique-panel::before {
+  content: '';
+  position: absolute;
+  top: -0.25rem;
+  left: 0;
+  right: 0;
+  height: 0.25rem;
+}
+
 .technique-heading {
   margin: 0 0 0.35rem;
   font-weight: 600;
@@ -322,16 +332,6 @@
   margin-top: 0.75rem;
 }
 
-.pr-badge,
-.badge {
-  display: inline-block;
-  margin-left: 0.5rem;
-  padding: 0.1rem 0.4rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  line-height: 1.2;
-  white-space: nowrap;
-  vertical-align: middle;
 .muscle-map {
   margin-top: 0.5rem;
 }
@@ -392,6 +392,16 @@
   background: var(--muscle-secondary);
 }
 
+.pr-badge,
+.badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.1rem 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  vertical-align: middle;
   color: var(--accent);
   background: var(--accent-bg);
   border: 1px solid var(--accent-border);

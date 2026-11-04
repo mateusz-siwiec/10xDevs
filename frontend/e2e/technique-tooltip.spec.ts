@@ -81,6 +81,10 @@ test('substitute suggestions expose the trigger for built-in exercises', async (
   await triggers.first().click()
   await expect(panel.getByRole('tooltip')).toBeVisible()
   await expect(panel.getByRole('tooltip')).toContainText('Proper technique')
+  // The cue list itself is rendered (3-4 cues), not just the heading.
+  const cues = panel.getByRole('tooltip').locator('li')
+  await expect(cues.first()).not.toBeEmpty()
+  expect(await cues.count()).toBeGreaterThanOrEqual(3)
 })
 
 test.describe('touch', () => {

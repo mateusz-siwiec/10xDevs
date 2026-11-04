@@ -409,7 +409,7 @@
     ],
     "deadlift": [
       "Stań ze sztangą nad środkiem stopy i chwyć ją tuż na zewnątrz nóg.",
-      "Przed ruchem utrzymaj neutralny kręgosłup, klatkę wypchniętą i napięte plecy.",
+      "Przed ruchem utrzymaj neutralny kręgosłup, klatkę wypchniętą i napięte mięśnie najszersze grzbietu.",
       "Odpychaj podłogę nogami, trzymając sztangę blisko ciała.",
       "Wyprostuj się, napinając pośladki, i kontrolowanie opuść sztangę."
     ],
@@ -489,7 +489,7 @@
       "Połóż się na ławce z ramionami wyprostowanymi nad barkami.",
       "Zginaj tylko łokcie, opuszczając ciężar w stronę czoła lub tuż za głowę.",
       "Łokcie kieruj do przodu, nie rozchylaj ich na boki.",
-      "Prostuj ramiona do góry, nie poruszając ramionami."
+      "Prostuj ręce do góry, nie ruszając ramionami."
     ],
     "close-grip-bench-press": [
       "Chwyć sztangę na szerokość barków, nie węziej.",
@@ -501,7 +501,7 @@
       "Trzymaj jeden hantel nad głową oburącz, łokcie skierowane do przodu.",
       "Opuszczaj ciężar za głowę, zginając tylko łokcie.",
       "Napnij brzuch i nie wyginaj pleców.",
-      "Wyprostuj ramiona do pełnego wyprostu, wracając w górę."
+      "Prostuj ręce, wracając w górę do pełnego wyprostu."
     ],
     "back-squat": [
       "Połóż sztangę na górnej części pleców i napnij brzuch przed zdjęciem ze stojaków.",
@@ -553,7 +553,7 @@
     ],
     "hip-thrust": [
       "Oprzyj górną część pleców o ławkę, sztanga leży na biodrach.",
-      "Ustaw stopy płasko na szerokość bioder, goleń pionowo w górnym punkcie.",
+      "Ustaw stopy płasko na szerokość bioder, tak, by golenie były pionowo w górnym punkcie.",
       "Odpychaj się piętami i napinaj pośladki, unosząc biodra.",
       "Przyciągnij brodę i nie wyginaj nadmiernie odcinka lędźwiowego."
     ],
@@ -577,20 +577,20 @@
     ],
     "standing-calf-raise": [
       "Stań, opierając przednią część stóp na stopniu lub podwyższeniu.",
-      "Wspinaj się na palce tak wysoko, jak to możliwe.",
+      "Unieś się na palce tak wysoko, jak to możliwe.",
       "Zatrzymaj się na chwilę na szczycie, napinając łydki.",
       "Opuszczaj powoli, aż poczujesz pełne rozciągnięcie."
     ],
     "seated-calf-raise": [
       "Usiądź z wałkami opartymi na dolnej części ud i przodem stóp na platformie.",
       "Opuść pięty, aby w pełni rozciągnąć łydki.",
-      "Wspinaj się na palce tak wysoko, jak to możliwe.",
+      "Unieś się na palce tak wysoko, jak to możliwe.",
       "Zatrzymaj się na szczycie i opuszczaj powoli."
     ],
     "donkey-calf-raise": [
       "Pochyl się w biodrach, przód stóp oprzyj na podwyższeniu.",
       "Trzymaj proste nogi i płaskie plecy.",
-      "Wspinaj się na palce tak wysoko, jak to możliwe.",
+      "Unieś się na palce tak wysoko, jak to możliwe.",
       "Opuszczaj powoli do głębokiego rozciągnięcia."
     ],
     "leg-press-calf-raise": [
@@ -620,7 +620,7 @@
     "ab-wheel-rollout": [
       "Uklęknij z kółkiem pod barkami i napiętym brzuchem.",
       "Rolluj kółko do przodu powoli, z płaskimi plecami.",
-      "Jedź tylko tak daleko, by biodra nie opadały.",
+      "Rozwijaj tylko tak daleko, by biodra nie opadały.",
       "Przyciągnij kółko z powrotem, napinając mięśnie brzucha."
     ]
   }

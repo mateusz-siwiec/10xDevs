@@ -1,5 +1,5 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
-import type { FocusEvent, PointerEvent } from 'react'
+import type { FocusEvent, MouseEvent as ReactMouseEvent, PointerEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { Exercise } from '../api/client'
 import { exerciseName, exerciseTechnique } from '../utils/exercises'
@@ -35,7 +35,8 @@ export default function TechniqueTooltip({ exercise }: TechniqueTooltipProps) {
     function onKeyDown(event: KeyboardEvent) {
       if (event.key !== 'Escape') return
       setOpen(false)
-      buttonRef.current?.focus()
+      // Hover-only openings must not pull focus away from what the user is working in.
+      if (rootRef.current?.contains(document.activeElement)) buttonRef.current?.focus()
     }
     document.addEventListener('mousedown', onMouseDown)
     document.addEventListener('keydown', onKeyDown)
@@ -46,17 +47,27 @@ export default function TechniqueTooltip({ exercise }: TechniqueTooltipProps) {
   }, [open])
 
   // Keep the panel inside the viewport: measure it unshifted, then nudge it back by the overflow.
+  // Re-measured on resize/rotation while open and reset on close, so a stale shift never carries over.
   useLayoutEffect(() => {
-    const panel = panelRef.current
-    if (!open || !panel) return
-    panel.style.left = '0px'
-    const rect = panel.getBoundingClientRect()
-    const viewport = document.documentElement.clientWidth
-    let next = 0
-    if (rect.right > viewport - EDGE_GAP) next = viewport - EDGE_GAP - rect.right
-    if (rect.left + next < EDGE_GAP) next = EDGE_GAP - rect.left
-    panel.style.left = ''
-    setShift(next)
+    if (!open) return
+    function measure() {
+      const panel = panelRef.current
+      if (!panel) return
+      panel.style.left = '0px'
+      const rect = panel.getBoundingClientRect()
+      const viewport = document.documentElement.clientWidth
+      let next = 0
+      if (rect.right > viewport - EDGE_GAP) next = viewport - EDGE_GAP - rect.right
+      if (rect.left + next < EDGE_GAP) next = EDGE_GAP - rect.left
+      panel.style.left = ''
+      setShift(next)
+    }
+    measure()
+    window.addEventListener('resize', measure)
+    return () => {
+      window.removeEventListener('resize', measure)
+      setShift(0)
+    }
   }, [open])
 
   const cues = exerciseTechnique(exercise)
@@ -69,7 +80,11 @@ export default function TechniqueTooltip({ exercise }: TechniqueTooltipProps) {
 
   function onBlur(event: FocusEvent) {
     const next = event.relatedTarget as Node | null
-    if (next && rootRef.current && !rootRef.current.contains(next)) setOpen(false)
+    const root = rootRef.current
+    if (!root || (next && root.contains(next))) return
+    // A null relatedTarget (browser chrome, another window) closes it too, but not while the pointer is over the
+    // component: clicking plain text inside the panel also blurs with a null relatedTarget.
+    if (!root.matches(':hover')) setOpen(false)
   }
 
   function onPointerEnter(event: PointerEvent) {
@@ -77,19 +92,24 @@ export default function TechniqueTooltip({ exercise }: TechniqueTooltipProps) {
   }
 
   function onPointerLeave(event: PointerEvent) {
+    // A press that never produced a click (dragged off the button) must not leave a stale pointer type behind.
+    pointerType.current = ''
     if (event.pointerType === 'touch') return
     const active = document.activeElement
     const keyboardInside = active && rootRef.current?.contains(active) && active.matches(':focus-visible')
     if (!keyboardInside) setOpen(false)
   }
 
-  function onClick() {
-    // A mouse click lands while hover already opened it; keep it open. Touch and keyboard toggle.
-    if (pointerType.current === 'mouse') setOpen(true)
+  function onClick(event: ReactMouseEvent) {
+    // A mouse click lands while hover already opened it, and a keyboard click (detail 0) lands after focus opened it;
+    // keep it open in both cases (Escape or tabbing away closes it). Only touch toggles.
+    if (pointerType.current === 'mouse' || event.detail === 0) setOpen(true)
     else setOpen((value) => !value)
     pointerType.current = ''
   }
 
+  // The panel (div/p/ul) is rendered inside the name spans of the list rows, which is technically invalid HTML nesting.
+  // Accepted on purpose: browsers handle it, and a real <ul> beats strict nesting for screen readers.
   return (
     <span
       className="technique-tooltip"

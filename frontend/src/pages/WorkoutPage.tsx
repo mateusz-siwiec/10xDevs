@@ -93,6 +93,7 @@ export default function WorkoutPage() {
   // Once every entry is done, stay on the last one so extra sets can still be logged.
   const autoId = progress && progress.length > 0 ? progress[autoIndex >= 0 ? autoIndex : progress.length - 1].entry.exerciseId : ''
   const selectedExercise = manual && manual.autoId === autoId ? manual.exerciseId : autoId
+  const selectedItem = selectedExercise ? exercisesById.get(selectedExercise) : undefined
   // Only skipped entries are left to do: the walkthrough has fallen back to the first of them.
   const showReturnHint =
     progress !== null &&
@@ -314,9 +315,7 @@ export default function WorkoutPage() {
                 onChange={handleSelect}
               />
               <div className="exercise-picker-actions">
-                {selectedExercise && exercisesById.get(selectedExercise) && (
-                  <TechniqueTooltip exercise={exercisesById.get(selectedExercise)!} />
-                )}
+                {selectedItem && <TechniqueTooltip exercise={selectedItem} />}
                 <button
                   type="button"
                   className="btn-secondary find-substitute-btn"
