@@ -3,6 +3,7 @@ import type { FormEvent } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router'
 import { useAuth } from '../auth/AuthContext'
+import { AuthFeatures, AuthIntro } from '../components/AuthIntro'
 import Topbar from '../components/Topbar'
 import '../styles/page.css'
 import { translateError } from '../utils/errors'
@@ -35,6 +36,8 @@ export default function LoginPage() {
     <>
       <Topbar />
       <div className="page-shell">
+        <div className="auth-stack">
+        <AuthIntro />
         <main className="page-card">
           <h1>{t('auth.loginTitle')}</h1>
           <form onSubmit={handleSubmit}>
@@ -69,6 +72,8 @@ export default function LoginPage() {
             <Trans i18nKey="auth.noAccount" components={{ authLink: <Link to="/register" /> }} />
           </p>
         </main>
+        <AuthFeatures />
+        </div>
       </div>
     </>
   )
