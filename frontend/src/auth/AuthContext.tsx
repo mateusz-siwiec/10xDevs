@@ -43,6 +43,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .finally(() => setLoading(false))
   }, [])
 
+  // Dismiss the static splash from index.html once the session check has resolved; kept for at least 600ms since page
+  // start so it doesn't just flash on fast loads.
+  useEffect(() => {
+    if (loading) return
+    const splash = document.getElementById('splash')
+    if (!splash) return
+    let remove = 0
+    const hide = window.setTimeout(() => {
+      splash.classList.add('splash-hide')
+      remove = window.setTimeout(() => splash.remove(), 350)
+    }, Math.max(0, 600 - performance.now()))
+    return () => {
+      window.clearTimeout(hide)
+      window.clearTimeout(remove)
+    }
+  }, [loading])
+
   async function login(email: string, password: string) {
     const result = await apiLogin(email, password)
     setStoredToken(result.token)

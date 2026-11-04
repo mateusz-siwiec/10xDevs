@@ -42,7 +42,14 @@
     "email": "E-mail",
     "password": "Hasło",
     "noAccount": "Nie masz konta? <authLink>Zarejestruj się</authLink>",
-    "haveAccount": "Masz już konto? <authLink>Zaloguj się</authLink>"
+    "haveAccount": "Masz już konto? <authLink>Zaloguj się</authLink>",
+    "tagline": "Zapisuj serie. Obserwuj postępy.",
+    "features": {
+      "logSets": "Zapisuj serie w kilka sekund, prosto na siłowni",
+      "progress": "Śledź wykresy progresji dla każdego ćwiczenia",
+      "plans": "Twórz własne plany treningowe",
+      "suggestions": "Otrzymuj sugestie ciężaru i ćwiczeń zastępczych"
+    }
   },
   "dashboard": {
     "title": "Pulpit",

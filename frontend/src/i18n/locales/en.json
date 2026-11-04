@@ -42,7 +42,14 @@
     "email": "Email",
     "password": "Password",
     "noAccount": "No account? <authLink>Register</authLink>",
-    "haveAccount": "Already have an account? <authLink>Log in</authLink>"
+    "haveAccount": "Already have an account? <authLink>Log in</authLink>",
+    "tagline": "Log your sets. See your progress.",
+    "features": {
+      "logSets": "Log sets in seconds, right in the gym",
+      "progress": "Track progression charts for every exercise",
+      "plans": "Build your own training plans",
+      "suggestions": "Get weight and substitute-exercise suggestions"
+    }
   },
   "dashboard": {
     "title": "Dashboard",

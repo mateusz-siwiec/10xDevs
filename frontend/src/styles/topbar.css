@@ -185,7 +185,12 @@
 }
 
 .topbar-guest + .page-shell {
-  min-height: calc(100svh - 61px);
+  /* #root is a flex column with min-height 100svh: fill what the topbar leaves instead of guessing its height. */
+  flex: 1;
+  min-height: 0;
+  /* The login/register stack (brand + card + features) is tall; a smaller top gap keeps it within the viewport. */
+  padding-top: clamp(1rem, 4vh, 3rem);
+  padding-bottom: 1rem;
 }
 
 /* Exercises menu: a button in the nav that opens a list of the exercise pages. */
