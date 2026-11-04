@@ -343,14 +343,31 @@
 }
 
 .muscle-map-figures svg {
-  width: 7rem;
+  width: 7.5rem;
   height: auto;
+}
+
+/* Matches the figure viewBox (660 x 1420) so the lazy-load placeholder does not shift layout. */
+.muscle-figure-placeholder {
+  width: 7.5rem;
+  aspect-ratio: 660 / 1420;
+}
+
+.muscle-body {
+  fill: var(--code-bg);
+  stroke: var(--text);
+  stroke-opacity: 0.5;
+  stroke-width: 3;
 }
 
 .muscle-region {
   fill: var(--muscle-idle);
   stroke: var(--bg);
-  stroke-width: 0.5;
+  stroke-width: 2;
+}
+
+.muscle-region[data-state='body'] {
+  fill: var(--muscle-idle);
 }
 
 .muscle-region[data-state='primary'] {

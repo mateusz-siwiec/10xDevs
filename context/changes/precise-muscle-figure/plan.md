@@ -250,32 +250,32 @@ None. No schema, API or stored data changes. Rollback is reverting the commit (t
 
 #### Automated
 
-- [x] 1.1 Unit tests pass: `npm test` (from `frontend/`)
-- [x] 1.2 Type check and build pass: `npm run build`
-- [x] 1.3 Lint passes: `npm run lint`
-- [x] 1.4 Licence notice names the new source: `grep -ci "musclemap" ../THIRD_PARTY_NOTICES.md` is at least 1
+- [x] 1.1 Unit tests pass: `npm test` (from `frontend/`) — 6f08d6b
+- [x] 1.2 Type check and build pass: `npm run build` — 6f08d6b
+- [x] 1.3 Lint passes: `npm run lint` — 6f08d6b
+- [x] 1.4 Licence notice names the new source: `grep -ci "musclemap" ../THIRD_PARTY_NOTICES.md` is at least 1 — 6f08d6b
 
 #### Manual
 
 - [ ] 1.5 Generated `muscleFigureData.ts` header and mapping match the plan table (attribution, group names, no executable code)
-- [x] 1.6 `MuscleFigure` renders both figures complete, with no clipped hands or feet, for Barbell Row, Plank and Deadlift
+- [x] 1.6 `MuscleFigure` renders both figures complete, with no clipped hands or feet, for Barbell Row, Plank and Deadlift — 6f08d6b
 
 ### Phase 2: Wire in
 
 #### Automated
 
-- [ ] 2.1 Unit tests pass: `npm test`
-- [ ] 2.2 Type check and build pass: `npm run build`
-- [ ] 2.3 Lint passes: `npm run lint`
-- [ ] 2.4 No hard-coded values: `npm run check:tokens`
-- [ ] 2.5 No leftover reference to the old data: `grep -rn "muscleRegions\|react-body-highlighter" src ../THIRD_PARTY_NOTICES.md` returns nothing
+- [x] 2.1 Unit tests pass: `npm test`
+- [x] 2.2 Type check and build pass: `npm run build`
+- [x] 2.3 Lint passes: `npm run lint`
+- [x] 2.4 No hard-coded values: `npm run check:tokens`
+- [x] 2.5 No leftover reference to the old data: `grep -rn "muscleRegions\|react-body-highlighter" src ../THIRD_PARTY_NOTICES.md` returns nothing
 
 #### Manual
 
-- [ ] 2.6 List, workout picker and substitutes panel show the new figure for a built-in exercise, and a map-only panel for a custom one
-- [ ] 2.7 The panel does not visibly jump in size when the figure appears and stays inside the viewport on a 390px-wide screen
-- [ ] 2.8 Light and dark themes look right; Polish and English legends are correct
-- [ ] 2.9 All 14 groups highlight the expected area (temporary preview grid)
+- [x] 2.6 List, workout picker and substitutes panel show the new figure for a built-in exercise, and a map-only panel for a custom one
+- [x] 2.7 The panel does not visibly jump in size when the figure appears and stays inside the viewport on a 390px-wide screen
+- [x] 2.8 Light and dark themes look right; Polish and English legends are correct
+- [x] 2.9 All 14 groups highlight the expected area (temporary preview grid)
 
 ### Phase 3: Playwright and verification
 
