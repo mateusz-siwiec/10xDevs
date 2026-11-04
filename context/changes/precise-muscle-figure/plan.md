@@ -281,16 +281,16 @@ None. No schema, API or stored data changes. Rollback is reverting the commit (t
 
 #### Automated
 
-- [x] 3.1 Playwright suite passes (Postgres and servers available, `CI` unset): `npm run test:e2e`
-- [x] 3.2 Backend tests pass: `./mvnw test`
-- [x] 3.3 Unit tests pass: `npm test`
-- [x] 3.4 Build passes and emits a separate figure chunk with the main bundle not growing by more than 1 KB gzipped: `npm run build`
-- [x] 3.5 Lint passes: `npm run lint`
-- [x] 3.6 No hard-coded values: `npm run check:tokens`
-- [x] 3.7 No preview leftovers: `git status --porcelain` lists none of the four temporary files
+- [x] 3.1 Playwright suite passes (Postgres and servers available, `CI` unset): `npm run test:e2e` — aa56f48
+- [x] 3.2 Backend tests pass: `./mvnw test` — aa56f48
+- [x] 3.3 Unit tests pass: `npm test` — aa56f48
+- [x] 3.4 Build passes and emits a separate figure chunk with the main bundle not growing by more than 1 KB gzipped: `npm run build` — aa56f48
+- [x] 3.5 Lint passes: `npm run lint` — aa56f48
+- [x] 3.6 No hard-coded values: `npm run check:tokens` — aa56f48
+- [x] 3.7 No preview leftovers: `git status --porcelain` lists none of the four temporary files — aa56f48
 
 #### Manual
 
-- [x] 3.8 Hover, keyboard focus and tap still open and close the panel as before
-- [x] 3.9 With the network throttled the first open shows the placeholder briefly, then the figure; later opens are instant
+- [x] 3.8 Hover, keyboard focus and tap still open and close the panel as before — aa56f48
+- [x] 3.9 With the network throttled the first open shows the placeholder briefly, then the figure; later opens are instant — aa56f48
 - [ ] 3.10 Linux CI passes, including the `workout-mobile-dark` baseline unchanged
