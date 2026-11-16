@@ -140,6 +140,7 @@ export interface Exercise {
   primaryMuscleGroup: string
   secondaryMuscleGroups: string[]
   custom: boolean
+  favorite: boolean
 }
 
 export interface WorkoutSet {
@@ -203,6 +204,11 @@ export async function updateExercise(id: string, input: CreateExerciseInput): Pr
 /** Resolves on 204 No Content; there is no body to parse. */
 export async function deleteExercise(id: string): Promise<void> {
   await authFetch(`/api/exercises/${id}`, { method: 'DELETE' })
+}
+
+/** Idempotent: PUT marks the exercise as a favourite, DELETE clears it. Resolves on 204 No Content. */
+export async function setExerciseFavorite(id: string, favorite: boolean): Promise<void> {
+  await authFetch(`/api/exercises/${id}/favorite`, { method: favorite ? 'PUT' : 'DELETE' })
 }
 
 export async function startSession(planId?: string): Promise<WorkoutSession> {

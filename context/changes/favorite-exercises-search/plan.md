@@ -290,21 +290,21 @@ Lists are the catalog plus a user's custom exercises (tens to low hundreds of ro
 
 #### Automated
 
-- [x] 1.1 Exercise tests pass, including migration V11 applying on a fresh container
-- [x] 1.2 New authorization and cascade tests pass
-- [x] 1.3 Full backend suite passes
+- [x] 1.1 Exercise tests pass, including migration V11 applying on a fresh container — e984e9d
+- [x] 1.2 New authorization and cascade tests pass — e984e9d
+- [x] 1.3 Full backend suite passes — e984e9d
 
 #### Manual
 
-- [x] 1.4 PUT then GET shows favorite true for that exercise only, and DELETE clears it
+- [x] 1.4 PUT then GET shows favorite true for that exercise only, and DELETE clears it — e984e9d
 
 ### Phase 2: Frontend foundation
 
 #### Automated
 
-- [ ] 2.1 Unit tests pass, including the new helper tests and locale parity
-- [ ] 2.2 Type check and build pass
-- [ ] 2.3 Lint passes
+- [x] 2.1 Unit tests pass, including the new helper tests and locale parity
+- [x] 2.2 Type check and build pass
+- [x] 2.3 Lint passes
 
 ### Phase 3: Exercises page
 
