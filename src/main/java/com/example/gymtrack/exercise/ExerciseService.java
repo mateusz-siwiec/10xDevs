@@ -5,6 +5,7 @@ import com.example.gymtrack.common.ResourceNotFoundException;
 import com.example.gymtrack.plan.TrainingPlanRepository;
 import com.example.gymtrack.workout.WorkoutSetRepository;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -19,8 +20,11 @@ public class ExerciseService {
 
 	private final WorkoutSetRepository workoutSetRepository;
 
+	private final FavoriteExerciseRepository favoriteRepository;
+
 	public ExerciseService(ExerciseRepository exerciseRepository, TrainingPlanRepository planRepository,
-			WorkoutSetRepository workoutSetRepository) {
+			WorkoutSetRepository workoutSetRepository, FavoriteExerciseRepository favoriteRepository) {
+		this.favoriteRepository = favoriteRepository;
 		this.exerciseRepository = exerciseRepository;
 		this.planRepository = planRepository;
 		this.workoutSetRepository = workoutSetRepository;
@@ -31,17 +35,38 @@ public class ExerciseService {
 		List<Exercise> exercises = muscleGroup == null
 				? exerciseRepository.findVisibleOrderByName(userId)
 				: exerciseRepository.findVisibleByPrimaryMuscleGroupOrderByName(userId, muscleGroup);
-		return exercises.stream().map(ExerciseResponse::from).toList();
+		return toResponses(userId, exercises);
+	}
+
+	private List<ExerciseResponse> toResponses(UUID userId, List<Exercise> exercises) {
+		Set<UUID> favorites = favoriteRepository.findExerciseIdsByUserId(userId);
+		return exercises.stream().map((e) -> ExerciseResponse.from(e, favorites.contains(e.getId()))).toList();
+	}
+
+	@Transactional
+	public void addFavorite(UUID userId, UUID exerciseId) {
+		requireVisible(userId, exerciseId);
+		favoriteRepository.addIfAbsent(userId, exerciseId);
+	}
+
+	@Transactional
+	public void removeFavorite(UUID userId, UUID exerciseId) {
+		requireVisible(userId, exerciseId);
+		favoriteRepository.remove(userId, exerciseId);
+	}
+
+	private void requireVisible(UUID userId, UUID exerciseId) {
+		if (!exerciseRepository.existsVisible(exerciseId, userId)) {
+			throw new ResourceNotFoundException(ErrorCode.EXERCISE_NOT_FOUND, "Exercise not found");
+		}
 	}
 
 	@Transactional(readOnly = true)
 	public List<ExerciseResponse> substitutes(UUID userId, UUID exerciseId) {
 		Exercise exercise = exerciseRepository.findVisibleById(exerciseId, userId)
 				.orElseThrow(() -> new ResourceNotFoundException(ErrorCode.EXERCISE_NOT_FOUND, "Exercise not found"));
-		return exerciseRepository.findVisibleSubstitutes(userId, exercise.getPrimaryMuscleGroup(), exercise.getId())
-				.stream()
-				.map(ExerciseResponse::from)
-				.toList();
+		return toResponses(userId,
+				exerciseRepository.findVisibleSubstitutes(userId, exercise.getPrimaryMuscleGroup(), exercise.getId()));
 	}
 
 	@Transactional
@@ -54,7 +79,7 @@ public class ExerciseService {
 		try {
 			Exercise exercise = exerciseRepository.saveAndFlush(
 					new Exercise(userId, name, request.primaryMuscleGroup(), request.secondaryMuscleGroups()));
-			return ExerciseResponse.from(exercise);
+			return ExerciseResponse.from(exercise, false);
 		}
 		catch (DataIntegrityViolationException e) {
 			// A concurrent create with the same name won the race past the check above.
@@ -73,7 +98,8 @@ public class ExerciseService {
 
 		try {
 			exercise.update(name, request.primaryMuscleGroup(), request.secondaryMuscleGroups());
-			return ExerciseResponse.from(exerciseRepository.saveAndFlush(exercise));
+			Exercise saved = exerciseRepository.saveAndFlush(exercise);
+			return ExerciseResponse.from(saved, favoriteRepository.findExerciseIdsByUserId(userId).contains(id));
 		}
 		catch (DataIntegrityViolationException e) {
 			// A concurrent create/rename with the same name won the race past the check above.

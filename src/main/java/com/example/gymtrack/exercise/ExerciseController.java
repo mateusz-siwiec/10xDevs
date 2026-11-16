@@ -49,6 +49,19 @@ public class ExerciseController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@PutMapping("/api/exercises/{id}/favorite")
+	public ResponseEntity<Void> addFavorite(@AuthenticationPrincipal CurrentUser currentUser, @PathVariable UUID id) {
+		exerciseService.addFavorite(currentUser.id(), id);
+		return ResponseEntity.noContent().build();
+	}
+
+	@DeleteMapping("/api/exercises/{id}/favorite")
+	public ResponseEntity<Void> removeFavorite(@AuthenticationPrincipal CurrentUser currentUser,
+			@PathVariable UUID id) {
+		exerciseService.removeFavorite(currentUser.id(), id);
+		return ResponseEntity.noContent().build();
+	}
+
 	@GetMapping("/api/exercises/{exerciseId}/substitutes")
 	public List<ExerciseResponse> substitutes(@AuthenticationPrincipal CurrentUser currentUser,
 			@PathVariable UUID exerciseId) {
