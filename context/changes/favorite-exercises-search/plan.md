@@ -323,13 +323,13 @@ Lists are the catalog plus a user's custom exercises (tens to low hundreds of ro
 
 #### Automated
 
-- [x] 4.1 Build, lint, unit tests and token guard pass
-- [x] 4.2 Picker and regression specs pass
-- [x] 4.3 Full e2e suite passes with no baseline changes
-- [x] 4.4 Backend suite still green
+- [x] 4.1 Build, lint, unit tests and token guard pass — 11e38e3
+- [x] 4.2 Picker and regression specs pass — 11e38e3
+- [x] 4.3 Full e2e suite passes with no baseline changes — 11e38e3
+- [x] 4.4 Backend suite still green — 11e38e3
 
 #### Manual
 
-- [x] 4.5 On a phone-width viewport the search box, select, technique tooltip and Find substitute lay out cleanly
-- [x] 4.6 Typing in the picker search does not lose the selected exercise or in-progress set inputs
-- [x] 4.7 Light/dark and PL/EN look correct
+- [x] 4.5 On a phone-width viewport the search box, select, technique tooltip and Find substitute lay out cleanly — 11e38e3
+- [x] 4.6 Typing in the picker search does not lose the selected exercise or in-progress set inputs — 11e38e3
+- [x] 4.7 Light/dark and PL/EN look correct — 11e38e3
