@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import type { APIRequestContext, Page } from '@playwright/test'
-import { API, PASSWORD, auth, registerViaApi } from './helpers.js'
+import { API, PASSWORD, auth, exerciseId, registerViaApi } from './helpers.js'
 import type { ApiUser } from './helpers.js'
 
 async function login(page: Page, user: ApiUser) {
@@ -191,4 +191,113 @@ test('on a phone the star, Edit and Delete stay on the right of every row', asyn
   const box = (await rows.nth(0).getByRole('button', { name: /^Favourite/ }).boundingBox())!
   expect(box.width).toBeGreaterThanOrEqual(44)
   expect(box.height).toBeGreaterThanOrEqual(44)
+})
+
+async function starViaApi(request: APIRequestContext, user: ApiUser, name: string) {
+  const id = await exerciseId(request, user, name)
+  const response = await request.put(`${API}/api/exercises/${id}/favorite`, auth(user))
+  expect(response.ok()).toBe(true)
+  return id
+}
+
+async function openWorkoutPicker(page: Page, user: ApiUser, lang: 'en' | 'pl' = 'en') {
+  await login(page, user)
+  if (lang === 'pl') await page.evaluate(() => localStorage.setItem('gymtrack.lang', 'pl'))
+  await page.goto('/workout')
+  // Let the page's initial loads settle first: a late "current session" response would otherwise
+  // overwrite a workout started by the click below (seen under load in the full suite).
+  await page.waitForLoadState('networkidle')
+  await page.getByRole('button', { name: lang === 'pl' ? 'Rozpocznij trening' : 'Start workout' }).click()
+  await expect(page.locator('#exercise-select')).toBeVisible()
+}
+
+const BENCH = 'Barbell Bench Press — Chest'
+
+test('workout picker: typing narrows the options and the selection survives clearing the search', async ({
+  page,
+  request,
+}) => {
+  const user = await registerViaApi(request, 'expick-search')
+  await openWorkoutPicker(page, user)
+
+  const select = page.locator('#exercise-select')
+  const search = page.locator('#exercise-search')
+  await expect(search).toBeVisible()
+  const total = await select.locator('option').count()
+
+  await search.fill('BENCH')
+  await expect(select.locator('option', { hasText: 'Barbell Row' })).toHaveCount(0)
+  await expect(select.locator('option', { hasText: 'Barbell Bench Press' })).toHaveCount(1)
+  expect(await select.locator('option').count()).toBeLessThan(total)
+
+  await select.selectOption({ label: BENCH })
+  await search.fill('')
+  await expect(select.locator('option')).toHaveCount(total)
+  await expect(select.locator('option:checked')).toHaveText(BENCH)
+
+  // A selection that no longer matches the search stays in the list.
+  await search.fill('row')
+  await expect(select.locator('option:checked')).toHaveText(BENCH)
+
+  await search.fill('zzzzzz')
+  await expect(page.getByText('No exercises match your search.')).toBeVisible()
+  await expect(select.locator('option:checked')).toHaveText(BENCH)
+  await expect(select.locator('option')).toHaveCount(2) // placeholder + kept selection
+})
+
+test('workout picker in Polish finds a translated name typed without diacritics', async ({ page, request }) => {
+  const user = await registerViaApi(request, 'expick-pl')
+  await openWorkoutPicker(page, user, 'pl')
+
+  await page.locator('#exercise-search').fill('lawce skosnej')
+  const options = page.locator('#exercise-select option', { hasText: 'Wyciskanie hantli na ławce skośnej' })
+  await expect(options).toHaveCount(1)
+  await expect(page.locator('#exercise-select option', { hasText: 'Przysiad' })).toHaveCount(0)
+})
+
+test('workout picker: starred exercises are grouped first and listed once; no favourites means a flat list', async ({
+  page,
+  request,
+}) => {
+  const user = await registerViaApi(request, 'expick-groups')
+  await openWorkoutPicker(page, user)
+  const select = page.locator('#exercise-select')
+
+  await expect(select.locator('optgroup')).toHaveCount(0)
+
+  await starViaApi(request, user, 'Barbell Row')
+  await page.reload()
+  await expect(select).toBeVisible()
+
+  const groups = select.locator('optgroup')
+  await expect(groups).toHaveCount(2)
+  await expect(groups.nth(0)).toHaveAttribute('label', 'Favourites')
+  await expect(groups.nth(1)).toHaveAttribute('label', 'Other exercises')
+  await expect(groups.nth(0).locator('option')).toHaveText(['Barbell Row — Lats'])
+  await expect(select.locator('option', { hasText: 'Barbell Row' })).toHaveCount(1)
+
+  // With only favourites matching, the other group disappears.
+  await page.locator('#exercise-search').fill('barbell row')
+  await expect(select.locator('optgroup')).toHaveCount(1)
+})
+
+test('plan editor picker filters and the chosen exercise can still be added to the plan', async ({ page, request }) => {
+  const user = await registerViaApi(request, 'expick-plan')
+  await starViaApi(request, user, 'Barbell Bench Press')
+  await login(page, user)
+  await page.goto('/plans/new')
+
+  const select = page.locator('#exercise-select')
+  await expect(select.locator('optgroup').first()).toHaveAttribute('label', 'Favourites')
+
+  await page.locator('#exercise-search').fill('bench')
+  await expect(select.locator('option', { hasText: 'Barbell Row' })).toHaveCount(0)
+  await select.selectOption({ label: BENCH })
+  await page.getByRole('button', { name: 'Add exercise' }).click()
+  await page.locator('#exercise-search').fill('')
+  await expect(select.locator('option:checked')).toHaveText(BENCH)
+
+  await page.getByLabel('Plan name').fill(`Picker plan ${Date.now()}`)
+  await page.getByRole('button', { name: 'Save', exact: true }).click()
+  await expect(page).toHaveURL(/\/plans$/)
 })

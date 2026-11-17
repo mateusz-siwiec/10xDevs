@@ -310,26 +310,26 @@ Lists are the catalog plus a user's custom exercises (tens to low hundreds of ro
 
 #### Automated
 
-- [x] 3.1 Build, lint and unit tests pass
-- [x] 3.2 No hard-coded values in the touched files
-- [x] 3.3 Exercises specs pass, including the existing ones
+- [x] 3.1 Build, lint and unit tests pass — 8a79b2b
+- [x] 3.2 No hard-coded values in the touched files — 8a79b2b
+- [x] 3.3 Exercises specs pass, including the existing ones — 8a79b2b
 
 #### Manual
 
-- [x] 3.4 Star, filter and search look right in light and dark, in both languages, on a phone-width viewport
-- [x] 3.5 Keyboard: star is reachable, toggles with Space/Enter, focus ring visible, focus sensible after un-starring in Favourites
+- [x] 3.4 Star, filter and search look right in light and dark, in both languages, on a phone-width viewport — 8a79b2b
+- [x] 3.5 Keyboard: star is reachable, toggles with Space/Enter, focus ring visible, focus sensible after un-starring in Favourites — 8a79b2b
 
 ### Phase 4: Exercise picker
 
 #### Automated
 
-- [ ] 4.1 Build, lint, unit tests and token guard pass
-- [ ] 4.2 Picker and regression specs pass
-- [ ] 4.3 Full e2e suite passes with no baseline changes
-- [ ] 4.4 Backend suite still green
+- [x] 4.1 Build, lint, unit tests and token guard pass
+- [x] 4.2 Picker and regression specs pass
+- [x] 4.3 Full e2e suite passes with no baseline changes
+- [x] 4.4 Backend suite still green
 
 #### Manual
 
-- [ ] 4.5 On a phone-width viewport the search box, select, technique tooltip and Find substitute lay out cleanly
-- [ ] 4.6 Typing in the picker search does not lose the selected exercise or in-progress set inputs
-- [ ] 4.7 Light/dark and PL/EN look correct
+- [x] 4.5 On a phone-width viewport the search box, select, technique tooltip and Find substitute lay out cleanly
+- [x] 4.6 Typing in the picker search does not lose the selected exercise or in-progress set inputs
+- [x] 4.7 Light/dark and PL/EN look correct

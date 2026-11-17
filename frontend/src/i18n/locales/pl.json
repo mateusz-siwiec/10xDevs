@@ -214,6 +214,7 @@
       "label": "Ćwiczenie",
       "choose": "Wybierz ćwiczenie…",
       "searchLabel": "Szukaj ćwiczeń",
+      "filterLabel": "Filtruj po nazwie",
       "favorites": "Ulubione",
       "others": "Pozostałe ćwiczenia",
       "noMatches": "Brak ćwiczeń pasujących do wyszukiwania."

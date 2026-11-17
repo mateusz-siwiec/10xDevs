@@ -204,6 +204,7 @@
       "label": "Exercise",
       "choose": "Choose an exercise…",
       "searchLabel": "Search exercises",
+      "filterLabel": "Filter by name",
       "favorites": "Favourites",
       "others": "Other exercises",
       "noMatches": "No exercises match your search."
