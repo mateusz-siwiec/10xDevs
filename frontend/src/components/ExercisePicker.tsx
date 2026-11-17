@@ -22,10 +22,13 @@ export default function ExercisePicker({ exercises, selectedId, onChange }: Exer
   const { t } = useTranslation()
   const [query, setQuery] = useState('')
 
-  const matches = exercises.filter((exercise) => matchesExerciseSearch(exercise, query))
+  const matchedIds = new Set(
+    exercises.filter((exercise) => matchesExerciseSearch(exercise, query)).map((exercise) => exercise.id),
+  )
+  const matchCount = matchedIds.size
   // The selected exercise stays listed even when it does not match, so the controlled select keeps its value.
   const visible = sortExercisesByName(
-    exercises.filter((exercise) => exercise.id === selectedId || matches.includes(exercise)),
+    exercises.filter((exercise) => exercise.id === selectedId || matchedIds.has(exercise.id)),
   )
   const hasFavorites = exercises.some((exercise) => exercise.favorite)
   const favorites = visible.filter((exercise) => exercise.favorite)
@@ -76,7 +79,7 @@ export default function ExercisePicker({ exercises, selectedId, onChange }: Exer
           )}
         </select>
         <p className="page-subtext exercise-picker-hint" aria-live="polite">
-          {matches.length === 0 ? t('exercises.picker.noMatches') : ''}
+          {query.trim() !== '' && matchCount === 0 ? t('exercises.picker.noMatches') : ''}
         </p>
       </div>
     </div>

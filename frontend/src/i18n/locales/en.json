@@ -199,11 +199,10 @@
     "searchPlaceholder": "Search by name…",
     "favoriteLabel": "Favourite {{name}}",
     "favoriteFailed": "Failed to update favourite",
-    "noFavorites": "No favourite exercises yet.",
+    "noFavorites": "No favourite exercises yet. Star an exercise to add it here.",
     "picker": {
       "label": "Exercise",
       "choose": "Choose an exercise…",
-      "searchLabel": "Search exercises",
       "filterLabel": "Filter by name",
       "favorites": "Favourites",
       "others": "Other exercises",

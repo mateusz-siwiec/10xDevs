@@ -51,6 +51,7 @@ export default function ExercisesPage() {
   const [busy, setBusy] = useState(false)
   // Rows whose favourite toggle request is still running; their star is disabled meanwhile.
   const [favoriteBusy, setFavoriteBusy] = useState<ReadonlySet<string>>(new Set())
+  const favoriteInFlight = useRef(new Set<string>())
   const headingRef = useRef<HTMLHeadingElement>(null)
   // Where focus goes once the confirm buttons (or the deleted/un-starred row) have unmounted.
   const pendingFocus = useRef<
@@ -92,6 +93,9 @@ export default function ExercisesPage() {
 
   async function toggleFavorite(exercise: Exercise) {
     const { id } = exercise
+    // `disabled` only applies after the next render, so a same-tick second click needs this guard.
+    if (favoriteInFlight.current.has(id)) return
+    favoriteInFlight.current.add(id)
     const favorite = !exercise.favorite
     // Un-starring inside the Favourites scope removes the row under the user's focus.
     const removesRow = !favorite && filters.scope === 'favorites'
@@ -106,6 +110,7 @@ export default function ExercisesPage() {
       patchFavorite(id, !favorite)
       setError({ err, key: 'exercises.favoriteFailed' })
     } finally {
+      favoriteInFlight.current.delete(id)
       setFavoriteBusy((ids) => {
         const next = new Set(ids)
         next.delete(id)
