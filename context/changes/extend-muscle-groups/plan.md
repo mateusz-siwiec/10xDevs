@@ -383,11 +383,11 @@ None: the catalogue grows from 40 to 48 rows and the stats response from 14 to 1
 
 #### Automated
 
-- [x] 5.1 Build, lint, unit tests and token guard pass
-- [x] 5.2 Full e2e suite passes with no baseline changes
-- [x] 5.3 Full backend suite passes
+- [x] 5.1 Build, lint, unit tests and token guard pass — 1defda4
+- [x] 5.2 Full e2e suite passes with no baseline changes — 1defda4
+- [x] 5.3 Full backend suite passes — 1defda4
 
 #### Manual
 
-- [x] 5.4 Exercise form, filters and the collapsible stats look right with 18 groups in EN and PL, light and dark, phone width
-- [x] 5.5 A custom exercise created before the migration shows as Side delts and still works
+- [x] 5.4 Exercise form, filters and the collapsible stats look right with 18 groups in EN and PL, light and dark, phone width — 1defda4
+- [x] 5.5 A custom exercise created before the migration shows as Side delts and still works — 1defda4
