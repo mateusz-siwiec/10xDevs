@@ -328,7 +328,15 @@
     "total_other": "{{count}} sets in total",
     "setsCount_one": "{{count}} set",
     "setsCount_other": "{{count}} sets",
-    "note": "Each set counts for the primary muscle group of its exercise. Only finished workouts are included."
+    "note": "Each set counts for the primary muscle group of its exercise. Only finished workouts are included. Select a group to see its muscles.",
+    "parent": {
+      "CHEST": "Chest",
+      "BACK": "Back",
+      "SHOULDERS": "Shoulders",
+      "ARMS": "Arms",
+      "LEGS": "Legs",
+      "CORE": "Core"
+    }
   },
   "muscle": {
     "CHEST": "Chest",

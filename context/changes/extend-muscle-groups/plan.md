@@ -351,33 +351,33 @@ None: the catalogue grows from 40 to 48 rows and the stats response from 14 to 1
 
 #### Automated
 
-- [x] 2.1 Unit tests pass, including locale parity and seeded name and technique checks
-- [x] 2.2 Type check and build pass
-- [x] 2.3 Lint passes
+- [x] 2.1 Unit tests pass, including locale parity and seeded name and technique checks — e4ba85d
+- [x] 2.2 Type check and build pass — e4ba85d
+- [x] 2.3 Lint passes — e4ba85d
 
 ### Phase 3: Body figure
 
 #### Automated
 
-- [x] 3.1 Unit tests pass, including every group has a figure region
-- [x] 3.2 Build and lint pass
-- [x] 3.3 Muscle-map e2e passes
+- [x] 3.1 Unit tests pass, including every group has a figure region — e4ba85d
+- [x] 3.2 Build and lint pass — e4ba85d
+- [x] 3.3 Muscle-map e2e passes — e4ba85d
 
 #### Manual
 
-- [x] 3.4 Delts, adductors and abductors are visibly distinct and highlight correctly in light and dark
+- [x] 3.4 Delts, adductors and abductors are visibly distinct and highlight correctly in light and dark — e4ba85d
 
 ### Phase 4: Collapsible muscle stats
 
 #### Automated
 
-- [ ] 4.1 Unit tests pass, including the hierarchy test and locale parity
-- [ ] 4.2 Build, lint and token guard pass
-- [ ] 4.3 Stats e2e specs pass
+- [x] 4.1 Unit tests pass, including the hierarchy test and locale parity
+- [x] 4.2 Build, lint and token guard pass
+- [x] 4.3 Stats e2e specs pass
 
 #### Manual
 
-- [ ] 4.4 Parent rows look right collapsed and expanded (EN/PL, light/dark, phone) and keyboard toggling works
+- [x] 4.4 Parent rows look right collapsed and expanded (EN/PL, light/dark, phone) and keyboard toggling works
 
 ### Phase 5: Surfaces, docs and full suites
 

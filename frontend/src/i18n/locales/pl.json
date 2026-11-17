@@ -344,7 +344,15 @@
     "setsCount_few": "{{count}} serie",
     "setsCount_many": "{{count}} serii",
     "setsCount_other": "{{count}} serii",
-    "note": "Każda seria liczy się do głównej partii mięśniowej ćwiczenia. Uwzględniane są tylko zakończone treningi."
+    "note": "Każda seria liczy się do głównej partii mięśniowej ćwiczenia. Uwzględniane są tylko zakończone treningi. Wybierz grupę, aby zobaczyć jej mięśnie.",
+    "parent": {
+      "CHEST": "Klatka piersiowa",
+      "BACK": "Plecy",
+      "SHOULDERS": "Barki",
+      "ARMS": "Ramiona",
+      "LEGS": "Nogi",
+      "CORE": "Core"
+    }
   },
   "muscle": {
     "CHEST": "Klatka piersiowa",
