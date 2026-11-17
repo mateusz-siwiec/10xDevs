@@ -53,8 +53,12 @@ class SplitShouldersMigrationTest {
 		assertThat(jdbc.queryForObject(
 				"select count(*) from exercise_secondary_muscle_groups where muscle_group = 'SHOULDERS'",
 				Integer.class)).isZero();
-		assertThat(jdbc.queryForObject("select count(*) from exercises where owner_id is null", Integer.class))
-				.isEqualTo(48);
+		// The catalogue rows added by V12 are shared (no owner); the total catalogue size is ExerciseSeedTest's concern.
+		assertThat(jdbc.queryForObject("""
+				select count(*) from exercises where owner_id is null and slug in (
+				    'hip-adduction-machine', 'copenhagen-plank', 'hip-abduction-machine', 'banded-lateral-walk',
+				    'reverse-pec-deck', 'bent-over-rear-delt-fly', 'front-raise', 'cable-lateral-raise')
+				""", Integer.class)).isEqualTo(8);
 	}
 
 	private static UUID custom(JdbcTemplate jdbc, UUID ownerId, String name, String primary) {

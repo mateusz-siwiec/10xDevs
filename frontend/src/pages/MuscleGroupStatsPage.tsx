@@ -56,17 +56,20 @@ export default function MuscleGroupStatsPage() {
 
   const shown = result !== null && result.days === days ? result : null
 
-  let body
+  // `status` (loading / error / empty / total) is the polite live region; the expandable list stays outside it so
+  // toggling a parent does not make assistive technology re-announce the whole list.
+  let status
+  let body = null
   if (shown === null) {
-    body = <p className="page-subtext">{t('muscleStats.loading')}</p>
+    status = <p className="page-subtext">{t('muscleStats.loading')}</p>
   } else if (shown.error || shown.stats === null) {
-    body = (
+    status = (
       <p className="error-text" role="alert">
         {translateError(shown.error, 'muscleStats.loadFailed')}
       </p>
     )
   } else if (shown.stats.totalSets === 0) {
-    body = (
+    status = (
       <p className="page-subtext">
         {days === 'all' ? t('muscleStats.emptyAll') : t('muscleStats.emptyWindow', { days })}{' '}
         {t('muscleStats.startHint')}
@@ -83,9 +86,9 @@ export default function MuscleGroupStatsPage() {
       return { key: parent.key, children, sets: children.reduce((sum, child) => sum + child.sets, 0) }
     }).sort((a, b) => b.sets - a.sets)
     const max = parents[0].sets
+    status = <p className="muscle-total">{t('muscleStats.total', { count: totalSets })}</p>
     body = (
       <>
-        <p className="muscle-total">{t('muscleStats.total', { count: totalSets })}</p>
         <ul className="muscle-list">
           {parents.map((parent) => {
             const open = expanded.has(parent.key)
@@ -121,7 +124,7 @@ export default function MuscleGroupStatsPage() {
                     role="img"
                     aria-label={t('muscleStats.setsCount', { count: parent.sets })}
                   >
-                    <span className="muscle-bar-fill" style={{ width: `${(parent.sets / max) * 100}%` }} />
+                    <span className="muscle-bar-fill" style={{ width: `${max > 0 ? (parent.sets / max) * 100 : 0}%` }} />
                   </span>
                   <span className="muscle-count">{parent.sets}</span>
                 </div>
@@ -174,7 +177,8 @@ export default function MuscleGroupStatsPage() {
             </button>
           ))}
         </div>
-        <div aria-live="polite">{body}</div>
+        <div aria-live="polite">{status}</div>
+        {body}
       </main>
     </div>
   )

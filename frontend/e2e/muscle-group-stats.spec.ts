@@ -132,7 +132,7 @@ test('in Polish the parents and sub-groups are translated', async ({ page, reque
   const toggle = page.getByRole('button', { name: 'Barki', exact: true })
   await expect(toggle).toBeVisible()
   await toggle.click()
-  await expect(child(page, 'REAR_DELTS')).toContainText('Tylne aktony barków')
+  await expect(child(page, 'REAR_DELTS')).toContainText('Tylna głowa barku')
   await expect(child(page, 'REAR_DELTS')).toContainText('2')
   await expect(page.getByText('Plecy', { exact: true })).toBeVisible()
 })

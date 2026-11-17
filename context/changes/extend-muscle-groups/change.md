@@ -1,7 +1,7 @@
 ---
 change_id: extend-muscle-groups
 title: Extend muscle groups with adductors and split deltoids
-status: implemented
+status: impl_reviewed
 created: 2026-11-17
 updated: 2026-11-17
 archived_at: null
