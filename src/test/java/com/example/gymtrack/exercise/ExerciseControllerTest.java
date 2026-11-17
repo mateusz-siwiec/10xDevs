@@ -73,7 +73,7 @@ class ExerciseControllerTest {
 	void listReturnsAllSeededExercisesWithAllFields() throws Exception {
 		mockMvc.perform(get("/api/exercises").header(HttpHeaders.AUTHORIZATION, bearerToken()))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$", hasSize(40)))
+			.andExpect(jsonPath("$", hasSize(48)))
 			.andExpect(jsonPath("$[*].id", everyItem(notNullValue())))
 			.andExpect(jsonPath("$[*].slug", everyItem(notNullValue())))
 			.andExpect(jsonPath("$[*].name", everyItem(notNullValue())))

@@ -33,11 +33,11 @@ class ExerciseSeedTest {
 	private JdbcTemplate jdbcTemplate;
 
 	@Test
-	void seedHasFortyExercisesWithUniqueSlugs() {
+	void seedHasFortyEightExercisesWithUniqueSlugs() {
 		List<Exercise> exercises = exerciseRepository.findAll();
 
-		assertThat(exercises).hasSize(40);
-		assertThat(exercises.stream().map(Exercise::getSlug).distinct()).hasSize(40);
+		assertThat(exercises).hasSize(48);
+		assertThat(exercises.stream().map(Exercise::getSlug).distinct()).hasSize(48);
 	}
 
 	@Test
@@ -46,13 +46,14 @@ class ExerciseSeedTest {
 				.collect(Collectors.groupingBy(Exercise::getPrimaryMuscleGroup, Collectors.counting()));
 
 		// LOWER_BACK, TRAPS, FOREARMS and OBLIQUES were introduced by V10 (split of BACK and CORE) and have no
-		// dedicated catalog exercises yet; every other group (including ABS, formerly CORE) already had at
+		// dedicated catalog exercises yet; V12 (split of SHOULDERS, new adductor/abductor groups) leaves
+		// SIDE_DELTS, ADDUCTORS and ABDUCTORS with two catalog exercises each. Every other group has at
 		// least three.
-		Set<MuscleGroup> introducedByV10 = EnumSet.of(MuscleGroup.LOWER_BACK, MuscleGroup.TRAPS,
-				MuscleGroup.FOREARMS, MuscleGroup.OBLIQUES);
+		Set<MuscleGroup> belowThree = EnumSet.of(MuscleGroup.LOWER_BACK, MuscleGroup.TRAPS, MuscleGroup.FOREARMS,
+				MuscleGroup.OBLIQUES, MuscleGroup.SIDE_DELTS, MuscleGroup.ADDUCTORS, MuscleGroup.ABDUCTORS);
 
 		for (MuscleGroup group : MuscleGroup.values()) {
-			if (introducedByV10.contains(group)) {
+			if (belowThree.contains(group)) {
 				continue;
 			}
 			assertThat(countsByGroup.getOrDefault(group, 0L)).as(group.name()).isGreaterThanOrEqualTo(3);
@@ -92,16 +93,58 @@ class ExerciseSeedTest {
 		assertPrimary("cable-crunch", MuscleGroup.ABS);
 		assertPrimary("ab-wheel-rollout", MuscleGroup.ABS);
 
-		assertSecondaries("plank", MuscleGroup.SHOULDERS, MuscleGroup.OBLIQUES);
-		assertSecondaries("ab-wheel-rollout", MuscleGroup.SHOULDERS, MuscleGroup.OBLIQUES);
-		assertSecondaries("push-up", MuscleGroup.TRICEPS, MuscleGroup.SHOULDERS, MuscleGroup.ABS);
+		assertSecondaries("plank", MuscleGroup.FRONT_DELTS, MuscleGroup.OBLIQUES);
+		assertSecondaries("ab-wheel-rollout", MuscleGroup.FRONT_DELTS, MuscleGroup.OBLIQUES);
+		assertSecondaries("push-up", MuscleGroup.TRICEPS, MuscleGroup.FRONT_DELTS, MuscleGroup.ABS);
 		assertSecondaries("back-squat", MuscleGroup.GLUTES, MuscleGroup.ABS);
 		assertSecondaries("front-squat", MuscleGroup.GLUTES, MuscleGroup.ABS);
 	}
 
 	@Test
+	void splitShouldersMigrationRetagsBuiltInExercisesBySlug() {
+		assertPrimary("overhead-press", MuscleGroup.FRONT_DELTS);
+		assertPrimary("arnold-press", MuscleGroup.FRONT_DELTS);
+		assertPrimary("lateral-raise", MuscleGroup.SIDE_DELTS);
+		assertPrimary("face-pull", MuscleGroup.REAR_DELTS);
+
+		assertSecondaries("overhead-press", MuscleGroup.TRICEPS, MuscleGroup.SIDE_DELTS);
+		assertSecondaries("arnold-press", MuscleGroup.TRICEPS, MuscleGroup.SIDE_DELTS);
+		assertSecondaries("face-pull", MuscleGroup.TRAPS);
+		assertSecondaries("barbell-bench-press", MuscleGroup.TRICEPS, MuscleGroup.FRONT_DELTS);
+		assertSecondaries("incline-dumbbell-press", MuscleGroup.TRICEPS, MuscleGroup.FRONT_DELTS);
+		assertSecondaries("close-grip-bench-press", MuscleGroup.CHEST, MuscleGroup.FRONT_DELTS);
+	}
+
+	@Test
+	void splitShouldersMigrationAddsNewCatalogExercises() {
+		assertPrimary("hip-adduction-machine", MuscleGroup.ADDUCTORS);
+		assertPrimary("copenhagen-plank", MuscleGroup.ADDUCTORS);
+		assertPrimary("hip-abduction-machine", MuscleGroup.ABDUCTORS);
+		assertPrimary("banded-lateral-walk", MuscleGroup.ABDUCTORS);
+		assertPrimary("reverse-pec-deck", MuscleGroup.REAR_DELTS);
+		assertPrimary("bent-over-rear-delt-fly", MuscleGroup.REAR_DELTS);
+		assertPrimary("front-raise", MuscleGroup.FRONT_DELTS);
+		assertPrimary("cable-lateral-raise", MuscleGroup.SIDE_DELTS);
+
+		assertSecondaries("hip-adduction-machine");
+		assertSecondaries("hip-abduction-machine");
+		assertSecondaries("copenhagen-plank", MuscleGroup.ABS, MuscleGroup.OBLIQUES);
+		assertSecondaries("banded-lateral-walk", MuscleGroup.GLUTES);
+		assertSecondaries("reverse-pec-deck", MuscleGroup.TRAPS);
+		assertSecondaries("bent-over-rear-delt-fly", MuscleGroup.TRAPS);
+		assertSecondaries("front-raise", MuscleGroup.SIDE_DELTS);
+		assertSecondaries("cable-lateral-raise", MuscleGroup.FRONT_DELTS);
+
+		for (String slug : List.of("hip-adduction-machine", "copenhagen-plank", "hip-abduction-machine",
+				"banded-lateral-walk", "reverse-pec-deck", "bent-over-rear-delt-fly", "front-raise",
+				"cable-lateral-raise")) {
+			assertThat(bySlug(slug).getOwnerId()).as(slug).isNull();
+		}
+	}
+
+	@Test
 	void noStoredGroupIsARetiredOne() {
-		for (String retired : List.of("BACK", "CORE")) {
+		for (String retired : List.of("BACK", "CORE", "SHOULDERS")) {
 			Integer primaries = jdbcTemplate.queryForObject(
 					"select count(*) from exercises where primary_muscle_group = ?", Integer.class, retired);
 			Integer secondaries = jdbcTemplate.queryForObject(
