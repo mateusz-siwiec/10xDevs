@@ -1,10 +1,10 @@
 ---
 change_id: favorite-exercises-search
 title: Favourite exercises and text search in exercise lists
-status: impl_reviewed
+status: archived
 created: 2026-11-16
 updated: 2026-11-17
-archived_at: null
+archived_at: 2026-11-17T11:05:28Z
 ---
 
 ## Notes
