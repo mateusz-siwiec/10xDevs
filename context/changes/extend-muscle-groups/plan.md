@@ -339,33 +339,33 @@ None: the catalogue grows from 40 to 48 rows and the stats response from 14 to 1
 
 #### Automated
 
-- [x] 1.1 Exercise tests pass, including V12 applying on a fresh container
-- [x] 1.2 Migration-over-data test passes
-- [x] 1.3 Full backend suite passes
+- [x] 1.1 Exercise tests pass, including V12 applying on a fresh container — 5380db0
+- [x] 1.2 Migration-over-data test passes — 5380db0
+- [x] 1.3 Full backend suite passes — 5380db0
 
 #### Manual
 
-- [x] 1.4 Local API shows retagged built-ins, the 8 new exercises and the new groups in the stats
+- [x] 1.4 Local API shows retagged built-ins, the 8 new exercises and the new groups in the stats — 5380db0
 
 ### Phase 2: Frontend foundation
 
 #### Automated
 
-- [ ] 2.1 Unit tests pass, including locale parity and seeded name and technique checks
-- [ ] 2.2 Type check and build pass
-- [ ] 2.3 Lint passes
+- [x] 2.1 Unit tests pass, including locale parity and seeded name and technique checks
+- [x] 2.2 Type check and build pass
+- [x] 2.3 Lint passes
 
 ### Phase 3: Body figure
 
 #### Automated
 
-- [ ] 3.1 Unit tests pass, including every group has a figure region
-- [ ] 3.2 Build and lint pass
-- [ ] 3.3 Muscle-map e2e passes
+- [x] 3.1 Unit tests pass, including every group has a figure region
+- [x] 3.2 Build and lint pass
+- [x] 3.3 Muscle-map e2e passes
 
 #### Manual
 
-- [ ] 3.4 Delts, adductors and abductors are visibly distinct and highlight correctly in light and dark
+- [x] 3.4 Delts, adductors and abductors are visibly distinct and highlight correctly in light and dark
 
 ### Phase 4: Collapsible muscle stats
 

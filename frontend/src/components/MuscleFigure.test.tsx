@@ -29,13 +29,36 @@ describe('MuscleFigure', () => {
     }
   })
 
-  it('only maps paths to known muscle groups, or to plain body for abductors and adductors', () => {
+  it('only maps paths to known muscle groups', () => {
     const known = new Set<string>(MUSCLE_GROUPS)
     for (const path of ALL_PATHS) {
       if (path.group !== null) expect(known.has(path.group), path.group).toBe(true)
     }
-    // Source: ABDUCTORS and ADDUCTORS, one path per side in each of the two views.
-    expect(ALL_PATHS.filter((path) => path.group === null)).toHaveLength(8)
+    // Every drawn body part is a selectable group; nothing is left as plain body any more.
+    expect(ALL_PATHS.filter((path) => path.group === null)).toHaveLength(0)
+  })
+
+  it('draws front, side and rear delts as separate regions, one path per side in the views that show them', () => {
+    const count = (view: 'front' | 'back', group: string) =>
+      MUSCLE_FIGURE[view].muscles.filter((path) => path.group === group).length
+    expect(count('front', 'FRONT_DELTS')).toBe(2)
+    expect(count('back', 'FRONT_DELTS')).toBe(0)
+    expect(count('front', 'SIDE_DELTS')).toBe(2)
+    expect(count('back', 'SIDE_DELTS')).toBe(2)
+    expect(count('front', 'REAR_DELTS')).toBe(0)
+    expect(count('back', 'REAR_DELTS')).toBe(2)
+    expect(ALL_PATHS.some((path) => path.group === 'SHOULDERS')).toBe(false)
+  })
+
+  it('highlights adductors and abductors, one path per side in each view', () => {
+    for (const group of ['ADDUCTORS', 'ABDUCTORS']) {
+      expect(MUSCLE_FIGURE.front.muscles.filter((path) => path.group === group), `${group} front`).toHaveLength(2)
+      expect(MUSCLE_FIGURE.back.muscles.filter((path) => path.group === group), `${group} back`).toHaveLength(2)
+    }
+    const result = states('ADDUCTORS', ['ABDUCTORS'])
+    expect([...result.get('ADDUCTORS')!]).toEqual(['primary'])
+    expect([...result.get('ABDUCTORS')!]).toEqual(['secondary'])
+    expect([...states('REAR_DELTS', ['SIDE_DELTS']).get('FRONT_DELTS')!]).toEqual(['idle'])
   })
 
   it('draws the body outline before the muscle paths in each view', () => {
@@ -46,10 +69,10 @@ describe('MuscleFigure', () => {
   })
 
   it('marks primary, secondary and idle regions', () => {
-    const result = states('CHEST', ['TRICEPS', 'SHOULDERS'])
+    const result = states('CHEST', ['TRICEPS', 'BICEPS'])
     expect([...result.get('CHEST')!]).toEqual(['primary'])
     expect([...result.get('TRICEPS')!]).toEqual(['secondary'])
-    expect([...result.get('SHOULDERS')!]).toEqual(['secondary'])
+    expect([...result.get('BICEPS')!]).toEqual(['secondary'])
     expect([...result.get('QUADS')!]).toEqual(['idle'])
     expect([...result.get('LATS')!]).toEqual(['idle'])
   })
@@ -66,14 +89,6 @@ describe('MuscleFigure', () => {
     expect(front).toBeGreaterThan(0)
     expect(back).toBeGreaterThan(0)
     expect(html.match(/data-muscle="CALVES" data-state="primary"/g)!.length).toBe(front + back)
-  })
-
-  it('draws plain body parts that are never highlighted', () => {
-    const html = render('CHEST', [])
-    const bodyParts = ALL_PATHS.filter((path) => path.group === null).length
-    expect(bodyParts).toBeGreaterThan(0)
-    expect(html.match(/data-state="body"/g)!.length).toBe(bodyParts)
-    expect(html).not.toMatch(/data-muscle="[^"]*" data-state="body"/)
   })
 
   it('ignores unknown groups without highlighting anything', () => {

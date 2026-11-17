@@ -254,7 +254,15 @@
     "plank": "Plank",
     "hanging-leg-raise": "Hanging Leg Raise",
     "cable-crunch": "Cable Crunch",
-    "ab-wheel-rollout": "Ab Wheel Rollout"
+    "ab-wheel-rollout": "Ab Wheel Rollout",
+    "hip-adduction-machine": "Hip Adduction Machine",
+    "copenhagen-plank": "Copenhagen Plank",
+    "hip-abduction-machine": "Hip Abduction Machine",
+    "banded-lateral-walk": "Banded Lateral Walk",
+    "reverse-pec-deck": "Reverse Pec Deck",
+    "bent-over-rear-delt-fly": "Bent-Over Rear Delt Fly",
+    "front-raise": "Front Raise",
+    "cable-lateral-raise": "Cable Lateral Raise"
   },
   "workout": {
     "title": "Workout",
@@ -327,13 +335,17 @@
     "LATS": "Lats",
     "TRAPS": "Traps",
     "LOWER_BACK": "Lower back",
-    "SHOULDERS": "Shoulders",
+    "FRONT_DELTS": "Front delts",
+    "SIDE_DELTS": "Side delts",
+    "REAR_DELTS": "Rear delts",
     "BICEPS": "Biceps",
     "TRICEPS": "Triceps",
     "FOREARMS": "Forearms",
     "QUADS": "Quads",
     "HAMSTRINGS": "Hamstrings",
     "GLUTES": "Glutes",
+    "ADDUCTORS": "Adductors",
+    "ABDUCTORS": "Abductors",
     "CALVES": "Calves",
     "ABS": "Abs",
     "OBLIQUES": "Obliques"
@@ -624,6 +636,54 @@
       "Roll forward slowly while keeping your back flat.",
       "Go only as far as you can without your hips sagging.",
       "Pull the wheel back by contracting your abs."
+    ],
+    "hip-adduction-machine": [
+      "Adjust the seat and leg pads so your knees start comfortably apart, not at the end of your range.",
+      "Sit tall with your back against the pad and hold the handles.",
+      "Squeeze your thighs together with a smooth, controlled motion.",
+      "Return slowly and do not let the weight stack slam."
+    ],
+    "copenhagen-plank": [
+      "Place your top leg on a bench with your forearm on the floor and your body in a straight line.",
+      "Lift your hips and keep your bottom leg off the floor, close to the top leg.",
+      "Brace your core and do not let your hips sag or rotate.",
+      "Start with short holds and stop if you feel groin pain."
+    ],
+    "hip-abduction-machine": [
+      "Sit with your back against the pad and your feet on the plates, then hold the handles.",
+      "Press your knees outward until your thighs are comfortably apart.",
+      "Pause briefly, then return slowly without letting the weight stack drop.",
+      "Keep your hips planted and avoid rocking your torso."
+    ],
+    "banded-lateral-walk": [
+      "Place a band just above your knees or around your ankles and sit into a quarter squat.",
+      "Step sideways with your lead foot while keeping your toes pointing forward.",
+      "Follow with your trailing foot without letting your knees cave inward.",
+      "Keep constant tension on the band and your hips level."
+    ],
+    "reverse-pec-deck": [
+      "Sit facing the pad with your chest supported and the handles at shoulder height.",
+      "Keep a slight bend in your elbows and open your arms out to the sides.",
+      "Squeeze your shoulder blades together at the end of the movement.",
+      "Return slowly and use a light weight so you do not shrug."
+    ],
+    "bent-over-rear-delt-fly": [
+      "Hinge at the hips with a flat back and let the dumbbells hang below your chest.",
+      "Keep a slight bend in your elbows and raise your arms out to the sides.",
+      "Lead with your elbows and squeeze your shoulder blades at the top.",
+      "Lower slowly without swinging your torso."
+    ],
+    "front-raise": [
+      "Stand tall with the weights in front of your thighs and your core braced.",
+      "Raise your arms forward with straight or slightly bent elbows until about shoulder height.",
+      "Avoid leaning back or swinging to lift the weights.",
+      "Lower slowly under control."
+    ],
+    "cable-lateral-raise": [
+      "Stand side-on to the cable with the handle in your far hand and a slight bend in your elbow.",
+      "Raise your arm out to the side until it reaches about shoulder height.",
+      "Lead with your elbow and avoid shrugging your shoulder.",
+      "Lower slowly and keep tension on the cable throughout."
     ]
   }
 }
