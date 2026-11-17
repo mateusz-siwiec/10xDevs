@@ -348,6 +348,53 @@ class CustomExerciseControllerTest {
 	}
 
 	@Test
+	void favoriteOfForeignCustomExerciseIsNotFound() throws Exception {
+		UUID foreignId = createdId(bearer(newUser()), "Foreign Star " + System.nanoTime());
+		String token = bearer(newUser());
+
+		mockMvc.perform(put("/api/exercises/" + foreignId + "/favorite").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.code", is("EXERCISE_NOT_FOUND")));
+		mockMvc.perform(delete("/api/exercises/" + foreignId + "/favorite").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void deletingStarredCustomExerciseRemovesItWithItsFavorite() throws Exception {
+		String token = bearer(newUser());
+		UUID id = createdId(token, "Starred Disposable " + System.nanoTime());
+		mockMvc.perform(put("/api/exercises/" + id + "/favorite").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isNoContent());
+
+		mockMvc.perform(delete("/api/exercises/" + id).header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isNoContent());
+		mockMvc.perform(get("/api/exercises").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(jsonPath("$", hasSize(40)))
+			.andExpect(jsonPath("$[?(@.id == '" + id + "')]", hasSize(0)));
+	}
+
+	@Test
+	void createReturnsNoFavoriteAndUpdateKeepsExistingStar() throws Exception {
+		String token = bearer(newUser());
+		String created = create(token, body("Star Keeper " + System.nanoTime(), "BICEPS", null))
+			.andExpect(status().isCreated())
+			.andExpect(jsonPath("$.favorite", is(false)))
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+		UUID id = UUID.fromString(com.jayway.jsonpath.JsonPath.read(created, "$.id"));
+
+		update(token, id, body("Star Keeper Plain " + System.nanoTime(), "BICEPS", null)).andExpect(status().isOk())
+			.andExpect(jsonPath("$.favorite", is(false)));
+		mockMvc.perform(put("/api/exercises/" + id + "/favorite").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isNoContent());
+		update(token, id, body("Star Keeper Renamed " + System.nanoTime(), "LATS", null)).andExpect(status().isOk())
+			.andExpect(jsonPath("$.favorite", is(true)));
+		mockMvc.perform(get("/api/exercises").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(jsonPath("$[?(@.id == '" + id + "')].favorite", contains(true)));
+	}
+
+	@Test
 	void createAndDeleteWithoutTokenReturnUnauthorized() throws Exception {
 		mockMvc.perform(post("/api/exercises").contentType(MediaType.APPLICATION_JSON)
 			.content(body("Anon", "BICEPS", null))).andExpect(status().isUnauthorized());

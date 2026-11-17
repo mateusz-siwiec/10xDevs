@@ -194,9 +194,19 @@
     "notFound": "Exercise not found",
     "backToList": "Back to exercises",
     "deleteFailed": "Failed to delete exercise",
+    "scopeFavorites": "Favourites",
+    "searchLabel": "Search exercises",
+    "searchPlaceholder": "Search by name…",
+    "favoriteLabel": "Favourite {{name}}",
+    "favoriteFailed": "Failed to update favourite",
+    "noFavorites": "No favourite exercises yet. Star an exercise to add it here.",
     "picker": {
       "label": "Exercise",
-      "choose": "Choose an exercise…"
+      "choose": "Choose an exercise…",
+      "filterLabel": "Filter by name",
+      "favorites": "Favourites",
+      "others": "Other exercises",
+      "noMatches": "No exercises match your search."
     },
     "techniqueLabel": "How to do {{name}}",
     "techniqueHeading": "Proper technique",

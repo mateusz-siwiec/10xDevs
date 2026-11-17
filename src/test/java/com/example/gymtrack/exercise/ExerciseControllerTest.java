@@ -8,7 +8,9 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -132,6 +134,66 @@ class ExerciseControllerTest {
 		mockMvc.perform(get("/api/exercises/{id}/substitutes", "not-a-uuid")
 				.header(HttpHeaders.AUTHORIZATION, bearerToken()))
 			.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void favoriteIsPerUserAndRemovable() throws Exception {
+		String alice = bearerToken();
+		String bob = bearerToken();
+		UUID deadlift = exerciseRepository.findAll().stream()
+			.filter((e) -> "deadlift".equals(e.getSlug()))
+			.findFirst()
+			.orElseThrow()
+			.getId();
+
+		mockMvc.perform(put("/api/exercises/{id}/favorite", deadlift).header(HttpHeaders.AUTHORIZATION, alice))
+			.andExpect(status().isNoContent());
+		// Repeating the call is a no-op, not an error.
+		mockMvc.perform(put("/api/exercises/{id}/favorite", deadlift).header(HttpHeaders.AUTHORIZATION, alice))
+			.andExpect(status().isNoContent());
+
+		mockMvc.perform(get("/api/exercises").header(HttpHeaders.AUTHORIZATION, alice))
+			.andExpect(jsonPath("$[?(@.slug == 'deadlift')].favorite", contains(true)))
+			.andExpect(jsonPath("$[?(@.slug != 'deadlift')].favorite", everyItem(is(false))));
+		mockMvc.perform(get("/api/exercises").header(HttpHeaders.AUTHORIZATION, bob))
+			.andExpect(jsonPath("$[*].favorite", everyItem(is(false))));
+
+		mockMvc.perform(delete("/api/exercises/{id}/favorite", deadlift).header(HttpHeaders.AUTHORIZATION, alice))
+			.andExpect(status().isNoContent());
+		mockMvc.perform(get("/api/exercises").header(HttpHeaders.AUTHORIZATION, alice))
+			.andExpect(jsonPath("$[*].favorite", everyItem(is(false))));
+	}
+
+	@Test
+	void substitutesCarryTheCallersFavoriteFlag() throws Exception {
+		String alice = bearerToken();
+		List<Exercise> chest = exerciseRepository.findByPrimaryMuscleGroupOrderByNameAsc(MuscleGroup.CHEST);
+		Exercise requested = chest.get(0);
+		Exercise starred = chest.get(1);
+
+		mockMvc.perform(put("/api/exercises/{id}/favorite", starred.getId()).header(HttpHeaders.AUTHORIZATION, alice))
+			.andExpect(status().isNoContent());
+
+		mockMvc.perform(get("/api/exercises/{id}/substitutes", requested.getId())
+				.header(HttpHeaders.AUTHORIZATION, alice))
+			.andExpect(jsonPath("$[?(@.id == '" + starred.getId() + "')].favorite", contains(true)))
+			.andExpect(jsonPath("$[?(@.id != '" + starred.getId() + "')].favorite", everyItem(is(false))));
+		mockMvc.perform(get("/api/exercises/{id}/substitutes", requested.getId())
+				.header(HttpHeaders.AUTHORIZATION, bearerToken()))
+			.andExpect(jsonPath("$[*].favorite", everyItem(is(false))));
+	}
+
+	@Test
+	void favoriteUnknownExerciseReturnsNotFound() throws Exception {
+		mockMvc.perform(put("/api/exercises/{id}/favorite", UUID.randomUUID())
+				.header(HttpHeaders.AUTHORIZATION, bearerToken()))
+			.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void favoriteWithoutTokenReturnsUnauthorized() throws Exception {
+		mockMvc.perform(put("/api/exercises/{id}/favorite", UUID.randomUUID()))
+			.andExpect(status().isUnauthorized());
 	}
 
 	@Test

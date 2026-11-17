@@ -15,7 +15,7 @@ transparent, rule-based suggestions for what to do next, with no black box: ever
 | Area | What the user can do |
 | --- | --- |
 | Access | Register and log in; everyone sees only their own data |
-| Exercises | Browse a seeded catalog (tagged by muscle group); add, rename and delete custom exercises |
+| Exercises | Browse a seeded catalog (tagged by muscle group); add, rename and delete custom exercises; star favourites and search by name |
 | Plans | Create, edit, reorder and delete training plans (ordered exercises with target sets × reps) |
 | Workouts | Start a session (free-form or from a plan), log and delete sets, end it; guided navigation with skip/return and a rest timer; delete a whole workout from its History page (with confirmation) |
 | Insight | Progression chart per exercise, history of past workouts, dashboard with totals, 12-week volume, streak and recent records, sets per muscle group |

@@ -67,9 +67,41 @@
   margin-bottom: 1rem;
 }
 
-/* The picker's own bottom margin would push the button below the select. */
-.exercise-picker-row .field {
+.exercise-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+  margin-bottom: 1rem;
+}
+
+.exercise-picker .field {
   margin-bottom: 0;
+}
+
+.exercise-picker-hint {
+  margin: 0.375rem 0 0;
+}
+
+.exercise-picker-hint:empty {
+  display: none;
+}
+
+/*
+ * In the workout row the picker's two fields become grid items: the search field takes the full
+ * width on its own line, the select shares the next line with the technique and substitute actions.
+ */
+.exercise-picker-row .exercise-picker {
+  display: contents;
+}
+
+.exercise-picker-row .exercise-picker > .field:first-child {
+  grid-column: 1 / -1;
+  margin-bottom: 0.25rem;
+}
+
+.exercise-picker-row .exercise-picker > .field {
+  min-width: 0;
 }
 
 .exercise-picker-actions {

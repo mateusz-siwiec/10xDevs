@@ -53,3 +53,25 @@
 .exercise-list .plan-item-actions .btn-secondary {
   padding-inline: 0.875rem;
 }
+
+/* Star toggle: square 44px+ target; the pressed state is also a filled shape, not just a colour. */
+.exercise-list .plan-item-actions .favorite-toggle {
+  min-width: 44px;
+  padding-inline: 0.625rem;
+  color: var(--text);
+}
+
+.exercise-list .favorite-toggle:hover:not(:disabled) {
+  color: var(--accent);
+}
+
+.exercise-list .favorite-toggle[aria-pressed='true'] {
+  color: var(--accent);
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+
+.exercise-list .favorite-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

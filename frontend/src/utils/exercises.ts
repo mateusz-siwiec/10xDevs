@@ -32,6 +32,25 @@ export function exerciseTechnique({ slug }: { slug: string }): string[] | null {
   return Array.isArray(cues) && cues.every((cue) => typeof cue === 'string') ? cues : null
 }
 
+/** Lowercases, strips diacritics (NFD marks plus the non-decomposing ł). */
+function normalizeSearch(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/ł/g, 'l')
+}
+
+/**
+ * True when the exercise's displayed name (active language) contains the query, ignoring case and
+ * diacritics. An empty or whitespace-only query matches everything.
+ */
+export function matchesExerciseSearch(exercise: NamedExercise, query: string): boolean {
+  const needle = normalizeSearch(query.trim())
+  if (needle === '') return true
+  return normalizeSearch(exerciseName(exercise)).includes(needle)
+}
+
 /** Returns a copy sorted alphabetically by display name under the active language's rules. */
 export function sortExercisesByName<T extends NamedExercise>(list: readonly T[]): T[] {
   return [...list].sort((a, b) => exerciseName(a).localeCompare(exerciseName(b), i18n.language))

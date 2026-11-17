@@ -204,9 +204,19 @@
     "notFound": "Nie znaleziono ćwiczenia",
     "backToList": "Wróć do ćwiczeń",
     "deleteFailed": "Nie udało się usunąć ćwiczenia",
+    "scopeFavorites": "Ulubione",
+    "searchLabel": "Szukaj ćwiczeń",
+    "searchPlaceholder": "Szukaj po nazwie…",
+    "favoriteLabel": "Ulubione: {{name}}",
+    "favoriteFailed": "Nie udało się zaktualizować ulubionych",
+    "noFavorites": "Brak ulubionych ćwiczeń. Oznacz ćwiczenie gwiazdką, aby je tu dodać.",
     "picker": {
       "label": "Ćwiczenie",
-      "choose": "Wybierz ćwiczenie…"
+      "choose": "Wybierz ćwiczenie…",
+      "filterLabel": "Filtruj po nazwie",
+      "favorites": "Ulubione",
+      "others": "Pozostałe ćwiczenia",
+      "noMatches": "Brak ćwiczeń pasujących do wyszukiwania."
     },
     "techniqueLabel": "Jak wykonać: {{name}}",
     "techniqueHeading": "Poprawna technika",
