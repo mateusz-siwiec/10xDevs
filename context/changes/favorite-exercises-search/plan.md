@@ -302,22 +302,22 @@ Lists are the catalog plus a user's custom exercises (tens to low hundreds of ro
 
 #### Automated
 
-- [x] 2.1 Unit tests pass, including the new helper tests and locale parity
-- [x] 2.2 Type check and build pass
-- [x] 2.3 Lint passes
+- [x] 2.1 Unit tests pass, including the new helper tests and locale parity — 59d65b4
+- [x] 2.2 Type check and build pass — 59d65b4
+- [x] 2.3 Lint passes — 59d65b4
 
 ### Phase 3: Exercises page
 
 #### Automated
 
-- [ ] 3.1 Build, lint and unit tests pass
-- [ ] 3.2 No hard-coded values in the touched files
-- [ ] 3.3 Exercises specs pass, including the existing ones
+- [x] 3.1 Build, lint and unit tests pass
+- [x] 3.2 No hard-coded values in the touched files
+- [x] 3.3 Exercises specs pass, including the existing ones
 
 #### Manual
 
-- [ ] 3.4 Star, filter and search look right in light and dark, in both languages, on a phone-width viewport
-- [ ] 3.5 Keyboard: star is reachable, toggles with Space/Enter, focus ring visible, focus sensible after un-starring in Favourites
+- [x] 3.4 Star, filter and search look right in light and dark, in both languages, on a phone-width viewport
+- [x] 3.5 Keyboard: star is reachable, toggles with Space/Enter, focus ring visible, focus sensible after un-starring in Favourites
 
 ### Phase 4: Exercise picker
 
