@@ -371,23 +371,23 @@ None: the catalogue grows from 40 to 48 rows and the stats response from 14 to 1
 
 #### Automated
 
-- [x] 4.1 Unit tests pass, including the hierarchy test and locale parity
-- [x] 4.2 Build, lint and token guard pass
-- [x] 4.3 Stats e2e specs pass
+- [x] 4.1 Unit tests pass, including the hierarchy test and locale parity — da1d837
+- [x] 4.2 Build, lint and token guard pass — da1d837
+- [x] 4.3 Stats e2e specs pass — da1d837
 
 #### Manual
 
-- [x] 4.4 Parent rows look right collapsed and expanded (EN/PL, light/dark, phone) and keyboard toggling works
+- [x] 4.4 Parent rows look right collapsed and expanded (EN/PL, light/dark, phone) and keyboard toggling works — da1d837
 
 ### Phase 5: Surfaces, docs and full suites
 
 #### Automated
 
-- [ ] 5.1 Build, lint, unit tests and token guard pass
-- [ ] 5.2 Full e2e suite passes with no baseline changes
-- [ ] 5.3 Full backend suite passes
+- [x] 5.1 Build, lint, unit tests and token guard pass
+- [x] 5.2 Full e2e suite passes with no baseline changes
+- [x] 5.3 Full backend suite passes
 
 #### Manual
 
-- [ ] 5.4 Exercise form, filters and the collapsible stats look right with 18 groups in EN and PL, light and dark, phone width
-- [ ] 5.5 A custom exercise created before the migration shows as Side delts and still works
+- [x] 5.4 Exercise form, filters and the collapsible stats look right with 18 groups in EN and PL, light and dark, phone width
+- [x] 5.5 A custom exercise created before the migration shows as Side delts and still works
