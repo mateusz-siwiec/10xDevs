@@ -292,24 +292,24 @@ One boolean column and one conditional count in an existing grouped query; no ne
 
 #### Automated
 
-- [x] 2.1 Unit tests pass, including locale parity
-- [x] 2.2 Build, lint and token guard pass
-- [x] 2.3 Log-set specs pass
+- [x] 2.1 Unit tests pass, including locale parity — 624f46e
+- [x] 2.2 Build, lint and token guard pass — 624f46e
+- [x] 2.3 Log-set specs pass — 624f46e
 
 #### Manual
 
-- [x] 2.4 The checkbox looks right, logs the flag, shows the badge and resets after logging (EN/PL, light/dark, phone)
+- [x] 2.4 The checkbox looks right, logs the flag, shows the badge and resets after logging (EN/PL, light/dark, phone) — 624f46e
 
 ### Phase 3: Read-back surfaces
 
 #### Automated
 
-- [ ] 3.1 Build, lint, unit tests and token guard pass
-- [ ] 3.2 Failure, log-set and stats specs pass
+- [x] 3.1 Build, lint, unit tests and token guard pass
+- [x] 3.2 Failure, log-set and stats specs pass
 
 #### Manual
 
-- [ ] 3.3 The badge and the stats failure text look right in history, the hint and the stats page (EN/PL, light/dark, phone)
+- [x] 3.3 The badge and the stats failure text look right in history, the hint and the stats page (EN/PL, light/dark, phone)
 
 ### Phase 4: Docs, baselines and full suites
 

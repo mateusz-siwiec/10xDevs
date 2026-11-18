@@ -97,3 +97,11 @@
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
+
+/* Secondary "N to failure" text under the bar; only rendered when the count is above zero. */
+.muscle-failure {
+  grid-column: 2 / -1;
+  margin-top: -0.5rem;
+  font-size: 0.75rem;
+  color: var(--text);
+}

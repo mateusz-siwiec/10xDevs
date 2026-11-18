@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getPreviousWorkout } from '../api/client'
 import type { PreviousWorkout } from '../api/client'
+import FailureBadge from './FailureBadge'
 
 interface PreviousWorkoutHintProps {
   exerciseId: string
@@ -57,6 +58,7 @@ export default function PreviousWorkoutHint({ exerciseId, planId, setNumber }: P
                 className={index + 1 === setNumber ? 'previous-workout-hint-current' : undefined}
               >
                 {t('workout.setLine', { n: index + 1, reps: set.reps, weight: set.weightKg })}
+                {set.toFailure && <FailureBadge />}
               </li>
             ))}
           </ol>

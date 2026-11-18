@@ -124,6 +124,43 @@ test('the toggle works with the keyboard and an expanded parent stays open when 
   await expect(child(page, 'LATS')).toContainText('2')
 })
 
+test('failure sets are counted on the parent and the muscle row, and groups without them show nothing', async ({
+  page,
+  request,
+}) => {
+  const user = await registerViaApi(request, 'muscles-failure')
+  const sideDelts = await exerciseIdByGroup(request, user, 'SIDE_DELTS')
+  const rearDelts = await exerciseIdByGroup(request, user, 'REAR_DELTS')
+  const chest = await exerciseIdByGroup(request, user, 'CHEST')
+  const session = await request.post(`${API}/api/workout-sessions`, auth(user))
+  const sessionId = (await session.json()).id
+  const sets: [string, boolean][] = [
+    [sideDelts, true],
+    [sideDelts, true],
+    [sideDelts, false],
+    [rearDelts, true],
+    [chest, false],
+  ]
+  for (const [exerciseId, toFailure] of sets) {
+    await request.post(`${API}/api/workout-sessions/${sessionId}/sets`, {
+      ...auth(user),
+      data: { exerciseId, reps: 8, weightKg: 50, toFailure },
+    })
+  }
+  await request.post(`${API}/api/workout-sessions/${sessionId}/end`, auth(user))
+  await openStats(page, user)
+
+  // Shoulders: 3 failure sets in total (side 2 + rear 1); Chest and Back have none.
+  await expect(parent(page, 'SHOULDERS')).toContainText('3 to failure')
+  await expect(parent(page, 'CHEST')).not.toContainText('to failure')
+  await expect(parent(page, 'BACK')).not.toContainText('to failure')
+
+  await page.getByRole('button', { name: 'Shoulders', exact: true }).click()
+  await expect(child(page, 'SIDE_DELTS')).toContainText('2 to failure')
+  await expect(child(page, 'REAR_DELTS')).toContainText('1 to failure')
+  await expect(child(page, 'FRONT_DELTS')).not.toContainText('to failure')
+})
+
 test('in Polish the parents and sub-groups are translated', async ({ page, request }) => {
   const user = await registerViaApi(request, 'muscles-pl')
   await logSets(request, user, [['REAR_DELTS', 2]])
