@@ -315,10 +315,10 @@ One boolean column and one conditional count in an existing grouped query; no ne
 
 #### Automated
 
-- [x] 4.1 Build, lint, unit tests and token guard pass
-- [x] 4.2 Full e2e suite passes
-- [x] 4.3 Full backend suite passes
+- [x] 4.1 Build, lint, unit tests and token guard pass — e4f7467
+- [x] 4.2 Full e2e suite passes — e4f7467
+- [x] 4.3 Full backend suite passes — e4f7467
 
 #### Manual
 
-- [x] 4.4 Only the expected workout-ui baselines changed and the checkbox is the only visual delta
+- [x] 4.4 Only the expected workout-ui baselines changed and the checkbox is the only visual delta — e4f7467
