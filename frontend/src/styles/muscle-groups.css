@@ -17,7 +17,8 @@
   display: grid;
   grid-template-columns: 6.5rem 1fr 2.5rem;
   align-items: center;
-  gap: 0.75rem;
+  column-gap: 0.75rem;
+  row-gap: 0.25rem;
 }
 
 .muscle-name {
@@ -101,7 +102,6 @@
 /* Secondary "N to failure" text under the bar; only rendered when the count is above zero. */
 .muscle-failure {
   grid-column: 2 / -1;
-  margin-top: -0.5rem;
   font-size: 0.75rem;
   color: var(--text);
 }

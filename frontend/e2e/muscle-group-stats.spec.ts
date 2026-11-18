@@ -133,6 +133,7 @@ test('failure sets are counted on the parent and the muscle row, and groups with
   const rearDelts = await exerciseIdByGroup(request, user, 'REAR_DELTS')
   const chest = await exerciseIdByGroup(request, user, 'CHEST')
   const session = await request.post(`${API}/api/workout-sessions`, auth(user))
+  expect(session.ok()).toBeTruthy()
   const sessionId = (await session.json()).id
   const sets: [string, boolean][] = [
     [sideDelts, true],
@@ -142,12 +143,14 @@ test('failure sets are counted on the parent and the muscle row, and groups with
     [chest, false],
   ]
   for (const [exerciseId, toFailure] of sets) {
-    await request.post(`${API}/api/workout-sessions/${sessionId}/sets`, {
+    const logged = await request.post(`${API}/api/workout-sessions/${sessionId}/sets`, {
       ...auth(user),
       data: { exerciseId, reps: 8, weightKg: 50, toFailure },
     })
+    expect(logged.ok()).toBeTruthy()
   }
-  await request.post(`${API}/api/workout-sessions/${sessionId}/end`, auth(user))
+  const ended = await request.post(`${API}/api/workout-sessions/${sessionId}/end`, auth(user))
+  expect(ended.ok()).toBeTruthy()
   await openStats(page, user)
 
   // Shoulders: 3 failure sets in total (side 2 + rear 1); Chest and Back have none.
