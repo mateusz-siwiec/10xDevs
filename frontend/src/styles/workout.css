@@ -12,6 +12,11 @@
   gap: 1rem;
 }
 
+.set-logger-fields .check-field {
+  grid-column: 1 / -1;
+  margin-bottom: 0;
+}
+
 .set-logger-fields .field input {
   min-height: 48px;
   font-size: 1.25rem;

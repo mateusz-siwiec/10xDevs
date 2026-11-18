@@ -281,24 +281,24 @@ One boolean column and one conditional count in an existing grouped query; no ne
 
 #### Automated
 
-- [x] 1.1 V13 applies and the workout tests pass
-- [x] 1.2 Full backend suite passes
+- [x] 1.1 V13 applies and the workout tests pass — 0c150cc
+- [x] 1.2 Full backend suite passes — 0c150cc
 
 #### Manual
 
-- [x] 1.3 The API accepts, stores and returns the flag, defaults to false and shows failureSets in the stats
+- [x] 1.3 The API accepts, stores and returns the flag, defaults to false and shows failureSets in the stats — 0c150cc
 
 ### Phase 2: Frontend foundation and logging
 
 #### Automated
 
-- [ ] 2.1 Unit tests pass, including locale parity
-- [ ] 2.2 Build, lint and token guard pass
-- [ ] 2.3 Log-set specs pass
+- [x] 2.1 Unit tests pass, including locale parity
+- [x] 2.2 Build, lint and token guard pass
+- [x] 2.3 Log-set specs pass
 
 #### Manual
 
-- [ ] 2.4 The checkbox looks right, logs the flag, shows the badge and resets after logging (EN/PL, light/dark, phone)
+- [x] 2.4 The checkbox looks right, logs the flag, shows the badge and resets after logging (EN/PL, light/dark, phone)
 
 ### Phase 3: Read-back surfaces
 

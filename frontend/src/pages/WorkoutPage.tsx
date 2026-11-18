@@ -175,12 +175,12 @@ export default function WorkoutPage() {
   }
 
   // Rethrows so SetLogger knows the log failed; the message is shown inline here.
-  async function handleLog(reps: number, weightKg: number) {
+  async function handleLog(reps: number, weightKg: number, toFailure: boolean) {
     if (!session) return
     setError(null)
     setBusy(true)
     try {
-      const set = await logSet(session.id, { exerciseId: selectedExercise, reps, weightKg })
+      const set = await logSet(session.id, { exerciseId: selectedExercise, reps, weightKg, toFailure })
       setSession((s) => (s && s.id === session.id ? { ...s, sets: [...s.sets, set] } : s))
       // Logging against a skipped entry counts as returning to it.
       if (progress) {
