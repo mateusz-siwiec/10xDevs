@@ -17,7 +17,7 @@ transparent, rule-based suggestions for what to do next, with no black box: ever
 | Access | Register and log in; everyone sees only their own data |
 | Exercises | Browse a seeded catalog (tagged by muscle group); add, rename and delete custom exercises; star favourites and search by name |
 | Plans | Create, edit, reorder and delete training plans (ordered exercises with target sets × reps) |
-| Workouts | Start a session (free-form or from a plan), log and delete sets, end it; guided navigation with skip/return and a rest timer; delete a whole workout from its History page (with confirmation) |
+| Workouts | Start a session (free-form or from a plan), log and delete sets, end it; guided navigation with skip/return and a rest timer; delete a whole workout from its History page (with confirmation); mark a set as taken "to failure" when logging it (shown in the active workout, in History and in the previous-workout hint) |
 | Insight | Progression chart per exercise, history of past workouts, dashboard with totals, 12-week volume, streak and recent records, sets per muscle group |
 | Rules | Weight-increase recommendation, substitute suggestions, personal-record flag (see below) |
 
@@ -155,6 +155,9 @@ Custom exercises count towards the group you gave them. Sets of a workout you ar
 | Shoulders, Arms, Legs, Core | 0 each | every muscle in it at 0 |
 
 The page shows "5 sets in total". Bench press also works the triceps and front delts, but those stay at 0 here because only the primary group counts.
+
+**Failure tracking.** A set can be marked "to failure" when you log it. The stats also show how many of the sets in each muscle group
+went to failure. This is informational only: it does **not** affect the weight-increase recommendation (rule 1), which looks at weight, sets and reps alone.
 
 ### Input rules enforced by the API
 

@@ -304,21 +304,21 @@ One boolean column and one conditional count in an existing grouped query; no ne
 
 #### Automated
 
-- [x] 3.1 Build, lint, unit tests and token guard pass
-- [x] 3.2 Failure, log-set and stats specs pass
+- [x] 3.1 Build, lint, unit tests and token guard pass — 3b6faec
+- [x] 3.2 Failure, log-set and stats specs pass — 3b6faec
 
 #### Manual
 
-- [x] 3.3 The badge and the stats failure text look right in history, the hint and the stats page (EN/PL, light/dark, phone)
+- [x] 3.3 The badge and the stats failure text look right in history, the hint and the stats page (EN/PL, light/dark, phone) — 3b6faec
 
 ### Phase 4: Docs, baselines and full suites
 
 #### Automated
 
-- [ ] 4.1 Build, lint, unit tests and token guard pass
-- [ ] 4.2 Full e2e suite passes
-- [ ] 4.3 Full backend suite passes
+- [x] 4.1 Build, lint, unit tests and token guard pass
+- [x] 4.2 Full e2e suite passes
+- [x] 4.3 Full backend suite passes
 
 #### Manual
 
-- [ ] 4.4 Only the expected workout-ui baselines changed and the checkbox is the only visual delta
+- [x] 4.4 Only the expected workout-ui baselines changed and the checkbox is the only visual delta
