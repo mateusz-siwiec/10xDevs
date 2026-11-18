@@ -176,12 +176,16 @@ public class DashboardService {
 			days = parseDays(window);
 			from = now.minus(Duration.ofDays(days));
 		}
-		Map<MuscleGroup, Long> counts = new EnumMap<>(MuscleGroup.class);
+		Map<MuscleGroup, MuscleGroupCount> counts = new EnumMap<>(MuscleGroup.class);
 		for (MuscleGroupCount count : setRepository.countSetsByMuscleGroupBetween(userId, from, now)) {
-			counts.put(count.muscleGroup(), count.sets());
+			counts.put(count.muscleGroup(), count);
 		}
 		List<MuscleGroupStatsResponse.Group> groups = Arrays.stream(MuscleGroup.values())
-			.map(group -> new MuscleGroupStatsResponse.Group(group, counts.getOrDefault(group, 0L)))
+			.map(group -> {
+				MuscleGroupCount count = counts.get(group);
+				return new MuscleGroupStatsResponse.Group(group, count == null ? 0L : count.sets(),
+						count == null ? 0L : count.failureSets());
+			})
 			.toList();
 		return new MuscleGroupStatsResponse(days, groups.stream().mapToLong(MuscleGroupStatsResponse.Group::sets).sum(),
 				groups);

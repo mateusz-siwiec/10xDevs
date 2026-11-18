@@ -131,6 +131,25 @@ class PreviousWorkoutControllerTest {
 	}
 
 	@Test
+	void previousWorkoutReturnsTheToFailureFlagPerSet() throws Exception {
+		User user = newUser();
+		UUID exerciseId = exerciseId();
+		TrainingPlan plan = plan(user);
+		WorkoutSession session = sessionRepository.saveAndFlush(new WorkoutSession(user.getId(), plan.getId()));
+		setRepository.saveAndFlush(new WorkoutSet(session, exerciseId, 8, new BigDecimal("60"), true));
+		Thread.sleep(5);
+		setRepository.saveAndFlush(new WorkoutSet(session, exerciseId, 8, new BigDecimal("60")));
+		session.end();
+		sessionRepository.saveAndFlush(session);
+
+		mockMvc.perform(get(url(exerciseId)).param("planId", plan.getId().toString())
+			.header(HttpHeaders.AUTHORIZATION, bearer(user)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.sets[0].toFailure", is(true)))
+			.andExpect(jsonPath("$.sets[1].toFailure", is(false)));
+	}
+
+	@Test
 	void unknownExerciseReturnsNotFound() throws Exception {
 		mockMvc
 			.perform(get(url(UUID.randomUUID())).param("planId", UUID.randomUUID().toString())

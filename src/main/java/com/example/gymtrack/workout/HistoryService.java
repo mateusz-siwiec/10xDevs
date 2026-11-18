@@ -97,7 +97,7 @@ public class HistoryService {
 		for (WorkoutSet set : sets) {
 			byExercise.computeIfAbsent(set.getExerciseId(), key -> new ArrayList<>())
 				.add(new HistoryDetailResponse.SetEntry(set.getReps(), set.getWeightKg(),
-						personalRecordSetIds.contains(set.getId())));
+						personalRecordSetIds.contains(set.getId()), set.isToFailure()));
 			volume = volume.add(set.getWeightKg().multiply(BigDecimal.valueOf(set.getReps())));
 		}
 		List<HistoryDetailResponse.ExerciseEntry> exercises = byExercise.entrySet()

@@ -37,14 +37,22 @@ public class WorkoutSet {
 	@Column(nullable = false)
 	private Instant loggedAt;
 
+	@Column(nullable = false)
+	private boolean toFailure;
+
 	protected WorkoutSet() {
 	}
 
 	public WorkoutSet(WorkoutSession session, UUID exerciseId, int reps, BigDecimal weightKg) {
+		this(session, exerciseId, reps, weightKg, false);
+	}
+
+	public WorkoutSet(WorkoutSession session, UUID exerciseId, int reps, BigDecimal weightKg, boolean toFailure) {
 		this.session = session;
 		this.exerciseId = exerciseId;
 		this.reps = reps;
 		this.weightKg = weightKg;
+		this.toFailure = toFailure;
 		this.loggedAt = Instant.now();
 	}
 
@@ -70,6 +78,10 @@ public class WorkoutSet {
 
 	public Instant getLoggedAt() {
 		return loggedAt;
+	}
+
+	public boolean isToFailure() {
+		return toFailure;
 	}
 
 }

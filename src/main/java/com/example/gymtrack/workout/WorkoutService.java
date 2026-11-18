@@ -103,7 +103,8 @@ public class WorkoutService {
 	}
 
 	@Transactional
-	public SetResponse logSet(UUID userId, UUID sessionId, UUID exerciseId, int reps, BigDecimal weightKg) {
+	public SetResponse logSet(UUID userId, UUID sessionId, UUID exerciseId, int reps, BigDecimal weightKg,
+			boolean toFailure) {
 		WorkoutSession session = findOwned(userId, sessionId);
 		if (!exerciseRepository.existsVisible(exerciseId, userId)) {
 			throw new WorkoutNotFoundException(ErrorCode.EXERCISE_NOT_FOUND, "Exercise not found");
@@ -111,7 +112,7 @@ public class WorkoutService {
 		if (!session.isActive()) {
 			throw new WorkoutConflictException(ErrorCode.WORKOUT_ENDED, "Workout session already ended");
 		}
-		WorkoutSet set = setRepository.saveAndFlush(new WorkoutSet(session, exerciseId, reps, weightKg));
+		WorkoutSet set = setRepository.saveAndFlush(new WorkoutSet(session, exerciseId, reps, weightKg, toFailure));
 		Set<UUID> personalRecordSetIds = personalRecordService.personalRecordSetIds(session,
 				setRepository.findBySessionIdOrderByLoggedAtAscIdAsc(session.getId()));
 		return SetResponse.from(set, personalRecordSetIds.contains(set.getId()));

@@ -5,11 +5,11 @@ import java.time.Instant;
 import java.util.UUID;
 
 public record SetResponse(UUID id, UUID exerciseId, int reps, BigDecimal weightKg, Instant loggedAt,
-		boolean personalRecord) {
+		boolean personalRecord, boolean toFailure) {
 
 	static SetResponse from(WorkoutSet set, boolean personalRecord) {
 		return new SetResponse(set.getId(), set.getExerciseId(), set.getReps(), set.getWeightKg(),
-				set.getLoggedAt(), personalRecord);
+				set.getLoggedAt(), personalRecord, set.isToFailure());
 	}
 
 }

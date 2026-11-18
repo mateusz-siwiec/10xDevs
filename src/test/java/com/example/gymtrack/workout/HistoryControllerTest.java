@@ -365,6 +365,22 @@ class HistoryControllerTest {
 	}
 
 	@Test
+	void detailReturnsTheToFailureFlagPerSet() throws Exception {
+		User user = newUser();
+		UUID exerciseId = exerciseId();
+		WorkoutSession session = sessionRepository.saveAndFlush(new WorkoutSession(user.getId(), null));
+		setRepository.saveAndFlush(new WorkoutSet(session, exerciseId, 8, new BigDecimal("60"), true));
+		Thread.sleep(5);
+		setRepository.saveAndFlush(new WorkoutSet(session, exerciseId, 8, new BigDecimal("60")));
+		session.end();
+		sessionRepository.saveAndFlush(session);
+
+		detail(user, session.getId()).andExpect(status().isOk())
+			.andExpect(jsonPath("$.exercises[0].sets[0].toFailure", is(true)))
+			.andExpect(jsonPath("$.exercises[0].sets[1].toFailure", is(false)));
+	}
+
+	@Test
 	void detailOfRunningSessionReturnsNotFound() throws Exception {
 		User user = newUser();
 		WorkoutSession running = runningSession(user, null, set(exerciseId(), 10, "50"));
