@@ -179,6 +179,40 @@ class WorkoutSetControllerTest {
 	}
 
 	@Test
+	void logSetWithToFailureReturnsAndPersistsTrue() throws Exception {
+		String token = bearerToken();
+		String sessionId = startSession(token);
+		String body = "{\"exerciseId\":\"" + exerciseId() + "\",\"reps\":8,\"weightKg\":60,\"toFailure\":true}";
+
+		mockMvc.perform(post("/api/workout-sessions/" + sessionId + "/sets")
+				.header(HttpHeaders.AUTHORIZATION, token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(body))
+			.andExpect(status().isCreated())
+			.andExpect(jsonPath("$.toFailure", is(true)));
+
+		mockMvc.perform(get("/api/workout-sessions/current").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.sets[0].toFailure", is(true)));
+	}
+
+	@Test
+	void logSetWithoutToFailureDefaultsToFalse() throws Exception {
+		String token = bearerToken();
+		String sessionId = startSession(token);
+
+		mockMvc.perform(post("/api/workout-sessions/" + sessionId + "/sets")
+				.header(HttpHeaders.AUTHORIZATION, token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(setBody(exerciseId(), 8, "60")))
+			.andExpect(status().isCreated())
+			.andExpect(jsonPath("$.toFailure", is(false)));
+
+		mockMvc.perform(get("/api/workout-sessions/current").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(jsonPath("$.sets[0].toFailure", is(false)));
+	}
+
+	@Test
 	void logSetWithInvalidValuesReturnsBadRequest() throws Exception {
 		String token = bearerToken();
 		String sessionId = startSession(token);

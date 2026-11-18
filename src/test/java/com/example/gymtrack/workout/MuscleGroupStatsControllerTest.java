@@ -114,6 +114,59 @@ class MuscleGroupStatsControllerTest {
 				OffsetDateTime.ofInstant(endedAt, ZoneOffset.UTC), UUID.fromString(sessionId));
 	}
 
+	private void logFailureSets(String token, String sessionId, UUID exerciseId, int count) throws Exception {
+		String body = "{\"exerciseId\":\"" + exerciseId + "\",\"reps\":8,\"weightKg\":50,\"toFailure\":true}";
+		for (int i = 0; i < count; i++) {
+			mockMvc.perform(post("/api/workout-sessions/" + sessionId + "/sets")
+					.header(HttpHeaders.AUTHORIZATION, token)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(body))
+				.andExpect(status().isCreated());
+		}
+	}
+
+	private void endedSessionWithFailure(String token, UUID exerciseId, int normal, int failure, int daysAgo)
+			throws Exception {
+		String sessionId = startSession(token);
+		logSets(token, sessionId, exerciseId, normal);
+		logFailureSets(token, sessionId, exerciseId, failure);
+		endSession(token, sessionId);
+		Instant endedAt = Instant.now().minus(daysAgo, ChronoUnit.DAYS);
+		jdbcTemplate.update("update workout_sessions set started_at = ?, ended_at = ? where id = ?",
+				OffsetDateTime.ofInstant(endedAt.minusSeconds(3600), ZoneOffset.UTC),
+				OffsetDateTime.ofInstant(endedAt, ZoneOffset.UTC), UUID.fromString(sessionId));
+	}
+
+	@Test
+	void countsFailureSetsPerGroupWithinTheSetTotals() throws Exception {
+		String token = bearerToken();
+		endedSessionWithFailure(token, catalogExercise(MuscleGroup.CHEST), 2, 1, 1);
+		endedSession(token, catalogExercise(MuscleGroup.LATS), 2, 1);
+
+		mockMvc.perform(get("/api/dashboard/muscle-groups").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(jsonPath("$.totalSets", is(5)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'CHEST')].sets", contains(3)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'CHEST')].failureSets", contains(1)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'LATS')].failureSets", contains(0)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'ABS')].failureSets", contains(0)));
+	}
+
+	@Test
+	void failureSetsFollowTheWindowAndIgnoreOtherUsersAndActiveWorkouts() throws Exception {
+		String token = bearerToken();
+		UUID chest = catalogExercise(MuscleGroup.CHEST);
+		endedSessionWithFailure(token, chest, 0, 2, 10);
+		endedSessionWithFailure(bearerToken(), chest, 0, 3, 1);
+		String active = startSession(token);
+		logFailureSets(token, active, chest, 4);
+
+		mockMvc.perform(get("/api/dashboard/muscle-groups").param("days", "7").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'CHEST')].failureSets", contains(0)));
+		mockMvc.perform(get("/api/dashboard/muscle-groups").param("days", "30").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'CHEST')].failureSets", contains(2)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'CHEST')].sets", contains(2)));
+	}
+
 	@Test
 	void emptyUserGetsEveryMuscleGroupWithZeroSets() throws Exception {
 		mockMvc.perform(get("/api/dashboard/muscle-groups").header(HttpHeaders.AUTHORIZATION, bearerToken()))

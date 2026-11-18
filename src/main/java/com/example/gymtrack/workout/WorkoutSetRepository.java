@@ -38,7 +38,8 @@ public interface WorkoutSetRepository extends JpaRepository<WorkoutSet, UUID> {
 			@Param("to") Instant to);
 
 	@Query("""
-			select new com.example.gymtrack.workout.MuscleGroupCount(e.primaryMuscleGroup, count(s))
+			select new com.example.gymtrack.workout.MuscleGroupCount(e.primaryMuscleGroup, count(s),
+				sum(case when s.toFailure = true then 1L else 0L end))
 			from WorkoutSet s, Exercise e
 			where e.id = s.exerciseId and s.session.userId = :userId
 			and s.session.endedAt >= :from and s.session.endedAt < :to

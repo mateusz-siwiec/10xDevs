@@ -21,7 +21,15 @@ public record LogSetRequest(
 	@DecimalMin(value = "0", inclusive = false)
 	@DecimalMax("1000")
 	@HalfKgStep
-	BigDecimal weightKg
+	BigDecimal weightKg,
+
+	Boolean toFailure
 
 ) {
+
+	/** An absent flag means "not taken to failure". */
+	public LogSetRequest {
+		toFailure = Boolean.TRUE.equals(toFailure);
+	}
+
 }

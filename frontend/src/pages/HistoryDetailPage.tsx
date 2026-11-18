@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useParams } from 'react-router'
 import { ApiError, deleteWorkout, getExercises, getHistorySession } from '../api/client'
 import type { Exercise, HistoryDetail } from '../api/client'
+import FailureBadge from '../components/FailureBadge'
 import SaveAsPlan from '../components/SaveAsPlan'
 import { exerciseName } from '../utils/exercises'
 import { defaultPlanName } from '../utils/workoutToPlan'
@@ -124,6 +125,7 @@ export default function HistoryDetailPage() {
                         PR
                       </span>
                     )}
+                    {set.toFailure && <FailureBadge />}
                   </li>
                 ))}
               </ol>

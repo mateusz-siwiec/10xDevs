@@ -39,7 +39,7 @@ public class PreviousWorkoutService {
 					.findBySessionIdOrderByLoggedAtAscIdAsc(session.getId())
 					.stream()
 					.filter(set -> set.getExerciseId().equals(exerciseId))
-					.map(set -> new PreviousWorkoutResponse.SetEntry(set.getReps(), set.getWeightKg()))
+					.map(set -> new PreviousWorkoutResponse.SetEntry(set.getReps(), set.getWeightKg(), set.isToFailure()))
 					.toList();
 				return new PreviousWorkoutResponse(exerciseId, session.getId(), session.getEndedAt(), sets);
 			});

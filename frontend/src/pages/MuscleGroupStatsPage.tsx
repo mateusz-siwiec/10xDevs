@@ -78,12 +78,18 @@ export default function MuscleGroupStatsPage() {
   } else {
     const { groups, totalSets } = shown.stats
     const setsByGroup = new Map(groups.map((group) => [group.muscleGroup as string, group.sets]))
+    const failureByGroup = new Map(groups.map((group) => [group.muscleGroup as string, group.failureSets]))
     // Most-trained first; Array.sort is stable, so ties keep the hierarchy order.
     const parents = MUSCLE_PARENTS.map((parent) => {
       const children = parent.groups
-        .map((group) => ({ group, sets: setsByGroup.get(group) ?? 0 }))
+        .map((group) => ({ group, sets: setsByGroup.get(group) ?? 0, failureSets: failureByGroup.get(group) ?? 0 }))
         .sort((a, b) => b.sets - a.sets)
-      return { key: parent.key, children, sets: children.reduce((sum, child) => sum + child.sets, 0) }
+      return {
+        key: parent.key,
+        children,
+        sets: children.reduce((sum, child) => sum + child.sets, 0),
+        failureSets: children.reduce((sum, child) => sum + child.failureSets, 0),
+      }
     }).sort((a, b) => b.sets - a.sets)
     const max = parents[0].sets
     status = <p className="muscle-total">{t('muscleStats.total', { count: totalSets })}</p>
@@ -127,6 +133,9 @@ export default function MuscleGroupStatsPage() {
                     <span className="muscle-bar-fill" style={{ width: `${max > 0 ? (parent.sets / max) * 100 : 0}%` }} />
                   </span>
                   <span className="muscle-count">{parent.sets}</span>
+                  {parent.failureSets > 0 && (
+                    <span className="muscle-failure">{t('muscleStats.failureCount', { count: parent.failureSets })}</span>
+                  )}
                 </div>
                 {parent.children.length > 1 && (
                   <ul id={listId} className="muscle-children" hidden={!open}>
@@ -144,6 +153,11 @@ export default function MuscleGroupStatsPage() {
                           />
                         </span>
                         <span className="muscle-count">{child.sets}</span>
+                        {child.failureSets > 0 && (
+                          <span className="muscle-failure">
+                            {t('muscleStats.failureCount', { count: child.failureSets })}
+                          </span>
+                        )}
                       </li>
                     ))}
                   </ul>

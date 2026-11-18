@@ -24,6 +24,16 @@ test('register, log a set in a workout, and see it in history', async ({ page })
 
   const sessionSets = page.getByRole('list').filter({ hasText: 'Barbell Bench Press' })
   await expect(sessionSets.getByText('8 × 60 kg')).toBeVisible()
+  await expect(sessionSets.getByRole('img', { name: 'Set taken to failure' })).toHaveCount(0)
+
+  // A set logged with "To failure" ticked gets the badge, and the checkbox resets.
+  const toFailure = page.getByRole('checkbox', { name: 'To failure' })
+  await toFailure.check()
+  await page.getByLabel('Reps').fill('6')
+  await page.getByRole('button', { name: 'Log set' }).click()
+  await expect(sessionSets.getByText('6 × 60 kg')).toBeVisible()
+  await expect(sessionSets.getByRole('img', { name: 'Set taken to failure' })).toHaveCount(1)
+  await expect(toFailure).not.toBeChecked()
 
   // End the session.
   await page.getByRole('button', { name: 'End workout' }).click()

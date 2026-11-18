@@ -4,22 +4,25 @@ import { useTranslation } from 'react-i18next'
 
 interface SetLoggerProps {
   disabled: boolean
-  onLog: (reps: number, weightKg: number) => Promise<void>
+  onLog: (reps: number, weightKg: number, toFailure: boolean) => Promise<void>
 }
 
 export default function SetLogger({ disabled, onLog }: SetLoggerProps) {
   const { t } = useTranslation()
   const [reps, setReps] = useState('')
   const [weight, setWeight] = useState('')
+  const [toFailure, setToFailure] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
-  // Values are kept after logging (consecutive sets are usually similar) and
-  // after a failure, so the user can correct them.
+  // Reps and weight are kept after logging (consecutive sets are usually similar) and
+  // after a failure, so the user can correct them. "To failure" is per set: it resets
+  // after a successful log and is kept when the log fails, so the user can retry.
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setSubmitting(true)
     try {
-      await onLog(Number(reps), Number(weight))
+      await onLog(Number(reps), Number(weight), toFailure)
+      setToFailure(false)
     } catch {
       // the page surfaces the error inline
     } finally {
@@ -54,6 +57,16 @@ export default function SetLogger({ disabled, onLog }: SetLoggerProps) {
             required
           />
         </div>
+        <label className="check-field" htmlFor="set-to-failure">
+          <input
+            id="set-to-failure"
+            type="checkbox"
+            checked={toFailure}
+            onChange={(event) => setToFailure(event.target.checked)}
+            disabled={disabled || submitting}
+          />
+          {t('workout.toFailure')}
+        </label>
       </div>
       <button type="submit" disabled={disabled || submitting} className="btn-primary">
         {submitting ? t('workout.logging') : t('workout.logSet')}

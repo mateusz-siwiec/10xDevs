@@ -168,6 +168,28 @@ class ProgressionRecommendationControllerTest {
 	}
 
 	@Test
+	void failureSetsDoNotChangeTheRecommendation() throws Exception {
+		User plain = newUser();
+		UUID exerciseId = exerciseId();
+		twoQualifying(plain, exerciseId, "60");
+
+		User failure = newUser();
+		TrainingPlan plan = plan(failure, exerciseId, 3, 10);
+		for (int i = 0; i < 2; i++) {
+			Thread.sleep(10);
+			WorkoutSession session = sessionRepository.saveAndFlush(new WorkoutSession(failure.getId(), plan.getId()));
+			for (int j = 0; j < 3; j++) {
+				setRepository.saveAndFlush(new WorkoutSet(session, exerciseId, 10, new BigDecimal("60"), true));
+			}
+			session.end();
+			sessionRepository.saveAndFlush(session);
+		}
+
+		assertRecommended(plain, exerciseId, 60.0, 61.5);
+		assertRecommended(failure, exerciseId, 60.0, 61.5);
+	}
+
+	@Test
 	void roundingBoundaries() throws Exception {
 		UUID exerciseId = exerciseId();
 

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { WorkoutSet } from '../api/client'
+import FailureBadge from './FailureBadge'
 import { exerciseName } from '../utils/exercises'
 import type { NamedExercise } from '../utils/exercises'
 
@@ -44,6 +45,7 @@ export default function SessionSetList({ sets, exercisesById, onDelete }: Sessio
                   {t('common.prBadge')}
                 </span>
               )}
+              {set.toFailure && <FailureBadge />}
             </span>
           </div>
           {confirmingId === set.id ? (

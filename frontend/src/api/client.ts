@@ -150,6 +150,7 @@ export interface WorkoutSet {
   weightKg: number
   loggedAt: string
   personalRecord: boolean
+  toFailure: boolean
 }
 
 export interface WorkoutSession {
@@ -164,6 +165,7 @@ export interface LogSetInput {
   exerciseId: string
   reps: number
   weightKg: number
+  toFailure?: boolean
 }
 
 export interface ProgressionPoint {
@@ -282,7 +284,7 @@ export interface PreviousWorkout {
   exerciseId: string
   sessionId: string
   endedAt: string
-  sets: { reps: number; weightKg: number }[]
+  sets: { reps: number; weightKg: number; toFailure: boolean }[]
 }
 
 /** Returns null when the exercise has no earlier workout in this plan (204 No Content). */
@@ -327,7 +329,7 @@ export interface MuscleGroupStats {
   days: number | null
   totalSets: number
   /** Every muscle group, zeros included. */
-  groups: { muscleGroup: string; sets: number }[]
+  groups: { muscleGroup: string; sets: number; failureSets: number }[]
 }
 
 export async function getMuscleGroupStats(days: StatsWindow): Promise<MuscleGroupStats> {
@@ -495,7 +497,7 @@ export interface HistoryDetail {
   planName: string | null
   durationSeconds: number
   volumeKg: number
-  exercises: { exerciseId: string; sets: { reps: number; weightKg: number; personalRecord: boolean }[] }[]
+  exercises: { exerciseId: string; sets: { reps: number; weightKg: number; personalRecord: boolean; toFailure: boolean }[] }[]
 }
 
 export async function getHistorySession(id: string): Promise<HistoryDetail> {
