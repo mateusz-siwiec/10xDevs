@@ -264,7 +264,15 @@
     "plank": "Deska",
     "hanging-leg-raise": "Unoszenie nóg w zwisie",
     "cable-crunch": "Spięcia brzucha na wyciągu",
-    "ab-wheel-rollout": "Rolowanie z kółkiem do brzucha"
+    "ab-wheel-rollout": "Rolowanie z kółkiem do brzucha",
+    "hip-adduction-machine": "Przywodzenie ud na maszynie",
+    "copenhagen-plank": "Deska Copenhagen",
+    "hip-abduction-machine": "Odwodzenie ud na maszynie",
+    "banded-lateral-walk": "Chodzenie bokiem z taśmą",
+    "reverse-pec-deck": "Odwrotne rozpiętki na maszynie",
+    "bent-over-rear-delt-fly": "Odwrotne rozpiętki z hantlami w opadzie",
+    "front-raise": "Unoszenie hantli przed siebie",
+    "cable-lateral-raise": "Unoszenie ramienia bokiem na wyciągu"
   },
   "workout": {
     "title": "Trening",
@@ -336,20 +344,32 @@
     "setsCount_few": "{{count}} serie",
     "setsCount_many": "{{count}} serii",
     "setsCount_other": "{{count}} serii",
-    "note": "Każda seria liczy się do głównej partii mięśniowej ćwiczenia. Uwzględniane są tylko zakończone treningi."
+    "note": "Każda seria liczy się do głównej partii mięśniowej ćwiczenia. Uwzględniane są tylko zakończone treningi. Wybierz grupę, aby zobaczyć jej mięśnie.",
+    "parent": {
+      "CHEST": "Klatka piersiowa",
+      "BACK": "Plecy",
+      "SHOULDERS": "Barki",
+      "ARMS": "Ramiona",
+      "LEGS": "Nogi",
+      "CORE": "Brzuch i core"
+    }
   },
   "muscle": {
     "CHEST": "Klatka piersiowa",
     "LATS": "Najszersze grzbietu",
     "TRAPS": "Kaptury",
     "LOWER_BACK": "Dolny odcinek pleców",
-    "SHOULDERS": "Barki",
+    "FRONT_DELTS": "Przednia głowa barku",
+    "SIDE_DELTS": "Boczna głowa barku",
+    "REAR_DELTS": "Tylna głowa barku",
     "BICEPS": "Biceps",
     "TRICEPS": "Triceps",
     "FOREARMS": "Przedramiona",
     "QUADS": "Czworogłowe",
     "HAMSTRINGS": "Dwugłowe uda",
     "GLUTES": "Pośladki",
+    "ADDUCTORS": "Przywodziciele",
+    "ABDUCTORS": "Odwodziciele",
     "CALVES": "Łydki",
     "ABS": "Brzuch",
     "OBLIQUES": "Mięśnie skośne"
@@ -640,6 +660,54 @@
       "Rolluj kółko do przodu powoli, z płaskimi plecami.",
       "Rozwijaj tylko tak daleko, by biodra nie opadały.",
       "Przyciągnij kółko z powrotem, napinając mięśnie brzucha."
+    ],
+    "hip-adduction-machine": [
+      "Ustaw siedzisko i wałki tak, aby kolana zaczynały ruch wygodnie rozsunięte, a nie w skrajnym zakresie.",
+      "Usiądź prosto z plecami opartymi o oparcie i chwyć uchwyty.",
+      "Zbliżaj uda do siebie płynnym, kontrolowanym ruchem.",
+      "Wracaj powoli i nie pozwól, aby ciężar opadał z trzaskiem."
+    ],
+    "copenhagen-plank": [
+      "Połóż górną nogę na ławce, przedramię oprzyj o podłogę i utrzymuj ciało w jednej linii.",
+      "Unieś biodra i trzymaj dolną nogę nad podłogą, blisko górnej.",
+      "Napnij brzuch i nie pozwól, aby biodra opadały lub się skręcały.",
+      "Zacznij od krótkich utrzymań i przerwij, jeśli poczujesz ból w pachwinie."
+    ],
+    "hip-abduction-machine": [
+      "Usiądź z plecami opartymi o oparcie i stopami na podstawkach, chwyć uchwyty.",
+      "Odpychaj kolana na zewnątrz, aż uda będą wygodnie rozsunięte.",
+      "Zatrzymaj się na chwilę, potem wracaj powoli, bez opadania ciężaru.",
+      "Trzymaj biodra nieruchomo i nie bujaj tułowiem."
+    ],
+    "banded-lateral-walk": [
+      "Załóż taśmę tuż nad kolanami lub wokół kostek i opuść się do półprzysiadu.",
+      "Zrób krok w bok wiodącą stopą, utrzymując palce skierowane do przodu.",
+      "Dostaw drugą stopę, nie pozwalając kolanom uciekać do środka.",
+      "Utrzymuj stałe napięcie taśmy i biodra na równym poziomie."
+    ],
+    "reverse-pec-deck": [
+      "Usiądź przodem do oparcia z klatką podpartą i uchwytami na wysokości barków.",
+      "Utrzymuj lekkie ugięcie łokci i rozchylaj ramiona na boki.",
+      "Ściągnij łopatki na końcu ruchu.",
+      "Wracaj powoli i użyj lekkiego ciężaru, aby nie unosić barków."
+    ],
+    "bent-over-rear-delt-fly": [
+      "Pochyl tułów w biodrach z prostymi plecami i pozwól hantlom zwisać pod klatką.",
+      "Utrzymuj lekkie ugięcie łokci i unoś ramiona na boki.",
+      "Prowadź ruch łokciami i ściągaj łopatki w górnym punkcie.",
+      "Opuszczaj powoli, bez bujania tułowiem."
+    ],
+    "front-raise": [
+      "Stań prosto z ciężarami przed udami i napiętym brzuchem.",
+      "Unoś ramiona przed siebie, z prostymi lub lekko ugiętymi łokciami, do wysokości barków.",
+      "Nie odchylaj się do tyłu i nie rozhuśtuj ciała, aby podnieść ciężar.",
+      "Opuszczaj powoli i kontrolowanie."
+    ],
+    "cable-lateral-raise": [
+      "Stań bokiem do wyciągu z uchwytem w dalszej dłoni i lekko ugiętym łokciem.",
+      "Unoś ramię w bok do wysokości barku.",
+      "Prowadź ruch łokciem i nie unoś barku do ucha.",
+      "Opuszczaj powoli i utrzymuj stałe napięcie linki."
     ]
   }
 }

@@ -140,19 +140,21 @@ Shows how many sets you have done for each muscle group, so an imbalance is easy
 
 **Rule.** Over your **finished** workouts that ended in the chosen window (**7, 30 or 90 days, or all time**, default 30), every set
 counts **once**, for the **primary** muscle group of its exercise. Secondary groups are not counted, so the numbers add up to
-your real set count. Every group is listed, with zero for the ones you haven't trained, and the page sorts the most-trained first.
+your real set count. The page shows six parent rows (Chest, Back, Shoulders, Arms, Legs, Core), each with the sum of its muscle
+groups, sorted most-trained first; select a parent to see its muscles (for example Shoulders: front, side and rear delts; Legs
+includes adductors and abductors). Every muscle is listed, with zero for the ones you haven't trained.
 Custom exercises count towards the group you gave them. Sets of a workout you are still doing are not counted, and a deleted workout stops counting.
 
 **Example.** In the last 30 days you finished two workouts: 3 sets of Barbell Bench Press (primary: chest) and, in another,
-2 sets of a back exercise.
+2 sets of Lat Pulldown (primary: lats).
 
-| Muscle group | Sets |
-| --- | --- |
-| Chest | 3 |
-| Back | 2 |
-| Shoulders, Biceps, Triceps, Quads, Hamstrings, Glutes, Calves, Core | 0 each |
+| Parent row | Sets | Expanded |
+| --- | --- | --- |
+| Chest | 3 | (single muscle) |
+| Back | 2 | Lats 2, Traps 0, Lower back 0 |
+| Shoulders, Arms, Legs, Core | 0 each | every muscle in it at 0 |
 
-The page shows "5 sets in total". Bench press also works the triceps and shoulders, but those groups stay at 0 here because only the primary group counts.
+The page shows "5 sets in total". Bench press also works the triceps and front delts, but those stay at 0 here because only the primary group counts.
 
 ### Input rules enforced by the API
 

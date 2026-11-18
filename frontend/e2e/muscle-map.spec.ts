@@ -57,6 +57,35 @@ test('Barbell Row highlights its primary and secondary groups and leaves the che
   await expect(panel.locator('.technique-list')).toBeVisible()
 })
 
+test('Overhead Press highlights front delts as primary and side delts as secondary, not rear delts', async ({
+  page,
+  request,
+}) => {
+  const user = await registerViaApi(request, 'mmap-delts')
+  await openList(page, user)
+
+  await row(page, 'Overhead Press').getByRole('button', { name: 'How to do Overhead Press' }).click()
+  const panel = row(page, 'Overhead Press').getByRole('tooltip')
+  await expect(panel).toBeVisible()
+  await expect(panel.locator('[data-muscle="FRONT_DELTS"][data-state="primary"]').first()).toBeVisible()
+  await expect(panel.locator('[data-muscle="SIDE_DELTS"][data-state="secondary"]').first()).toBeVisible()
+  await expect(panel.locator('[data-muscle="REAR_DELTS"][data-state="idle"]').first()).toBeVisible()
+  await expect(panel.locator('[data-muscle="REAR_DELTS"][data-state="primary"]')).toHaveCount(0)
+  await expect(panel.locator('[data-muscle="SHOULDERS"]')).toHaveCount(0)
+})
+
+test('a new adductor exercise highlights the adductors and its secondaries', async ({ page, request }) => {
+  const user = await registerViaApi(request, 'mmap-adductors')
+  await openList(page, user)
+
+  await row(page, 'Copenhagen Plank').getByRole('button', { name: 'How to do Copenhagen Plank' }).click()
+  const panel = row(page, 'Copenhagen Plank').getByRole('tooltip')
+  await expect(panel).toBeVisible()
+  await expect(panel.locator('[data-muscle="ADDUCTORS"][data-state="primary"]').first()).toBeVisible()
+  await expect(panel.locator('[data-muscle="OBLIQUES"][data-state="secondary"]').first()).toBeVisible()
+  await expect(panel.locator('[data-muscle="ABDUCTORS"][data-state="idle"]').first()).toBeVisible()
+})
+
 test('a failed figure load keeps the panel, legend and cues and draws no figure', async ({ page, request }) => {
   const user = await registerViaApi(request, 'mmap-blocked')
   // Dev serves /src/components/MuscleFigure.tsx, the build a MuscleFigure-<hash>.js chunk. Registered before any
