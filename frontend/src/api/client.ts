@@ -133,6 +133,8 @@ export async function authFetch(path: string, options: RequestInit = {}): Promis
   return res
 }
 
+export type WeightMode = 'REQUIRED' | 'OPTIONAL' | 'NONE'
+
 export interface Exercise {
   id: string
   slug: string
@@ -141,6 +143,7 @@ export interface Exercise {
   secondaryMuscleGroups: string[]
   custom: boolean
   favorite: boolean
+  weightMode: WeightMode
 }
 
 export interface WorkoutSet {
@@ -164,7 +167,8 @@ export interface WorkoutSession {
 export interface LogSetInput {
   exerciseId: string
   reps: number
-  weightKg: number
+  /** Omit for exercises without added weight. */
+  weightKg?: number
   toFailure?: boolean
 }
 
@@ -172,6 +176,8 @@ export interface ProgressionPoint {
   sessionId: string
   date: string
   topWeightKg: number
+  metric: 'WEIGHT' | 'REPS'
+  value: number
 }
 
 export async function getExercises(): Promise<Exercise[]> {
@@ -183,6 +189,7 @@ export interface CreateExerciseInput {
   name: string
   primaryMuscleGroup: string
   secondaryMuscleGroups: string[]
+  weightMode?: WeightMode
 }
 
 export async function createExercise(input: CreateExerciseInput): Promise<Exercise> {

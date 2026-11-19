@@ -7,7 +7,7 @@ import FailureBadge from '../components/FailureBadge'
 import SaveAsPlan from '../components/SaveAsPlan'
 import { exerciseName } from '../utils/exercises'
 import { defaultPlanName } from '../utils/workoutToPlan'
-import { formatDate, formatDuration, formatVolume } from '../utils/format'
+import { formatDate, formatDuration, formatSet, formatVolume } from '../utils/format'
 import '../styles/page.css'
 import '../styles/history.css'
 import { translateError } from '../utils/errors'
@@ -119,7 +119,7 @@ export default function HistoryDetailPage() {
               <ol>
                 {group.sets.map((set, index) => (
                   <li key={index}>
-                    {t('history.detail.setLine', { n: index + 1, reps: set.reps, weight: set.weightKg })}
+                    {t('history.detail.setLine', { n: index + 1, set: formatSet(set) })}
                     {set.personalRecord && (
                       <span className="pr-badge" role="img" aria-label={t('common.personalRecord')}>
                         PR

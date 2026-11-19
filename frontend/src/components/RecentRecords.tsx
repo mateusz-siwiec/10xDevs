@@ -32,7 +32,7 @@ export default function RecentRecords({ records, exercises }: RecentRecordsProps
                 </span>
               </span>
               <span className="recent-record-detail">
-                {record.weightKg} kg x {record.reps} · {formatShortDate(record.achievedAt)}
+                {record.weightKg > 0 ? `${record.weightKg} kg x ${record.reps}` : t('common.repsCount', { count: record.reps })} · {formatShortDate(record.achievedAt)}
               </span>
             </li>
           ))}

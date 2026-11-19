@@ -178,7 +178,7 @@ export default function WorkoutPage() {
   }
 
   // Rethrows so SetLogger knows the log failed; the message is shown inline here.
-  async function handleLog(reps: number, weightKg: number, toFailure: boolean) {
+  async function handleLog(reps: number, weightKg: number | undefined, toFailure: boolean) {
     if (!session) return
     setError(null)
     setBusy(true)
@@ -361,7 +361,7 @@ export default function WorkoutPage() {
               />
             )}
             {selectedExercise && <ProgressionRecommendation exerciseId={selectedExercise} />}
-            <SetLogger disabled={!selectedExercise} onLog={handleLog} />
+            <SetLogger key={selectedExercise} disabled={!selectedExercise} exercise={selectedItem} onLog={handleLog} />
             <RestTimer
               endsAt={restEndsAt}
               onChange={setRestEndsAt}

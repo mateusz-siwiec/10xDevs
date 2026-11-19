@@ -11,6 +11,8 @@
     "closeMenu": "Close menu"
   },
   "common": {
+    "repsCount_one": "{{count}} rep",
+    "repsCount_other": "{{count}} reps",
     "language": "Language",
     "duration": {
       "lessThanMinute": "<1m",
@@ -115,7 +117,7 @@
       "delete": "Delete workout",
       "deleteConfirm": "Delete this workout and all its sets? This cannot be undone.",
       "deleteFailed": "Failed to delete workout",
-      "setLine": "Set {{n}}: {{reps}} × {{weight}} kg"
+      "setLine": "Set {{n}}: {{set}}"
     }
   },
   "saveAsPlan": {
@@ -134,7 +136,10 @@
     "loading": "Loading progression…",
     "loadFailed": "Failed to load progression",
     "empty": "No history for this exercise yet. Log a set to start the chart.",
-    "topWeight": "Top weight"
+    "topWeight": "Top weight",
+    "topReps": "Top reps",
+    "unitKg": " kg",
+    "unitReps": " reps"
   },
   "plans": {
     "title": "Plans",
@@ -173,6 +178,11 @@
     "primaryGroup": "Primary muscle group",
     "choosePrimary": "Choose a muscle group…",
     "secondaryGroups": "Secondary muscle groups (optional)",
+    "weightMode": "Weight",
+    "weightModeRequired": "Weighted (weight required)",
+    "weightModeOptional": "Optional added weight (e.g. pull-ups)",
+    "weightModeNone": "No weight (reps only)",
+    "weightModeInUse": "The weight setting cannot be changed because this exercise already has logged sets.",
     "adding": "Adding…",
     "add": "Add exercise",
     "scopeLabel": "Show exercises",
@@ -302,12 +312,13 @@
     "deleteFailed": "Failed to delete set",
     "reps": "Reps",
     "weightKg": "Weight (kg)",
+    "weightKgOptional": "Added weight (kg), optional",
     "toFailure": "To failure",
     "logging": "Logging…",
     "logSet": "Log set",
     "skipped": "Skipped",
     "skip": "Skip",
-    "setLine": "Set {{n}}: {{reps}} × {{weight}} kg",
+    "setLine": "Set {{n}}: {{set}}",
     "lastTime": "Last time ({{date}}):",
     "recommendation_one": "Try {{weight}} kg — you completed {{sets}}×{{reps}} at {{previousWeight}} kg in your last workout.",
     "recommendation_other": "Try {{weight}} kg — you completed {{sets}}×{{reps}} at {{previousWeight}} kg in your last {{count}} workouts.",

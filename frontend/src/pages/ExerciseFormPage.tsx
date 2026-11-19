@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { useTranslation } from 'react-i18next'
-import { createExercise, getExercises, updateExercise } from '../api/client'
+import { ApiError, createExercise, getExercises, updateExercise } from '../api/client'
+import type { WeightMode } from '../api/client'
 import '../styles/page.css'
 import '../styles/workout.css'
 import '../styles/plans.css'
@@ -12,6 +13,11 @@ import type { ErrorInfo } from '../utils/errors'
 import { MUSCLE_GROUPS, muscleGroupLabel } from '../utils/muscleGroups'
 
 const NAME_MAX_LENGTH = 60
+const WEIGHT_MODES: { mode: WeightMode; labelKey: 'exercises.weightModeRequired' | 'exercises.weightModeOptional' | 'exercises.weightModeNone' }[] = [
+  { mode: 'REQUIRED', labelKey: 'exercises.weightModeRequired' },
+  { mode: 'OPTIONAL', labelKey: 'exercises.weightModeOptional' },
+  { mode: 'NONE', labelKey: 'exercises.weightModeNone' },
+]
 
 /**
  * /exercises/new and /exercises/:id/edit render this same component at the same place in the tree, so React would
@@ -32,6 +38,7 @@ function ExerciseForm({ editingId }: { editingId: string | null }) {
   const [name, setName] = useState('')
   const [primary, setPrimary] = useState('')
   const [secondary, setSecondary] = useState<string[]>([])
+  const [weightMode, setWeightMode] = useState<WeightMode>('REQUIRED')
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
@@ -48,6 +55,7 @@ function ExerciseForm({ editingId }: { editingId: string | null }) {
         setName(found.name)
         setPrimary(found.primaryMuscleGroup)
         setSecondary(found.secondaryMuscleGroups)
+        setWeightMode(found.weightMode)
       })
       .catch((err) => {
         if (cancelled) return
@@ -81,6 +89,7 @@ function ExerciseForm({ editingId }: { editingId: string | null }) {
       name: name.trim(),
       primaryMuscleGroup: primary,
       secondaryMuscleGroups: secondary,
+      weightMode,
     }
     try {
       if (editingId) {
@@ -90,7 +99,12 @@ function ExerciseForm({ editingId }: { editingId: string | null }) {
       }
       navigate('/exercises')
     } catch (err) {
-      setError({ err, key: editingId ? 'exercises.updateFailed' : 'exercises.addFailed' })
+      // The generic EXERCISE_IN_USE text talks about deleting; here it means the weight setting is locked.
+      if (editingId && err instanceof ApiError && err.code === 'EXERCISE_IN_USE') {
+        setError({ err: null, key: 'exercises.weightModeInUse' })
+      } else {
+        setError({ err, key: editingId ? 'exercises.updateFailed' : 'exercises.addFailed' })
+      }
       setSaving(false)
     }
   }
@@ -148,6 +162,7 @@ function ExerciseForm({ editingId }: { editingId: string | null }) {
                 ))}
               </select>
             </div>
+<div className="field">              <label htmlFor="exercise-weight-mode">{t('exercises.weightMode')}</label>              <select                id="exercise-weight-mode"                className="workout-select"                value={weightMode}                disabled={saving}                onChange={(event) => setWeightMode(event.target.value as WeightMode)}              >                {WEIGHT_MODES.map(({ mode, labelKey }) => (                  <option key={mode} value={mode}>                    {t(labelKey)}                  </option>                ))}              </select>            </div>
             <fieldset className="exercise-secondary">
               <legend>{t('exercises.secondaryGroups')}</legend>
               <div className="exercise-secondary-options">

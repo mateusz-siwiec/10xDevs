@@ -40,3 +40,10 @@ export function formatShortDate(value: string): string {
     ? value
     : date.toLocaleDateString(appLocale(), { month: 'short', day: 'numeric' })
 }
+
+/** One set as shown in lists: "8 × 60 kg", or "8 reps" when no weight was added. */
+export function formatSet({ reps, weightKg }: { reps: number; weightKg: number }): string {
+  return weightKg > 0
+    ? `${reps} × ${weightKg} kg`
+    : i18n.t('common.repsCount', { count: reps })
+}

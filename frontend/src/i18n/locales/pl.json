@@ -11,6 +11,10 @@
     "closeMenu": "Zamknij menu"
   },
   "common": {
+    "repsCount_one": "{{count}} powtórzenie",
+    "repsCount_few": "{{count}} powtórzenia",
+    "repsCount_many": "{{count}} powtórzeń",
+    "repsCount_other": "{{count}} powtórzenia",
     "language": "Język",
     "duration": {
       "lessThanMinute": "<1 min",
@@ -121,7 +125,7 @@
       "delete": "Usuń trening",
       "deleteConfirm": "Usunąć ten trening i wszystkie jego serie? Tej operacji nie można cofnąć.",
       "deleteFailed": "Nie udało się usunąć treningu",
-      "setLine": "Seria {{n}}: {{reps}} × {{weight}} kg"
+      "setLine": "Seria {{n}}: {{set}}"
     }
   },
   "saveAsPlan": {
@@ -140,7 +144,10 @@
     "loading": "Wczytywanie progresji…",
     "loadFailed": "Nie udało się wczytać progresji",
     "empty": "Brak historii dla tego ćwiczenia. Zapisz serię, aby zacząć wykres.",
-    "topWeight": "Największy ciężar"
+    "topWeight": "Największy ciężar",
+    "topReps": "Najwięcej powtórzeń",
+    "unitKg": " kg",
+    "unitReps": " powt."
   },
   "plans": {
     "title": "Plany",
@@ -181,6 +188,11 @@
     "primaryGroup": "Główna partia mięśniowa",
     "choosePrimary": "Wybierz partię mięśniową…",
     "secondaryGroups": "Dodatkowe partie mięśniowe (opcjonalnie)",
+    "weightMode": "Obciążenie",
+    "weightModeRequired": "Z obciążeniem (ciężar wymagany)",
+    "weightModeOptional": "Opcjonalne dodatkowe obciążenie (np. podciąganie)",
+    "weightModeNone": "Bez obciążenia (tylko powtórzenia)",
+    "weightModeInUse": "Nie można zmienić ustawienia obciążenia, bo to ćwiczenie ma już zapisane serie.",
     "adding": "Dodawanie…",
     "add": "Dodaj ćwiczenie",
     "scopeLabel": "Pokaż ćwiczenia",
@@ -314,12 +326,13 @@
     "deleteFailed": "Nie udało się usunąć serii",
     "reps": "Powtórzenia",
     "weightKg": "Ciężar (kg)",
+    "weightKgOptional": "Dodatkowy ciężar (kg), opcjonalnie",
     "toFailure": "Do upadku",
     "logging": "Zapisywanie…",
     "logSet": "Zapisz serię",
     "skipped": "Pominięte",
     "skip": "Pomiń",
-    "setLine": "Seria {{n}}: {{reps}} × {{weight}} kg",
+    "setLine": "Seria {{n}}: {{set}}",
     "lastTime": "Poprzednio ({{date}}):",
     "recommendation_one": "Spróbuj {{weight}} kg — w ostatnim treningu wykonano {{sets}}×{{reps}} z {{previousWeight}} kg.",
     "recommendation_few": "Spróbuj {{weight}} kg — w ostatnich {{count}} treningach wykonano {{sets}}×{{reps}} z {{previousWeight}} kg.",
