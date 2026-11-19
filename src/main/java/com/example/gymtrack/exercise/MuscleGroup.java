@@ -1,7 +1,9 @@
 package com.example.gymtrack.exercise;
 
 public enum MuscleGroup {
-	CHEST,
+	UPPER_CHEST,
+	MID_CHEST,
+	LOWER_CHEST,
 	LATS,
 	TRAPS,
 	LOWER_BACK,

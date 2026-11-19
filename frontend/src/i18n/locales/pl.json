@@ -231,6 +231,8 @@
     "incline-dumbbell-press": "Wyciskanie hantli na ławce skośnej",
     "chest-fly": "Rozpiętki",
     "push-up": "Pompki",
+    "decline-bench-press": "Wyciskanie sztangi na ławce ujemnej",
+    "chest-dip": "Pompki na poręczach (klatka piersiowa)",
     "deadlift": "Martwy ciąg",
     "pull-up": "Podciąganie na drążku",
     "barbell-row": "Wiosłowanie sztangą",
@@ -362,7 +364,9 @@
     }
   },
   "muscle": {
-    "CHEST": "Klatka piersiowa",
+    "UPPER_CHEST": "Górna część klatki piersiowej",
+    "MID_CHEST": "Środkowa część klatki piersiowej",
+    "LOWER_CHEST": "Dolna część klatki piersiowej",
     "LATS": "Najszersze grzbietu",
     "TRAPS": "Kaptury",
     "LOWER_BACK": "Dolny odcinek pleców",
@@ -451,6 +455,18 @@
       "Napnij brzuch i pośladki, aby biodra nie opadały.",
       "Opuść klatkę tuż nad podłogę, łokcie pod kątem ok. 45 stopni.",
       "Odepchnij się od podłogi do pełnego wyprostu ramion."
+    ],
+    "decline-bench-press": [
+      "Zablokuj nogi pod wałkami i połóż się z oczami pod gryfem.",
+      "Ściągnij łopatki i utrzymuj je przyklejone do ławki.",
+      "Opuszczaj sztangę kontrolowanie do dolnej części klatki, łokcie pod kątem ok. 45 stopni do tułowia.",
+      "Wyciskaj do pełnego wyprostu ramion, bez odbijania sztangi od klatki."
+    ],
+    "chest-dip": [
+      "Chwyć poręcze i wyprostuj ramiona, ściągając barki w dół i do tyłu.",
+      "Pochyl tułów do przodu i lekko rozchyl łokcie, aby obciążyć klatkę piersiową.",
+      "Opuszczaj się powoli, aż poczujesz mocne rozciąganie dolnej części klatki.",
+      "Wypchnij się do pełnego wyprostu bez bujania nogami."
     ],
     "deadlift": [
       "Stań ze sztangą nad środkiem stopy i chwyć ją tuż na zewnątrz nóg.",

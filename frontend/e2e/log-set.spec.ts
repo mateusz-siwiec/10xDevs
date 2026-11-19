@@ -17,7 +17,7 @@ test('register, log a set in a workout, and see it in history', async ({ page })
   await page.getByRole('button', { name: 'Start workout' }).click()
 
   // Log one set on a preloaded exercise.
-  await page.getByLabel('Exercise').selectOption({ label: 'Barbell Bench Press — Chest' })
+  await page.getByLabel('Exercise').selectOption({ label: 'Barbell Bench Press — Mid chest' })
   await page.getByLabel('Reps').fill('8')
   await page.getByLabel('Weight (kg)').fill('60')
   await page.getByRole('button', { name: 'Log set' }).click()

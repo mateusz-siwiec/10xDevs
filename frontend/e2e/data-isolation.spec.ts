@@ -16,7 +16,7 @@ test("a second user cannot see or reach the first user's plan and custom exercis
   const planId = (await plan.json()).id
   const custom = await request.post(`${API}/api/exercises`, {
     ...auth(owner),
-    data: { name: customName, primaryMuscleGroup: 'CHEST', secondaryMuscleGroups: [] },
+    data: { name: customName, primaryMuscleGroup: 'MID_CHEST', secondaryMuscleGroups: [] },
   })
   expect(custom.status()).toBe(201)
 

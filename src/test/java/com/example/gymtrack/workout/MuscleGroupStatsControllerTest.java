@@ -140,13 +140,13 @@ class MuscleGroupStatsControllerTest {
 	@Test
 	void countsFailureSetsPerGroupWithinTheSetTotals() throws Exception {
 		String token = bearerToken();
-		endedSessionWithFailure(token, catalogExercise(MuscleGroup.CHEST), 2, 1, 1);
+		endedSessionWithFailure(token, catalogExercise(MuscleGroup.MID_CHEST), 2, 1, 1);
 		endedSession(token, catalogExercise(MuscleGroup.LATS), 2, 1);
 
 		mockMvc.perform(get("/api/dashboard/muscle-groups").header(HttpHeaders.AUTHORIZATION, token))
 			.andExpect(jsonPath("$.totalSets", is(5)))
-			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'CHEST')].sets", contains(3)))
-			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'CHEST')].failureSets", contains(1)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'MID_CHEST')].sets", contains(3)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'MID_CHEST')].failureSets", contains(1)))
 			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'LATS')].failureSets", contains(0)))
 			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'ABS')].failureSets", contains(0)));
 	}
@@ -154,17 +154,17 @@ class MuscleGroupStatsControllerTest {
 	@Test
 	void failureSetsFollowTheWindowAndIgnoreOtherUsersAndActiveWorkouts() throws Exception {
 		String token = bearerToken();
-		UUID chest = catalogExercise(MuscleGroup.CHEST);
+		UUID chest = catalogExercise(MuscleGroup.MID_CHEST);
 		endedSessionWithFailure(token, chest, 0, 2, 10);
 		endedSessionWithFailure(bearerToken(), chest, 0, 3, 1);
 		String active = startSession(token);
 		logFailureSets(token, active, chest, 4);
 
 		mockMvc.perform(get("/api/dashboard/muscle-groups").param("days", "7").header(HttpHeaders.AUTHORIZATION, token))
-			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'CHEST')].failureSets", contains(0)));
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'MID_CHEST')].failureSets", contains(0)));
 		mockMvc.perform(get("/api/dashboard/muscle-groups").param("days", "30").header(HttpHeaders.AUTHORIZATION, token))
-			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'CHEST')].failureSets", contains(2)))
-			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'CHEST')].sets", contains(2)));
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'MID_CHEST')].failureSets", contains(2)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'MID_CHEST')].sets", contains(2)));
 	}
 
 	@Test
@@ -174,20 +174,22 @@ class MuscleGroupStatsControllerTest {
 			.andExpect(jsonPath("$.days", is(30)))
 			.andExpect(jsonPath("$.totalSets", is(0)))
 			.andExpect(jsonPath("$.groups", hasSize(MuscleGroup.values().length)))
-			.andExpect(jsonPath("$.groups[0].muscleGroup", is("CHEST")))
+			.andExpect(jsonPath("$.groups[0].muscleGroup", is("UPPER_CHEST")))
+			.andExpect(jsonPath("$.groups[1].muscleGroup", is("MID_CHEST")))
+			.andExpect(jsonPath("$.groups[2].muscleGroup", is("LOWER_CHEST")))
 			.andExpect(jsonPath("$.groups[?(@.sets != 0)]", hasSize(0)));
 	}
 
 	@Test
 	void countsEverySetUnderItsExercisesPrimaryMuscleGroup() throws Exception {
 		String token = bearerToken();
-		endedSession(token, catalogExercise(MuscleGroup.CHEST), 3, 1);
+		endedSession(token, catalogExercise(MuscleGroup.MID_CHEST), 3, 1);
 		endedSession(token, catalogExercise(MuscleGroup.LATS), 2, 2);
 
 		mockMvc.perform(get("/api/dashboard/muscle-groups").header(HttpHeaders.AUTHORIZATION, token))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.totalSets", is(5)))
-			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'CHEST')].sets", contains(3)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'MID_CHEST')].sets", contains(3)))
 			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'LATS')].sets", contains(2)))
 			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'ABS')].sets", contains(0)));
 	}
@@ -209,7 +211,7 @@ class MuscleGroupStatsControllerTest {
 	void activeSessionSetsAreNotCounted() throws Exception {
 		String token = bearerToken();
 		String sessionId = startSession(token);
-		logSets(token, sessionId, catalogExercise(MuscleGroup.CHEST), 3);
+		logSets(token, sessionId, catalogExercise(MuscleGroup.MID_CHEST), 3);
 
 		mockMvc.perform(get("/api/dashboard/muscle-groups").header(HttpHeaders.AUTHORIZATION, token))
 			.andExpect(jsonPath("$.totalSets", is(0)));
@@ -218,7 +220,7 @@ class MuscleGroupStatsControllerTest {
 	@Test
 	void windowFiltersByWhenTheWorkoutEnded() throws Exception {
 		String token = bearerToken();
-		endedSession(token, catalogExercise(MuscleGroup.CHEST), 3, 10);
+		endedSession(token, catalogExercise(MuscleGroup.MID_CHEST), 3, 10);
 
 		mockMvc.perform(get("/api/dashboard/muscle-groups").param("days", "7").header(HttpHeaders.AUTHORIZATION, token))
 			.andExpect(jsonPath("$.days", is(7)))
@@ -249,7 +251,7 @@ class MuscleGroupStatsControllerTest {
 
 	@Test
 	void otherUsersSetsNeverLeak() throws Exception {
-		endedSession(bearerToken(), catalogExercise(MuscleGroup.CHEST), 3, 1);
+		endedSession(bearerToken(), catalogExercise(MuscleGroup.MID_CHEST), 3, 1);
 
 		mockMvc.perform(get("/api/dashboard/muscle-groups").header(HttpHeaders.AUTHORIZATION, bearerToken()))
 			.andExpect(jsonPath("$.totalSets", is(0)));
@@ -259,7 +261,7 @@ class MuscleGroupStatsControllerTest {
 	void deletedWorkoutNoLongerCounts() throws Exception {
 		String token = bearerToken();
 		String sessionId = startSession(token);
-		logSets(token, sessionId, catalogExercise(MuscleGroup.CHEST), 3);
+		logSets(token, sessionId, catalogExercise(MuscleGroup.MID_CHEST), 3);
 		endSession(token, sessionId);
 
 		mockMvc.perform(delete("/api/workout-sessions/" + sessionId).header(HttpHeaders.AUTHORIZATION, token))

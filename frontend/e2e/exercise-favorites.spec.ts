@@ -211,7 +211,7 @@ async function openWorkoutPicker(page: Page, user: ApiUser, lang: 'en' | 'pl' = 
   await expect(page.locator('#exercise-select')).toBeVisible()
 }
 
-const BENCH = 'Barbell Bench Press — Chest'
+const BENCH = 'Barbell Bench Press — Mid chest'
 
 test('workout picker: typing narrows the options and the selection survives clearing the search', async ({
   page,

@@ -1,7 +1,9 @@
 import i18n from '../i18n'
 
 export const MUSCLE_GROUPS = [
-  'CHEST',
+  'UPPER_CHEST',
+  'MID_CHEST',
+  'LOWER_CHEST',
   'LATS',
   'TRAPS',
   'LOWER_BACK',
@@ -25,7 +27,7 @@ export type MuscleGroup = (typeof MUSCLE_GROUPS)[number]
 
 /** Parent rows of the muscle stats page; each lists the groups it sums, in display order. */
 export const MUSCLE_PARENTS = [
-  { key: 'CHEST', groups: ['CHEST'] },
+  { key: 'CHEST', groups: ['UPPER_CHEST', 'MID_CHEST', 'LOWER_CHEST'] },
   { key: 'BACK', groups: ['LATS', 'TRAPS', 'LOWER_BACK'] },
   { key: 'SHOULDERS', groups: ['FRONT_DELTS', 'SIDE_DELTS', 'REAR_DELTS'] },
   { key: 'ARMS', groups: ['BICEPS', 'TRICEPS', 'FOREARMS'] },

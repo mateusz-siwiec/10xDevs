@@ -26,7 +26,7 @@ test('a set logged to failure is marked in the workout, in history and in the ne
   await page.goto('/workout')
   await page.getByLabel('Start from plan').selectOption({ label: 'Push day' })
   await page.getByRole('button', { name: 'Start plan' }).click()
-  await page.getByLabel('Exercise').selectOption({ label: 'Barbell Bench Press — Chest' })
+  await page.getByLabel('Exercise').selectOption({ label: 'Barbell Bench Press — Mid chest' })
 
   // First set with "To failure" ticked, second without.
   const toFailure = page.getByRole('checkbox', { name: 'To failure' })
@@ -61,7 +61,7 @@ test('a set logged to failure is marked in the workout, in history and in the ne
   await page.goto('/workout')
   await page.getByLabel('Start from plan').selectOption({ label: 'Push day' })
   await page.getByRole('button', { name: 'Start plan' }).click()
-  await page.getByLabel('Exercise').selectOption({ label: 'Barbell Bench Press — Chest' })
+  await page.getByLabel('Exercise').selectOption({ label: 'Barbell Bench Press — Mid chest' })
   const hint = page.locator('.previous-workout-hint')
   await expect(hint).toContainText('Set 1: 8 × 60 kg')
   await expect(hint.locator('li').nth(0).getByRole('img', { name: BADGE })).toBeVisible()

@@ -11,23 +11,23 @@ describe('MuscleMap', () => {
 
   it('names the worked muscles in the active language', async () => {
     await i18n.changeLanguage('en')
-    let html = renderToStaticMarkup(<MuscleMap primary="CHEST" secondary={['TRICEPS']} />)
-    expect(html).toContain(`Muscles worked: ${muscleGroupLabel('CHEST')}, ${muscleGroupLabel('TRICEPS')}`)
+    let html = renderToStaticMarkup(<MuscleMap primary="UPPER_CHEST" secondary={['TRICEPS']} />)
+    expect(html).toContain(`Muscles worked: ${muscleGroupLabel('UPPER_CHEST')}, ${muscleGroupLabel('TRICEPS')}`)
 
     await i18n.changeLanguage('pl')
-    html = renderToStaticMarkup(<MuscleMap primary="CHEST" secondary={['TRICEPS']} />)
-    expect(html).toContain(`Mięśnie: ${muscleGroupLabel('CHEST')}, ${muscleGroupLabel('TRICEPS')}`)
-    expect(muscleGroupLabel('CHEST')).not.toBe('CHEST')
+    html = renderToStaticMarkup(<MuscleMap primary="UPPER_CHEST" secondary={['TRICEPS']} />)
+    expect(html).toContain(`Mięśnie: ${muscleGroupLabel('UPPER_CHEST')}, ${muscleGroupLabel('TRICEPS')}`)
+    expect(muscleGroupLabel('UPPER_CHEST')).not.toBe('UPPER_CHEST')
   })
 
   it('renders the legend labels synchronously', () => {
-    const html = renderToStaticMarkup(<MuscleMap primary="CHEST" secondary={[]} />)
+    const html = renderToStaticMarkup(<MuscleMap primary="UPPER_CHEST" secondary={[]} />)
     expect(html).toContain(i18n.t('exercises.musclePrimary'))
     expect(html).toContain(i18n.t('exercises.muscleSecondary'))
   })
 
   it('shows the placeholder, not the lazy figure, in the initial markup', () => {
-    const html = renderToStaticMarkup(<MuscleMap primary="CHEST" secondary={['TRICEPS']} />)
+    const html = renderToStaticMarkup(<MuscleMap primary="UPPER_CHEST" secondary={['TRICEPS']} />)
     expect(html).toContain('muscle-figure-placeholder')
     expect(html).not.toContain('data-muscle')
     expect(html).not.toContain('<svg')

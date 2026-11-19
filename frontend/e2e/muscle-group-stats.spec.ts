@@ -37,7 +37,7 @@ const child = (page: Page, group: string) => page.locator(`[data-group="${group}
 // Test plan risk R11: the per-muscle-group set counts must match what the user actually logged.
 test('the muscle group page, opened from the dashboard, shows sets per parent group', async ({ page, request }) => {
   const user = await registerViaApi(request, 'muscles')
-  await logSets(request, user, [['CHEST', 3], ['LATS', 2]])
+  await logSets(request, user, [['MID_CHEST', 3], ['LATS', 2]])
 
   await page.addInitScript(() => localStorage.setItem('gymtrack.lang', 'en'))
   await page.goto('/login')
@@ -66,7 +66,7 @@ test('parents sum their sub-groups, start collapsed and expand to the sub-groups
   request,
 }) => {
   const user = await registerViaApi(request, 'muscles-sum')
-  await logSets(request, user, [['CHEST', 3], ['SIDE_DELTS', 2], ['REAR_DELTS', 1], ['LATS', 1]])
+  await logSets(request, user, [['MID_CHEST', 3], ['SIDE_DELTS', 2], ['REAR_DELTS', 1], ['LATS', 1]])
   await openStats(page, user)
 
   await expect(page.getByText('7 sets in total')).toBeVisible()
@@ -79,8 +79,9 @@ test('parents sum their sub-groups, start collapsed and expand to the sub-groups
   const toggle = page.getByRole('button', { name: 'Shoulders', exact: true })
   await expect(toggle).toHaveAttribute('aria-expanded', 'false')
   await expect(child(page, 'SIDE_DELTS')).toBeHidden()
-  // Chest has a single group and therefore no toggle.
-  await expect(page.getByRole('button', { name: 'Chest', exact: true })).toHaveCount(0)
+  // Chest now has three regions and therefore a toggle, collapsed like the others.
+  await expect(page.getByRole('button', { name: 'Chest', exact: true })).toHaveAttribute('aria-expanded', 'false')
+  await expect(child(page, 'MID_CHEST')).toBeHidden()
 
   await toggle.click()
   await expect(toggle).toHaveAttribute('aria-expanded', 'true')
@@ -96,6 +97,19 @@ test('parents sum their sub-groups, start collapsed and expand to the sub-groups
   await toggle.click()
   await expect(toggle).toHaveAttribute('aria-expanded', 'false')
   await expect(child(page, 'SIDE_DELTS')).toBeHidden()
+})
+
+test('the Chest parent total includes sets from different chest regions', async ({ page, request }) => {
+  const user = await registerViaApi(request, 'muscles-chest-regions')
+  await logSets(request, user, [['MID_CHEST', 2], ['UPPER_CHEST', 3]])
+  await openStats(page, user)
+
+  await expect(page.getByText('5 sets in total')).toBeVisible()
+  await expect(parent(page, 'CHEST')).toContainText('5')
+  await page.getByRole('button', { name: 'Chest', exact: true }).click()
+  await expect(child(page, 'UPPER_CHEST')).toContainText('3')
+  await expect(child(page, 'MID_CHEST')).toContainText('2')
+  await expect(child(page, 'LOWER_CHEST')).toContainText('0')
 })
 
 test('the toggle works with the keyboard and an expanded parent stays open when the window changes', async ({
@@ -131,7 +145,7 @@ test('failure sets are counted on the parent and the muscle row, and groups with
   const user = await registerViaApi(request, 'muscles-failure')
   const sideDelts = await exerciseIdByGroup(request, user, 'SIDE_DELTS')
   const rearDelts = await exerciseIdByGroup(request, user, 'REAR_DELTS')
-  const chest = await exerciseIdByGroup(request, user, 'CHEST')
+  const chest = await exerciseIdByGroup(request, user, 'MID_CHEST')
   const session = await request.post(`${API}/api/workout-sessions`, auth(user))
   expect(session.ok()).toBeTruthy()
   const sessionId = (await session.json()).id

@@ -73,7 +73,7 @@ class ExerciseControllerTest {
 	void listReturnsAllSeededExercisesWithAllFields() throws Exception {
 		mockMvc.perform(get("/api/exercises").header(HttpHeaders.AUTHORIZATION, bearerToken()))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$", hasSize(48)))
+			.andExpect(jsonPath("$", hasSize(50)))
 			.andExpect(jsonPath("$[*].id", everyItem(notNullValue())))
 			.andExpect(jsonPath("$[*].slug", everyItem(notNullValue())))
 			.andExpect(jsonPath("$[*].name", everyItem(notNullValue())))
@@ -83,11 +83,21 @@ class ExerciseControllerTest {
 
 	@Test
 	void muscleGroupFilterReturnsOnlyExercisesWithThatPrimaryGroup() throws Exception {
-		mockMvc.perform(get("/api/exercises").param("muscleGroup", "CHEST")
+		mockMvc.perform(get("/api/exercises").param("muscleGroup", "MID_CHEST")
 				.header(HttpHeaders.AUTHORIZATION, bearerToken()))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$", hasSize(4)))
-			.andExpect(jsonPath("$[*].primaryMuscleGroup", everyItem(is("CHEST"))));
+			.andExpect(jsonPath("$", hasSize(3)))
+			.andExpect(jsonPath("$[*].primaryMuscleGroup", everyItem(is("MID_CHEST"))));
+	}
+
+	@Test
+	void lowerChestFilterReturnsTheTwoNewExercises() throws Exception {
+		mockMvc.perform(get("/api/exercises").param("muscleGroup", "LOWER_CHEST")
+				.header(HttpHeaders.AUTHORIZATION, bearerToken()))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$", hasSize(2)))
+			.andExpect(jsonPath("$[*].slug", containsInAnyOrder("decline-bench-press", "chest-dip")))
+			.andExpect(jsonPath("$[*].primaryMuscleGroup", everyItem(is("LOWER_CHEST"))));
 	}
 
 	@Test
@@ -105,7 +115,7 @@ class ExerciseControllerTest {
 
 	@Test
 	void substitutesReturnsOtherExercisesOfSamePrimaryGroupOrderedByName() throws Exception {
-		List<Exercise> chest = exerciseRepository.findByPrimaryMuscleGroupOrderByNameAsc(MuscleGroup.CHEST);
+		List<Exercise> chest = exerciseRepository.findByPrimaryMuscleGroupOrderByNameAsc(MuscleGroup.MID_CHEST);
 		Exercise requested = chest.get(1);
 		String[] expectedNames = chest.stream()
 			.filter(e -> !e.getId().equals(requested.getId()))
@@ -117,7 +127,7 @@ class ExerciseControllerTest {
 				.header(HttpHeaders.AUTHORIZATION, bearerToken()))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$", hasSize(chest.size() - 1)))
-			.andExpect(jsonPath("$[*].primaryMuscleGroup", everyItem(is("CHEST"))))
+			.andExpect(jsonPath("$[*].primaryMuscleGroup", everyItem(is("MID_CHEST"))))
 			.andExpect(jsonPath("$[*].id", not(hasItem(requested.getId().toString()))))
 			.andExpect(jsonPath("$[*].name", contains(expectedNames)));
 	}
@@ -167,7 +177,7 @@ class ExerciseControllerTest {
 	@Test
 	void substitutesCarryTheCallersFavoriteFlag() throws Exception {
 		String alice = bearerToken();
-		List<Exercise> chest = exerciseRepository.findByPrimaryMuscleGroupOrderByNameAsc(MuscleGroup.CHEST);
+		List<Exercise> chest = exerciseRepository.findByPrimaryMuscleGroupOrderByNameAsc(MuscleGroup.MID_CHEST);
 		Exercise requested = chest.get(0);
 		Exercise starred = chest.get(1);
 

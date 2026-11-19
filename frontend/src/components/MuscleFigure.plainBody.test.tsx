@@ -8,7 +8,7 @@ vi.mock('./muscleFigureData', () => ({
     front: {
       body: 'M0 0L1 1Z',
       muscles: [
-        { group: 'CHEST', d: 'M0 0L1 1Z' },
+        { group: 'MID_CHEST', d: 'M0 0L1 1Z' },
         { group: null, d: 'M2 2L3 3Z' },
       ],
     },
@@ -20,7 +20,7 @@ import MuscleFigure from './MuscleFigure'
 
 describe('MuscleFigure plain body parts', () => {
   it('draws regions without a group as plain body that is never highlighted', () => {
-    const html = renderToStaticMarkup(<MuscleFigure primary="CHEST" secondary={[]} />)
+    const html = renderToStaticMarkup(<MuscleFigure primary="MID_CHEST" secondary={[]} />)
     expect(html.match(/data-state="body"/g)!.length).toBe(2)
     expect(html).not.toMatch(/data-muscle="[^"]*" data-state="body"/)
   })

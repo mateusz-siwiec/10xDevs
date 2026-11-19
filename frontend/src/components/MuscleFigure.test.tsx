@@ -62,19 +62,36 @@ describe('MuscleFigure', () => {
   })
 
   it('draws the body outline before the muscle paths in each view', () => {
-    const html = render('CHEST', [])
+    const html = render('MID_CHEST', [])
     for (const view of ['front', 'back']) {
       expect(html).toMatch(new RegExp(`<svg[^>]*data-view="${view}"[^>]*><path class="muscle-body"`))
     }
   })
 
   it('marks primary, secondary and idle regions', () => {
-    const result = states('CHEST', ['TRICEPS', 'BICEPS'])
-    expect([...result.get('CHEST')!]).toEqual(['primary'])
+    const result = states('MID_CHEST', ['TRICEPS', 'BICEPS'])
+    expect([...result.get('MID_CHEST')!]).toEqual(['primary'])
     expect([...result.get('TRICEPS')!]).toEqual(['secondary'])
     expect([...result.get('BICEPS')!]).toEqual(['secondary'])
     expect([...result.get('QUADS')!]).toEqual(['idle'])
     expect([...result.get('LATS')!]).toEqual(['idle'])
+  })
+
+  it('splits the chest into upper, mid and lower regions, two paths each in the front view only', () => {
+    const count = (view: 'front' | 'back', group: string) =>
+      MUSCLE_FIGURE[view].muscles.filter((path) => path.group === group).length
+    for (const group of ['UPPER_CHEST', 'MID_CHEST', 'LOWER_CHEST']) {
+      expect(count('front', group), `${group} front`).toBe(2)
+      expect(count('back', group), `${group} back`).toBe(0)
+    }
+    expect(ALL_PATHS.some((path) => path.group === 'CHEST')).toBe(false)
+  })
+
+  it('highlights only the chest regions that are worked', () => {
+    const result = states('UPPER_CHEST', ['LOWER_CHEST'])
+    expect([...result.get('UPPER_CHEST')!]).toEqual(['primary'])
+    expect([...result.get('LOWER_CHEST')!]).toEqual(['secondary'])
+    expect([...result.get('MID_CHEST')!]).toEqual(['idle'])
   })
 
   it('renders primary when a group is in both inputs', () => {

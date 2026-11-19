@@ -25,7 +25,7 @@ import type { ApiUser } from './helpers.js'
  */
 
 async function seedPlanSession(request: APIRequestContext, user: ApiUser) {
-  const groups = ['CHEST', 'LATS', 'QUADS']
+  const groups = ['MID_CHEST', 'LATS', 'QUADS']
   const ids: string[] = []
   for (const group of groups) {
     ids.push(await exerciseIdByGroup(request, user, group))
@@ -173,7 +173,7 @@ test.describe('workout ui', () => {
   }) => {
     const fresh = await registerViaApi(request, 'workout-ui-loading')
     // A saved plan makes the start screen its fullest (plan select + two buttons).
-    const chest = await exerciseIdByGroup(request, fresh, 'CHEST')
+    const chest = await exerciseIdByGroup(request, fresh, 'MID_CHEST')
     await request.post(`${API}/api/training-plans`, {
       ...auth(fresh),
       data: { name: 'Push', entries: [{ exerciseId: chest, sets: 3, reps: 8 }] },

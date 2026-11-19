@@ -127,13 +127,13 @@ class CustomExerciseControllerTest {
 
 		mockMvc.perform(get("/api/exercises").header(HttpHeaders.AUTHORIZATION, bearer(owner)))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$", hasSize(49)))
+			.andExpect(jsonPath("$", hasSize(51)))
 			.andExpect(jsonPath("$[?(@.custom == true)].name", contains(name)));
 		mockMvc.perform(get("/api/exercises").param("muscleGroup", "BICEPS")
 			.header(HttpHeaders.AUTHORIZATION, bearer(owner)))
 			.andExpect(jsonPath("$[*].name", hasItem(name)));
 		mockMvc.perform(get("/api/exercises").header(HttpHeaders.AUTHORIZATION, bearer(other)))
-			.andExpect(jsonPath("$", hasSize(48)))
+			.andExpect(jsonPath("$", hasSize(50)))
 			.andExpect(jsonPath("$[*].name", not(hasItem(name))));
 	}
 
@@ -188,7 +188,7 @@ class CustomExerciseControllerTest {
 		mockMvc.perform(delete("/api/exercises/" + id).header(HttpHeaders.AUTHORIZATION, token))
 			.andExpect(status().isNoContent());
 		mockMvc.perform(get("/api/exercises").header(HttpHeaders.AUTHORIZATION, token))
-			.andExpect(jsonPath("$", hasSize(48)));
+			.andExpect(jsonPath("$", hasSize(50)));
 	}
 
 	@Test
@@ -205,7 +205,7 @@ class CustomExerciseControllerTest {
 			.andExpect(jsonPath("$.code", is("EXERCISE_IN_USE")))
 			.andExpect(jsonPath("$.error", notNullValue()));
 		mockMvc.perform(get("/api/exercises").header(HttpHeaders.AUTHORIZATION, token))
-			.andExpect(jsonPath("$", hasSize(49)));
+			.andExpect(jsonPath("$", hasSize(51)));
 	}
 
 	@Test
@@ -269,7 +269,7 @@ class CustomExerciseControllerTest {
 			.andExpect(jsonPath("$.secondaryMuscleGroups", contains("BICEPS")));
 
 		mockMvc.perform(get("/api/exercises").header(HttpHeaders.AUTHORIZATION, token))
-			.andExpect(jsonPath("$", hasSize(49)))
+			.andExpect(jsonPath("$", hasSize(51)))
 			.andExpect(jsonPath("$[?(@.id == '" + id + "')].name", contains(newName)))
 			.andExpect(jsonPath("$[?(@.id == '" + id + "')].primaryMuscleGroup", contains("ABS")))
 			.andExpect(jsonPath("$[*].name", not(hasItem(oldName))));
@@ -369,7 +369,7 @@ class CustomExerciseControllerTest {
 		mockMvc.perform(delete("/api/exercises/" + id).header(HttpHeaders.AUTHORIZATION, token))
 			.andExpect(status().isNoContent());
 		mockMvc.perform(get("/api/exercises").header(HttpHeaders.AUTHORIZATION, token))
-			.andExpect(jsonPath("$", hasSize(48)))
+			.andExpect(jsonPath("$", hasSize(50)))
 			.andExpect(jsonPath("$[?(@.id == '" + id + "')]", hasSize(0)));
 	}
 
