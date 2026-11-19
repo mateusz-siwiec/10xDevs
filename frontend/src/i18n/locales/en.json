@@ -412,7 +412,7 @@
     "DecimalMin": "{{field}} is too small (limit: {{min}}).",
     "DecimalMax": "{{field}} is too large (maximum: {{max}}).",
     "AssertTrue": "Secondary muscle groups must not include the primary muscle group.",
-    "HalfKgStep": "{{field}} must be a multiple of 0.5.",
+    "QuarterKgStep": "{{field}} must be a multiple of 0.25.",
     "fields": {
       "email": "Email",
       "password": "Password",

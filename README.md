@@ -182,7 +182,7 @@ went to failure. This is informational only: it does **not** affect the weight-i
 | Field | Rule |
 | --- | --- |
 | Set reps | 1 to 100 |
-| Set weight | above 0 and up to 1000 kg, in steps of 0.5 kg |
+| Set weight | above 0 and up to 1000 kg, in steps of 0.25 kg |
 | Plan | name up to 60 characters; 1 to 50 entries; each entry 1 to 20 sets and 1 to 100 reps; the same exercise may repeat |
 | Custom exercise | name up to 60 characters, unique among catalog and your own; cannot be deleted while used in a plan or a logged set |
 | Password | 8 to 72 characters; emails are case-insensitive |

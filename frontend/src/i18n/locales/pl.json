@@ -434,7 +434,7 @@
     "DecimalMin": "Wartość pola „{{field}}” jest za mała (granica: {{min}}).",
     "DecimalMax": "Wartość pola „{{field}}” jest za duża (maksimum: {{max}}).",
     "AssertTrue": "Dodatkowe partie mięśniowe nie mogą zawierać partii głównej.",
-    "HalfKgStep": "Pole „{{field}}” musi być wielokrotnością 0,5.",
+    "QuarterKgStep": "Pole „{{field}}” musi być wielokrotnością 0,25.",
     "fields": {
       "email": "E-mail",
       "password": "Hasło",

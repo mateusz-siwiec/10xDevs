@@ -51,7 +51,7 @@ export default function SetLogger({ disabled, onLog }: SetLoggerProps) {
             id="set-weight"
             type="number"
             inputMode="decimal"
-            step="0.5"
+            step="0.25"
             value={weight}
             onChange={(event) => setWeight(event.target.value)}
             required

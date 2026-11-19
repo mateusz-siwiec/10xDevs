@@ -98,7 +98,7 @@ push a user to an unsafe weight.
 
 | Test | Level | Covers |
 | --- | --- | --- |
-| `WorkoutSetControllerTest.logSetWithInvalidValues…`, `…NonHalfKgWeight…` | Backend | Reps 1 to 100, weight above 0 up to 1000 in 0.5 kg steps |
+| `WorkoutSetControllerTest.logSetWithInvalidValues…`, `…NonQuarterKgWeight…` | Backend | Reps 1 to 100, weight above 0 up to 1000 in 0.25 kg steps |
 | `TrainingPlanControllerTest.invalidRequestsReturnBadRequest`, `CustomExerciseControllerTest` | Backend | Name length, entry counts and set/rep ranges, duplicate exercise names |
 | `ExerciseControllerTest.unknownMuscleGroupReturnsBadRequest` | Backend | Bad filter values give a clean 400 with an error body |
 

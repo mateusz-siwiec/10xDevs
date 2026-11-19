@@ -224,7 +224,7 @@ class WorkoutSetControllerTest {
 			setBody(exerciseId, 5, "0"),
 			setBody(exerciseId, 5, "-5"),
 			setBody(exerciseId, 5, "1000.5"),
-			setBody(exerciseId, 5, "60.3"),
+			setBody(exerciseId, 5, "60.1"),
 			"{\"reps\":5,\"weightKg\":60}",
 		};
 		for (String body : badBodies) {
@@ -239,18 +239,18 @@ class WorkoutSetControllerTest {
 	}
 
 	@Test
-	void logSetWithNonHalfKgWeightReportsHalfKgStepRule() throws Exception {
+	void logSetWithNonQuarterKgWeightReportsQuarterKgStepRule() throws Exception {
 		String token = bearerToken();
 		String sessionId = startSession(token);
 
 		mockMvc.perform(post("/api/workout-sessions/" + sessionId + "/sets")
 				.header(HttpHeaders.AUTHORIZATION, token)
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(setBody(exerciseId(), 5, "60.3")))
+				.content(setBody(exerciseId(), 5, "60.1")))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.code", is("VALIDATION_FAILED")))
 			.andExpect(jsonPath("$.field", is("weightKg")))
-			.andExpect(jsonPath("$.rule", is("HalfKgStep")));
+			.andExpect(jsonPath("$.rule", is("QuarterKgStep")));
 	}
 
 	@Test
