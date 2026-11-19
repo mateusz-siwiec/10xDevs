@@ -94,8 +94,9 @@ class ExerciseSeedTest {
 		assertPrimary("cable-crunch", MuscleGroup.ABS);
 		assertPrimary("ab-wheel-rollout", MuscleGroup.ABS);
 
-		assertSecondaries("plank", MuscleGroup.FRONT_DELTS, MuscleGroup.OBLIQUES);
-		assertSecondaries("ab-wheel-rollout", MuscleGroup.FRONT_DELTS, MuscleGroup.OBLIQUES);
+		// V15 dropped the FRONT_DELTS secondary that the shoulders split (V12) had given these two.
+		assertSecondaries("plank", MuscleGroup.OBLIQUES);
+		assertSecondaries("ab-wheel-rollout", MuscleGroup.OBLIQUES);
 		assertSecondaries("push-up", MuscleGroup.TRICEPS, MuscleGroup.FRONT_DELTS, MuscleGroup.ABS);
 		assertSecondaries("back-squat", MuscleGroup.GLUTES, MuscleGroup.ABS);
 		assertSecondaries("front-squat", MuscleGroup.GLUTES, MuscleGroup.ABS);

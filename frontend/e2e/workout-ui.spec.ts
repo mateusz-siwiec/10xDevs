@@ -172,7 +172,7 @@ test.describe('workout ui', () => {
     request,
   }) => {
     const fresh = await registerViaApi(request, 'workout-ui-loading')
-    // A saved plan makes the start screen its fullest (plan select + two buttons).
+    // A saved plan makes the start screen its fullest (start button + a plan row).
     const chest = await exerciseIdByGroup(request, fresh, 'MID_CHEST')
     await request.post(`${API}/api/training-plans`, {
       ...auth(fresh),
@@ -191,7 +191,7 @@ test.describe('workout ui', () => {
     await expect(page.locator('.skeleton')).toHaveCount(0)
     await expect(page.getByRole('button', { name: 'Start workout' })).toBeVisible()
     const after = (await card.boundingBox())!.height
-    // The skeleton is sized to the fullest start screen (saved plan: plan select + two buttons); the
+    // The skeleton is sized to the fullest start screen (start button + one plan row); the
     // card height must stay within a small tolerance when the content replaces it.
     expect(Math.abs(after - before)).toBeLessThanOrEqual(24)
   })

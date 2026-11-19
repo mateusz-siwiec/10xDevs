@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.example.gymtrack.auth.JwtService;
 import com.example.gymtrack.exercise.ExerciseRepository;
 import com.example.gymtrack.exercise.MuscleGroup;
+import com.example.gymtrack.exercise.MuscleParent;
 import com.example.gymtrack.user.User;
 import com.example.gymtrack.user.UserRepository;
 import com.jayway.jsonpath.JsonPath;
@@ -20,7 +21,9 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -177,7 +180,11 @@ class MuscleGroupStatsControllerTest {
 			.andExpect(jsonPath("$.groups[0].muscleGroup", is("UPPER_CHEST")))
 			.andExpect(jsonPath("$.groups[1].muscleGroup", is("MID_CHEST")))
 			.andExpect(jsonPath("$.groups[2].muscleGroup", is("LOWER_CHEST")))
-			.andExpect(jsonPath("$.groups[?(@.sets != 0)]", hasSize(0)));
+			.andExpect(jsonPath("$.groups[?(@.sets != 0)]", hasSize(0)))
+			.andExpect(jsonPath("$.parents", hasSize(MuscleParent.values().length)))
+			.andExpect(jsonPath("$.parents[*].parent",
+					contains("CHEST", "BACK", "SHOULDERS", "ARMS", "LEGS", "CORE")))
+			.andExpect(jsonPath("$.parents[?(@.sets != 0)]", hasSize(0)));
 	}
 
 	@Test
@@ -247,6 +254,78 @@ class MuscleGroupStatsControllerTest {
 
 		mockMvc.perform(get("/api/dashboard/muscle-groups").header(HttpHeaders.AUTHORIZATION, token))
 			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'CALVES')].sets", contains(2)));
+	}
+
+	private UUID customExercise(String token, MuscleGroup primary, MuscleGroup... secondary) throws Exception {
+		String secondaries = Arrays.stream(secondary).map(group -> "\"" + group + "\"").collect(Collectors.joining(","));
+		String created = mockMvc.perform(post("/api/exercises").header(HttpHeaders.AUTHORIZATION, token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"name\":\"Custom move " + System.nanoTime() + "\",\"primaryMuscleGroup\":\"" + primary
+						+ "\",\"secondaryMuscleGroups\":[" + secondaries + "]}"))
+			.andExpect(status().isCreated())
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+		return UUID.fromString(JsonPath.read(created, "$.id"));
+	}
+
+	@Test
+	void secondarySetsAreReportedSeparatelyFromPrimaryAndOutsideTheTotal() throws Exception {
+		String token = bearerToken();
+		endedSessionWithFailure(token, customExercise(token, MuscleGroup.MID_CHEST, MuscleGroup.FRONT_DELTS), 2, 1, 1);
+
+		mockMvc.perform(get("/api/dashboard/muscle-groups").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.totalSets", is(3)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'MID_CHEST')].sets", contains(3)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'MID_CHEST')].secondarySets", contains(0)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'MID_CHEST')].failureSets", contains(1)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'FRONT_DELTS')].sets", contains(0)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'FRONT_DELTS')].secondarySets", contains(3)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'FRONT_DELTS')].failureSets", contains(0)));
+	}
+
+	@Test
+	void aParentCountsASetInBothNumbersWhenPrimaryAndSecondaryShareItButOnlyOnceInEach() throws Exception {
+		String token = bearerToken();
+		endedSession(token, customExercise(token, MuscleGroup.FRONT_DELTS, MuscleGroup.SIDE_DELTS), 1, 1);
+
+		mockMvc.perform(get("/api/dashboard/muscle-groups").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(jsonPath("$.parents[?(@.parent == 'SHOULDERS')].sets", contains(1)))
+			.andExpect(jsonPath("$.parents[?(@.parent == 'SHOULDERS')].secondarySets", contains(1)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'FRONT_DELTS')].sets", contains(1)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'SIDE_DELTS')].sets", contains(0)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'SIDE_DELTS')].secondarySets", contains(1)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'REAR_DELTS')].secondarySets", contains(0)));
+	}
+
+	@Test
+	void aParentCountsASetOnceAsSecondaryEvenWhenSeveralOfItsMusclesAreSecondary() throws Exception {
+		String token = bearerToken();
+		UUID exercise = customExercise(token, MuscleGroup.FRONT_DELTS, MuscleGroup.SIDE_DELTS, MuscleGroup.TRICEPS,
+				MuscleGroup.BICEPS);
+		endedSession(token, exercise, 2, 1);
+
+		mockMvc.perform(get("/api/dashboard/muscle-groups").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(jsonPath("$.parents[?(@.parent == 'SHOULDERS')].sets", contains(2)))
+			.andExpect(jsonPath("$.parents[?(@.parent == 'SHOULDERS')].secondarySets", contains(2)))
+			.andExpect(jsonPath("$.parents[?(@.parent == 'ARMS')].sets", contains(0)))
+			.andExpect(jsonPath("$.parents[?(@.parent == 'ARMS')].secondarySets", contains(2)))
+			.andExpect(jsonPath("$.parents[?(@.parent == 'ARMS')].failureSets", contains(0)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'TRICEPS')].secondarySets", contains(2)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'BICEPS')].secondarySets", contains(2)))
+			.andExpect(jsonPath("$.parents[?(@.parent == 'CHEST')].secondarySets", contains(0)));
+	}
+
+	@Test
+	void totalSetsIsTheLoggedSetCountEvenWithSecondaryMuscles() throws Exception {
+		String token = bearerToken();
+		endedSession(token, customExercise(token, MuscleGroup.MID_CHEST, MuscleGroup.TRICEPS, MuscleGroup.FRONT_DELTS),
+				3, 1);
+		endedSession(token, catalogExercise(MuscleGroup.LATS), 2, 2);
+
+		mockMvc.perform(get("/api/dashboard/muscle-groups").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(jsonPath("$.totalSets", is(5)));
 	}
 
 	@Test

@@ -27,6 +27,8 @@
 }
 
 .exercise-secondary-option input {
+  /* A fixed-size box: without flex-shrink: 0 it is squeezed whenever a long label wraps to two lines. */
+  flex: 0 0 1.25rem;
   width: 1.25rem;
   height: 1.25rem;
   margin: 0;
@@ -74,4 +76,29 @@
 .exercise-list .favorite-toggle:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+/* Previous / Next with the current page between them. The buttons use aria-disabled, not disabled, so keyboard
+   focus stays on them when the first or last page is reached. */
+.exercise-pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.exercise-pager-status {
+  color: var(--text);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.exercise-pager .btn-secondary[aria-disabled='true'] {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.exercise-pager .btn-secondary[aria-disabled='true']:hover {
+  border-color: var(--border);
 }
