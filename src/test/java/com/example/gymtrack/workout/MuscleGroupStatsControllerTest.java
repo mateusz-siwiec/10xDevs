@@ -4,7 +4,6 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -257,29 +256,6 @@ class MuscleGroupStatsControllerTest {
 			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'CALVES')].sets", contains(2)));
 	}
 
-	@Test
-	void includeSecondaryAlsoCountsSetsForSecondaryGroupsWithoutChangingTheTotal() throws Exception {
-		String token = bearerToken();
-		String created = mockMvc.perform(post("/api/exercises").header(HttpHeaders.AUTHORIZATION, token)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content("{\"name\":\"Press move " + System.nanoTime()
-						+ "\",\"primaryMuscleGroup\":\"MID_CHEST\",\"secondaryMuscleGroups\":[\"FRONT_DELTS\"]}"))
-			.andExpect(status().isCreated())
-			.andReturn()
-			.getResponse()
-			.getContentAsString();
-		endedSessionWithFailure(token, UUID.fromString(JsonPath.read(created, "$.id")), 2, 1, 1);
-
-		mockMvc.perform(get("/api/dashboard/muscle-groups").header(HttpHeaders.AUTHORIZATION, token))
-			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'FRONT_DELTS')].sets", contains(0)));
-		mockMvc.perform(get("/api/dashboard/muscle-groups").param("includeSecondary", "true")
-				.header(HttpHeaders.AUTHORIZATION, token))
-			.andExpect(jsonPath("$.totalSets", is(3)))
-			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'MID_CHEST')].sets", contains(3)))
-			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'FRONT_DELTS')].sets", contains(3)))
-			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'FRONT_DELTS')].failureSets", contains(1)));
-	}
-
 	private UUID customExercise(String token, MuscleGroup primary, MuscleGroup... secondary) throws Exception {
 		String secondaries = Arrays.stream(secondary).map(group -> "\"" + group + "\"").collect(Collectors.joining(","));
 		String created = mockMvc.perform(post("/api/exercises").header(HttpHeaders.AUTHORIZATION, token)
@@ -294,81 +270,62 @@ class MuscleGroupStatsControllerTest {
 	}
 
 	@Test
-	void parentCountsASetOnceWhenPrimaryAndSecondaryShareIt() throws Exception {
+	void secondarySetsAreReportedSeparatelyFromPrimaryAndOutsideTheTotal() throws Exception {
+		String token = bearerToken();
+		endedSessionWithFailure(token, customExercise(token, MuscleGroup.MID_CHEST, MuscleGroup.FRONT_DELTS), 2, 1, 1);
+
+		mockMvc.perform(get("/api/dashboard/muscle-groups").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.totalSets", is(3)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'MID_CHEST')].sets", contains(3)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'MID_CHEST')].secondarySets", contains(0)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'MID_CHEST')].failureSets", contains(1)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'FRONT_DELTS')].sets", contains(0)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'FRONT_DELTS')].secondarySets", contains(3)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'FRONT_DELTS')].failureSets", contains(0)));
+	}
+
+	@Test
+	void aParentCountsASetInBothNumbersWhenPrimaryAndSecondaryShareItButOnlyOnceInEach() throws Exception {
 		String token = bearerToken();
 		endedSession(token, customExercise(token, MuscleGroup.FRONT_DELTS, MuscleGroup.SIDE_DELTS), 1, 1);
 
-		mockMvc.perform(get("/api/dashboard/muscle-groups").param("includeSecondary", "true")
-				.header(HttpHeaders.AUTHORIZATION, token))
-			.andExpect(jsonPath("$.totalSets", is(1)))
+		mockMvc.perform(get("/api/dashboard/muscle-groups").header(HttpHeaders.AUTHORIZATION, token))
 			.andExpect(jsonPath("$.parents[?(@.parent == 'SHOULDERS')].sets", contains(1)))
+			.andExpect(jsonPath("$.parents[?(@.parent == 'SHOULDERS')].secondarySets", contains(1)))
 			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'FRONT_DELTS')].sets", contains(1)))
-			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'SIDE_DELTS')].sets", contains(1)))
-			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'REAR_DELTS')].sets", contains(0)));
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'SIDE_DELTS')].sets", contains(0)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'SIDE_DELTS')].secondarySets", contains(1)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'REAR_DELTS')].secondarySets", contains(0)));
 	}
 
 	@Test
-	void secondaryFailureSetsCountPerMuscleAndOncePerParent() throws Exception {
+	void aParentCountsASetOnceAsSecondaryEvenWhenSeveralOfItsMusclesAreSecondary() throws Exception {
 		String token = bearerToken();
-		UUID exercise = customExercise(token, MuscleGroup.FRONT_DELTS, MuscleGroup.SIDE_DELTS, MuscleGroup.TRICEPS);
-		endedSessionWithFailure(token, exercise, 2, 1, 1);
+		UUID exercise = customExercise(token, MuscleGroup.FRONT_DELTS, MuscleGroup.SIDE_DELTS, MuscleGroup.TRICEPS,
+				MuscleGroup.BICEPS);
+		endedSession(token, exercise, 2, 1);
 
-		mockMvc.perform(get("/api/dashboard/muscle-groups").param("includeSecondary", "true")
-				.header(HttpHeaders.AUTHORIZATION, token))
-			.andExpect(jsonPath("$.totalSets", is(3)))
-			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'FRONT_DELTS')].failureSets", contains(1)))
-			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'SIDE_DELTS')].failureSets", contains(1)))
-			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'TRICEPS')].sets", contains(3)))
-			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'TRICEPS')].failureSets", contains(1)))
-			.andExpect(jsonPath("$.parents[?(@.parent == 'SHOULDERS')].sets", contains(3)))
-			.andExpect(jsonPath("$.parents[?(@.parent == 'SHOULDERS')].failureSets", contains(1)))
-			.andExpect(jsonPath("$.parents[?(@.parent == 'ARMS')].sets", contains(3)))
-			.andExpect(jsonPath("$.parents[?(@.parent == 'ARMS')].failureSets", contains(1)))
-			.andExpect(jsonPath("$.parents[?(@.parent == 'CHEST')].sets", contains(0)));
-	}
-
-	@Test
-	void absentAndFalseIncludeSecondaryReturnTheSamePrimaryOnlyNumbers() throws Exception {
-		String token = bearerToken();
-		endedSession(token, customExercise(token, MuscleGroup.MID_CHEST, MuscleGroup.TRICEPS), 2, 1);
-
-		String absent = mockMvc.perform(get("/api/dashboard/muscle-groups").header(HttpHeaders.AUTHORIZATION, token))
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.totalSets", is(2)))
-			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'TRICEPS')].sets", contains(0)))
+		mockMvc.perform(get("/api/dashboard/muscle-groups").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(jsonPath("$.parents[?(@.parent == 'SHOULDERS')].sets", contains(2)))
+			.andExpect(jsonPath("$.parents[?(@.parent == 'SHOULDERS')].secondarySets", contains(2)))
 			.andExpect(jsonPath("$.parents[?(@.parent == 'ARMS')].sets", contains(0)))
-			.andExpect(jsonPath("$.parents[?(@.parent == 'CHEST')].sets", contains(2)))
-			.andReturn()
-			.getResponse()
-			.getContentAsString();
-		String explicitFalse = mockMvc.perform(get("/api/dashboard/muscle-groups")
-				.param("includeSecondary", "false")
-				.header(HttpHeaders.AUTHORIZATION, token))
-			.andReturn()
-			.getResponse()
-			.getContentAsString();
-		assertEquals(absent, explicitFalse);
+			.andExpect(jsonPath("$.parents[?(@.parent == 'ARMS')].secondarySets", contains(2)))
+			.andExpect(jsonPath("$.parents[?(@.parent == 'ARMS')].failureSets", contains(0)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'TRICEPS')].secondarySets", contains(2)))
+			.andExpect(jsonPath("$.groups[?(@.muscleGroup == 'BICEPS')].secondarySets", contains(2)))
+			.andExpect(jsonPath("$.parents[?(@.parent == 'CHEST')].secondarySets", contains(0)));
 	}
 
 	@Test
-	void totalSetsIsTheLoggedSetCountInBothModes() throws Exception {
+	void totalSetsIsTheLoggedSetCountEvenWithSecondaryMuscles() throws Exception {
 		String token = bearerToken();
 		endedSession(token, customExercise(token, MuscleGroup.MID_CHEST, MuscleGroup.TRICEPS, MuscleGroup.FRONT_DELTS),
 				3, 1);
 		endedSession(token, catalogExercise(MuscleGroup.LATS), 2, 2);
 
-		for (String flag : new String[] { "false", "true" }) {
-			mockMvc.perform(get("/api/dashboard/muscle-groups").param("includeSecondary", flag)
-					.header(HttpHeaders.AUTHORIZATION, token))
-				.andExpect(jsonPath("$.totalSets", is(5)));
-		}
-	}
-
-	@Test
-	void nonBooleanIncludeSecondaryReturnsBadRequest() throws Exception {
-		mockMvc.perform(get("/api/dashboard/muscle-groups").param("includeSecondary", "abc")
-				.header(HttpHeaders.AUTHORIZATION, bearerToken()))
-			.andExpect(status().isBadRequest());
+		mockMvc.perform(get("/api/dashboard/muscle-groups").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(jsonPath("$.totalSets", is(5)));
 	}
 
 	@Test

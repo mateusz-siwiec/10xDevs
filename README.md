@@ -135,18 +135,21 @@ Streak = **2**. After one more workout this week it becomes **3**. With no goal 
 
 ### 5. Sets per muscle group
 
-*Code: `workout/DashboardService.muscleGroupStats` (`includeSecondary` parameter), `GET /api/dashboard/muscle-groups`; page `/muscle-groups`, opened from the dashboard.*
+*Code: `workout/DashboardService.muscleGroupStats`, `GET /api/dashboard/muscle-groups`; page `/muscle-groups`, opened from the dashboard.*
 Shows how many sets you have done for each muscle group, so an imbalance is easy to spot.
 
 **Rule.** Over your **finished** workouts that ended in the chosen window (**7, 30 or 90 days, or all time**, default 30), every set
-counts **once**, for the **primary** muscle group of its exercise. By default secondary groups are not counted, so the numbers
-add up to your real set count. The page has an **Include secondary muscles** checkbox (off by default, and off again on each visit): with it
-on, every set also counts for each secondary muscle of its exercise, once per muscle row and once per parent row (a set that
-trained several muscles of one parent still counts once in that parent row; the sub-rows count every muscle trained). The
-"in total" line stays the number of sets logged, so with the checkbox on the rows can add up to more. "To failure" counts follow
-the same rule. The page shows six parent rows (Chest, Back, Shoulders, Arms, Legs, Core), each with the number of sets that
-trained any of its muscle groups, sorted most-trained first; select a parent to see its muscles (for example Shoulders: front, side and rear delts; Legs
-includes adductors and abductors). Every muscle is listed, with zero for the ones you haven't trained.
+counts **once**, for the **primary** muscle group of its exercise, so the main numbers add up to your real set count. These are the
+numbers, the bars and the "to failure" counts you see by default. The API also returns, for every row, the **secondary sets**: sets
+whose exercise trains that muscle only as a secondary muscle. The page has an **Include secondary muscles** checkbox (off by default,
+and off again on each visit) that shows them, with no reload: a bracket after the number, like `12 (+5)`, and a lighter part added
+to the bar with a short animation (none with reduced motion). A parent row counts a set at most once in each number: in the main
+number when the exercise's primary muscle belongs to it, and in the bracket when any of its muscles is a secondary muscle of the
+exercise (even if several are). So a set can show in both the number and the bracket of a parent (Plank: Abs primary, Obliques
+secondary, both under Core), but never twice in one of them, and the parent's bracket always covers the brackets of its muscles. "To failure" counts stay for the primary muscle only. The page shows six parent rows (Chest, Back, Shoulders, Arms, Legs,
+Core), sorted most-trained first by primary sets (the order does not change when the checkbox is ticked); select a parent to see its
+muscles (for example Shoulders: front, side and rear delts; Legs includes adductors and abductors). Every muscle is listed, with zero
+for the ones you haven't trained.
 Custom exercises count towards the group you gave them. Sets of a workout you are still doing are not counted, and a deleted workout stops counting.
 
 **Example.** In the last 30 days you finished two workouts: 3 sets of Barbell Bench Press (primary: chest) and, in another,
@@ -160,15 +163,16 @@ Custom exercises count towards the group you gave them. Sets of a workout you ar
 
 The page shows "5 sets in total". Bench press also works the triceps and front delts, but those stay at 0 here because only the primary group counts.
 
-With **Include secondary muscles** on, those sets also count for the secondary muscles. For instance, one set of an exercise
-with primary front delts and secondary side delts adds:
+With **Include secondary muscles** on, the same data also shows the secondary sets. Bench press trains triceps and front delts as
+secondary muscles, so the 3 bench sets show as **Arms 0 (+3)** and, expanded, **Triceps 0 (+3)**; Shoulders shows **0 (+3)** and
+Front delts **0 (+3)**. The total line stays at 5. For one set of an exercise with primary front delts and secondary side delts:
 
-| Row | Sets |
-| --- | --- |
-| Shoulders (parent) | +1 (once, although two of its muscles were trained) |
-| Front delts | +1 |
-| Side delts | +1 |
-| Total line | +1 |
+| Row | Primary sets | Secondary (in brackets) |
+| --- | --- | --- |
+| Shoulders (parent) | 1 | (+1): side delts is a secondary muscle of this set, and the parent counts it once |
+| Front delts | 1 | none |
+| Side delts | 0 | (+1) |
+| Total line | 1 | not changed |
 
 **Failure tracking.** A set can be marked "to failure" when you log it. The stats also show how many of the sets in each muscle group
 went to failure. This is informational only: it does **not** affect the weight-increase recommendation (rule 1), which looks at weight, sets and reps alone.
