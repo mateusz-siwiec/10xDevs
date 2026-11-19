@@ -329,12 +329,12 @@ export interface MuscleGroupStats {
   days: number | null
   totalSets: number
   /** Every muscle group, zeros included. */
-  groups: { muscleGroup: string; sets: number; failureSets: number }[]
-  parents: { parent: string; sets: number; failureSets: number }[]
+  groups: { muscleGroup: string; sets: number; secondarySets: number; failureSets: number }[]
+  parents: { parent: string; sets: number; secondarySets: number; failureSets: number }[]
 }
 
-export async function getMuscleGroupStats(days: StatsWindow, includeSecondary = false): Promise<MuscleGroupStats> {
-  const res = await authFetch(`/api/dashboard/muscle-groups?days=${days}&includeSecondary=${includeSecondary}`)
+export async function getMuscleGroupStats(days: StatsWindow): Promise<MuscleGroupStats> {
+  const res = await authFetch(`/api/dashboard/muscle-groups?days=${days}`)
   return res.json()
 }
 

@@ -205,7 +205,9 @@ async function logExerciseSets(request: APIRequestContext, user: ApiUser, exerci
   expect(ended.ok()).toBeTruthy()
 }
 
-test('including secondary muscles counts a set once for the parent and once on each muscle row', async ({
+const secondaryToggle = (page: Page, name = 'Include secondary muscles') => page.getByRole('checkbox', { name })
+
+test('secondary muscles are hidden until the checkbox is ticked, then shown in brackets', async ({
   page,
   request,
 }) => {
@@ -218,36 +220,67 @@ test('including secondary muscles counts a set once for the parent and once on e
   await logExerciseSets(request, user, (await created.json()).id, 1)
   await openStats(page, user)
 
-  const checkbox = page.getByRole('checkbox', { name: 'Include secondary muscles' })
+  const checkbox = secondaryToggle(page)
   await expect(checkbox).not.toBeChecked()
   await page.getByRole('button', { name: 'Shoulders', exact: true }).click()
-  await expect(parent(page, 'SHOULDERS')).toContainText('1')
-  await expect(child(page, 'FRONT_DELTS')).toContainText('1')
+  await expect(page.locator('.muscle-secondary-count')).toHaveCount(0)
   await expect(child(page, 'SIDE_DELTS')).toContainText('0')
 
   await checkbox.check()
-  await expect(page.getByText(/once per muscle group/)).toBeVisible()
+  await expect(page.getByText(/Numbers in brackets/)).toBeVisible()
+  await expect(child(page, 'SIDE_DELTS')).toContainText('(+1)')
+  // The primary muscle itself gets no bracket.
+  await expect(child(page, 'FRONT_DELTS')).not.toContainText('(+')
+  // The parent counts the set as primary and, because side delts is secondary in it, in its bracket too (once).
+  await expect(parent(page, 'SHOULDERS').locator('.muscle-row').first()).toContainText('(+1)')
   await expect(page.getByText('1 set in total')).toBeVisible()
-  await expect(child(page, 'SIDE_DELTS')).toContainText('1')
-  await expect(child(page, 'FRONT_DELTS')).toContainText('1')
-  await expect(parent(page, 'SHOULDERS').locator('.muscle-row').first()).not.toContainText('2')
 
   await checkbox.uncheck()
-  await expect(child(page, 'SIDE_DELTS')).toContainText('0')
-  await expect(child(page, 'FRONT_DELTS')).toContainText('1')
+  await expect(page.locator('.muscle-secondary-count')).toHaveCount(0)
   await expect(page.getByText('1 set in total')).toBeVisible()
 })
 
-test('a secondary muscle in another parent adds to that parent row', async ({ page, request }) => {
+test('a secondary muscle in another parent adds a bracket and a lighter bar segment to that parent row', async ({
+  page,
+  request,
+}) => {
   const user = await registerViaApi(request, 'muscles-secondary-parent')
   await logExerciseSets(request, user, await exerciseId(request, user, 'Barbell Bench Press'), 2)
-  await openStats(page, user)
 
+  let statsRequests = 0
+  page.on('request', (req) => {
+    if (req.url().includes('/api/dashboard/muscle-groups')) statsRequests++
+  })
+  await openStats(page, user)
   await expect(parent(page, 'ARMS')).toContainText('0')
-  await page.getByRole('checkbox', { name: 'Include secondary muscles' }).check()
-  await expect(parent(page, 'ARMS')).toContainText('2')
+  const armsFill = parent(page, 'ARMS').locator('.muscle-bar-fill').first()
+  const armsSecondary = parent(page, 'ARMS').locator('.muscle-bar-secondary').first()
+  const requestsBefore = statsRequests
+
+  await secondaryToggle(page).check()
+  await expect(parent(page, 'ARMS')).toContainText('(+2)')
   await expect(parent(page, 'CHEST')).toContainText('2')
+  await expect(parent(page, 'CHEST').locator('.muscle-row').first()).not.toContainText('(+')
   await expect(page.getByText('2 sets in total')).toBeVisible()
+  // The lighter segment grows out of the (empty) primary bar; the primary fill never changes.
+  await expect.poll(async () => (await armsSecondary.boundingBox())?.width ?? 0).toBeGreaterThan(0)
+  expect((await armsFill.boundingBox())?.width ?? 0).toBe(0)
+  // The numbers were already loaded: ticking the box does not call the API again, so the page never reloads.
+  expect(statsRequests).toBe(requestsBefore)
+})
+
+test('ticking the checkbox keeps the list and its height in place', async ({ page, request }) => {
+  const user = await registerViaApi(request, 'muscles-secondary-stable')
+  await logSets(request, user, [['LATS', 2], ['MID_CHEST', 1]])
+  await openStats(page, user)
+  await expect(page.getByText('3 sets in total')).toBeVisible()
+
+  const list = page.locator('.muscle-list')
+  const before = await list.boundingBox()
+  await secondaryToggle(page).check()
+  await expect(page.getByText(/Numbers in brackets/)).toBeVisible()
+  await expect(page.getByText('Loading stats…')).toHaveCount(0)
+  expect((await list.boundingBox())?.height).toBe(before?.height)
 })
 
 test('in Polish the secondary toggle label and footnote are translated', async ({ page, request }) => {
@@ -255,10 +288,10 @@ test('in Polish the secondary toggle label and footnote are translated', async (
   await logSets(request, user, [['LATS', 1]])
   await openStats(page, user, 'pl')
 
-  const checkbox = page.getByRole('checkbox', { name: 'Uwzględnij mięśnie pomocnicze' })
+  const checkbox = secondaryToggle(page, 'Uwzględnij mięśnie pomocnicze')
   await expect(checkbox).toBeVisible()
   await checkbox.check()
-  await expect(page.getByText(/raz w każdej grupie mięśniowej/)).toBeVisible()
+  await expect(page.getByText(/Liczby w nawiasach/)).toBeVisible()
 })
 
 test('the secondary checkbox toggles with Space and keeps an expanded parent open', async ({ page, request }) => {
@@ -270,13 +303,27 @@ test('the secondary checkbox toggles with Space and keeps an expanded parent ope
   await toggle.click()
   await expect(toggle).toHaveAttribute('aria-expanded', 'true')
 
-  const checkbox = page.getByRole('checkbox', { name: 'Include secondary muscles' })
+  const checkbox = secondaryToggle(page)
   await checkbox.focus()
   await page.keyboard.press('Space')
   await expect(checkbox).toBeChecked()
-  await expect(page.getByText(/once per muscle group/)).toBeVisible()
+  await expect(page.getByText(/Numbers in brackets/)).toBeVisible()
   await expect(toggle).toHaveAttribute('aria-expanded', 'true')
   await expect(child(page, 'LATS')).toBeVisible()
   await page.keyboard.press('Space')
   await expect(checkbox).not.toBeChecked()
+})
+
+test("a parent's bracket covers the brackets of its muscles", async ({ page, request }) => {
+  const user = await registerViaApi(request, 'muscles-secondary-parent-sum')
+  // Plank: primary Abs, secondary Obliques, both under Core.
+  await logExerciseSets(request, user, await exerciseId(request, user, 'Plank'), 2)
+  await openStats(page, user)
+
+  await secondaryToggle(page).check()
+  await expect(parent(page, 'CORE').locator('.muscle-row').first()).toContainText('2 (+2)')
+  await page.getByRole('button', { name: 'Core', exact: true }).click()
+  await expect(child(page, 'ABS')).toContainText('2')
+  await expect(child(page, 'ABS')).not.toContainText('(+')
+  await expect(child(page, 'OBLIQUES')).toContainText('0 (+2)')
 })
