@@ -24,7 +24,7 @@ import type { ApiUser } from './helpers.js'
  */
 
 async function seedWorkout(request: APIRequestContext, user: ApiUser) {
-  const chest = await exerciseIdByGroup(request, user, 'CHEST')
+  const chest = await exerciseIdByGroup(request, user, 'MID_CHEST')
   const session = await request.post(`${API}/api/workout-sessions`, auth(user))
   const sessionId = (await session.json()).id
   for (const weightKg of [60, 65]) {

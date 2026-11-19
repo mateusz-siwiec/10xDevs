@@ -50,11 +50,29 @@ test('Barbell Row highlights its primary and secondary groups and leaves the che
   await expect(panel.locator('[data-muscle="LATS"][data-state="primary"]').first()).toBeVisible()
   await expect(panel.locator('[data-muscle="TRAPS"][data-state="secondary"]').first()).toBeVisible()
   await expect(panel.locator('[data-muscle="BICEPS"][data-state="secondary"]').first()).toBeVisible()
-  await expect(panel.locator('[data-muscle="CHEST"][data-state="idle"]').first()).toBeVisible()
-  await expect(panel.locator('[data-muscle="CHEST"][data-state="primary"]')).toHaveCount(0)
-  await expect(panel.locator('[data-muscle="CHEST"][data-state="secondary"]')).toHaveCount(0)
+  for (const region of ['UPPER_CHEST', 'MID_CHEST', 'LOWER_CHEST']) {
+    await expect(panel.locator(`[data-muscle="${region}"][data-state="idle"]`).first()).toBeVisible()
+    await expect(panel.locator(`[data-muscle="${region}"][data-state="primary"]`)).toHaveCount(0)
+    await expect(panel.locator(`[data-muscle="${region}"][data-state="secondary"]`)).toHaveCount(0)
+  }
   // A built-in exercise with cues still shows the technique list after the map.
   await expect(panel.locator('.technique-list')).toBeVisible()
+})
+
+test('Incline Dumbbell Press highlights the upper chest as primary and leaves the other regions idle', async ({
+  page,
+  request,
+}) => {
+  const user = await registerViaApi(request, 'mmap-upper')
+  await openList(page, user)
+
+  await row(page, 'Incline Dumbbell Press').getByRole('button', { name: 'How to do Incline Dumbbell Press' }).click()
+  const panel = row(page, 'Incline Dumbbell Press').getByRole('tooltip')
+  await expect(panel).toBeVisible()
+  await expect(panel.locator('[data-muscle="UPPER_CHEST"][data-state="primary"]').first()).toBeVisible()
+  await expect(panel.locator('[data-muscle="MID_CHEST"][data-state="idle"]').first()).toBeVisible()
+  await expect(panel.locator('[data-muscle="LOWER_CHEST"][data-state="idle"]').first()).toBeVisible()
+  await expect(panel.locator('[data-muscle="MID_CHEST"][data-state="primary"]')).toHaveCount(0)
 })
 
 test('Overhead Press highlights front delts as primary and side delts as secondary, not rear delts', async ({

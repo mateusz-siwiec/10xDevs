@@ -309,30 +309,30 @@ V14 runs on every deploy against Supabase. Per CLAUDE.md, never point a local ru
 
 #### Automated
 
-- [x] 2.1 Frontend unit tests pass: `npm run test`
-- [x] 2.2 Type check and build pass: `npm run build`
-- [x] 2.3 Lint passes: `npm run lint`
+- [x] 2.1 Frontend unit tests pass: `npm run test` — 80e86a5
+- [x] 2.2 Type check and build pass: `npm run build` — 80e86a5
+- [x] 2.3 Lint passes: `npm run lint` — 80e86a5
 
 #### Manual
 
-- [x] 2.4 Rendered preview of the three chest bands per side reviewed and approved by the user
-- [x] 2.5 Tooltip highlights only the upper band for incline dumbbell press and only the lower band for decline bench press
+- [x] 2.4 Rendered preview of the three chest bands per side reviewed and approved by the user — 80e86a5
+- [x] 2.5 Tooltip highlights only the upper band for incline dumbbell press and only the lower band for decline bench press — 80e86a5
 
 ### Phase 3: Frontend integration
 
 #### Automated
 
-- [ ] 3.1 Unit tests pass: `npm run test`
-- [ ] 3.2 Type check and build pass: `npm run build`
-- [ ] 3.3 Main bundle grows by at most 1 KB gzipped versus the build before this change
-- [ ] 3.4 Lint and hard-coded value guard pass: `npm run lint` and `npm run check:tokens`
-- [ ] 3.5 End-to-end suite passes with Postgres running: `npm run test:e2e`
+- [x] 3.1 Unit tests pass: `npm run test`
+- [x] 3.2 Type check and build pass: `npm run build`
+- [x] 3.3 Main bundle grows by at most 1 KB gzipped versus the build before this change
+- [x] 3.4 Lint and hard-coded value guard pass: `npm run lint` and `npm run check:tokens`
+- [x] 3.5 End-to-end suite passes with Postgres running: `npm run test:e2e`
 
 #### Manual
 
-- [ ] 3.6 Form select, checkboxes and list filter show Upper, Mid and Lower chest in English and Polish
-- [ ] 3.7 Stats page Chest parent total equals the sum of its three child rows
-- [ ] 3.8 Technique tooltip for decline bench press and chest dip shows cues in both languages
+- [x] 3.6 Form select, checkboxes and list filter show Upper, Mid and Lower chest in English and Polish
+- [x] 3.7 Stats page Chest parent total equals the sum of its three child rows
+- [x] 3.8 Technique tooltip for decline bench press and chest dip shows cues in both languages
 
 ### Phase 4: Docs and full suites
 
