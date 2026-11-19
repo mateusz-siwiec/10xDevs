@@ -258,39 +258,39 @@ No database migration. API change is additive (`parents` field, optional `includ
 
 #### Automated
 
-- [x] 1.1 Stats controller tests pass: `./mvnw test -Dtest=MuscleGroupStatsControllerTest` — 56dceda
-- [x] 1.2 Parent mapping test passes: `./mvnw test -Dtest=MuscleGroupParentTest` — 56dceda
-- [x] 1.3 Full backend suite passes: `./mvnw test` — 56dceda
+- [x] 1.1 Stats controller tests pass: `./mvnw test -Dtest=MuscleGroupStatsControllerTest` — 2befcc2
+- [x] 1.2 Parent mapping test passes: `./mvnw test -Dtest=MuscleGroupParentTest` — 2befcc2
+- [x] 1.3 Full backend suite passes: `./mvnw test` — 2befcc2
 
 #### Manual
 
-- [x] 1.4 With the `local` profile and Postgres up, `GET /api/dashboard/muscle-groups?includeSecondary=true` returns `parents` with six entries and the same `totalSets` as without the flag — 56dceda
+- [x] 1.4 With the `local` profile and Postgres up, `GET /api/dashboard/muscle-groups?includeSecondary=true` returns `parents` with six entries and the same `totalSets` as without the flag — 2befcc2
 
 ### Phase 2: Frontend toggle and parent rows
 
 #### Automated
 
-- [x] 2.1 Type check and build pass: `cd frontend && npm run build` — c61fd72
-- [x] 2.2 Lint passes: `cd frontend && npm run lint` — c61fd72
-- [x] 2.3 Hard-coded value guard passes: `cd frontend && npm run check:tokens` — c61fd72
-- [x] 2.4 Unit tests pass: `cd frontend && npm run test` — c61fd72
-- [x] 2.5 Muscle stats e2e spec passes: `cd frontend && npx playwright test muscle-group-stats.spec.ts` (Postgres running, `CI` unset) — c61fd72
+- [x] 2.1 Type check and build pass: `cd frontend && npm run build` — c9ebe74
+- [x] 2.2 Lint passes: `cd frontend && npm run lint` — c9ebe74
+- [x] 2.3 Hard-coded value guard passes: `cd frontend && npm run check:tokens` — c9ebe74
+- [x] 2.4 Unit tests pass: `cd frontend && npm run test` — c9ebe74
+- [x] 2.5 Muscle stats e2e spec passes: `cd frontend && npx playwright test muscle-group-stats.spec.ts` (Postgres running, `CI` unset) — c9ebe74
 
 #### Manual
 
-- [x] 2.6 In the browser the checkbox shows hover and a visible keyboard focus ring in light and dark themes — c61fd72
-- [x] 2.7 Ticking the box on a user with mixed exercises changes sub-rows as expected, and Shoulders never exceeds the number of sets that touched shoulders — c61fd72
-- [x] 2.8 The page still looks correct at phone width — c61fd72
+- [x] 2.6 In the browser the checkbox shows hover and a visible keyboard focus ring in light and dark themes — c9ebe74
+- [x] 2.7 Ticking the box on a user with mixed exercises changes sub-rows as expected, and Shoulders never exceeds the number of sets that touched shoulders — c9ebe74
+- [x] 2.8 The page still looks correct at phone width — c9ebe74
 
 ### Phase 3: Docs and full verification
 
 #### Automated
 
-- [x] 3.1 Full backend suite passes: `./mvnw test` — 8382641
-- [x] 3.2 Frontend build, lint, tokens and unit tests pass: `cd frontend && npm run build && npm run lint && npm run check:tokens && npm run test` — 8382641
-- [x] 3.3 Full e2e suite passes: `cd frontend && npm run test:e2e` — 8382641
+- [x] 3.1 Full backend suite passes: `./mvnw test` — 5c8fbce
+- [x] 3.2 Frontend build, lint, tokens and unit tests pass: `cd frontend && npm run build && npm run lint && npm run check:tokens && npm run test` — 5c8fbce
+- [x] 3.3 Full e2e suite passes: `cd frontend && npm run test:e2e` — 5c8fbce
 
 #### Manual
 
-- [x] 3.4 README section 5 matches what the page does in both modes — 8382641
-- [x] 3.5 `git status` shows only intended files changed and no baseline images modified without an explanation — 8382641
+- [x] 3.4 README section 5 matches what the page does in both modes — 5c8fbce
+- [x] 3.5 `git status` shows only intended files changed and no baseline images modified without an explanation — 5c8fbce
