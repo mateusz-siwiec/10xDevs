@@ -185,6 +185,18 @@ class ExerciseSeedTest {
 		assertThat(stored).isNotEmpty().isSubsetOf(known);
 	}
 
+	@Test
+	void weightModeMigrationClassifiesBuiltInExercisesBySlug() {
+		for (String slug : List.of("ab-wheel-rollout", "banded-lateral-walk", "copenhagen-plank")) {
+			assertThat(bySlug(slug).getWeightMode()).as(slug).isEqualTo(WeightMode.NONE);
+		}
+		for (String slug : List.of("pull-up", "chest-dip", "push-up", "hanging-leg-raise", "plank")) {
+			assertThat(bySlug(slug).getWeightMode()).as(slug).isEqualTo(WeightMode.OPTIONAL);
+		}
+		assertThat(bySlug("barbell-row").getWeightMode()).isEqualTo(WeightMode.REQUIRED);
+		assertThat(bySlug("back-squat").getWeightMode()).isEqualTo(WeightMode.REQUIRED);
+	}
+
 	private void assertPrimary(String slug, MuscleGroup expected) {
 		assertThat(bySlug(slug).getPrimaryMuscleGroup()).as(slug).isEqualTo(expected);
 	}

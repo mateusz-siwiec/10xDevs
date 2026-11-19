@@ -16,7 +16,10 @@ public record CreateExerciseRequest(
 	@NotNull
 	MuscleGroup primaryMuscleGroup,
 
-	Set<@NotNull MuscleGroup> secondaryMuscleGroups
+	Set<@NotNull MuscleGroup> secondaryMuscleGroups,
+
+	/** Optional: defaults to REQUIRED on create and keeps the current value on update. */
+	WeightMode weightMode
 
 ) {
 

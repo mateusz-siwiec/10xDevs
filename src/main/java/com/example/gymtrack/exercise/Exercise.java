@@ -31,6 +31,10 @@ public class Exercise {
 	@Column(nullable = false)
 	private MuscleGroup primaryMuscleGroup;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "weight_mode", nullable = false)
+	private WeightMode weightMode = WeightMode.REQUIRED;
+
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "exercise_secondary_muscle_groups", joinColumns = @JoinColumn(name = "exercise_id"))
 	@Column(name = "muscle_group", nullable = false)
@@ -45,7 +49,13 @@ public class Exercise {
 
 	public Exercise(UUID ownerId, String name, MuscleGroup primaryMuscleGroup,
 			Set<MuscleGroup> secondaryMuscleGroups) {
-		this.id = UUID.randomUUID();
+		this(ownerId, name, primaryMuscleGroup, secondaryMuscleGroups, WeightMode.REQUIRED);
+	}
+
+	public Exercise(UUID ownerId, String name, MuscleGroup primaryMuscleGroup,
+			Set<MuscleGroup> secondaryMuscleGroups, WeightMode weightMode) {
+		this.weightMode = weightMode == null ? WeightMode.REQUIRED : weightMode;
+		this.id =UUID.randomUUID();
 		this.slug = "custom-" + this.id;
 		this.ownerId = ownerId;
 		this.name = name;
@@ -55,7 +65,12 @@ public class Exercise {
 		}
 	}
 
-	public void update(String name, MuscleGroup primaryMuscleGroup, Set<MuscleGroup> secondaryMuscleGroups) {
+	/** A null {@code weightMode} keeps the current one. */
+	public void update(String name, MuscleGroup primaryMuscleGroup, Set<MuscleGroup> secondaryMuscleGroups,
+			WeightMode weightMode) {
+		if (weightMode != null) {
+			this.weightMode = weightMode;
+		}
 		this.name = name;
 		this.primaryMuscleGroup = primaryMuscleGroup;
 		Set<MuscleGroup> updated = EnumSet.noneOf(MuscleGroup.class);
@@ -84,6 +99,10 @@ public class Exercise {
 
 	public MuscleGroup getPrimaryMuscleGroup() {
 		return primaryMuscleGroup;
+	}
+
+	public WeightMode getWeightMode() {
+		return weightMode;
 	}
 
 	public Set<MuscleGroup> getSecondaryMuscleGroups() {

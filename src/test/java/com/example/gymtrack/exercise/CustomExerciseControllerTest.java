@@ -278,6 +278,47 @@ class CustomExerciseControllerTest {
 			.andExpect(jsonPath("$.exercises[0].exerciseName", is(newName)));
 	}
 
+	private static String bodyWithMode(String name, String mode) {
+		return "{\"name\":\"" + name + "\",\"primaryMuscleGroup\":\"ABS\",\"weightMode\":" + mode + "}";
+	}
+
+	@Test
+	void createDefaultsWeightModeToRequiredAndAcceptsExplicitMode() throws Exception {
+		String token = bearer(newUser());
+
+		create(token, body("Default Mode " + System.nanoTime(), "BICEPS", null)).andExpect(status().isCreated())
+			.andExpect(jsonPath("$.weightMode", is("REQUIRED")));
+		create(token, bodyWithMode("Timed Hold " + System.nanoTime(), "\"NONE\"")).andExpect(status().isCreated())
+			.andExpect(jsonPath("$.weightMode", is("NONE")));
+	}
+
+	@Test
+	void updateChangesWeightModeAndKeepsItWhenOmitted() throws Exception {
+		String token = bearer(newUser());
+		UUID id = createdId(token, "Mode Update " + System.nanoTime());
+
+		update(token, id, bodyWithMode("Mode Update " + System.nanoTime(), "\"OPTIONAL\"")).andExpect(status().isOk())
+			.andExpect(jsonPath("$.weightMode", is("OPTIONAL")));
+		update(token, id, body("Mode Keep " + System.nanoTime(), "ABS", null)).andExpect(status().isOk())
+			.andExpect(jsonPath("$.weightMode", is("OPTIONAL")));
+	}
+
+	@Test
+	void updateChangingWeightModeIsConflictOnceASetExists() throws Exception {
+		User owner = newUser();
+		String token = bearer(owner);
+		String name = "Locked Mode " + System.nanoTime();
+		UUID id = createdId(token, name);
+		WorkoutSession session = sessionRepository.save(new WorkoutSession(owner.getId()));
+		setRepository.save(new WorkoutSet(session, id, 8, new BigDecimal("20.0")));
+
+		update(token, id, bodyWithMode(name, "\"NONE\"")).andExpect(status().isConflict())
+			.andExpect(jsonPath("$.code", is("EXERCISE_IN_USE")))
+			.andExpect(jsonPath("$.error", notNullValue()));
+		update(token, id, bodyWithMode(name, "\"REQUIRED\"")).andExpect(status().isOk())
+			.andExpect(jsonPath("$.weightMode", is("REQUIRED")));
+	}
+
 	@Test
 	void updateAllowsKeepingOrRecasingOwnName() throws Exception {
 		String token = bearer(newUser());

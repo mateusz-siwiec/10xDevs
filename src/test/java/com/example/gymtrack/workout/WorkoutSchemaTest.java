@@ -87,10 +87,22 @@ class WorkoutSchemaTest {
 	}
 
 	@Test
-	void zeroWeightIsRejected() {
+	void zeroWeightIsAccepted() {
 		UUID sessionId = insertSession(false);
 
-		assertThatThrownBy(() -> insertSet(sessionId, 5, 0)).isInstanceOf(DataIntegrityViolationException.class);
+		insertSet(sessionId, 5, 0);
+
+		Integer sets = jdbc.queryForObject("select count(*) from workout_sets where session_id = ?", Integer.class,
+				sessionId);
+		assertThat(sets).isEqualTo(1);
+	}
+
+	@Test
+	void negativeOrOverThousandWeightIsRejected() {
+		UUID sessionId = insertSession(false);
+
+		assertThatThrownBy(() -> insertSet(sessionId, 5, -1)).isInstanceOf(DataIntegrityViolationException.class);
+		assertThatThrownBy(() -> insertSet(sessionId, 5, 1000.5)).isInstanceOf(DataIntegrityViolationException.class);
 	}
 
 	@Test

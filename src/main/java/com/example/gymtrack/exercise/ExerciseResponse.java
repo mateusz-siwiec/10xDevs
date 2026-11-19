@@ -9,13 +9,14 @@ import java.util.UUID;
  * {@code favorite} marks one the caller starred.
  */
 public record ExerciseResponse(UUID id, String slug, String name, MuscleGroup primaryMuscleGroup,
-		Set<MuscleGroup> secondaryMuscleGroups, boolean custom, boolean favorite) {
+		Set<MuscleGroup> secondaryMuscleGroups, boolean custom, boolean favorite, WeightMode weightMode) {
 
 	static ExerciseResponse from(Exercise exercise, boolean favorite) {
 		Set<MuscleGroup> secondary = EnumSet.noneOf(MuscleGroup.class);
 		secondary.addAll(exercise.getSecondaryMuscleGroups());
 		return new ExerciseResponse(exercise.getId(), exercise.getSlug(), exercise.getName(),
-				exercise.getPrimaryMuscleGroup(), secondary, exercise.getOwnerId() != null, favorite);
+				exercise.getPrimaryMuscleGroup(), secondary, exercise.getOwnerId() != null, favorite,
+				exercise.getWeightMode());
 	}
 
 }
