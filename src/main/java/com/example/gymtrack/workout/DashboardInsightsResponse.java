@@ -20,8 +20,8 @@ public record DashboardInsightsResponse(List<WeeklyVolume> weeklyVolume, Streak 
 	public record Streak(Integer goal, int weeks, long currentWeekWorkouts) {
 	}
 
-	public record RecentPersonalRecord(UUID sessionId, UUID exerciseId, String exerciseName, int reps,
-			BigDecimal weightKg, Instant achievedAt) {
+	public record RecentPersonalRecord(UUID sessionId, UUID exerciseId, String exerciseName, Integer reps,
+			Integer durationSeconds, BigDecimal weightKg, Instant achievedAt) {
 	}
 
 }

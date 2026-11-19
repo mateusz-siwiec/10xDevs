@@ -47,9 +47,14 @@ public class PersonalRecordService {
 			return Set.of();
 		}
 		Map<UUID, Rank> best = new HashMap<>();
+		for (DurationScore baseline : setRepository.findBestDurationScoresBefore(session.getUserId(), exerciseIds,
+				session.getStartedAt())) {
+			Rank rank = new Rank(BigDecimal.valueOf(baseline.durationSeconds()), baseline.weightKg());
+			best.merge(baseline.exerciseId(), rank, (a, b) -> b.beats(a) ? b : a);
+		}
 		for (ExerciseScore baseline : setRepository.findBestScoresBefore(session.getUserId(), exerciseIds,
 				MAX_ELIGIBLE_REPS, session.getStartedAt())) {
-			Rank rank = new Rank(baseline.score(), baseline.reps());
+			Rank rank = new Rank(baseline.score(), BigDecimal.valueOf(baseline.reps()));
 			best.merge(baseline.exerciseId(), rank, (a, b) -> b.beats(a) ? b : a);
 		}
 		Set<UUID> flagged = new HashSet<>();
@@ -92,7 +97,7 @@ public class PersonalRecordService {
 			}
 			else if (rank.beats(previousBest)) {
 				records.add(new PersonalRecordEntry(set.getSession().getId(), set.getExerciseId(), set.getReps(),
-						set.getWeightKg(), set.getLoggedAt()));
+						set.getDurationSeconds(), set.getWeightKg(), set.getLoggedAt()));
 				best.put(set.getExerciseId(), rank);
 			}
 		}
@@ -100,22 +105,28 @@ public class PersonalRecordService {
 		return records.size() > limit ? List.copyOf(records.subList(0, limit)) : records;
 	}
 
-	/** Weighted sets obey the rep cap; bodyweight sets (weight 0) are eligible at any rep count. */
+	/** Duration sets are always eligible; weighted rep sets obey the rep cap, bodyweight sets (weight 0) do not. */
 	private static boolean isEligible(WorkoutSet set) {
-		return set.getReps() <= MAX_ELIGIBLE_REPS || set.getWeightKg().signum() == 0;
+		return set.getReps() == null || set.getReps() <= MAX_ELIGIBLE_REPS || set.getWeightKg().signum() == 0;
 	}
 
 	private static Rank rank(WorkoutSet set) {
+		if (set.getReps() == null) {
+			return new Rank(BigDecimal.valueOf(set.getDurationSeconds()), set.getWeightKg());
+		}
 		return new Rank(set.getWeightKg().multiply(EPLEY_BASE.add(BigDecimal.valueOf(set.getReps()))),
-				set.getReps());
+				BigDecimal.valueOf(set.getReps()));
 	}
 
-	/** Sets rank by score, then by reps; a weight-0 set has score 0 so it ranks by reps and loses to any weighted set. */
-	private record Rank(BigDecimal score, int reps) {
+	/**
+	 * Rep sets rank by (score, reps); a weight-0 set has score 0 so it ranks by reps and loses to any weighted
+	 * set. Duration sets rank by (durationSeconds, weight): longest time first, heavier on a tie.
+	 */
+	private record Rank(BigDecimal primary, BigDecimal secondary) {
 
 		boolean beats(Rank other) {
-			int byScore = score.compareTo(other.score);
-			return byScore > 0 || (byScore == 0 && reps > other.reps);
+			int byPrimary = primary.compareTo(other.primary);
+			return byPrimary > 0 || (byPrimary == 0 && secondary.compareTo(other.secondary) > 0);
 		}
 
 	}

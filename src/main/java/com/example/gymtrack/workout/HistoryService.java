@@ -96,9 +96,11 @@ public class HistoryService {
 		Set<UUID> personalRecordSetIds = personalRecordService.personalRecordSetIds(session, sets);
 		for (WorkoutSet set : sets) {
 			byExercise.computeIfAbsent(set.getExerciseId(), key -> new ArrayList<>())
-				.add(new HistoryDetailResponse.SetEntry(set.getReps(), set.getWeightKg(),
+				.add(new HistoryDetailResponse.SetEntry(set.getReps(), set.getDurationSeconds(), set.getWeightKg(),
 						personalRecordSetIds.contains(set.getId()), set.isToFailure()));
-			volume = volume.add(set.getWeightKg().multiply(BigDecimal.valueOf(set.getReps())));
+			if (set.getReps() != null) {
+				volume = volume.add(set.getWeightKg().multiply(BigDecimal.valueOf(set.getReps())));
+			}
 		}
 		List<HistoryDetailResponse.ExerciseEntry> exercises = byExercise.entrySet()
 			.stream()

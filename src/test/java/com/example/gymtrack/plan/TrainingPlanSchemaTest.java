@@ -131,4 +131,39 @@ class TrainingPlanSchemaTest {
 				.isInstanceOf(DataIntegrityViolationException.class);
 	}
 
+	private void insertRawEntry(UUID planId, int position, Integer reps, Integer targetDurationSeconds) {
+		jdbc.update("insert into training_plan_entries (id, plan_id, exercise_id, position, sets, reps, "
+				+ "target_duration_seconds) values (?, ?, ?, ?, 3, ?, ?)", UUID.randomUUID(), planId, exerciseId,
+				position, reps, targetDurationSeconds);
+	}
+
+	@Test
+	void durationEntryWithoutRepsIsAccepted() {
+		UUID planId = insertPlan();
+
+		insertRawEntry(planId, 0, null, 60);
+
+		Integer entries = jdbc.queryForObject(
+				"select count(*) from training_plan_entries where plan_id = ? and reps is null", Integer.class, planId);
+		assertThat(entries).isEqualTo(1);
+	}
+
+	@Test
+	void exactlyOneOfRepsAndTargetDurationIsRequired() {
+		UUID planId = insertPlan();
+
+		assertThatThrownBy(() -> insertRawEntry(planId, 0, 10, 60)).isInstanceOf(DataIntegrityViolationException.class);
+		assertThatThrownBy(() -> insertRawEntry(planId, 1, null, null))
+				.isInstanceOf(DataIntegrityViolationException.class);
+	}
+
+	@Test
+	void outOfRangeTargetDurationIsRejected() {
+		UUID planId = insertPlan();
+
+		assertThatThrownBy(() -> insertRawEntry(planId, 0, null, 0)).isInstanceOf(DataIntegrityViolationException.class);
+		assertThatThrownBy(() -> insertRawEntry(planId, 1, null, 3601))
+				.isInstanceOf(DataIntegrityViolationException.class);
+	}
+
 }

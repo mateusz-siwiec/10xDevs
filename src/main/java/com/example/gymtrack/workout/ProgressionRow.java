@@ -5,5 +5,6 @@ import java.time.Instant;
 import java.util.UUID;
 
 /** Per-session maxima of one exercise, the raw input of the progression chart. */
-public record ProgressionRow(UUID sessionId, Instant date, BigDecimal topWeightKg, Integer topReps) {
+public record ProgressionRow(UUID sessionId, Instant date, BigDecimal topWeightKg, Integer topReps,
+		Integer topDurationSeconds) {
 }

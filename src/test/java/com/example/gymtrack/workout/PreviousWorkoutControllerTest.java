@@ -301,4 +301,22 @@ class PreviousWorkoutControllerTest {
 		assertNoPrevious(user, exerciseId(), plan.getId());
 	}
 
+	@Test
+	void previousWorkoutReturnsDurationSets() throws Exception {
+		User user = newUser();
+		UUID plank = exerciseRepository.findAllByOrderByNameAsc().stream()
+			.filter(exercise -> exercise.getSlug().equals("plank")).findFirst().orElseThrow().getId();
+		TrainingPlan plan = plan(user);
+		WorkoutSession session = sessionRepository.saveAndFlush(new WorkoutSession(user.getId(), plan.getId()));
+		setRepository.saveAndFlush(new WorkoutSet(session, plank, null, 60, BigDecimal.ZERO, false));
+		session.end();
+		sessionRepository.saveAndFlush(session);
+
+		mockMvc.perform(get(url(plank)).param("planId", plan.getId().toString())
+			.header(HttpHeaders.AUTHORIZATION, bearer(user)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.sets[0].durationSeconds").value(60))
+			.andExpect(jsonPath("$.sets[0].reps").value(org.hamcrest.Matchers.nullValue()));
+	}
+
 }

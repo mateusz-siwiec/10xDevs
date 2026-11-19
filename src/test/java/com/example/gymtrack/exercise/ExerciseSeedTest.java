@@ -210,4 +210,16 @@ class ExerciseSeedTest {
 				.orElseThrow();
 	}
 
+	@Test
+	void durationMeasureMigrationMarksPlanksAsDurationAndEverythingElseAsReps() {
+		for (String slug : List.of("plank", "copenhagen-plank")) {
+			assertThat(bySlug(slug).getMeasure()).as(slug).isEqualTo(Measure.DURATION);
+		}
+		assertThat(exerciseRepository.findAll().stream().filter(e -> e.getMeasure() == Measure.DURATION))
+				.extracting(Exercise::getSlug)
+				.containsExactlyInAnyOrder("plank", "copenhagen-plank");
+		assertThat(bySlug("barbell-bench-press").getMeasure()).isEqualTo(Measure.REPS);
+		assertThat(bySlug("deadlift").getMeasure()).isEqualTo(Measure.REPS);
+	}
+
 }

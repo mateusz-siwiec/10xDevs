@@ -442,4 +442,45 @@ class CustomExerciseControllerTest {
 		mockMvc.perform(delete("/api/exercises/" + UUID.randomUUID())).andExpect(status().isUnauthorized());
 	}
 
+	private static String bodyWithMeasure(String name, String measure) {
+		return "{\"name\":\"" + name + "\",\"primaryMuscleGroup\":\"ABS\",\"measure\":" + measure + "}";
+	}
+
+	@Test
+	void createDefaultsMeasureToRepsAndAcceptsDuration() throws Exception {
+		String token = bearer(newUser());
+
+		create(token, body("Default Measure " + System.nanoTime(), "BICEPS", null)).andExpect(status().isCreated())
+			.andExpect(jsonPath("$.measure", is("REPS")));
+		create(token, bodyWithMeasure("Wall Sit " + System.nanoTime(), "\"DURATION\"")).andExpect(status().isCreated())
+			.andExpect(jsonPath("$.measure", is("DURATION")));
+	}
+
+	@Test
+	void updateKeepsMeasureWhenOmittedAndChangesItWhenNoSetsExist() throws Exception {
+		String token = bearer(newUser());
+		UUID id = createdId(token, "Measure Update " + System.nanoTime());
+
+		update(token, id, bodyWithMeasure("Measure Update " + System.nanoTime(), "\"DURATION\"")).andExpect(status().isOk())
+			.andExpect(jsonPath("$.measure", is("DURATION")));
+		update(token, id, body("Measure Keep " + System.nanoTime(), "ABS", null)).andExpect(status().isOk())
+			.andExpect(jsonPath("$.measure", is("DURATION")));
+	}
+
+	@Test
+	void updateChangingMeasureIsConflictOnceASetExists() throws Exception {
+		User owner = newUser();
+		String token = bearer(owner);
+		String name = "Locked Measure " + System.nanoTime();
+		UUID id = createdId(token, name);
+		WorkoutSession session = sessionRepository.save(new WorkoutSession(owner.getId()));
+		setRepository.save(new WorkoutSet(session, id, 8, new BigDecimal("20.0")));
+
+		update(token, id, bodyWithMeasure(name, "\"DURATION\"")).andExpect(status().isConflict())
+			.andExpect(jsonPath("$.code", is("EXERCISE_IN_USE")))
+			.andExpect(jsonPath("$.error", org.hamcrest.Matchers.containsString("easure")));
+		update(token, id, bodyWithMeasure(name, "\"REPS\"")).andExpect(status().isOk())
+			.andExpect(jsonPath("$.measure", is("REPS")));
+	}
+
 }

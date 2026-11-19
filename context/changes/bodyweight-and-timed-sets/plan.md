@@ -446,28 +446,28 @@ V16 and V17 only add columns with defaults and relax checks, so existing rows st
 
 #### Automated
 
-- [x] 3.1 Lint passes: `npm run lint`
-- [x] 3.2 Build and typecheck pass: `npm run build`
-- [x] 3.3 Token guard passes: `npm run check:tokens`
-- [x] 3.4 Unit tests pass: `npx vitest run`
-- [x] 3.5 Existing Playwright specs pass unchanged: `npm run test:e2e`
+- [x] 3.1 Lint passes: `npm run lint` — 96c3da4
+- [x] 3.2 Build and typecheck pass: `npm run build` — 96c3da4
+- [x] 3.3 Token guard passes: `npm run check:tokens` — 96c3da4
+- [x] 3.4 Unit tests pass: `npx vitest run` — 96c3da4
+- [x] 3.5 Existing Playwright specs pass unchanged: `npm run test:e2e` — 96c3da4
 
 #### Manual
 
-- [x] 3.6 Bench press logs as before, pull-up shows the optional weight field, ab wheel shows none, and the form control works in light/dark and en/pl
-- [x] 3.7 No visual baseline needed refreshing
+- [x] 3.6 Bench press logs as before, pull-up shows the optional weight field, ab wheel shows none, and the form control works in light/dark and en/pl — 96c3da4
+- [x] 3.7 No visual baseline needed refreshing — 96c3da4
 
 ### Phase 4: Duration measure (backend)
 
 #### Automated
 
-- [ ] 4.1 Schema tests pass: `./mvnw test -Dtest=WorkoutSchemaTest,TrainingPlanSchemaTest,ExerciseSeedTest`
-- [ ] 4.2 Duration-related controller tests pass: `./mvnw test -Dtest=WorkoutSetControllerTest,TrainingPlanControllerTest,HistoryControllerTest,PreviousWorkoutControllerTest,PersonalRecordControllerTest,ProgressionControllerTest,ProgressionRecommendationControllerTest`
-- [ ] 4.3 Full backend suite passes: `./mvnw test`
+- [x] 4.1 Schema tests pass: `./mvnw test -Dtest=WorkoutSchemaTest,TrainingPlanSchemaTest,ExerciseSeedTest`
+- [x] 4.2 Duration-related controller tests pass: `./mvnw test -Dtest=WorkoutSetControllerTest,TrainingPlanControllerTest,HistoryControllerTest,PreviousWorkoutControllerTest,PersonalRecordControllerTest,ProgressionControllerTest,ProgressionRecommendationControllerTest`
+- [x] 4.3 Full backend suite passes: `./mvnw test`
 
 #### Manual
 
-- [ ] 4.4 A plank set logs via the API and session, history, previous workout, records and chart endpoints all return 200 with sensible values
+- [x] 4.4 A plank set logs via the API and session, history, previous workout, records and chart endpoints all return 200 with sensible values
 
 ### Phase 5: Duration UI and plans (frontend)
 

@@ -257,4 +257,26 @@ class ProgressionControllerTest {
 			.andExpect(jsonPath("$[1].value", is(7.5)));
 	}
 
+	@Test
+	void durationExerciseChartPlotsLongestSecondsPerSession() throws Exception {
+		String token = bearerToken();
+		UUID plank = exerciseBySlug("plank");
+		String sessionId = startSession(token);
+		for (int seconds : new int[] { 40, 75, 60 }) {
+			mockMvc.perform(post("/api/workout-sessions/" + sessionId + "/sets")
+					.header(HttpHeaders.AUTHORIZATION, token)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content("{\"exerciseId\":\"" + plank + "\",\"durationSeconds\":" + seconds + "}"))
+				.andExpect(status().isCreated());
+		}
+		endSession(token, sessionId);
+
+		mockMvc.perform(get(progressionUrl(plank)).header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$", org.hamcrest.Matchers.hasSize(1)))
+			.andExpect(jsonPath("$[0].metric").value("DURATION"))
+			.andExpect(jsonPath("$[0].value").value(75))
+			.andExpect(jsonPath("$[0].topWeightKg").value(0.0));
+	}
+
 }

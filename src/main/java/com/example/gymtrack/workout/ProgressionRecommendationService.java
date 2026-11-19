@@ -3,6 +3,7 @@ package com.example.gymtrack.workout;
 import com.example.gymtrack.common.ErrorCode;
 import com.example.gymtrack.exercise.Exercise;
 import com.example.gymtrack.exercise.ExerciseRepository;
+import com.example.gymtrack.exercise.Measure;
 import com.example.gymtrack.exercise.WeightMode;
 import com.example.gymtrack.plan.TrainingPlanEntry;
 import com.example.gymtrack.plan.TrainingPlanRepository;
@@ -53,7 +54,7 @@ public class ProgressionRecommendationService {
 	public Optional<ProgressionRecommendationResponse> recommend(UUID userId, UUID exerciseId) {
 		Exercise exercise = exerciseRepository.findVisibleById(exerciseId, userId)
 			.orElseThrow(() -> new WorkoutNotFoundException(ErrorCode.EXERCISE_NOT_FOUND, "Exercise not found"));
-		if (exercise.getWeightMode() == WeightMode.NONE) {
+		if (exercise.getWeightMode() == WeightMode.NONE || exercise.getMeasure() == Measure.DURATION) {
 			return Optional.empty();
 		}
 		List<WorkoutSession> sessions = sessionRepository.findRecentEndedWithExercise(userId, exerciseId,
@@ -71,7 +72,7 @@ public class ProgressionRecommendationService {
 			}
 			List<WorkoutSet> sets = setRepository.findBySessionIdOrderByLoggedAtAscIdAsc(session.getId())
 				.stream()
-				.filter(set -> set.getExerciseId().equals(exerciseId))
+				.filter(set -> set.getExerciseId().equals(exerciseId) && set.getReps() != null)
 				.toList();
 			BigDecimal sessionTop = sets.stream()
 				.map(WorkoutSet::getWeightKg)
@@ -85,6 +86,9 @@ public class ProgressionRecommendationService {
 				.filter(set -> set.getWeightKg().compareTo(sessionTop) == 0)
 				.toList();
 			TrainingPlanEntry entry = target.get();
+			if (entry.getReps() == null) {
+				return Optional.empty();
+			}
 			if (workingSets.size() < entry.getSets()
 					|| workingSets.stream().anyMatch(set -> set.getReps() < entry.getReps())) {
 				return Optional.empty();

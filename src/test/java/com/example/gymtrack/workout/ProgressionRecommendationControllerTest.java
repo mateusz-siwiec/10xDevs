@@ -396,4 +396,33 @@ class ProgressionRecommendationControllerTest {
 		assertRecommended(user, pullUp, 10.0, 10.25);
 	}
 
+	@Test
+	void durationExerciseGetsNoRecommendationEvenWithQualifyingHistory() throws Exception {
+		User user = newUser();
+		UUID plank = exerciseBySlug("plank");
+		TrainingPlan plan = plan(user, plank, 1, 10);
+		for (int i = 0; i < 2; i++) {
+			WorkoutSession session = sessionRepository.saveAndFlush(new WorkoutSession(user.getId(), plan.getId()));
+			setRepository.saveAndFlush(new WorkoutSet(session, plank, null, 60, new BigDecimal("10"), false));
+			session.end();
+			sessionRepository.saveAndFlush(session);
+		}
+
+		assertNoRecommendation(user, plank);
+	}
+
+	@Test
+	void durationSetsInAnotherExercisesSessionAreIgnoredWhenScanning() throws Exception {
+		User user = newUser();
+		UUID plank = exerciseBySlug("plank");
+		twoQualifying(user, exerciseId(), "60");
+		TrainingPlan plan = plan(user, plank, 1, 10);
+		WorkoutSession session = sessionRepository.saveAndFlush(new WorkoutSession(user.getId(), plan.getId()));
+		setRepository.saveAndFlush(new WorkoutSet(session, plank, null, 60, BigDecimal.ZERO, false));
+		session.end();
+		sessionRepository.saveAndFlush(session);
+
+		assertRecommended(user, exerciseId(), 60, 61.5);
+	}
+
 }

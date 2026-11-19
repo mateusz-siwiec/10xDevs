@@ -32,13 +32,23 @@ public class TrainingPlanEntry {
 	@Column(nullable = false)
 	private int sets;
 
-	@Column(nullable = false)
-	private int reps;
+	@Column
+	private Integer reps;
+
+	@Column
+	private Integer targetDurationSeconds;
 
 	protected TrainingPlanEntry() {
 	}
 
 	public TrainingPlanEntry(TrainingPlan plan, UUID exerciseId, int position, int sets, int reps) {
+		this(plan, exerciseId, position, sets, Integer.valueOf(reps), null);
+	}
+
+	/** Exactly one of {@code reps} and {@code targetDurationSeconds} is set. */
+	public TrainingPlanEntry(TrainingPlan plan, UUID exerciseId, int position, int sets, Integer reps,
+			Integer targetDurationSeconds) {
+		this.targetDurationSeconds = targetDurationSeconds;
 		this.plan = plan;
 		this.exerciseId = exerciseId;
 		this.position = position;
@@ -66,8 +76,14 @@ public class TrainingPlanEntry {
 		return sets;
 	}
 
-	public int getReps() {
+	/** Null for a duration entry. */
+	public Integer getReps() {
 		return reps;
+	}
+
+	/** Null for a rep entry. */
+	public Integer getTargetDurationSeconds() {
+		return targetDurationSeconds;
 	}
 
 }

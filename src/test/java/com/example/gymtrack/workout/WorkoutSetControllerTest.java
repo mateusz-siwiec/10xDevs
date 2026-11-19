@@ -413,4 +413,131 @@ class WorkoutSetControllerTest {
 			.andExpect(status().isNotFound());
 	}
 
+	private String durationBody(Object exerciseId, int seconds, String weightKg) {
+		return "{\"exerciseId\":\"" + exerciseId + "\",\"durationSeconds\":" + seconds
+				+ (weightKg == null ? "" : ",\"weightKg\":" + weightKg) + "}";
+	}
+
+	private org.springframework.test.web.servlet.ResultActions postSet(String token, String sessionId, String body)
+			throws Exception {
+		return mockMvc.perform(post("/api/workout-sessions/" + sessionId + "/sets")
+			.header(HttpHeaders.AUTHORIZATION, token)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(body));
+	}
+
+	@Test
+	void durationSetIsLoggedWithDurationAndNoReps() throws Exception {
+		String token = bearerToken();
+		String sessionId = startSession(token);
+
+		postSet(token, sessionId, durationBody(exerciseBySlug("plank"), 45, null))
+			.andExpect(status().isCreated())
+			.andExpect(jsonPath("$.durationSeconds", is(45)))
+			.andExpect(jsonPath("$.reps").value(org.hamcrest.Matchers.nullValue()))
+			.andExpect(jsonPath("$.weightKg", is(0)));
+		postSet(token, sessionId, durationBody(exerciseBySlug("plank"), 30, "10"))
+			.andExpect(status().isCreated())
+			.andExpect(jsonPath("$.weightKg", is(10)));
+	}
+
+	@Test
+	void measureFieldsMustMatchTheExercise() throws Exception {
+		String token = bearerToken();
+		String sessionId = startSession(token);
+		UUID plank = exerciseBySlug("plank");
+
+		postSet(token, sessionId, setBody(plank, 10, "null")).andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("VALIDATION_FAILED")))
+			.andExpect(jsonPath("$.field", is("durationSeconds")));
+		postSet(token, sessionId, "{\"exerciseId\":\"" + plank + "\",\"reps\":10,\"durationSeconds\":30}")
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.field", is("reps")));
+		postSet(token, sessionId, "{\"exerciseId\":\"" + exerciseId() + "\",\"reps\":5,\"weightKg\":60,\"durationSeconds\":30}")
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("VALIDATION_FAILED")))
+			.andExpect(jsonPath("$.field", is("durationSeconds")));
+		postSet(token, sessionId, "{\"exerciseId\":\"" + exerciseId() + "\",\"weightKg\":60}")
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.field", is("reps")));
+		postSet(token, sessionId, durationBody(plank, 0, null)).andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.field", is("durationSeconds")));
+		postSet(token, sessionId, durationBody(plank, 3601, null)).andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.field", is("durationSeconds")));
+	}
+
+	@Test
+	void weightRulesStillApplyToDurationSets() throws Exception {
+		String token = bearerToken();
+		String sessionId = startSession(token);
+
+		postSet(token, sessionId, durationBody(exerciseBySlug("copenhagen-plank"), 30, "10"))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.field", is("weightKg")));
+		postSet(token, sessionId, durationBody(exerciseBySlug("copenhagen-plank"), 30, null))
+			.andExpect(status().isCreated())
+			.andExpect(jsonPath("$.weightKg", is(0)));
+	}
+
+	@Test
+	void durationSetsFlowThroughEveryReadEndpoint() throws Exception {
+		String token = bearerToken();
+		UUID plank = exerciseBySlug("plank");
+		String plan = mockMvc.perform(post("/api/training-plans")
+				.header(HttpHeaders.AUTHORIZATION, token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"name\":\"Core\",\"entries\":[{\"exerciseId\":\"" + plank
+						+ "\",\"sets\":2,\"targetDurationSeconds\":60}]}"))
+			.andExpect(status().isCreated())
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+		String planId = JsonPath.read(plan, "$.id");
+		String sessionId = JsonPath.read(mockMvc.perform(post("/api/workout-sessions")
+				.header(HttpHeaders.AUTHORIZATION, token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"planId\":\"" + planId + "\"}"))
+			.andReturn()
+			.getResponse()
+			.getContentAsString(), "$.id");
+		logSet(token, sessionId, durationBody(plank, 60, null));
+		postSet(token, sessionId, durationBody(plank, 90, null)).andExpect(status().isCreated())
+			.andExpect(jsonPath("$.personalRecord", is(true)));
+		logSet(token, sessionId, setBody(exerciseId(), 5, "60"));
+
+		mockMvc.perform(get("/api/workout-sessions/current").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.sets[0].durationSeconds", is(60)));
+		endSession(token, sessionId);
+
+		mockMvc.perform(get("/api/workout-sessions").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.items[0].setCount", is(3)))
+			.andExpect(jsonPath("$.items[0].volumeKg", is(300.0)));
+		mockMvc.perform(get("/api/workout-sessions/" + sessionId).header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.volumeKg", is(300.0)))
+			.andExpect(jsonPath("$.exercises[0].sets[0].durationSeconds", is(60)))
+			.andExpect(jsonPath("$.exercises[0].sets[0].reps").value(org.hamcrest.Matchers.nullValue()))
+			.andExpect(jsonPath("$.exercises[0].sets[1].personalRecord", is(true)));
+		mockMvc.perform(get("/api/exercises/" + plank + "/previous-workout").param("planId", planId)
+				.header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.sets[1].durationSeconds", is(90)))
+			.andExpect(jsonPath("$.sets[1].reps").value(org.hamcrest.Matchers.nullValue()));
+		mockMvc.perform(get("/api/dashboard/insights").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.recentPersonalRecords[0].durationSeconds", is(90)))
+			.andExpect(jsonPath("$.recentPersonalRecords[0].reps").value(org.hamcrest.Matchers.nullValue()));
+		mockMvc.perform(get("/api/dashboard/stats").param("window", "all").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk());
+		mockMvc.perform(get("/api/exercises/" + plank + "/progression").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$[0].metric", is("DURATION")))
+			.andExpect(jsonPath("$[0].value", is(90)));
+		mockMvc.perform(get("/api/exercises/" + plank + "/progression-recommendation")
+				.header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isNoContent());
+	}
+
 }

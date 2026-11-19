@@ -81,7 +81,12 @@ class TrainingPlanControllerTest {
 	}
 
 	private List<UUID> exerciseIds(int count) {
-		return exerciseRepository.findAllByOrderByNameAsc().stream().limit(count).map(Exercise::getId).toList();
+		return exerciseRepository.findAllByOrderByNameAsc()
+			.stream()
+			.filter(exercise -> exercise.getMeasure() == com.example.gymtrack.exercise.Measure.REPS)
+			.limit(count)
+			.map(Exercise::getId)
+			.toList();
 	}
 
 	private String entryJson(Object id, String sets, String reps) {
@@ -380,6 +385,71 @@ class TrainingPlanControllerTest {
 				.content(body("  Leg day  ", ids)))
 			.andExpect(status().isCreated())
 			.andExpect(jsonPath("$.name", is("Leg day")));
+	}
+
+	private UUID exerciseBySlug(String slug) {
+		return exerciseRepository.findAllByOrderByNameAsc()
+			.stream()
+			.filter(exercise -> exercise.getSlug().equals(slug))
+			.findFirst()
+			.orElseThrow()
+			.getId();
+	}
+
+	private org.springframework.test.web.servlet.ResultActions postPlan(String token, String entryJson) throws Exception {
+		return mockMvc.perform(post("/api/training-plans")
+			.header(HttpHeaders.AUTHORIZATION, token)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content("{\"name\":\"Core\",\"entries\":[" + entryJson + "]}"));
+	}
+
+	@Test
+	void durationExerciseEntryStoresTargetDurationInsteadOfReps() throws Exception {
+		String token = bearerToken();
+		UUID plank = exerciseBySlug("plank");
+		UUID bench = exerciseBySlug("barbell-bench-press");
+
+		String created = postPlan(token, "{\"exerciseId\":\"" + plank + "\",\"sets\":3,\"targetDurationSeconds\":60},"
+				+ "{\"exerciseId\":\"" + bench + "\",\"sets\":3,\"reps\":8}")
+			.andExpect(status().isCreated())
+			.andExpect(jsonPath("$.exercises[0].targetDurationSeconds", is(60)))
+			.andExpect(jsonPath("$.exercises[0].reps").value(org.hamcrest.Matchers.nullValue()))
+			.andExpect(jsonPath("$.exercises[1].reps", is(8)))
+			.andExpect(jsonPath("$.exercises[1].targetDurationSeconds").value(org.hamcrest.Matchers.nullValue()))
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+		String planId = JsonPath.read(created, "$.id");
+
+		mockMvc.perform(get("/api/training-plans/" + planId).header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.exercises[0].targetDurationSeconds", is(60)))
+			.andExpect(jsonPath("$.exercises[1].reps", is(8)));
+	}
+
+	@Test
+	void entryFieldsMustMatchTheExercisesMeasure() throws Exception {
+		String token = bearerToken();
+		UUID plank = exerciseBySlug("plank");
+		UUID bench = exerciseBySlug("barbell-bench-press");
+
+		postPlan(token, "{\"exerciseId\":\"" + plank + "\",\"sets\":3,\"reps\":10}")
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("VALIDATION_FAILED")))
+			.andExpect(jsonPath("$.field", is("targetDurationSeconds")));
+		postPlan(token, "{\"exerciseId\":\"" + plank + "\",\"sets\":3,\"reps\":10,\"targetDurationSeconds\":60}")
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.field", is("reps")));
+		postPlan(token, "{\"exerciseId\":\"" + bench + "\",\"sets\":3}")
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("VALIDATION_FAILED")))
+			.andExpect(jsonPath("$.field", is("reps")));
+		postPlan(token, "{\"exerciseId\":\"" + bench + "\",\"sets\":3,\"reps\":8,\"targetDurationSeconds\":60}")
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.field", is("targetDurationSeconds")));
+		postPlan(token, "{\"exerciseId\":\"" + plank + "\",\"sets\":3,\"targetDurationSeconds\":3601}")
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.field", is("entries[0].targetDurationSeconds")));
 	}
 
 }

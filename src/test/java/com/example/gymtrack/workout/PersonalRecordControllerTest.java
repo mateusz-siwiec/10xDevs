@@ -305,4 +305,43 @@ class PersonalRecordControllerTest {
 			.andExpect(jsonPath("$.sets[1].personalRecord", is(true)));
 	}
 
+	private boolean logDurationFlag(String token, String sessionId, UUID exerciseId, int seconds, String weightKg)
+			throws Exception {
+		String body = "{\"exerciseId\":\"" + exerciseId + "\",\"durationSeconds\":" + seconds
+				+ (weightKg == null ? "" : ",\"weightKg\":" + weightKg) + "}";
+		String response = mockMvc.perform(post("/api/workout-sessions/" + sessionId + "/sets")
+				.header(HttpHeaders.AUTHORIZATION, token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(body))
+			.andExpect(status().isCreated())
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+		return JsonPath.read(response, "$.personalRecord");
+	}
+
+	@Test
+	void durationSetsRankByLongestTimeThenWeight() throws Exception {
+		String token = bearerToken();
+		UUID plank = exerciseBySlug("plank");
+		String first = startSession(token);
+
+		assertFalse(logDurationFlag(token, first, plank, 60, null));
+		assertTrue(logDurationFlag(token, first, plank, 90, null));
+		assertFalse(logDurationFlag(token, first, plank, 80, "20"));
+		assertFalse(logDurationFlag(token, first, plank, 90, null));
+		assertTrue(logDurationFlag(token, first, plank, 90, "5"));
+		endSession(token, first);
+
+		String second = startSession(token);
+		assertFalse(logDurationFlag(token, second, plank, 85, "30"));
+		assertTrue(logDurationFlag(token, second, plank, 91, null));
+		endSession(token, second);
+
+		mockMvc.perform(get("/api/dashboard/insights").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.recentPersonalRecords[0].durationSeconds").value(91))
+			.andExpect(jsonPath("$.recentPersonalRecords[0].reps").value(org.hamcrest.Matchers.nullValue()));
+	}
+
 }

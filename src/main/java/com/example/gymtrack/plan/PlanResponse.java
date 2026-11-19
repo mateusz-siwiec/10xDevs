@@ -17,7 +17,8 @@ public record PlanResponse(UUID id, String name, Instant createdAt, Instant upda
 						+ " is missing from the exercise map");
 			}
 			return new PlanEntryResponse(entry.getExerciseId(), exercise.getName(), exercise.getSlug(),
-					entry.getPosition(), entry.getSets(), entry.getReps());
+					entry.getPosition(), entry.getSets(), entry.getReps(),
+					entry.getTargetDurationSeconds());
 		}).toList();
 		return new PlanResponse(plan.getId(), plan.getName(), plan.getCreatedAt(), plan.getUpdatedAt(), entries);
 	}

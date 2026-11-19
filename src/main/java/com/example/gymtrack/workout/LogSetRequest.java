@@ -13,9 +13,15 @@ public record LogSetRequest(
 	@NotNull
 	UUID exerciseId,
 
+	/** Required for REPS exercises, rejected for DURATION ones (see WorkoutService#logSet). */
 	@Min(1)
 	@Max(100)
-	int reps,
+	Integer reps,
+
+	/** Required for DURATION exercises, rejected for REPS ones. */
+	@Min(1)
+	@Max(3600)
+	Integer durationSeconds,
 
 	/** Optional: its meaning depends on the exercise's weight mode (see WorkoutService#logSet). */
 	@DecimalMin("0")

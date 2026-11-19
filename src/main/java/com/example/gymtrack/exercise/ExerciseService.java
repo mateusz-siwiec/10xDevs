@@ -79,7 +79,7 @@ public class ExerciseService {
 		try {
 			Exercise exercise = exerciseRepository.saveAndFlush(
 					new Exercise(userId, name, request.primaryMuscleGroup(), request.secondaryMuscleGroups(),
-							request.weightMode()));
+							request.weightMode(), request.measure()));
 			return ExerciseResponse.from(exercise, false);
 		}
 		catch (DataIntegrityViolationException e) {
@@ -103,9 +103,15 @@ public class ExerciseService {
 					"Weight mode cannot be changed once sets are logged for this exercise");
 		}
 
+		if (request.measure() != null && request.measure() != exercise.getMeasure()
+				&& workoutSetRepository.existsByExerciseId(id)) {
+			throw new ExerciseConflictException(ErrorCode.EXERCISE_IN_USE,
+					"Measure cannot be changed once sets are logged for this exercise");
+		}
+
 		try {
 			exercise.update(name, request.primaryMuscleGroup(), request.secondaryMuscleGroups(),
-					request.weightMode());
+					request.weightMode(), request.measure());
 			Exercise saved = exerciseRepository.saveAndFlush(exercise);
 			return ExerciseResponse.from(saved, favoriteRepository.findExerciseIdsByUserId(userId).contains(id));
 		}

@@ -52,7 +52,7 @@ public class WorkoutController {
 	public ResponseEntity<SetResponse> logSet(@AuthenticationPrincipal CurrentUser currentUser,
 			@PathVariable UUID id, @Valid @RequestBody LogSetRequest request) {
 		SetResponse set = workoutService.logSet(currentUser.id(), id, request.exerciseId(), request.reps(),
-				request.weightKg(), request.toFailure());
+				request.durationSeconds(), request.weightKg(), request.toFailure());
 		return ResponseEntity.status(HttpStatus.CREATED).body(set);
 	}
 

@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public record PreviousWorkoutResponse(UUID exerciseId, UUID sessionId, Instant endedAt, List<SetEntry> sets) {
 
-	public record SetEntry(int reps, BigDecimal weightKg, boolean toFailure) {
+	public record SetEntry(Integer reps, Integer durationSeconds, BigDecimal weightKg, boolean toFailure) {
 	}
 
 }
