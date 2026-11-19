@@ -87,6 +87,65 @@ test('substitute suggestions expose the trigger for built-in exercises', async (
   expect(await cues.count()).toBeGreaterThanOrEqual(3)
 })
 
+// The panel is taller than the room below a row in a short list, which used to lengthen the page while it was open and
+// make everything jump back when it closed.
+async function openFirstPanelOnShortList(page: Page, request: APIRequestContext, prefix: string) {
+  const user = await registerViaApi(request, prefix)
+  await login(page, user)
+  await page.goto('/exercises')
+  await page.getByLabel('Muscle group').selectOption('LOWER_CHEST')
+  const trigger = page.getByRole('button', { name: /^How to do / }).first()
+  await expect(trigger).toBeVisible()
+  const pageHeight = () => page.evaluate(() => document.documentElement.scrollHeight)
+  const heightBefore = await pageHeight()
+  await trigger.hover()
+  const panel = page.getByRole('tooltip')
+  await expect(panel).toBeVisible()
+  return { panel, heightBefore, pageHeight }
+}
+
+test('opening the panel keeps the page height and the panel inside the viewport', async ({ page, request }) => {
+  const { panel, heightBefore, pageHeight } = await openFirstPanelOnShortList(page, request, 'tech-height')
+  expect(await pageHeight()).toBe(heightBefore)
+  const box = (await panel.boundingBox())!
+  const viewport = page.viewportSize()!
+  expect(box.y).toBeGreaterThanOrEqual(0)
+  expect(box.y + box.height).toBeLessThanOrEqual(viewport.height)
+
+  // Leaving closes it and the page does not move.
+  await page.mouse.move(5, 5)
+  await expect(panel).toHaveCount(0)
+  expect(await pageHeight()).toBe(heightBefore)
+})
+
+test.describe('short viewport', () => {
+  test.use({ viewport: { width: 1280, height: 500 } })
+
+  test('a panel taller than the viewport scrolls inside itself instead of moving the page', async ({
+    page,
+    request,
+  }) => {
+    const { panel, heightBefore, pageHeight } = await openFirstPanelOnShortList(page, request, 'tech-short')
+    const box = (await panel.boundingBox())!
+    expect(box.y).toBeGreaterThanOrEqual(0)
+    expect(box.y + box.height).toBeLessThanOrEqual(500)
+    expect(await panel.evaluate((element) => element.scrollHeight > element.clientHeight)).toBe(true)
+
+    // The trigger stays uncovered (the panel opens beside it), so it can still be clicked.
+    const trigger = page.getByRole('button', { name: /^How to do / }).first()
+    const triggerBox = (await trigger.boundingBox())!
+    expect(box.x + box.width <= triggerBox.x || box.x >= triggerBox.x + triggerBox.width).toBe(true)
+
+    await panel.hover()
+    const scrollYBefore = await page.evaluate(() => window.scrollY)
+    await page.mouse.wheel(0, 400)
+    await expect.poll(() => panel.evaluate((element) => element.scrollTop)).toBeGreaterThan(0)
+    expect(await page.evaluate(() => window.scrollY)).toBe(scrollYBefore)
+    expect(await pageHeight()).toBe(heightBefore)
+    await expect(panel).toBeVisible()
+  })
+})
+
 test.describe('touch', () => {
   test.use({ hasTouch: true, isMobile: true })
 

@@ -12,6 +12,16 @@ interface TechniqueTooltipProps {
 /** Minimum gap kept between the panel and the viewport edge, in px (1rem at the default font size). */
 const EDGE_GAP = 16
 
+/** Gap between the trigger and the panel, in px (0.25rem). Bridged in page.css so the pointer can cross it. */
+const PANEL_GAP = 4
+
+/** Viewport coordinates of the open panel; `placement` tells which side of the trigger it opened on. */
+interface PanelPosition {
+  top: number
+  left: number
+  placement: 'below' | 'above' | 'right' | 'left'
+}
+
 /** Must match the phone breakpoint of the bottom-sheet layout in page.css. */
 const PHONE_QUERY = '(max-width: 40rem)'
 
@@ -23,7 +33,7 @@ const PHONE_QUERY = '(max-width: 40rem)'
 export default function TechniqueTooltip({ exercise }: TechniqueTooltipProps) {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
-  const [shift, setShift] = useState(0)
+  const [position, setPosition] = useState<PanelPosition | null>(null)
   const panelId = useId()
   const rootRef = useRef<HTMLSpanElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -64,27 +74,83 @@ export default function TechniqueTooltip({ exercise }: TechniqueTooltipProps) {
     }
   }, [open])
 
-  // Keep the panel inside the viewport: measure it unshifted, then nudge it back by the overflow.
-  // Re-measured on resize/rotation while open and reset on close, so a stale shift never carries over.
+  // The panel is position: fixed, so opening it never lengthens the page (an absolutely positioned panel taller than the
+  // room below its row did, and the page jumped back when it closed). Place it against the viewport instead: below the
+  // trigger, or above it when it does not fit below; otherwise pin it inside the viewport (the panel scrolls itself).
+  // Re-measured on resize and on scroll so it stays attached to its row, and reset on close so a stale position never
+  // carries over. Phones use the bottom sheet from page.css and need no coordinates.
   useLayoutEffect(() => {
     if (!open) return
+    let frame = 0
     function measure() {
+      const root = rootRef.current
       const panel = panelRef.current
-      if (!panel) return
+      if (!root || !panel) return
+      if (window.matchMedia(PHONE_QUERY).matches) {
+        setPosition(null)
+        return
+      }
+      // Measure the panel's own size at a neutral spot, independent of where it currently sits, then put the inline
+      // coordinates back: when the new position equals the old one React does not re-render to restore them.
+      const { top: previousTop, left: previousLeft } = panel.style
+      panel.style.top = '0px'
       panel.style.left = '0px'
-      const rect = panel.getBoundingClientRect()
-      const viewport = document.documentElement.clientWidth
-      let next = 0
-      if (rect.right > viewport - EDGE_GAP) next = viewport - EDGE_GAP - rect.right
-      if (rect.left + next < EDGE_GAP) next = EDGE_GAP - rect.left
-      panel.style.left = ''
-      setShift(next)
+      const { width, height } = panel.getBoundingClientRect()
+      panel.style.top = previousTop
+      panel.style.left = previousLeft
+
+      const anchor = root.getBoundingClientRect()
+      const viewportWidth = document.documentElement.clientWidth
+      const viewportHeight = document.documentElement.clientHeight
+      let left = Math.max(EDGE_GAP, Math.min(anchor.left, viewportWidth - EDGE_GAP - width))
+
+      let top = anchor.bottom + PANEL_GAP
+      let placement: PanelPosition['placement'] = 'below'
+      if (top + height > viewportHeight - EDGE_GAP) {
+        const above = anchor.top - PANEL_GAP - height
+        const rightOfTrigger = anchor.right + PANEL_GAP
+        const leftOfTrigger = anchor.left - PANEL_GAP - width
+        if (above >= EDGE_GAP) {
+          top = above
+          placement = 'above'
+        } else if (rightOfTrigger + width <= viewportWidth - EDGE_GAP || leftOfTrigger >= EDGE_GAP) {
+          // No room above or below (a tall panel on a short viewport): open beside the trigger so it stays uncovered
+          // and clickable, kept inside the viewport vertically. The panel scrolls itself if it is still too tall.
+          const toTheRight = rightOfTrigger + width <= viewportWidth - EDGE_GAP
+          left = toTheRight ? rightOfTrigger : leftOfTrigger
+          placement = toTheRight ? 'right' : 'left'
+          top = Math.max(EDGE_GAP, Math.min(anchor.top, viewportHeight - EDGE_GAP - height))
+        } else {
+          top = Math.max(EDGE_GAP, viewportHeight - EDGE_GAP - height)
+        }
+      }
+      setPosition((current) =>
+        current && current.top === top && current.left === left && current.placement === placement
+          ? current
+          : { top, left, placement },
+      )
+    }
+    function schedule() {
+      if (frame) return
+      frame = requestAnimationFrame(() => {
+        frame = 0
+        measure()
+      })
+    }
+    function onScroll(event: Event) {
+      // The panel scrolling its own content does not move the trigger.
+      if (panelRef.current?.contains(event.target as Node)) return
+      schedule()
     }
     measure()
-    window.addEventListener('resize', measure)
+    window.addEventListener('resize', schedule)
+    // Capture: scrolling any ancestor (not only the window) moves the trigger.
+    window.addEventListener('scroll', onScroll, true)
     return () => {
-      window.removeEventListener('resize', measure)
-      setShift(0)
+      if (frame) cancelAnimationFrame(frame)
+      window.removeEventListener('resize', schedule)
+      window.removeEventListener('scroll', onScroll, true)
+      setPosition(null)
     }
   }, [open])
 
@@ -133,6 +199,8 @@ export default function TechniqueTooltip({ exercise }: TechniqueTooltipProps) {
   return (
     <span
       className="technique-tooltip"
+      data-open={open ? '' : undefined}
+      data-placement={open ? position?.placement : undefined}
       ref={rootRef}
       onPointerEnter={onPointerEnter}
       onPointerLeave={onPointerLeave}
@@ -179,7 +247,7 @@ export default function TechniqueTooltip({ exercise }: TechniqueTooltipProps) {
           ref={panelRef}
           role="tooltip"
           className="technique-panel"
-          style={shift ? { left: `${shift}px` } : undefined}
+          style={position ? { top: `${position.top}px`, left: `${position.left}px` } : undefined}
         >
           <div className="technique-panel-head">
             <span className="technique-panel-title">{exerciseName(exercise)}</span>

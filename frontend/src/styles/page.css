@@ -319,14 +319,18 @@
   background: transparent;
 }
 
+/* Fixed, so opening the panel can never make the page taller (and snap back when it closes). TechniqueTooltip sets the
+   top/left coordinates inline from the trigger; the panel scrolls itself when the viewport is shorter than its content. */
 .technique-panel {
-  position: absolute;
-  top: 100%;
+  position: fixed;
+  top: 0;
   left: 0;
   z-index: 10;
   width: max-content;
   max-width: min(20rem, calc(100vw - 2rem));
-  margin-top: 0.25rem;
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 0.75rem 1rem;
   font-size: 0.9rem;
   font-weight: 400;
@@ -341,34 +345,53 @@
   box-sizing: border-box;
 }
 
-/* Bridges the visual gap above the panel so the pointer never leaves the component while moving onto it. */
-.technique-panel::before {
+/* Bridges the small gap between the trigger and the panel (on whichever side it opened) so the pointer never leaves the
+   component while moving onto it. Lives on the root rather than the panel, whose own overflow would clip it. */
+.technique-tooltip[data-open]::after {
   content: '';
   position: absolute;
-  top: -0.25rem;
+  top: 100%;
   left: 0;
   right: 0;
   height: 0.25rem;
 }
 
-/* Phones: pin the panel to the viewport so it can never widen or lengthen the page (which made the screen drift while
-   scrolling). The inline `left` shift from TechniqueTooltip only matters for the absolute layout, hence !important. */
+.technique-tooltip[data-open][data-placement='above']::after {
+  top: auto;
+  bottom: 100%;
+}
+
+.technique-tooltip[data-open][data-placement='right']::after,
+.technique-tooltip[data-open][data-placement='left']::after {
+  top: 0;
+  bottom: 0;
+  width: 0.25rem;
+  height: auto;
+}
+
+.technique-tooltip[data-open][data-placement='right']::after {
+  left: 100%;
+  right: auto;
+}
+
+.technique-tooltip[data-open][data-placement='left']::after {
+  left: auto;
+  right: 100%;
+}
+
+/* Phones: pin the panel to the bottom of the viewport as a sheet. The coordinates TechniqueTooltip sets inline only
+   matter for the desktop layout, hence !important. */
 @media (max-width: 40rem) {
   .technique-panel {
-    position: fixed;
-    top: auto;
+    top: auto !important;
     right: 1rem;
     bottom: 1rem;
     left: 1rem !important;
     width: auto;
     max-width: none;
-    max-height: calc(100dvh - 2rem);
-    margin-top: 0;
-    overflow-y: auto;
-    overscroll-behavior: contain;
   }
 
-  .technique-panel::before {
+  .technique-tooltip[data-open]::after {
     display: none;
   }
 }
