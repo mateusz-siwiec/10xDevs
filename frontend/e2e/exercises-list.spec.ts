@@ -27,24 +27,28 @@ function row(page: Page, name: string) {
   return page.getByRole('listitem').filter({ hasText: name })
 }
 
-async function openList(page: Page, user: ApiUser, lang: 'en' | 'pl' = 'en') {
+/** The list shows 10 exercises per page, so a test that needs a specific row passes its name as `search`. */
+async function openList(page: Page, user: ApiUser, lang: 'en' | 'pl' = 'en', search?: string) {
   await login(page, user)
   if (lang === 'pl') await page.evaluate(() => localStorage.setItem('gymtrack.lang', 'pl'))
   await page.goto('/exercises')
   await expect(page.getByRole('heading', { name: lang === 'pl' ? 'Ćwiczenia' : 'Exercises' })).toBeVisible()
+  if (search) await page.getByLabel(lang === 'pl' ? 'Szukaj ćwiczeń' : 'Search exercises').fill(search)
 }
 
 test('the list shows built-in and custom exercises, with a Custom tag on the custom one', async ({ page, request }) => {
   const user = await registerViaApi(request, 'exlist-tag')
   const name = `Cable Curl ${Date.now()}`
   await seedCustom(request, user, name)
-  await openList(page, user)
+  await openList(page, user, 'en', 'Barbell Bench Press')
 
   await expect(row(page, 'Barbell Bench Press')).toBeVisible()
   await expect(row(page, 'Barbell Bench Press').getByText('Custom', { exact: true })).toHaveCount(0)
+  await page.getByLabel('Search exercises').fill(name)
   await expect(row(page, name)).toBeVisible()
   await expect(row(page, name).getByText('Custom', { exact: true })).toBeVisible()
   await expect(page.getByRole('link', { name: `Edit ${name}` })).toBeVisible()
+  await page.getByLabel('Search exercises').fill('Barbell Bench Press')
   await expect(row(page, 'Barbell Bench Press').getByRole('link', { name: /^Edit/ })).toHaveCount(0)
   await expect(row(page, 'Barbell Bench Press').getByRole('button', { name: /^Delete/ })).toHaveCount(0)
 })
@@ -75,7 +79,8 @@ test('Mine hides built-in exercises and the muscle filter matches primary or sec
   await expect(page.getByText('No exercises match these filters.')).toBeVisible()
   await page.getByRole('button', { name: 'Clear filters' }).click()
   await expect(page.getByText('No exercises match these filters.')).toHaveCount(0)
-  await expect(row(page, name)).toBeVisible()
+  // Back to the full list: the first page of the paged list, with Barbell Bench Press on it.
+  await expect(page.locator('.exercise-list .plan-item')).toHaveCount(10)
   await expect(row(page, 'Barbell Bench Press')).toBeVisible()
   await expect(page.getByRole('button', { name: 'All', exact: true })).toHaveAttribute('aria-pressed', 'true')
 
@@ -99,6 +104,8 @@ test('an exercise can be added, edited and deleted from the list', async ({ page
   await page.getByRole('button', { name: 'Add exercise' }).click()
 
   await expect(page).toHaveURL(/\/exercises$/)
+  // The new exercise sorts to a later page: find it with the search box.
+  await page.getByLabel('Search exercises').fill(name)
   await expect(row(page, name)).toBeVisible()
   await expect(row(page, name).getByText('Custom', { exact: true })).toBeVisible()
 
@@ -109,6 +116,7 @@ test('an exercise can be added, edited and deleted from the list', async ({ page
   await page.getByRole('button', { name: 'Save', exact: true }).click()
 
   await expect(page).toHaveURL(/\/exercises$/)
+  await page.getByLabel('Search exercises').fill(renamed)
   await expect(row(page, renamed)).toBeVisible()
 
   // Cancel keeps the exercise.
@@ -191,7 +199,7 @@ test('opening New exercise after editing one starts with an empty form', async (
   const user = await registerViaApi(request, 'exlist-carry')
   const name = `Carry Curl ${Date.now()}`
   await seedCustom(request, user, name)
-  await openList(page, user)
+  await openList(page, user, 'en', name)
 
   await page.getByRole('link', { name: `Edit ${name}` }).click()
   await expect(page.getByLabel('Name')).toHaveValue(name)
@@ -215,7 +223,7 @@ test('an exercise used in a plan cannot be deleted: an error is shown and the ro
     data: { name: 'Uses custom', entries: [{ exerciseId: custom.id, sets: 3, reps: 8 }] },
   })
   expect(plan.status()).toBe(201)
-  await openList(page, user)
+  await openList(page, user, 'en', name)
 
   await page.getByRole('button', { name: `Delete ${name}` }).click()
   await page.getByRole('button', { name: 'Confirm' }).click()
@@ -234,7 +242,7 @@ test('Cancel on a delete confirmation returns focus to that row, and a successfu
   const user = await registerViaApi(request, 'exlist-focus')
   const name = `Focus Curl ${Date.now()}`
   await seedCustom(request, user, name)
-  await openList(page, user)
+  await openList(page, user, 'en', name)
 
   await page.getByRole('button', { name: `Delete ${name}` }).click()
   await page.getByRole('button', { name: 'Cancel' }).click()
@@ -252,7 +260,7 @@ test('while one delete is in flight the other rows cannot start a delete', async
   const second = `Busy Curl B ${Date.now()}`
   await seedCustom(request, user, first)
   await seedCustom(request, user, second)
-  await openList(page, user)
+  await openList(page, user, 'en', 'Busy Curl')
 
   let release!: () => void
   const gate = new Promise<void>((resolve) => (release = resolve))
@@ -299,7 +307,7 @@ test.describe('technique tooltip', () => {
     const user = await registerViaApi(request, 'extech-open')
     const name = `Tech Curl ${Date.now()}`
     await seedCustom(request, user, name)
-    await openList(page, user)
+    await openList(page, user, 'en', 'Barbell Bench Press')
 
     const button = trigger(page)
     const panel = row(page, 'Barbell Bench Press').getByRole('tooltip')
@@ -318,6 +326,7 @@ test.describe('technique tooltip', () => {
     await button.click()
     await expect(panel).toBeVisible()
 
+    await page.getByLabel('Search exercises').fill(name)
     await expect(row(page, name)).toBeVisible()
     await expect(row(page, name).getByRole('button', { name: /^How to do/ })).toHaveCount(0)
     const customButton = row(page, name).getByRole('button', { name: `Muscles worked: ${name}` })

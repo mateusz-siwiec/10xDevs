@@ -22,6 +22,9 @@ interface Filters {
 
 const DEFAULT_FILTERS: Filters = { scope: 'all', muscle: '', search: '' }
 
+// Rows per page.
+const PAGE_SIZE = 10
+
 function StarIcon({ filled }: { filled: boolean }) {
   return (
     <svg
@@ -47,6 +50,9 @@ export default function ExercisesPage() {
   const [loadFailed, setLoadFailed] = useState(false)
   const [error, setError] = useState<ErrorInfo | null>(null)
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS)
+  // 1-based; not persisted, and reset to 1 whenever a filter changes (see changeFilters).
+  const [page, setPage] = useState(1)
+  const listRef = useRef<HTMLElement>(null)
   const [confirmingId, setConfirmingId] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
   // Rows whose favourite toggle request is still running; their star is disabled meanwhile.
@@ -158,6 +164,26 @@ export default function ExercisesPage() {
     filters.search.trim() !== ''
   const noFavoritesYet = filters.scope === 'favorites' && !exercises.some((e) => e.favorite)
 
+  // The page is clamped when the list shrinks (deleting the last row of a page, un-starring in Favourites).
+  const pageCount = Math.max(1, Math.ceil(visible.length / PAGE_SIZE))
+  const currentPage = Math.min(page, pageCount)
+  const pageItems = visible.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+
+  function changeFilters(update: Filters | ((current: Filters) => Filters)) {
+    setFilters(update)
+    setPage(1)
+  }
+
+  function goToPage(target: number) {
+    if (target < 1 || target > pageCount || target === currentPage) return
+    setPage(target)
+    // A confirmation left open on the other page would reappear when coming back to it.
+    setConfirmingId(null)
+    // The pager sits below the list: bring the new page's first row into view if it has scrolled off the top.
+    const list = listRef.current
+    if (list && list.getBoundingClientRect().top < 0) list.scrollIntoView({ block: 'start' })
+  }
+
   return (
     <div className="page-shell">
       <main className="page-card plans-card">
@@ -171,7 +197,7 @@ export default function ExercisesPage() {
               type="button"
               className="btn-secondary"
               aria-pressed={filters.scope === scope}
-              onClick={() => setFilters((f) => ({ ...f, scope }))}
+              onClick={() => changeFilters((f) => ({ ...f, scope }))}
             >
               {scope === 'all'
                 ? t('exercises.scopeAll')
@@ -189,7 +215,7 @@ export default function ExercisesPage() {
             value={filters.search}
             placeholder={t('exercises.searchPlaceholder')}
             autoComplete="off"
-            onChange={(event) => setFilters((f) => ({ ...f, search: event.target.value }))}
+            onChange={(event) => changeFilters((f) => ({ ...f, search: event.target.value }))}
           />
         </div>
         <div className="field">
@@ -199,7 +225,7 @@ export default function ExercisesPage() {
             className="workout-select"
             value={filters.muscle}
             onChange={(event) =>
-              setFilters((f) => ({ ...f, muscle: event.target.value as Filters['muscle'] }))
+              changeFilters((f) => ({ ...f, muscle: event.target.value as Filters['muscle'] }))
             }
           >
             <option value="">{t('exercises.allMuscles')}</option>
@@ -218,7 +244,7 @@ export default function ExercisesPage() {
         <p className="visually-hidden" aria-live="polite">
           {loading || loadFailed ? '' : t('exercises.resultCount', { count: visible.length })}
         </p>
-        <section className="workout-section">
+        <section className="workout-section" ref={listRef}>
           {loading ? (
             <p className="page-subtext">{t('exercises.loading')}</p>
           ) : loadFailed ? null : exercises.length === 0 ? (
@@ -232,7 +258,7 @@ export default function ExercisesPage() {
                 <button
                   type="button"
                   className="btn-secondary"
-                  onClick={() => setFilters(DEFAULT_FILTERS)}
+                  onClick={() => changeFilters(DEFAULT_FILTERS)}
                 >
                   {t('exercises.clearFilters')}
                 </button>
@@ -240,7 +266,7 @@ export default function ExercisesPage() {
             </>
           ) : (
             <ul className="plan-list exercise-list">
-              {visible.map((exercise) => (
+              {pageItems.map((exercise) => (
                 <li key={exercise.id} className="plan-item">
                   <div className="plan-item-info">
                     <span className="plan-item-name">
@@ -315,6 +341,29 @@ export default function ExercisesPage() {
                 </li>
               ))}
             </ul>
+          )}
+          {pageCount > 1 && (
+            <nav className="exercise-pager" aria-label={t('exercises.pagerLabel')}>
+              <button
+                type="button"
+                className="btn-secondary"
+                aria-disabled={currentPage === 1}
+                onClick={() => goToPage(currentPage - 1)}
+              >
+                {t('exercises.prevPage')}
+              </button>
+              <span className="exercise-pager-status" aria-live="polite">
+                {t('exercises.pageOf', { page: currentPage, total: pageCount })}
+              </span>
+              <button
+                type="button"
+                className="btn-secondary"
+                aria-disabled={currentPage === pageCount}
+                onClick={() => goToPage(currentPage + 1)}
+              >
+                {t('exercises.nextPage')}
+              </button>
+            </nav>
           )}
         </section>
       </main>

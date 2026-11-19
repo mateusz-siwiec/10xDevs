@@ -34,11 +34,13 @@ function star(page: Page, name: string, lang: 'en' | 'pl' = 'en') {
   })
 }
 
-async function openList(page: Page, user: ApiUser, lang: 'en' | 'pl' = 'en') {
+/** The list shows 10 exercises per page, so a test that needs a specific row passes its name as `search`. */
+async function openList(page: Page, user: ApiUser, lang: 'en' | 'pl' = 'en', search?: string) {
   await login(page, user)
   if (lang === 'pl') await page.evaluate(() => localStorage.setItem('gymtrack.lang', 'pl'))
   await page.goto('/exercises')
   await expect(page.getByRole('heading', { name: lang === 'pl' ? 'Ćwiczenia' : 'Exercises' })).toBeVisible()
+  if (search) await page.getByLabel(lang === 'pl' ? 'Szukaj ćwiczeń' : 'Search exercises').fill(search)
 }
 
 test('a built-in and a custom exercise can be starred and stay starred after a reload', async ({ page, request }) => {
@@ -50,15 +52,18 @@ test('a built-in and a custom exercise can be starred and stay starred after a r
   await expect(star(page, 'Barbell Bench Press')).toHaveAttribute('aria-pressed', 'false')
   await star(page, 'Barbell Bench Press').click()
   await expect(star(page, 'Barbell Bench Press')).toHaveAttribute('aria-pressed', 'true')
+  // The custom row is on a later page of the alphabetical list: find it with the search box.
+  await page.getByLabel('Search exercises').fill(name)
   await star(page, name).click()
   await expect(star(page, name)).toHaveAttribute('aria-pressed', 'true')
 
   await page.reload()
   await expect(star(page, 'Barbell Bench Press')).toHaveAttribute('aria-pressed', 'true')
-  await expect(star(page, name)).toHaveAttribute('aria-pressed', 'true')
   await expect(star(page, 'Barbell Row')).toHaveAttribute('aria-pressed', 'false')
   // The star does not turn built-in rows into editable ones.
   await expect(row(page, 'Barbell Bench Press').getByRole('link', { name: /^Edit/ })).toHaveCount(0)
+  await page.getByLabel('Search exercises').fill(name)
+  await expect(star(page, name)).toHaveAttribute('aria-pressed', 'true')
 })
 
 test('Favourites lists only starred exercises; un-starring there removes the row and focuses the heading', async ({
@@ -122,7 +127,8 @@ test('search narrows the list ignoring case and accents, combines with other fil
   await expect(search).toHaveValue('')
   await expect(page.getByRole('button', { name: 'All', exact: true })).toHaveAttribute('aria-pressed', 'true')
   await expect(row(page, 'Barbell Bench Press')).toBeVisible()
-  await expect(row(page, name)).toBeVisible()
+  // The full list is back, so it is paged again.
+  await expect(page.getByRole('navigation', { name: 'Exercise pages' })).toBeVisible()
 
   // Search combines with the muscle filter.
   await page.getByLabel('Muscle group').selectOption('BICEPS')

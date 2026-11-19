@@ -15,11 +15,13 @@ async function login(page: Page, user: ApiUser) {
   await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible()
 }
 
-async function openList(page: Page, user: ApiUser, lang: 'en' | 'pl' = 'en') {
+/** The list shows 10 exercises per page, so a test that needs a specific row passes its name as `search`. */
+async function openList(page: Page, user: ApiUser, lang: 'en' | 'pl' = 'en', search?: string) {
   await login(page, user)
   if (lang === 'pl') await page.evaluate(() => localStorage.setItem('gymtrack.lang', 'pl'))
   await page.goto('/exercises')
   await expect(page.getByRole('heading', { name: lang === 'pl' ? 'Ćwiczenia' : 'Exercises' })).toBeVisible()
+  if (search) await page.getByLabel(lang === 'pl' ? 'Szukaj ćwiczeń' : 'Search exercises').fill(search)
 }
 
 async function startFreeForm(page: Page, request: APIRequestContext, user: ApiUser) {
@@ -64,7 +66,7 @@ test('Incline Dumbbell Press highlights the upper chest as primary and leaves th
   request,
 }) => {
   const user = await registerViaApi(request, 'mmap-upper')
-  await openList(page, user)
+  await openList(page, user, 'en', 'Incline Dumbbell Press')
 
   await row(page, 'Incline Dumbbell Press').getByRole('button', { name: 'How to do Incline Dumbbell Press' }).click()
   const panel = row(page, 'Incline Dumbbell Press').getByRole('tooltip')
@@ -80,7 +82,7 @@ test('Overhead Press highlights front delts as primary and side delts as seconda
   request,
 }) => {
   const user = await registerViaApi(request, 'mmap-delts')
-  await openList(page, user)
+  await openList(page, user, 'en', 'Overhead Press')
 
   await row(page, 'Overhead Press').getByRole('button', { name: 'How to do Overhead Press' }).click()
   const panel = row(page, 'Overhead Press').getByRole('tooltip')
@@ -94,7 +96,7 @@ test('Overhead Press highlights front delts as primary and side delts as seconda
 
 test('a new adductor exercise highlights the adductors and its secondaries', async ({ page, request }) => {
   const user = await registerViaApi(request, 'mmap-adductors')
-  await openList(page, user)
+  await openList(page, user, 'en', 'Copenhagen Plank')
 
   await row(page, 'Copenhagen Plank').getByRole('button', { name: 'How to do Copenhagen Plank' }).click()
   const panel = row(page, 'Copenhagen Plank').getByRole('tooltip')
@@ -109,7 +111,7 @@ test('a failed figure load keeps the panel, legend and cues and draws no figure'
   // Dev serves /src/components/MuscleFigure.tsx, the build a MuscleFigure-<hash>.js chunk. Registered before any
   // panel opens: the module is cached after its first successful load.
   await page.route('**/MuscleFigure*', (route) => route.abort())
-  await openList(page, user)
+  await openList(page, user, 'en', 'Barbell Row')
 
   const item = row(page, 'Barbell Row')
   await item.getByRole('button', { name: 'How to do Barbell Row' }).click()
@@ -134,7 +136,7 @@ test('a custom exercise shows its muscle map and no technique cues', async ({ pa
     data: { name, primaryMuscleGroup: 'TRICEPS', secondaryMuscleGroups: ['FOREARMS'] },
   })
   expect(created.ok()).toBe(true)
-  await openList(page, user)
+  await openList(page, user, 'en', name)
 
   await row(page, name).getByRole('button', { name: `Muscles worked: ${name}` }).click()
   const panel = row(page, name).getByRole('tooltip')
