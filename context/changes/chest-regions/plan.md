@@ -322,26 +322,26 @@ V14 runs on every deploy against Supabase. Per CLAUDE.md, never point a local ru
 
 #### Automated
 
-- [x] 3.1 Unit tests pass: `npm run test`
-- [x] 3.2 Type check and build pass: `npm run build`
-- [x] 3.3 Main bundle grows by at most 1 KB gzipped versus the build before this change
-- [x] 3.4 Lint and hard-coded value guard pass: `npm run lint` and `npm run check:tokens`
-- [x] 3.5 End-to-end suite passes with Postgres running: `npm run test:e2e`
+- [x] 3.1 Unit tests pass: `npm run test` — e9f31c1
+- [x] 3.2 Type check and build pass: `npm run build` — e9f31c1
+- [x] 3.3 Main bundle grows by at most 1 KB gzipped versus the build before this change — e9f31c1
+- [x] 3.4 Lint and hard-coded value guard pass: `npm run lint` and `npm run check:tokens` — e9f31c1
+- [x] 3.5 End-to-end suite passes with Postgres running: `npm run test:e2e` — e9f31c1
 
 #### Manual
 
-- [x] 3.6 Form select, checkboxes and list filter show Upper, Mid and Lower chest in English and Polish
-- [x] 3.7 Stats page Chest parent total equals the sum of its three child rows
-- [x] 3.8 Technique tooltip for decline bench press and chest dip shows cues in both languages
+- [x] 3.6 Form select, checkboxes and list filter show Upper, Mid and Lower chest in English and Polish — e9f31c1
+- [x] 3.7 Stats page Chest parent total equals the sum of its three child rows — e9f31c1
+- [x] 3.8 Technique tooltip for decline bench press and chest dip shows cues in both languages — e9f31c1
 
 ### Phase 4: Docs and full suites
 
 #### Automated
 
-- [ ] 4.1 Full backend suite passes: `./mvnw test`
-- [ ] 4.2 Full frontend suite passes: `npm run test` and `npm run build`
-- [ ] 4.3 Full end-to-end suite passes and no snapshot PNG changed
+- [x] 4.1 Full backend suite passes: `./mvnw test`
+- [x] 4.2 Full frontend suite passes: `npm run test` and `npm run build`
+- [x] 4.3 Full end-to-end suite passes and no snapshot PNG changed
 
 #### Manual
 
-- [ ] 4.4 CLAUDE.md names V15 as the next migration and the final figure check matches the approved preview
+- [x] 4.4 CLAUDE.md names V15 as the next migration and the final figure check matches the approved preview
