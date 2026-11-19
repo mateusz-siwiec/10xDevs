@@ -112,6 +112,8 @@ Introduce the three leaf values, migrate all stored data, add the two new catalo
 
 Cut the existing chest paths into three bands per side, get the user's approval on a rendered preview, then commit the paths and switch the frontend group constants so the figure and constants agree.
 
+**Deviations from plan:** the three `muscle.*` labels, the names and technique cues for decline-bench-press and chest-dip (en and pl), and the `MuscleMap.test.tsx` fixture change were pulled forward from Phase 3 into this phase, because the unit suite (`locales.test.ts`, `muscleGroups.test.ts`) was red without them. Approved by the user during implementation.
+
 ### Changes Required:
 
 #### 1. Artwork cutting (outside the repo)
@@ -168,6 +170,8 @@ Cut the existing chest paths into three bands per side, get the user's approval 
 ### Overview
 
 Add the labels, the two new exercises' names and technique cues, and update the remaining unit and e2e tests that reference `CHEST`.
+
+**Deviations from plan:** the i18n labels, new-exercise names and cues and the `MuscleMap.test.tsx` change landed in Phase 2 (see there). Four additional e2e specs (`exercise-favorites`, `log-set`, `muscular-failure`, `progression-recommendation`) were updated because the picker label for bench press is now "Barbell Bench Press — Mid chest". Phase 1 also changed the catalogue sizes in `CustomExerciseControllerTest` (48/49 to 50/51), which the plan did not list.
 
 ### Changes Required:
 

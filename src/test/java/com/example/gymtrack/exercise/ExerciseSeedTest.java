@@ -47,8 +47,8 @@ class ExerciseSeedTest {
 
 		// LOWER_BACK, TRAPS, FOREARMS and OBLIQUES were introduced by V10 (split of BACK and CORE) and have no
 		// dedicated catalog exercises yet; V12 (split of SHOULDERS, new adductor/abductor groups) leaves
-		// SIDE_DELTS, ADDUCTORS and ABDUCTORS with two catalog exercises each. Every other group has at
-		// least three.
+		// SIDE_DELTS, ADDUCTORS and ABDUCTORS with two catalog exercises each; V14 (split of CHEST) leaves
+		// UPPER_CHEST with one and LOWER_CHEST with two. Every other group has at least three.
 		Set<MuscleGroup> belowThree = EnumSet.of(MuscleGroup.LOWER_BACK, MuscleGroup.TRAPS, MuscleGroup.FOREARMS,
 				MuscleGroup.OBLIQUES, MuscleGroup.SIDE_DELTS, MuscleGroup.ADDUCTORS, MuscleGroup.ABDUCTORS,
 				MuscleGroup.UPPER_CHEST, MuscleGroup.LOWER_CHEST);
