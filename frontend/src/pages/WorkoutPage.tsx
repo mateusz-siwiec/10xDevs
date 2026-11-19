@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router'
 import {
   deleteSet,
   deleteWorkout,
@@ -32,12 +33,14 @@ import type { ErrorInfo } from '../utils/errors'
 import { defaultPlanName } from '../utils/workoutToPlan'
 import type { LoggedSet } from '../utils/workoutToPlan'
 
+// Plans listed on the start screen; the rest are one tap away on the Plans page.
+const MAX_PLANS_SHOWN = 5
+
 export default function WorkoutPage() {
   const { t } = useTranslation()
   const [session, setSession] = useState<WorkoutSession | null>(null)
   const [exercises, setExercises] = useState<Exercise[]>([])
   const [plans, setPlans] = useState<PlanSummary[]>([])
-  const [startPlanId, setStartPlanId] = useState('')
   const [planState, setPlanState] = useState<{ planId: string; plan: Plan | null } | null>(null)
   // A manual pick is only honoured while the plan's auto-selected exercise is unchanged.
   const [manual, setManual] = useState<{ exerciseId: string; autoId: string } | null>(null)
@@ -267,34 +270,51 @@ export default function WorkoutPage() {
                 </button>
               </div>
             )}
-            {plans.length > 0 && (
-              <div className="workout-start-plan">
-                <select
-                  className="workout-select"
-                  aria-label={t('workout.startFromPlanLabel')}
-                  value={startPlanId}
-                  onChange={(event) => setStartPlanId(event.target.value)}
-                >
-                  <option value="">{t('workout.startFromPlan')}</option>
-                  {plans.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  type="button"
-                  className="btn-primary"
-                  disabled={busy || !startPlanId}
-                  onClick={() => handleStart(startPlanId)}
-                >
-                  {t('workout.startPlan')}
-                </button>
-              </div>
-            )}
             <button type="button" className="btn-primary" disabled={busy} onClick={() => handleStart()}>
               {busy ? t('workout.starting') : t('workout.startWorkout')}
             </button>
+            <section className="workout-plans" aria-labelledby="workout-plans-heading">
+              <h2 id="workout-plans-heading" className="workout-plans-heading">
+                {t('workout.fromPlan')}
+              </h2>
+              {plans.length === 0 ? (
+                <p className="page-subtext">
+                  {t('workout.noPlans')}{' '}
+                  <Link to="/plans" className="workout-plans-link">
+                    {t('workout.createPlan')}
+                  </Link>
+                </p>
+              ) : (
+                <>
+                  <ul className="workout-plan-list">
+                    {plans.slice(0, MAX_PLANS_SHOWN).map((p) => (
+                      <li key={p.id} className="workout-plan-row">
+                        <span className="workout-plan-info">
+                          <span className="workout-plan-name">{p.name}</span>
+                          <span className="workout-plan-meta">
+                            {t('workout.planExerciseCount', { count: p.exerciseCount })}
+                          </span>
+                        </span>
+                        <button
+                          type="button"
+                          className="btn-secondary workout-plan-start"
+                          disabled={busy}
+                          aria-label={t('workout.startPlanNamed', { name: p.name })}
+                          onClick={() => handleStart(p.id)}
+                        >
+                          {t('workout.startShort')}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                  {plans.length > MAX_PLANS_SHOWN && (
+                    <Link to="/plans" className="workout-plans-link">
+                      {t('workout.allPlans')}
+                    </Link>
+                  )}
+                </>
+              )}
+            </section>
           </div>
         ) : (
           <>

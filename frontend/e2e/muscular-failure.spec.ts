@@ -24,8 +24,8 @@ test('a set logged to failure is marked in the workout, in history and in the ne
 
   // Start the workout from the plan.
   await page.goto('/workout')
-  await page.getByLabel('Start from plan').selectOption({ label: 'Push day' })
-  await page.getByRole('button', { name: 'Start plan' }).click()
+  // The plan row has its own Start button.
+  await page.getByRole('button', { name: 'Start plan Push day' }).click()
   await page.getByLabel('Exercise').selectOption({ label: 'Barbell Bench Press — Mid chest' })
 
   // First set with "To failure" ticked, second without.
@@ -59,8 +59,8 @@ test('a set logged to failure is marked in the workout, in history and in the ne
 
   // The next workout from the same plan shows the marker in the "last time" hint.
   await page.goto('/workout')
-  await page.getByLabel('Start from plan').selectOption({ label: 'Push day' })
-  await page.getByRole('button', { name: 'Start plan' }).click()
+  // The plan row has its own Start button.
+  await page.getByRole('button', { name: 'Start plan Push day' }).click()
   await page.getByLabel('Exercise').selectOption({ label: 'Barbell Bench Press — Mid chest' })
   const hint = page.locator('.previous-workout-hint')
   await expect(hint).toContainText('Set 1: 8 × 60 kg')
