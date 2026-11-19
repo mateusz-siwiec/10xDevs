@@ -17,8 +17,8 @@ public record LogSetRequest(
 	@Max(100)
 	int reps,
 
-	@NotNull
-	@DecimalMin(value = "0", inclusive = false)
+	/** Optional: its meaning depends on the exercise's weight mode (see WorkoutService#logSet). */
+	@DecimalMin("0")
 	@DecimalMax("1000")
 	@QuarterKgStep
 	BigDecimal weightKg,

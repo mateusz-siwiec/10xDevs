@@ -61,12 +61,21 @@ class PersonalRecordControllerTest {
 		return "Bearer " + jwtService.generateToken(user.getId(), user.getEmail());
 	}
 
+	private UUID exerciseBySlug(String slug) {
+		return exerciseRepository.findAllByOrderByNameAsc()
+			.stream()
+			.filter(exercise -> exercise.getSlug().equals(slug))
+			.findFirst()
+			.orElseThrow()
+			.getId();
+	}
+
 	private UUID exerciseId() {
-		return exerciseRepository.findAllByOrderByNameAsc().get(0).getId();
+		return exerciseBySlug("barbell-bench-press");
 	}
 
 	private UUID otherExerciseId() {
-		return exerciseRepository.findAllByOrderByNameAsc().get(1).getId();
+		return exerciseBySlug("deadlift");
 	}
 
 	private String startSession(String token) throws Exception {
@@ -237,6 +246,61 @@ class PersonalRecordControllerTest {
 			.andExpect(status().isNoContent());
 
 		mockMvc.perform(get("/api/workout-sessions/current").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(jsonPath("$.sets[0].personalRecord", is(false)))
+			.andExpect(jsonPath("$.sets[1].personalRecord", is(true)));
+	}
+
+	private String logBodyweightSet(String token, String sessionId, UUID exerciseId, int reps) throws Exception {
+		return mockMvc.perform(post("/api/workout-sessions/" + sessionId + "/sets")
+				.header(HttpHeaders.AUTHORIZATION, token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"exerciseId\":\"" + exerciseId + "\",\"reps\":" + reps + "}"))
+			.andExpect(status().isCreated())
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+	}
+
+	private boolean bodyweightFlag(String token, String sessionId, UUID exerciseId, int reps) throws Exception {
+		return JsonPath.read(logBodyweightSet(token, sessionId, exerciseId, reps), "$.personalRecord");
+	}
+
+	@Test
+	void bodyweightSetsRankByRepsAndAreExemptFromTheRepCap() throws Exception {
+		String token = bearerToken();
+		String sessionId = startSession(token);
+		UUID pullUp = exerciseBySlug("pull-up");
+
+		assertFalse(bodyweightFlag(token, sessionId, pullUp, 8));
+		assertTrue(bodyweightFlag(token, sessionId, pullUp, 10));
+		assertFalse(bodyweightFlag(token, sessionId, pullUp, 10));
+		assertFalse(bodyweightFlag(token, sessionId, pullUp, 9));
+		// Above the 15-rep weighted cap, yet eligible at weight 0.
+		assertTrue(bodyweightFlag(token, sessionId, pullUp, 20));
+	}
+
+	@Test
+	void weightedSetBeatsAnyBodyweightSetButNotTheReverse() throws Exception {
+		String token = bearerToken();
+		String sessionId = startSession(token);
+		UUID pullUp = exerciseBySlug("pull-up");
+
+		assertFalse(bodyweightFlag(token, sessionId, pullUp, 12));
+		assertTrue(logSetFlag(token, sessionId, pullUp, 1, "5"));
+		assertFalse(bodyweightFlag(token, sessionId, pullUp, 30));
+	}
+
+	@Test
+	void currentSessionReportsBodyweightRecordFlags() throws Exception {
+		String token = bearerToken();
+		String sessionId = startSession(token);
+		UUID pullUp = exerciseBySlug("pull-up");
+
+		bodyweightFlag(token, sessionId, pullUp, 8);
+		bodyweightFlag(token, sessionId, pullUp, 12);
+
+		mockMvc.perform(get("/api/workout-sessions/current").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.sets[0].personalRecord", is(false)))
 			.andExpect(jsonPath("$.sets[1].personalRecord", is(true)));
 	}

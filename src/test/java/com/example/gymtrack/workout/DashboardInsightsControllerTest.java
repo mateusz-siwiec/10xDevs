@@ -80,12 +80,21 @@ class DashboardInsightsControllerTest {
 		return "Bearer " + jwtService.generateToken(user.getId(), user.getEmail());
 	}
 
+	private UUID exerciseBySlug(String slug) {
+		return exerciseRepository.findAllByOrderByNameAsc()
+			.stream()
+			.filter(exercise -> exercise.getSlug().equals(slug))
+			.findFirst()
+			.orElseThrow()
+			.getId();
+	}
+
 	private UUID exerciseA() {
-		return exerciseRepository.findAllByOrderByNameAsc().get(0).getId();
+		return exerciseBySlug("barbell-bench-press");
 	}
 
 	private UUID exerciseB() {
-		return exerciseRepository.findAllByOrderByNameAsc().get(1).getId();
+		return exerciseBySlug("deadlift");
 	}
 
 	private String startSession(String token) throws Exception {
@@ -381,6 +390,21 @@ class DashboardInsightsControllerTest {
 		insights(tokenB).andExpect(status().isOk())
 			.andExpect(jsonPath("$.weeklyVolume[?(@.workoutCount > 0)]", hasSize(0)))
 			.andExpect(jsonPath("$.recentPersonalRecords", hasSize(0)));
+	}
+
+	@Test
+	void bodyweightRecordsAreRankedByRepsAndShowZeroWeight() throws Exception {
+		String token = bearerToken();
+		UUID pullUp = exerciseBySlug("pull-up");
+		endedSession(token, Duration.ofDays(10), new S(pullUp, 8, "0"));
+		insights(token).andExpect(jsonPath("$.recentPersonalRecords", hasSize(0)));
+
+		// 20 reps is above the weighted cap but eligible at weight 0.
+		endedSession(token, Duration.ofDays(2), new S(pullUp, 20, "0"));
+		insights(token).andExpect(jsonPath("$.recentPersonalRecords", hasSize(1)))
+			.andExpect(jsonPath("$.recentPersonalRecords[0].exerciseId", is(pullUp.toString())))
+			.andExpect(jsonPath("$.recentPersonalRecords[0].reps", is(20)))
+			.andExpect(jsonPath("$.recentPersonalRecords[0].weightKg", closeTo(0.0, 0.001)));
 	}
 
 }

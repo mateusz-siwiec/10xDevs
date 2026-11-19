@@ -424,23 +424,23 @@ V16 and V17 only add columns with defaults and relax checks, so existing rows st
 
 #### Automated
 
-- [x] 1.1 Exercise and schema tests pass: `./mvnw test -Dtest=ExerciseSeedTest,CustomExerciseControllerTest,WorkoutSchemaTest`
-- [x] 1.2 Full backend suite passes with V16 applied by Flyway: `./mvnw test`
+- [x] 1.1 Exercise and schema tests pass: `./mvnw test -Dtest=ExerciseSeedTest,CustomExerciseControllerTest,WorkoutSchemaTest` — d6a9ed4
+- [x] 1.2 Full backend suite passes with V16 applied by Flyway: `./mvnw test` — d6a9ed4
 
 #### Manual
 
-- [x] 1.3 Custom exercise with `weightMode: OPTIONAL` round-trips via the API and changing it after logging a set returns 409
+- [x] 1.3 Custom exercise with `weightMode: OPTIONAL` round-trips via the API and changing it after logging a set returns 409 — d6a9ed4
 
 ### Phase 2: Weight-aware logging and stats (backend)
 
 #### Automated
 
-- [ ] 2.1 Workout, PR and progression tests pass: `./mvnw test -Dtest=WorkoutSetControllerTest,PersonalRecordControllerTest,ProgressionRecommendationControllerTest,ProgressionControllerTest,DashboardInsightsControllerTest`
-- [ ] 2.2 Full backend suite passes: `./mvnw test`
+- [x] 2.1 Workout, PR and progression tests pass: `./mvnw test -Dtest=WorkoutSetControllerTest,PersonalRecordControllerTest,ProgressionRecommendationControllerTest,ProgressionControllerTest,DashboardInsightsControllerTest`
+- [x] 2.2 Full backend suite passes: `./mvnw test`
 
 #### Manual
 
-- [ ] 2.3 Empty-weight pull-up and ab wheel sets log via the API, a positive weight on the ab wheel is rejected, and records and chart JSON show reps
+- [x] 2.3 Empty-weight pull-up and ab wheel sets log via the API, a positive weight on the ab wheel is rejected, and records and chart JSON show reps
 
 ### Phase 3: Weight mode UI (frontend)
 

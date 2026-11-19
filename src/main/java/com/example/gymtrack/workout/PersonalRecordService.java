@@ -15,11 +15,12 @@ import org.springframework.stereotype.Service;
 /**
  * FR-014 rule: a set is a personal record when its estimated one-rep max beats every earlier
  * eligible set the user logged for that exercise. The Epley estimate {@code weight * (1 + reps/30)}
- * is compared as the exact score {@code weight * (30 + reps)} (Epley x 30), and only a strictly
- * greater score counts, so ties are not records. The first eligible set of an exercise has nothing
- * to beat and is not flagged. Sets above {@link #MAX_ELIGIBLE_REPS} reps are ignored entirely:
- * never flagged and never part of the baseline, because 1RM estimates are least reliable at higher
- * reps. The flag is derived on every read, so deleting a set re-judges the ones after it.
+ * is compared as the exact score {@code weight * (30 + reps)} (Epley x 30), with reps as the
+ * tie-break (lexicographic pair), and only a strictly greater pair counts, so ties are not records.
+ * Bodyweight sets (weight 0) therefore rank by reps alone. The first eligible set of an exercise has
+ * nothing to beat and is not flagged. Weighted sets above {@link #MAX_ELIGIBLE_REPS} reps are ignored
+ * entirely: never flagged and never part of the baseline, because 1RM estimates are least reliable at
+ * higher reps; bodyweight sets are exempt from that cap. The flag is derived on every read, so deleting a set re-judges the ones after it.
  * <p>
  * Not a transaction boundary: call it inside the caller's transaction.
  */
@@ -45,24 +46,25 @@ public class PersonalRecordService {
 		if (exerciseIds.isEmpty()) {
 			return Set.of();
 		}
-		Map<UUID, BigDecimal> best = new HashMap<>();
+		Map<UUID, Rank> best = new HashMap<>();
 		for (ExerciseScore baseline : setRepository.findBestScoresBefore(session.getUserId(), exerciseIds,
 				MAX_ELIGIBLE_REPS, session.getStartedAt())) {
-			best.put(baseline.exerciseId(), baseline.score());
+			Rank rank = new Rank(baseline.score(), baseline.reps());
+			best.merge(baseline.exerciseId(), rank, (a, b) -> b.beats(a) ? b : a);
 		}
 		Set<UUID> flagged = new HashSet<>();
 		for (WorkoutSet set : sets) {
 			if (!isEligible(set)) {
 				continue;
 			}
-			BigDecimal score = score(set);
-			BigDecimal previousBest = best.get(set.getExerciseId());
+			Rank rank = rank(set);
+			Rank previousBest = best.get(set.getExerciseId());
 			if (previousBest == null) {
-				best.put(set.getExerciseId(), score);
+				best.put(set.getExerciseId(), rank);
 			}
-			else if (score.compareTo(previousBest) > 0) {
+			else if (rank.beats(previousBest)) {
 				flagged.add(set.getId());
-				best.put(set.getExerciseId(), score);
+				best.put(set.getExerciseId(), rank);
 			}
 		}
 		return flagged;
@@ -77,33 +79,45 @@ public class PersonalRecordService {
 	 * {@code loggedAt} equals History's "everything logged before the session started" baseline.
 	 */
 	public List<PersonalRecordEntry> recentRecords(UUID userId, int limit) {
-		Map<UUID, BigDecimal> best = new HashMap<>();
+		Map<UUID, Rank> best = new HashMap<>();
 		List<PersonalRecordEntry> records = new ArrayList<>();
 		for (WorkoutSet set : setRepository.findEligibleSetsOfEndedSessions(userId, MAX_ELIGIBLE_REPS)) {
 			if (!isEligible(set)) {
 				continue;
 			}
-			BigDecimal score = score(set);
-			BigDecimal previousBest = best.get(set.getExerciseId());
+			Rank rank = rank(set);
+			Rank previousBest = best.get(set.getExerciseId());
 			if (previousBest == null) {
-				best.put(set.getExerciseId(), score);
+				best.put(set.getExerciseId(), rank);
 			}
-			else if (score.compareTo(previousBest) > 0) {
+			else if (rank.beats(previousBest)) {
 				records.add(new PersonalRecordEntry(set.getSession().getId(), set.getExerciseId(), set.getReps(),
 						set.getWeightKg(), set.getLoggedAt()));
-				best.put(set.getExerciseId(), score);
+				best.put(set.getExerciseId(), rank);
 			}
 		}
 		Collections.reverse(records);
 		return records.size() > limit ? List.copyOf(records.subList(0, limit)) : records;
 	}
 
+	/** Weighted sets obey the rep cap; bodyweight sets (weight 0) are eligible at any rep count. */
 	private static boolean isEligible(WorkoutSet set) {
-		return set.getReps() <= MAX_ELIGIBLE_REPS;
+		return set.getReps() <= MAX_ELIGIBLE_REPS || set.getWeightKg().signum() == 0;
 	}
 
-	private static BigDecimal score(WorkoutSet set) {
-		return set.getWeightKg().multiply(EPLEY_BASE.add(BigDecimal.valueOf(set.getReps())));
+	private static Rank rank(WorkoutSet set) {
+		return new Rank(set.getWeightKg().multiply(EPLEY_BASE.add(BigDecimal.valueOf(set.getReps()))),
+				set.getReps());
+	}
+
+	/** Sets rank by score, then by reps; a weight-0 set has score 0 so it ranks by reps and loses to any weighted set. */
+	private record Rank(BigDecimal score, int reps) {
+
+		boolean beats(Rank other) {
+			int byScore = score.compareTo(other.score);
+			return byScore > 0 || (byScore == 0 && reps > other.reps);
+		}
+
 	}
 
 }

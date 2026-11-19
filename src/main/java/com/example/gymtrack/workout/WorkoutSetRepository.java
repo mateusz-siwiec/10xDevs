@@ -19,13 +19,13 @@ public interface WorkoutSetRepository extends JpaRepository<WorkoutSet, UUID> {
 	Optional<WorkoutSet> findByIdAndSessionId(UUID id, UUID sessionId);
 
 	@Query("""
-			select new com.example.gymtrack.workout.ProgressionPointResponse(s.session.id, s.session.startedAt, max(s.weightKg))
+			select new com.example.gymtrack.workout.ProgressionRow(s.session.id, s.session.startedAt, max(s.weightKg), max(s.reps))
 			from WorkoutSet s
 			where s.exerciseId = :exerciseId and s.session.userId = :userId
 			group by s.session.id, s.session.startedAt
 			order by s.session.startedAt asc
 			""")
-	List<ProgressionPointResponse> findProgression(@Param("userId") UUID userId,
+	List<ProgressionRow> findProgression(@Param("userId") UUID userId,
 			@Param("exerciseId") UUID exerciseId);
 
 	@Query("""
@@ -57,11 +57,10 @@ public interface WorkoutSetRepository extends JpaRepository<WorkoutSet, UUID> {
 	List<SessionAggregate> aggregateBySession(@Param("sessionIds") Collection<UUID> sessionIds);
 
 	@Query("""
-			select new com.example.gymtrack.workout.ExerciseScore(s.exerciseId, max(s.weightKg * (30 + s.reps)))
+			select new com.example.gymtrack.workout.ExerciseScore(s.exerciseId, s.weightKg * (30 + s.reps), s.reps)
 			from WorkoutSet s
 			where s.session.userId = :userId and s.exerciseId in :exerciseIds
-				and s.reps <= :maxReps and s.loggedAt < :before
-			group by s.exerciseId
+				and (s.reps <= :maxReps or s.weightKg = 0) and s.loggedAt < :before
 			""")
 	List<ExerciseScore> findBestScoresBefore(@Param("userId") UUID userId,
 			@Param("exerciseIds") Collection<UUID> exerciseIds, @Param("maxReps") int maxReps,
@@ -69,7 +68,7 @@ public interface WorkoutSetRepository extends JpaRepository<WorkoutSet, UUID> {
 
 	@Query("""
 			select s from WorkoutSet s join fetch s.session ss
-			where ss.userId = :userId and ss.endedAt is not null and s.reps <= :maxReps
+			where ss.userId = :userId and ss.endedAt is not null and (s.reps <= :maxReps or s.weightKg = 0)
 			order by s.loggedAt asc, s.id asc
 			""")
 	List<WorkoutSet> findEligibleSetsOfEndedSessions(@Param("userId") UUID userId, @Param("maxReps") int maxReps);
