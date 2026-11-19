@@ -270,27 +270,27 @@ No database migration. API change is additive (`parents` field, optional `includ
 
 #### Automated
 
-- [x] 2.1 Type check and build pass: `cd frontend && npm run build`
-- [x] 2.2 Lint passes: `cd frontend && npm run lint`
-- [x] 2.3 Hard-coded value guard passes: `cd frontend && npm run check:tokens`
-- [x] 2.4 Unit tests pass: `cd frontend && npm run test`
-- [x] 2.5 Muscle stats e2e spec passes: `cd frontend && npx playwright test muscle-group-stats.spec.ts` (Postgres running, `CI` unset)
+- [x] 2.1 Type check and build pass: `cd frontend && npm run build` — c61fd72
+- [x] 2.2 Lint passes: `cd frontend && npm run lint` — c61fd72
+- [x] 2.3 Hard-coded value guard passes: `cd frontend && npm run check:tokens` — c61fd72
+- [x] 2.4 Unit tests pass: `cd frontend && npm run test` — c61fd72
+- [x] 2.5 Muscle stats e2e spec passes: `cd frontend && npx playwright test muscle-group-stats.spec.ts` (Postgres running, `CI` unset) — c61fd72
 
 #### Manual
 
-- [x] 2.6 In the browser the checkbox shows hover and a visible keyboard focus ring in light and dark themes
-- [x] 2.7 Ticking the box on a user with mixed exercises changes sub-rows as expected, and Shoulders never exceeds the number of sets that touched shoulders
-- [x] 2.8 The page still looks correct at phone width
+- [x] 2.6 In the browser the checkbox shows hover and a visible keyboard focus ring in light and dark themes — c61fd72
+- [x] 2.7 Ticking the box on a user with mixed exercises changes sub-rows as expected, and Shoulders never exceeds the number of sets that touched shoulders — c61fd72
+- [x] 2.8 The page still looks correct at phone width — c61fd72
 
 ### Phase 3: Docs and full verification
 
 #### Automated
 
-- [ ] 3.1 Full backend suite passes: `./mvnw test`
-- [ ] 3.2 Frontend build, lint, tokens and unit tests pass: `cd frontend && npm run build && npm run lint && npm run check:tokens && npm run test`
-- [ ] 3.3 Full e2e suite passes: `cd frontend && npm run test:e2e`
+- [x] 3.1 Full backend suite passes: `./mvnw test`
+- [x] 3.2 Frontend build, lint, tokens and unit tests pass: `cd frontend && npm run build && npm run lint && npm run check:tokens && npm run test`
+- [x] 3.3 Full e2e suite passes: `cd frontend && npm run test:e2e`
 
 #### Manual
 
-- [ ] 3.4 README section 5 matches what the page does in both modes
-- [ ] 3.5 `git status` shows only intended files changed and no baseline images modified without an explanation
+- [x] 3.4 README section 5 matches what the page does in both modes
+- [x] 3.5 `git status` shows only intended files changed and no baseline images modified without an explanation
