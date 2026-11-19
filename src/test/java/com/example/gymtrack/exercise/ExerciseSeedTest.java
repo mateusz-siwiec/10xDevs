@@ -33,11 +33,11 @@ class ExerciseSeedTest {
 	private JdbcTemplate jdbcTemplate;
 
 	@Test
-	void seedHasFortyEightExercisesWithUniqueSlugs() {
+	void seedHasFiftyExercisesWithUniqueSlugs() {
 		List<Exercise> exercises = exerciseRepository.findAll();
 
-		assertThat(exercises).hasSize(48);
-		assertThat(exercises.stream().map(Exercise::getSlug).distinct()).hasSize(48);
+		assertThat(exercises).hasSize(50);
+		assertThat(exercises.stream().map(Exercise::getSlug).distinct()).hasSize(50);
 	}
 
 	@Test
@@ -50,7 +50,8 @@ class ExerciseSeedTest {
 		// SIDE_DELTS, ADDUCTORS and ABDUCTORS with two catalog exercises each. Every other group has at
 		// least three.
 		Set<MuscleGroup> belowThree = EnumSet.of(MuscleGroup.LOWER_BACK, MuscleGroup.TRAPS, MuscleGroup.FOREARMS,
-				MuscleGroup.OBLIQUES, MuscleGroup.SIDE_DELTS, MuscleGroup.ADDUCTORS, MuscleGroup.ABDUCTORS);
+				MuscleGroup.OBLIQUES, MuscleGroup.SIDE_DELTS, MuscleGroup.ADDUCTORS, MuscleGroup.ABDUCTORS,
+				MuscleGroup.UPPER_CHEST, MuscleGroup.LOWER_CHEST);
 
 		for (MuscleGroup group : MuscleGroup.values()) {
 			if (belowThree.contains(group)) {
@@ -112,7 +113,7 @@ class ExerciseSeedTest {
 		assertSecondaries("face-pull", MuscleGroup.TRAPS);
 		assertSecondaries("barbell-bench-press", MuscleGroup.TRICEPS, MuscleGroup.FRONT_DELTS);
 		assertSecondaries("incline-dumbbell-press", MuscleGroup.TRICEPS, MuscleGroup.FRONT_DELTS);
-		assertSecondaries("close-grip-bench-press", MuscleGroup.CHEST, MuscleGroup.FRONT_DELTS);
+		assertSecondaries("close-grip-bench-press", MuscleGroup.MID_CHEST, MuscleGroup.FRONT_DELTS);
 	}
 
 	@Test
@@ -143,8 +144,23 @@ class ExerciseSeedTest {
 	}
 
 	@Test
+	void splitChestMigrationRetagsAndAddsCatalogExercises() {
+		assertPrimary("incline-dumbbell-press", MuscleGroup.UPPER_CHEST);
+		assertPrimary("barbell-bench-press", MuscleGroup.MID_CHEST);
+		assertPrimary("chest-fly", MuscleGroup.MID_CHEST);
+		assertPrimary("push-up", MuscleGroup.MID_CHEST);
+		assertPrimary("decline-bench-press", MuscleGroup.LOWER_CHEST);
+		assertPrimary("chest-dip", MuscleGroup.LOWER_CHEST);
+
+		assertSecondaries("decline-bench-press", MuscleGroup.TRICEPS, MuscleGroup.FRONT_DELTS);
+		assertSecondaries("chest-dip", MuscleGroup.TRICEPS, MuscleGroup.FRONT_DELTS);
+		assertThat(bySlug("decline-bench-press").getOwnerId()).isNull();
+		assertThat(bySlug("chest-dip").getOwnerId()).isNull();
+	}
+
+	@Test
 	void noStoredGroupIsARetiredOne() {
-		for (String retired : List.of("BACK", "CORE", "SHOULDERS")) {
+		for (String retired : List.of("BACK", "CORE", "SHOULDERS", "CHEST")) {
 			Integer primaries = jdbcTemplate.queryForObject(
 					"select count(*) from exercises where primary_muscle_group = ?", Integer.class, retired);
 			Integer secondaries = jdbcTemplate.queryForObject(

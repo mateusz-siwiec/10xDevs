@@ -43,7 +43,7 @@ class SplitShouldersMigrationTest {
 
 		assertThat(primary(jdbc, shouldersPrimary)).isEqualTo("SIDE_DELTS");
 		assertThat(secondaries(jdbc, shouldersPrimary)).isEmpty();
-		assertThat(primary(jdbc, shouldersSecondary)).isEqualTo("CHEST");
+		assertThat(primary(jdbc, shouldersSecondary)).isEqualTo("MID_CHEST");
 		assertThat(secondaries(jdbc, shouldersSecondary)).containsExactly("FRONT_DELTS");
 		assertThat(primary(jdbc, shouldersBoth)).isEqualTo("SIDE_DELTS");
 		assertThat(secondaries(jdbc, shouldersBoth)).containsExactly("TRICEPS");
