@@ -1,7 +1,7 @@
 ---
 change_id: chest-regions
 title: Upper, mid and lower chest muscle groups
-status: implementing
+status: implemented
 created: 2026-11-19
 updated: 2026-11-19
 archived_at: null

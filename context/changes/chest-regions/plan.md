@@ -338,10 +338,10 @@ V14 runs on every deploy against Supabase. Per CLAUDE.md, never point a local ru
 
 #### Automated
 
-- [x] 4.1 Full backend suite passes: `./mvnw test`
-- [x] 4.2 Full frontend suite passes: `npm run test` and `npm run build`
-- [x] 4.3 Full end-to-end suite passes and no snapshot PNG changed
+- [x] 4.1 Full backend suite passes: `./mvnw test` — 6ffe0f9
+- [x] 4.2 Full frontend suite passes: `npm run test` and `npm run build` — 6ffe0f9
+- [x] 4.3 Full end-to-end suite passes and no snapshot PNG changed — 6ffe0f9
 
 #### Manual
 
-- [x] 4.4 CLAUDE.md names V15 as the next migration and the final figure check matches the approved preview
+- [x] 4.4 CLAUDE.md names V15 as the next migration and the final figure check matches the approved preview — 6ffe0f9
