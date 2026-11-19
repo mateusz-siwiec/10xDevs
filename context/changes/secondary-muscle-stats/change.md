@@ -1,7 +1,7 @@
 ---
 change_id: secondary-muscle-stats
 title: Include secondary muscles toggle on muscle group stats
-status: implementing
+status: implemented
 created: 2026-11-19
 updated: 2026-11-19
 archived_at: null

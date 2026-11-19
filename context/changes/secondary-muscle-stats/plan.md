@@ -286,11 +286,11 @@ No database migration. API change is additive (`parents` field, optional `includ
 
 #### Automated
 
-- [x] 3.1 Full backend suite passes: `./mvnw test`
-- [x] 3.2 Frontend build, lint, tokens and unit tests pass: `cd frontend && npm run build && npm run lint && npm run check:tokens && npm run test`
-- [x] 3.3 Full e2e suite passes: `cd frontend && npm run test:e2e`
+- [x] 3.1 Full backend suite passes: `./mvnw test` — 8382641
+- [x] 3.2 Frontend build, lint, tokens and unit tests pass: `cd frontend && npm run build && npm run lint && npm run check:tokens && npm run test` — 8382641
+- [x] 3.3 Full e2e suite passes: `cd frontend && npm run test:e2e` — 8382641
 
 #### Manual
 
-- [x] 3.4 README section 5 matches what the page does in both modes
-- [x] 3.5 `git status` shows only intended files changed and no baseline images modified without an explanation
+- [x] 3.4 README section 5 matches what the page does in both modes — 8382641
+- [x] 3.5 `git status` shows only intended files changed and no baseline images modified without an explanation — 8382641
