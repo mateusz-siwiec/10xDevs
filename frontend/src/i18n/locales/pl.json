@@ -354,6 +354,8 @@
     "failureCount_many": "{{count}} do upadku",
     "failureCount_other": "{{count}} do upadku",
     "note": "Każda seria liczy się do głównej partii mięśniowej ćwiczenia. Uwzględniane są tylko zakończone treningi. Wybierz grupę, aby zobaczyć jej mięśnie.",
+    "includeSecondary": "Uwzględnij mięśnie pomocnicze",
+    "noteSecondary": "Seria liczy się raz w każdej grupie mięśniowej i raz w każdym mięśniu, głównym lub pomocniczym, więc suma wierszy mięśni może przekraczać łączną liczbę serii. Uwzględniane są tylko zakończone treningi. Wybierz grupę, aby zobaczyć jej mięśnie.",
     "parent": {
       "CHEST": "Klatka piersiowa",
       "BACK": "Plecy",

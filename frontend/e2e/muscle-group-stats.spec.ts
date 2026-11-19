@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import type { APIRequestContext, Page } from '@playwright/test'
-import { API, PASSWORD, auth, exerciseIdByGroup, registerViaApi } from './helpers.js'
+import { API, PASSWORD, auth, exerciseId, exerciseIdByGroup, registerViaApi } from './helpers.js'
 import type { ApiUser } from './helpers.js'
 
 type Plan = [group: string, sets: number][]
@@ -189,4 +189,94 @@ test('in Polish the parents and sub-groups are translated', async ({ page, reque
   await expect(child(page, 'REAR_DELTS')).toContainText('Tylna głowa barku')
   await expect(child(page, 'REAR_DELTS')).toContainText('2')
   await expect(page.getByText('Plecy', { exact: true })).toBeVisible()
+})
+
+async function logExerciseSets(request: APIRequestContext, user: ApiUser, exerciseId: string, sets: number) {
+  const session = await request.post(`${API}/api/workout-sessions`, auth(user))
+  const sessionId = (await session.json()).id
+  for (let i = 0; i < sets; i++) {
+    const logged = await request.post(`${API}/api/workout-sessions/${sessionId}/sets`, {
+      ...auth(user),
+      data: { exerciseId, reps: 8, weightKg: 50 },
+    })
+    expect(logged.ok()).toBeTruthy()
+  }
+  const ended = await request.post(`${API}/api/workout-sessions/${sessionId}/end`, auth(user))
+  expect(ended.ok()).toBeTruthy()
+}
+
+test('including secondary muscles counts a set once for the parent and once on each muscle row', async ({
+  page,
+  request,
+}) => {
+  const user = await registerViaApi(request, 'muscles-secondary')
+  const created = await request.post(`${API}/api/exercises`, {
+    ...auth(user),
+    data: { name: 'Front raise combo', primaryMuscleGroup: 'FRONT_DELTS', secondaryMuscleGroups: ['SIDE_DELTS'] },
+  })
+  expect(created.ok()).toBeTruthy()
+  await logExerciseSets(request, user, (await created.json()).id, 1)
+  await openStats(page, user)
+
+  const checkbox = page.getByRole('checkbox', { name: 'Include secondary muscles' })
+  await expect(checkbox).not.toBeChecked()
+  await page.getByRole('button', { name: 'Shoulders', exact: true }).click()
+  await expect(parent(page, 'SHOULDERS')).toContainText('1')
+  await expect(child(page, 'FRONT_DELTS')).toContainText('1')
+  await expect(child(page, 'SIDE_DELTS')).toContainText('0')
+
+  await checkbox.check()
+  await expect(page.getByText(/once per muscle group/)).toBeVisible()
+  await expect(page.getByText('1 set in total')).toBeVisible()
+  await expect(child(page, 'SIDE_DELTS')).toContainText('1')
+  await expect(child(page, 'FRONT_DELTS')).toContainText('1')
+  await expect(parent(page, 'SHOULDERS').locator('.muscle-row').first()).not.toContainText('2')
+
+  await checkbox.uncheck()
+  await expect(child(page, 'SIDE_DELTS')).toContainText('0')
+  await expect(child(page, 'FRONT_DELTS')).toContainText('1')
+  await expect(page.getByText('1 set in total')).toBeVisible()
+})
+
+test('a secondary muscle in another parent adds to that parent row', async ({ page, request }) => {
+  const user = await registerViaApi(request, 'muscles-secondary-parent')
+  await logExerciseSets(request, user, await exerciseId(request, user, 'Barbell Bench Press'), 2)
+  await openStats(page, user)
+
+  await expect(parent(page, 'ARMS')).toContainText('0')
+  await page.getByRole('checkbox', { name: 'Include secondary muscles' }).check()
+  await expect(parent(page, 'ARMS')).toContainText('2')
+  await expect(parent(page, 'CHEST')).toContainText('2')
+  await expect(page.getByText('2 sets in total')).toBeVisible()
+})
+
+test('in Polish the secondary toggle label and footnote are translated', async ({ page, request }) => {
+  const user = await registerViaApi(request, 'muscles-secondary-pl')
+  await logSets(request, user, [['LATS', 1]])
+  await openStats(page, user, 'pl')
+
+  const checkbox = page.getByRole('checkbox', { name: 'Uwzględnij mięśnie pomocnicze' })
+  await expect(checkbox).toBeVisible()
+  await checkbox.check()
+  await expect(page.getByText(/raz w każdej grupie mięśniowej/)).toBeVisible()
+})
+
+test('the secondary checkbox toggles with Space and keeps an expanded parent open', async ({ page, request }) => {
+  const user = await registerViaApi(request, 'muscles-secondary-kbd')
+  await logSets(request, user, [['LATS', 2]])
+  await openStats(page, user)
+
+  const toggle = page.getByRole('button', { name: 'Back', exact: true })
+  await toggle.click()
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true')
+
+  const checkbox = page.getByRole('checkbox', { name: 'Include secondary muscles' })
+  await checkbox.focus()
+  await page.keyboard.press('Space')
+  await expect(checkbox).toBeChecked()
+  await expect(page.getByText(/once per muscle group/)).toBeVisible()
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true')
+  await expect(child(page, 'LATS')).toBeVisible()
+  await page.keyboard.press('Space')
+  await expect(checkbox).not.toBeChecked()
 })

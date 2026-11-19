@@ -258,29 +258,29 @@ No database migration. API change is additive (`parents` field, optional `includ
 
 #### Automated
 
-- [x] 1.1 Stats controller tests pass: `./mvnw test -Dtest=MuscleGroupStatsControllerTest`
-- [x] 1.2 Parent mapping test passes: `./mvnw test -Dtest=MuscleGroupParentTest`
-- [x] 1.3 Full backend suite passes: `./mvnw test`
+- [x] 1.1 Stats controller tests pass: `./mvnw test -Dtest=MuscleGroupStatsControllerTest` — 56dceda
+- [x] 1.2 Parent mapping test passes: `./mvnw test -Dtest=MuscleGroupParentTest` — 56dceda
+- [x] 1.3 Full backend suite passes: `./mvnw test` — 56dceda
 
 #### Manual
 
-- [x] 1.4 With the `local` profile and Postgres up, `GET /api/dashboard/muscle-groups?includeSecondary=true` returns `parents` with six entries and the same `totalSets` as without the flag
+- [x] 1.4 With the `local` profile and Postgres up, `GET /api/dashboard/muscle-groups?includeSecondary=true` returns `parents` with six entries and the same `totalSets` as without the flag — 56dceda
 
 ### Phase 2: Frontend toggle and parent rows
 
 #### Automated
 
-- [ ] 2.1 Type check and build pass: `cd frontend && npm run build`
-- [ ] 2.2 Lint passes: `cd frontend && npm run lint`
-- [ ] 2.3 Hard-coded value guard passes: `cd frontend && npm run check:tokens`
-- [ ] 2.4 Unit tests pass: `cd frontend && npm run test`
-- [ ] 2.5 Muscle stats e2e spec passes: `cd frontend && npx playwright test muscle-group-stats.spec.ts` (Postgres running, `CI` unset)
+- [x] 2.1 Type check and build pass: `cd frontend && npm run build`
+- [x] 2.2 Lint passes: `cd frontend && npm run lint`
+- [x] 2.3 Hard-coded value guard passes: `cd frontend && npm run check:tokens`
+- [x] 2.4 Unit tests pass: `cd frontend && npm run test`
+- [x] 2.5 Muscle stats e2e spec passes: `cd frontend && npx playwright test muscle-group-stats.spec.ts` (Postgres running, `CI` unset)
 
 #### Manual
 
-- [ ] 2.6 In the browser the checkbox shows hover and a visible keyboard focus ring in light and dark themes
-- [ ] 2.7 Ticking the box on a user with mixed exercises changes sub-rows as expected, and Shoulders never exceeds the number of sets that touched shoulders
-- [ ] 2.8 The page still looks correct at phone width
+- [x] 2.6 In the browser the checkbox shows hover and a visible keyboard focus ring in light and dark themes
+- [x] 2.7 Ticking the box on a user with mixed exercises changes sub-rows as expected, and Shoulders never exceeds the number of sets that touched shoulders
+- [x] 2.8 The page still looks correct at phone width
 
 ### Phase 3: Docs and full verification
 

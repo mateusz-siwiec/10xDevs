@@ -336,6 +336,8 @@
     "failureCount_one": "{{count}} to failure",
     "failureCount_other": "{{count}} to failure",
     "note": "Each set counts for the primary muscle group of its exercise. Only finished workouts are included. Select a group to see its muscles.",
+    "includeSecondary": "Include secondary muscles",
+    "noteSecondary": "A set counts once per muscle group and once per muscle, primary or secondary, so the muscle rows can add up to more than the total. Only finished workouts are included. Select a group to see its muscles.",
     "parent": {
       "CHEST": "Chest",
       "BACK": "Back",
