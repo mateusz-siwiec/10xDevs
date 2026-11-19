@@ -221,6 +221,8 @@
     "incline-dumbbell-press": "Incline Dumbbell Press",
     "chest-fly": "Chest Fly",
     "push-up": "Push-Up",
+    "decline-bench-press": "Decline Bench Press",
+    "chest-dip": "Chest Dip",
     "deadlift": "Deadlift",
     "pull-up": "Pull-Up",
     "barbell-row": "Barbell Row",
@@ -344,7 +346,9 @@
     }
   },
   "muscle": {
-    "CHEST": "Chest",
+    "UPPER_CHEST": "Upper chest",
+    "MID_CHEST": "Mid chest",
+    "LOWER_CHEST": "Lower chest",
     "LATS": "Lats",
     "TRAPS": "Traps",
     "LOWER_BACK": "Lower back",
@@ -433,6 +437,18 @@
       "Brace your core and squeeze your glutes so your hips do not sag.",
       "Lower your chest to just above the floor with your elbows at about 45 degrees.",
       "Push the floor away until your arms are fully straight."
+    ],
+    "decline-bench-press": [
+      "Secure your legs under the pads and lie back with your eyes under the bar.",
+      "Pull your shoulder blades together and keep them pinned to the bench.",
+      "Lower the bar under control to your lower chest, elbows about 45 degrees from your body.",
+      "Press the bar up until your arms are straight without bouncing it off your chest."
+    ],
+    "chest-dip": [
+      "Grip the bars and lock your arms out with your shoulders pulled down and back.",
+      "Lean your torso forward and flare your elbows slightly to put the load on your chest.",
+      "Lower slowly until you feel a deep stretch across your lower chest.",
+      "Press back up to full lockout without swinging your legs."
     ],
     "deadlift": [
       "Stand with the bar over mid-foot and grip it just outside your legs.",

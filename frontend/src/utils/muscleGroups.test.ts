@@ -9,9 +9,10 @@ describe('muscleGroupLabel', () => {
     await i18n.changeLanguage('en')
   })
 
-  it('covers the 18 backend groups in order', () => {
+  it('covers the 20 backend groups in order', () => {
     expect([...MUSCLE_GROUPS]).toEqual([
-      'CHEST', 'LATS', 'TRAPS', 'LOWER_BACK', 'FRONT_DELTS', 'SIDE_DELTS', 'REAR_DELTS', 'BICEPS',
+      'UPPER_CHEST', 'MID_CHEST', 'LOWER_CHEST', 'LATS', 'TRAPS', 'LOWER_BACK', 'FRONT_DELTS',
+      'SIDE_DELTS', 'REAR_DELTS', 'BICEPS',
       'TRICEPS', 'FOREARMS', 'QUADS', 'HAMSTRINGS', 'GLUTES', 'ADDUCTORS', 'ABDUCTORS', 'CALVES',
       'ABS', 'OBLIQUES',
     ])

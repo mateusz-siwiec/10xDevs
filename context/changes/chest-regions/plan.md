@@ -297,26 +297,26 @@ V14 runs on every deploy against Supabase. Per CLAUDE.md, never point a local ru
 
 #### Automated
 
-- [x] 1.1 Backend suite passes with the new enum and migration: `./mvnw test`
-- [x] 1.2 Chest migration test passes: `./mvnw test -Dtest=SplitChestMigrationTest`
-- [x] 1.3 Seed expectations (50 exercises, re-tagged built-ins, two new LOWER_CHEST rows) pass: `./mvnw test -Dtest=ExerciseSeedTest`
+- [x] 1.1 Backend suite passes with the new enum and migration: `./mvnw test` — e3783ce
+- [x] 1.2 Chest migration test passes: `./mvnw test -Dtest=SplitChestMigrationTest` — e3783ce
+- [x] 1.3 Seed expectations (50 exercises, re-tagged built-ins, two new LOWER_CHEST rows) pass: `./mvnw test -Dtest=ExerciseSeedTest` — e3783ce
 
 #### Manual
 
-- [x] 1.4 Local API filter returns the expected exercises for LOWER_CHEST and UPPER_CHEST
+- [x] 1.4 Local API filter returns the expected exercises for LOWER_CHEST and UPPER_CHEST — e3783ce
 
 ### Phase 2: Figure artwork with preview gate
 
 #### Automated
 
-- [ ] 2.1 Frontend unit tests pass: `npm run test`
-- [ ] 2.2 Type check and build pass: `npm run build`
-- [ ] 2.3 Lint passes: `npm run lint`
+- [x] 2.1 Frontend unit tests pass: `npm run test`
+- [x] 2.2 Type check and build pass: `npm run build`
+- [x] 2.3 Lint passes: `npm run lint`
 
 #### Manual
 
-- [ ] 2.4 Rendered preview of the three chest bands per side reviewed and approved by the user
-- [ ] 2.5 Tooltip highlights only the upper band for incline dumbbell press and only the lower band for decline bench press
+- [x] 2.4 Rendered preview of the three chest bands per side reviewed and approved by the user
+- [x] 2.5 Tooltip highlights only the upper band for incline dumbbell press and only the lower band for decline bench press
 
 ### Phase 3: Frontend integration
 
