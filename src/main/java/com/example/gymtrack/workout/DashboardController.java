@@ -27,8 +27,9 @@ public class DashboardController {
 
 	@GetMapping("/api/dashboard/muscle-groups")
 	public MuscleGroupStatsResponse muscleGroups(@AuthenticationPrincipal CurrentUser currentUser,
-			@RequestParam(defaultValue = "30") String days) {
-		return dashboardService.muscleGroupStats(currentUser.id(), days);
+			@RequestParam(defaultValue = "30") String days,
+			@RequestParam(defaultValue = "false") boolean includeSecondary) {
+		return dashboardService.muscleGroupStats(currentUser.id(), days, includeSecondary);
 	}
 
 	@GetMapping("/api/dashboard/insights")

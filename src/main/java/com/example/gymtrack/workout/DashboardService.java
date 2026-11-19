@@ -5,6 +5,7 @@ import com.example.gymtrack.common.ResourceNotFoundException;
 import com.example.gymtrack.exercise.Exercise;
 import com.example.gymtrack.exercise.ExerciseRepository;
 import com.example.gymtrack.exercise.MuscleGroup;
+import com.example.gymtrack.exercise.MuscleParent;
 import com.example.gymtrack.user.User;
 import com.example.gymtrack.user.UserRepository;
 import java.math.BigDecimal;
@@ -13,11 +14,13 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -164,11 +167,14 @@ public class DashboardService {
 	}
 
 	/**
-	 * Sets per primary muscle group over ended workouts with {@code endedAt} in the window, one entry for
-	 * every group (zeros included) in enum order. A set counts once, for its exercise's primary group only.
+	 * Sets per muscle group and per parent over ended workouts with {@code endedAt} in the window, one
+	 * entry for every group and every parent (zeros included) in enum order. Counting is per exercise: its
+	 * sets go to the primary group and, when {@code includeSecondary} is set, to each secondary group too;
+	 * each distinct parent of those muscles gets them once. {@code totalSets} is the number of sets logged,
+	 * so with secondary muscles the group rows can add up to more.
 	 */
 	@Transactional(readOnly = true)
-	public MuscleGroupStatsResponse muscleGroupStats(UUID userId, String window) {
+	public MuscleGroupStatsResponse muscleGroupStats(UUID userId, String window, boolean includeSecondary) {
 		Instant now = Instant.now();
 		Integer days = null;
 		Instant from = Instant.EPOCH;
@@ -176,19 +182,53 @@ public class DashboardService {
 			days = parseDays(window);
 			from = now.minus(Duration.ofDays(days));
 		}
-		Map<MuscleGroup, MuscleGroupCount> counts = new EnumMap<>(MuscleGroup.class);
-		for (MuscleGroupCount count : setRepository.countSetsByMuscleGroupBetween(userId, from, now)) {
-			counts.put(count.muscleGroup(), count);
+		List<ExerciseSetCount> exerciseCounts = setRepository.countSetsByExerciseBetween(userId, from, now);
+		Map<UUID, Exercise> exercises = exerciseRepository
+			.findAllById(exerciseCounts.stream().map(ExerciseSetCount::exerciseId).toList())
+			.stream()
+			.collect(Collectors.toMap(Exercise::getId, Function.identity()));
+
+		Map<MuscleGroup, long[]> groupCounts = new EnumMap<>(MuscleGroup.class);
+		Map<MuscleParent, long[]> parentCounts = new EnumMap<>(MuscleParent.class);
+		long totalSets = 0;
+		for (ExerciseSetCount count : exerciseCounts) {
+			totalSets += count.sets();
+			Exercise exercise = exercises.get(count.exerciseId());
+			if (exercise == null) {
+				continue;
+			}
+			Set<MuscleGroup> muscles = EnumSet.of(exercise.getPrimaryMuscleGroup());
+			if (includeSecondary) {
+				muscles.addAll(exercise.getSecondaryMuscleGroups());
+			}
+			Set<MuscleParent> parents = EnumSet.noneOf(MuscleParent.class);
+			for (MuscleGroup muscle : muscles) {
+				add(groupCounts, muscle, count);
+				parents.add(muscle.parent());
+			}
+			for (MuscleParent parent : parents) {
+				add(parentCounts, parent, count);
+			}
 		}
 		List<MuscleGroupStatsResponse.Group> groups = Arrays.stream(MuscleGroup.values())
 			.map(group -> {
-				MuscleGroupCount count = counts.get(group);
-				return new MuscleGroupStatsResponse.Group(group, count == null ? 0L : count.sets(),
-						count == null ? 0L : count.failureSets());
+				long[] sums = groupCounts.getOrDefault(group, new long[2]);
+				return new MuscleGroupStatsResponse.Group(group, sums[0], sums[1]);
 			})
 			.toList();
-		return new MuscleGroupStatsResponse(days, groups.stream().mapToLong(MuscleGroupStatsResponse.Group::sets).sum(),
-				groups);
+		List<MuscleGroupStatsResponse.Parent> parents = Arrays.stream(MuscleParent.values())
+			.map(parent -> {
+				long[] sums = parentCounts.getOrDefault(parent, new long[2]);
+				return new MuscleGroupStatsResponse.Parent(parent, sums[0], sums[1]);
+			})
+			.toList();
+		return new MuscleGroupStatsResponse(days, totalSets, groups, parents);
+	}
+
+	private static <K> void add(Map<K, long[]> sums, K key, ExerciseSetCount count) {
+		long[] entry = sums.computeIfAbsent(key, k -> new long[2]);
+		entry[0] += count.sets();
+		entry[1] += count.failureSets();
 	}
 
 	private static int parseDays(String window) {
