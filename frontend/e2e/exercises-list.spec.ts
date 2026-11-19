@@ -426,7 +426,8 @@ test.describe('technique tooltip', () => {
     await page.keyboard.press('Tab')
     await expect(panel).toBeVisible()
 
-    await page.getByRole('heading', { name: 'Exercises', exact: true }).click()
+    // The fixed panel can sit over the heading, so click a corner of the viewport the panel never reaches.
+    await page.mouse.click(5, 5)
     await expect(panel).toHaveCount(0)
   })
 
