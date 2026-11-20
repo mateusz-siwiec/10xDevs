@@ -461,28 +461,28 @@ V16 and V17 only add columns with defaults and relax checks, so existing rows st
 
 #### Automated
 
-- [x] 4.1 Schema tests pass: `./mvnw test -Dtest=WorkoutSchemaTest,TrainingPlanSchemaTest,ExerciseSeedTest`
-- [x] 4.2 Duration-related controller tests pass: `./mvnw test -Dtest=WorkoutSetControllerTest,TrainingPlanControllerTest,HistoryControllerTest,PreviousWorkoutControllerTest,PersonalRecordControllerTest,ProgressionControllerTest,ProgressionRecommendationControllerTest`
-- [x] 4.3 Full backend suite passes: `./mvnw test`
+- [x] 4.1 Schema tests pass: `./mvnw test -Dtest=WorkoutSchemaTest,TrainingPlanSchemaTest,ExerciseSeedTest` — 4eb7a70
+- [x] 4.2 Duration-related controller tests pass: `./mvnw test -Dtest=WorkoutSetControllerTest,TrainingPlanControllerTest,HistoryControllerTest,PreviousWorkoutControllerTest,PersonalRecordControllerTest,ProgressionControllerTest,ProgressionRecommendationControllerTest` — 4eb7a70
+- [x] 4.3 Full backend suite passes: `./mvnw test` — 4eb7a70
 
 #### Manual
 
-- [x] 4.4 A plank set logs via the API and session, history, previous workout, records and chart endpoints all return 200 with sensible values
+- [x] 4.4 A plank set logs via the API and session, history, previous workout, records and chart endpoints all return 200 with sensible values — 4eb7a70
 
 ### Phase 5: Duration UI and plans (frontend)
 
 #### Automated
 
-- [ ] 5.1 Lint passes: `npm run lint`
-- [ ] 5.2 Build passes: `npm run build`
-- [ ] 5.3 Token guard passes: `npm run check:tokens`
-- [ ] 5.4 Unit tests pass: `npx vitest run`
-- [ ] 5.5 Existing Playwright specs pass: `npm run test:e2e`
+- [x] 5.1 Lint passes: `npm run lint`
+- [x] 5.2 Build passes: `npm run build`
+- [x] 5.3 Token guard passes: `npm run check:tokens`
+- [x] 5.4 Unit tests pass: `npx vitest run`
+- [x] 5.5 Existing Playwright specs pass: `npm run test:e2e`
 
 #### Manual
 
-- [ ] 5.6 Plank sets log with and without added weight and appear in session list, history, previous-workout hint and chart (seconds)
-- [ ] 5.7 A plan with a plank entry shows a seconds target in the editor and walkthrough, and saving a workout with a plank as a plan creates a seconds target
+- [x] 5.6 Plank sets log with and without added weight and appear in session list, history, previous-workout hint and chart (seconds)
+- [x] 5.7 A plan with a plank entry shows a seconds target in the editor and walkthrough, and saving a workout with a plank as a plan creates a seconds target
 
 ### Phase 6: End-to-end coverage and docs
 

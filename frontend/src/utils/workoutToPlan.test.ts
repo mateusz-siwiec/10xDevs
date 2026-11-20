@@ -46,6 +46,29 @@ describe('workoutToPlanEntries', () => {
   })
 })
 
+describe('workoutToPlanEntries with timed sets', () => {
+  const timed = (exerciseId: string, durationSeconds: number) => ({ exerciseId, reps: null, durationSeconds })
+
+  it('makes a duration target from the most common seconds', () => {
+    expect(workoutToPlanEntries([timed('p', 45), timed('p', 45), timed('p', 30)])).toEqual([
+      { exerciseId: 'p', sets: 3, targetDurationSeconds: 45 },
+    ])
+  })
+
+  it('clamps the duration target within 1-3600', () => {
+    expect(workoutToPlanEntries([timed('p', 9000)])[0].targetDurationSeconds).toBe(3600)
+    expect(workoutToPlanEntries([timed('p', 0)])[0].targetDurationSeconds).toBe(1)
+  })
+
+  it('mixes timed and rep entries in workout order', () => {
+    const entries = workoutToPlanEntries([set('a', 10), timed('p', 60)])
+    expect(entries).toEqual([
+      { exerciseId: 'a', sets: 1, reps: 10 },
+      { exerciseId: 'p', sets: 1, targetDurationSeconds: 60 },
+    ])
+  })
+})
+
 describe('defaultPlanName', () => {
   beforeEach(async () => {
     await i18n.changeLanguage('en')

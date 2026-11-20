@@ -41,9 +41,29 @@ export function formatShortDate(value: string): string {
     : date.toLocaleDateString(appLocale(), { month: 'short', day: 'numeric' })
 }
 
-/** One set as shown in lists: "8 × 60 kg", or "8 reps" when no weight was added. */
-export function formatSet({ reps, weightKg }: { reps: number; weightKg: number }): string {
-  return weightKg > 0
-    ? `${reps} × ${weightKg} kg`
-    : i18n.t('common.repsCount', { count: reps })
+/** Seconds as shown everywhere sets are listed: "45 s" (plain seconds, matching the 1-3600 input). */
+export function formatSeconds(seconds: number): string {
+  return i18n.t('common.secondsCount', { seconds })
+}
+
+/**
+ * One set as shown in lists: "8 × 60 kg", "8 reps" when no weight was added, "45 s" for a timed set,
+ * or "45 s × 10 kg" for a timed set with added weight.
+ */
+export function formatSet({
+  reps,
+  durationSeconds,
+  weightKg,
+}: {
+  reps: number | null
+  durationSeconds?: number | null
+  weightKg: number
+}): string {
+  if (durationSeconds != null) {
+    return weightKg > 0
+      ? `${formatSeconds(durationSeconds)} × ${weightKg} kg`
+      : formatSeconds(durationSeconds)
+  }
+  const count = reps ?? 0
+  return weightKg > 0 ? `${count} × ${weightKg} kg` : i18n.t('common.repsCount', { count })
 }

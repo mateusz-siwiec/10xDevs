@@ -5,12 +5,17 @@ import { formatDate } from './format'
 const MAX_SETS = 20
 const MIN_REPS = 1
 const MAX_REPS = 100
+const MIN_DURATION_SECONDS = 1
+const MAX_DURATION_SECONDS = 3600
 const MAX_ENTRIES = 50
 export const PLAN_NAME_MAX_LENGTH = 60
 
 export interface LoggedSet {
   exerciseId: string
-  reps: number
+  /** Set for rep-based sets; null for timed sets. */
+  reps: number | null
+  /** Set for timed sets; null/absent for rep-based sets. */
+  durationSeconds?: number | null
 }
 
 /** Most frequent value; ties go to the higher one. */
@@ -26,6 +31,18 @@ function mostCommon(values: number[]): number {
     }
   }
   return best
+}
+
+/** Timed runs get a duration target (most common seconds), rep runs a reps target, each clamped to the plan limits. */
+function targetFor(run: readonly LoggedSet[]): Pick<PlanEntryInput, 'reps' | 'targetDurationSeconds'> {
+  const durations = run.flatMap((s) => (s.durationSeconds != null ? [s.durationSeconds] : []))
+  if (durations.length > 0) {
+    return {
+      targetDurationSeconds: Math.min(Math.max(mostCommon(durations), MIN_DURATION_SECONDS), MAX_DURATION_SECONDS),
+    }
+  }
+  const reps = run.map((s) => s.reps ?? 0)
+  return { reps: Math.min(Math.max(mostCommon(reps), MIN_REPS), MAX_REPS) }
 }
 
 /** Consecutive runs of the same exercise, in logged order (before any plan limit is applied). */
@@ -47,14 +64,14 @@ export function exceedsPlanLimits(sets: readonly LoggedSet[]): boolean {
 
 /**
  * Turns a workout's sets (in logged order) into plan entries: one entry per consecutive run of the same
- * exercise, so an exercise revisited later stays a separate entry. Sets = run length (capped), reps = the
- * most common rep count in the run, at most 50 entries.
+ * exercise, so an exercise revisited later stays a separate entry. Sets = run length (capped), reps (or a duration target for timed
+ * exercises) = the most common value in the run, at most 50 entries.
  */
 export function workoutToPlanEntries(sets: readonly LoggedSet[]): PlanEntryInput[] {
   return groupRuns(sets).slice(0, MAX_ENTRIES).map((run) => ({
     exerciseId: run[0].exerciseId,
     sets: Math.min(run.length, MAX_SETS),
-    reps: Math.min(Math.max(mostCommon(run.map((s) => s.reps)), MIN_REPS), MAX_REPS),
+    ...targetFor(run),
   }))
 }
 

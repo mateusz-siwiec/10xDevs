@@ -139,7 +139,7 @@ export default function HistoryDetailPage() {
         )}
         <div className="history-detail-actions">
           <SaveAsPlan
-            sets={data.exercises.flatMap((g) => g.sets.map((s) => ({ exerciseId: g.exerciseId, reps: s.reps })))}
+            sets={data.exercises.flatMap((g) => g.sets.map((s) => ({ exerciseId: g.exerciseId, reps: s.reps, durationSeconds: s.durationSeconds })))}
             defaultName={defaultPlanName(data.planName, data.startedAt)}
           />
           {confirming ? (

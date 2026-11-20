@@ -65,9 +65,14 @@ export default function ProgressionChart({ exerciseId, refreshKey }: Progression
   } else if (shown.points.length === 0) {
     body = <p className="page-subtext">{t('progression.empty')}</p>
   } else {
-    const isReps = shown.points[0].metric === 'REPS'
-    const unit = t(isReps ? 'progression.unitReps' : 'progression.unitKg')
-    const seriesLabel = t(isReps ? 'progression.topReps' : 'progression.topWeight')
+    const metric = shown.points[0].metric
+    const isWhole = metric !== 'WEIGHT'
+    const unit = t(
+      metric === 'DURATION' ? 'progression.unitSeconds' : metric === 'REPS' ? 'progression.unitReps' : 'progression.unitKg',
+    )
+    const seriesLabel = t(
+      metric === 'DURATION' ? 'progression.topDuration' : metric === 'REPS' ? 'progression.topReps' : 'progression.topWeight',
+    )
     body = (
       <div className="progression-chart-body">
         <ResponsiveContainer width="100%" height={240}>
@@ -78,7 +83,7 @@ export default function ProgressionChart({ exerciseId, refreshKey }: Progression
               unit={unit}
               width={56}
               domain={['auto', 'auto']}
-              allowDecimals={!isReps}
+              allowDecimals={!isWhole}
               {...axisProps}
             />
             <Tooltip

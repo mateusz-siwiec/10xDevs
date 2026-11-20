@@ -15,6 +15,7 @@
     "repsCount_few": "{{count}} powtórzenia",
     "repsCount_many": "{{count}} powtórzeń",
     "repsCount_other": "{{count}} powtórzenia",
+    "secondsCount": "{{seconds}} s",
     "language": "Język",
     "duration": {
       "lessThanMinute": "<1 min",
@@ -146,8 +147,10 @@
     "empty": "Brak historii dla tego ćwiczenia. Zapisz serię, aby zacząć wykres.",
     "topWeight": "Największy ciężar",
     "topReps": "Najwięcej powtórzeń",
+    "topDuration": "Najdłuższy czas",
     "unitKg": " kg",
-    "unitReps": " powt."
+    "unitReps": " powt.",
+    "unitSeconds": " s"
   },
   "plans": {
     "title": "Plany",
@@ -171,8 +174,10 @@
       "noExercises": "Nie dodano jeszcze żadnych ćwiczeń.",
       "sets": "Serie",
       "reps": "Powtórzenia",
+      "durationSeconds": "Sekundy",
       "setsFor": "Serie: {{name}}",
       "repsFor": "Powtórzenia: {{name}}",
+      "durationFor": "Sekundy: {{name}}",
       "moveUpLabel": "Przesuń w górę: {{name}}",
       "moveDownLabel": "Przesuń w dół: {{name}}",
       "movedTo": "{{name}}: pozycja {{position}} z {{total}}",
@@ -191,8 +196,11 @@
     "weightMode": "Obciążenie",
     "weightModeRequired": "Z obciążeniem (ciężar wymagany)",
     "weightModeOptional": "Opcjonalne dodatkowe obciążenie (np. podciąganie)",
-    "weightModeNone": "Bez obciążenia (tylko powtórzenia)",
-    "weightModeInUse": "Nie można zmienić ustawienia obciążenia, bo to ćwiczenie ma już zapisane serie.",
+    "weightModeNone": "Bez obciążenia",
+    "measure": "Liczone w",
+    "measureReps": "Powtórzeniach",
+    "measureDuration": "Czasie (sekundy)",
+    "settingsInUse": "Nie można zmienić ustawień obciążenia i sposobu liczenia, bo to ćwiczenie ma już zapisane serie.",
     "adding": "Dodawanie…",
     "add": "Dodaj ćwiczenie",
     "scopeLabel": "Pokaż ćwiczenia",
@@ -325,6 +333,7 @@
     "logFailed": "Nie udało się zapisać serii",
     "deleteFailed": "Nie udało się usunąć serii",
     "reps": "Powtórzenia",
+    "durationSeconds": "Czas (sekundy)",
     "weightKg": "Ciężar (kg)",
     "weightKgOptional": "Dodatkowy ciężar (kg), opcjonalnie",
     "toFailure": "Do upadku",
@@ -458,6 +467,8 @@
       "exerciseId": "Ćwiczenie",
       "sets": "Serie",
       "reps": "Powtórzenia",
+      "durationSeconds": "Czas",
+      "targetDurationSeconds": "Czas",
       "weightKg": "Ciężar"
     }
   },

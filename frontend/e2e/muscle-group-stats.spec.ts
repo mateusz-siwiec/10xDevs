@@ -191,13 +191,21 @@ test('in Polish the parents and sub-groups are translated', async ({ page, reque
   await expect(page.getByText('Plecy', { exact: true })).toBeVisible()
 })
 
-async function logExerciseSets(request: APIRequestContext, user: ApiUser, exerciseId: string, sets: number) {
+async function logExerciseSets(
+  request: APIRequestContext,
+  user: ApiUser,
+  exerciseId: string,
+  sets: number,
+  timed = false,
+) {
   const session = await request.post(`${API}/api/workout-sessions`, auth(user))
   const sessionId = (await session.json()).id
+  // Timed exercises (e.g. Plank) take seconds instead of reps, and their weight is optional.
+  const setBody = timed ? { exerciseId, durationSeconds: 30 } : { exerciseId, reps: 8, weightKg: 50 }
   for (let i = 0; i < sets; i++) {
     const logged = await request.post(`${API}/api/workout-sessions/${sessionId}/sets`, {
       ...auth(user),
-      data: { exerciseId, reps: 8, weightKg: 50 },
+      data: setBody,
     })
     expect(logged.ok()).toBeTruthy()
   }
@@ -317,7 +325,7 @@ test('the secondary checkbox toggles with Space and keeps an expanded parent ope
 test("a parent's bracket covers the brackets of its muscles", async ({ page, request }) => {
   const user = await registerViaApi(request, 'muscles-secondary-parent-sum')
   // Plank: primary Abs, secondary Obliques, both under Core.
-  await logExerciseSets(request, user, await exerciseId(request, user, 'Plank'), 2)
+  await logExerciseSets(request, user, await exerciseId(request, user, 'Plank'), 2, true)
   await openStats(page, user)
 
   await secondaryToggle(page).check()

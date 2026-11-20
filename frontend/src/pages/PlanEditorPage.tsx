@@ -49,8 +49,9 @@ function PlanEditor() {
                 exerciseId: e.exerciseId,
                 exerciseName: e.exerciseName,
                 exerciseSlug: e.exerciseSlug,
+                measure: e.targetDurationSeconds != null ? ('DURATION' as const) : ('REPS' as const),
                 sets: String(e.sets),
-                reps: String(e.reps),
+                reps: String(e.targetDurationSeconds ?? e.reps ?? ''),
               })),
           )
         }
@@ -78,8 +79,9 @@ function PlanEditor() {
         exerciseId: exercise.id,
         exerciseName: exercise.name,
         exerciseSlug: exercise.slug,
+        measure: exercise.measure,
         sets: '3',
-        reps: '10',
+        reps: exercise.measure === 'DURATION' ? '30' : '10',
       },
     ])
   }
@@ -111,7 +113,9 @@ function PlanEditor() {
       entries: entries.map((e) => ({
         exerciseId: e.exerciseId,
         sets: toTarget(e.sets),
-        reps: toTarget(e.reps),
+        ...(e.measure === 'DURATION'
+          ? { targetDurationSeconds: toTarget(e.reps) }
+          : { reps: toTarget(e.reps) }),
       })),
     }
     try {

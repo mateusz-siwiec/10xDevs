@@ -13,6 +13,7 @@
   "common": {
     "repsCount_one": "{{count}} rep",
     "repsCount_other": "{{count}} reps",
+    "secondsCount": "{{seconds}} s",
     "language": "Language",
     "duration": {
       "lessThanMinute": "<1m",
@@ -138,8 +139,10 @@
     "empty": "No history for this exercise yet. Log a set to start the chart.",
     "topWeight": "Top weight",
     "topReps": "Top reps",
+    "topDuration": "Longest duration",
     "unitKg": " kg",
-    "unitReps": " reps"
+    "unitReps": " reps",
+    "unitSeconds": " s"
   },
   "plans": {
     "title": "Plans",
@@ -161,8 +164,10 @@
       "noExercises": "No exercises added yet.",
       "sets": "Sets",
       "reps": "Reps",
+      "durationSeconds": "Seconds",
       "setsFor": "Sets for {{name}}",
       "repsFor": "Reps for {{name}}",
+      "durationFor": "Seconds for {{name}}",
       "moveUpLabel": "Move {{name}} up",
       "moveDownLabel": "Move {{name}} down",
       "movedTo": "{{name}} moved to position {{position}} of {{total}}",
@@ -181,8 +186,11 @@
     "weightMode": "Weight",
     "weightModeRequired": "Weighted (weight required)",
     "weightModeOptional": "Optional added weight (e.g. pull-ups)",
-    "weightModeNone": "No weight (reps only)",
-    "weightModeInUse": "The weight setting cannot be changed because this exercise already has logged sets.",
+    "weightModeNone": "No weight",
+    "measure": "Counted in",
+    "measureReps": "Reps",
+    "measureDuration": "Duration (seconds)",
+    "settingsInUse": "The weight and measure settings cannot be changed because this exercise already has logged sets.",
     "adding": "Adding…",
     "add": "Add exercise",
     "scopeLabel": "Show exercises",
@@ -311,6 +319,7 @@
     "logFailed": "Failed to log set",
     "deleteFailed": "Failed to delete set",
     "reps": "Reps",
+    "durationSeconds": "Duration (seconds)",
     "weightKg": "Weight (kg)",
     "weightKgOptional": "Added weight (kg), optional",
     "toFailure": "To failure",
@@ -434,6 +443,8 @@
       "exerciseId": "Exercise",
       "sets": "Sets",
       "reps": "Reps",
+      "durationSeconds": "Duration",
+      "targetDurationSeconds": "Duration",
       "weightKg": "Weight"
     }
   },

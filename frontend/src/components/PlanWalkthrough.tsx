@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { exerciseName } from '../utils/exercises'
+import { formatSeconds } from '../utils/format'
 import type { EntryProgress } from './planProgress'
 import { currentIndex, selectedIndex as findSelectedIndex } from './planProgress'
 
@@ -44,7 +45,7 @@ export default function PlanWalkthrough({
               <span className="walkthrough-entry-info">
                 <span className="walkthrough-entry-name">{exerciseName({ slug: entry.exerciseSlug, name: entry.exerciseName })}</span>
                 <span>
-                  {entry.sets} × {entry.reps}
+                  {entry.sets} × {entry.targetDurationSeconds != null ? formatSeconds(entry.targetDurationSeconds) : entry.reps}
                 </span>
               </span>
               <span className="walkthrough-entry-progress">
