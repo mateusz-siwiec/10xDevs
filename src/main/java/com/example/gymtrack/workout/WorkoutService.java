@@ -152,14 +152,14 @@ public class WorkoutService {
 		return switch (mode) {
 			case REQUIRED -> {
 				if (!positive) {
-					throw new InvalidSetWeightException("weightKg must be greater than 0", "DecimalMin");
+					throw new InvalidFieldException("weightKg is required for this exercise", "weightKg", "WeightRequired");
 				}
 				yield weightKg;
 			}
 			case OPTIONAL -> weightKg == null ? BigDecimal.ZERO : weightKg;
 			case NONE -> {
 				if (positive) {
-					throw new InvalidSetWeightException("weightKg is not allowed for this exercise", "WeightNotAllowed");
+					throw new InvalidFieldException("weightKg is not allowed for this exercise", "weightKg", "WeightNotAllowed");
 				}
 				yield BigDecimal.ZERO;
 			}

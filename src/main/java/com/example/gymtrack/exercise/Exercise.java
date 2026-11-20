@@ -65,7 +65,7 @@ public class Exercise {
 			Set<MuscleGroup> secondaryMuscleGroups, WeightMode weightMode, Measure measure) {
 		this.measure = measure == null ? Measure.REPS : measure;
 		this.weightMode = weightMode == null ? WeightMode.REQUIRED : weightMode;
-		this.id =UUID.randomUUID();
+		this.id = UUID.randomUUID();
 		this.slug = "custom-" + this.id;
 		this.ownerId = ownerId;
 		this.name = name;

@@ -61,6 +61,6 @@ test('changing the measure of a custom exercise that has sets shows the in-use m
   await page.locator('#exercise-measure').selectOption('REPS')
   await page.getByRole('button', { name: 'Save', exact: true }).click()
   await expect(page.getByRole('alert')).toHaveText(
-    'The weight and measure settings cannot be changed because this exercise already has logged sets.',
+    'The weight and measure settings cannot be changed because this exercise already has logged sets or is used in a plan.',
   )
 })

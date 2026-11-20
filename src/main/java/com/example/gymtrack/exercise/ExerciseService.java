@@ -103,10 +103,11 @@ public class ExerciseService {
 					"Weight mode cannot be changed once sets are logged for this exercise");
 		}
 
+		// Plan entries hold a reps or a seconds target by the exercise's measure, so plans lock it too.
 		if (request.measure() != null && request.measure() != exercise.getMeasure()
-				&& workoutSetRepository.existsByExerciseId(id)) {
+				&& (workoutSetRepository.existsByExerciseId(id) || planRepository.existsEntryByExerciseId(id))) {
 			throw new ExerciseConflictException(ErrorCode.EXERCISE_IN_USE,
-					"Measure cannot be changed once sets are logged for this exercise");
+					"Measure cannot be changed once sets are logged or a plan uses this exercise");
 		}
 
 		try {

@@ -74,6 +74,6 @@ test('changing the weight mode of a custom exercise that has sets shows the in-u
   await page.locator('#exercise-weight-mode').selectOption('NONE')
   await page.getByRole('button', { name: 'Save', exact: true }).click()
   await expect(page.getByRole('alert')).toHaveText(
-    'The weight and measure settings cannot be changed because this exercise already has logged sets.',
+    'The weight and measure settings cannot be changed because this exercise already has logged sets or is used in a plan.',
   )
 })

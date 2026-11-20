@@ -56,21 +56,29 @@ public interface WorkoutSetRepository extends JpaRepository<WorkoutSet, UUID> {
 			""")
 	List<SessionAggregate> aggregateBySession(@Param("sessionIds") Collection<UUID> sessionIds);
 
+	/**
+	 * One row per exercise and rep count with the heaviest weight's score. For a fixed rep count a heavier set always
+	 * scores higher, so the best (score, reps) pair over these rows is the best over all earlier sets, while the row
+	 * count stays bounded by the distinct rep counts instead of growing with the history.
+	 */
 	@Query("""
-			select new com.example.gymtrack.workout.ExerciseScore(s.exerciseId, s.weightKg * (30 + s.reps), s.reps)
+			select new com.example.gymtrack.workout.ExerciseScore(s.exerciseId, max(s.weightKg) * (30 + s.reps), s.reps)
 			from WorkoutSet s
 			where s.session.userId = :userId and s.exerciseId in :exerciseIds
 				and s.reps is not null and (s.reps <= :maxReps or s.weightKg = 0) and s.loggedAt < :before
+			group by s.exerciseId, s.reps
 			""")
 	List<ExerciseScore> findBestScoresBefore(@Param("userId") UUID userId,
 			@Param("exerciseIds") Collection<UUID> exerciseIds, @Param("maxReps") int maxReps,
 			@Param("before") Instant before);
 
+	/** One row per exercise and duration with the heaviest weight, so the row count is bounded by distinct durations. */
 	@Query("""
-			select new com.example.gymtrack.workout.DurationScore(s.exerciseId, s.durationSeconds, s.weightKg)
+			select new com.example.gymtrack.workout.DurationScore(s.exerciseId, s.durationSeconds, max(s.weightKg))
 			from WorkoutSet s
 			where s.session.userId = :userId and s.exerciseId in :exerciseIds
 				and s.durationSeconds is not null and s.loggedAt < :before
+			group by s.exerciseId, s.durationSeconds
 			""")
 	List<DurationScore> findBestDurationScoresBefore(@Param("userId") UUID userId,
 			@Param("exerciseIds") Collection<UUID> exerciseIds, @Param("before") Instant before);

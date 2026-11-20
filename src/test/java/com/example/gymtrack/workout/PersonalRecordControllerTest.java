@@ -50,6 +50,12 @@ class PersonalRecordControllerTest {
 	private ExerciseRepository exerciseRepository;
 
 	@Autowired
+	private WorkoutSessionRepository sessionRepository;
+
+	@Autowired
+	private WorkoutSetRepository setRepository;
+
+	@Autowired
 	private PasswordEncoder passwordEncoder;
 
 	@Autowired
@@ -342,6 +348,51 @@ class PersonalRecordControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.recentPersonalRecords[0].durationSeconds").value(91))
 			.andExpect(jsonPath("$.recentPersonalRecords[0].reps").value(org.hamcrest.Matchers.nullValue()));
+	}
+
+	/**
+	 * Rep sets logged while Plank was a rep exercise must not block records for its new duration sets: the first
+	 * duration set starts its own group (no record), the next longer one is a record.
+	 */
+	@Test
+	void legacyWeightedRepSetsNeverBlockDurationRecords() throws Exception {
+		User user = userRepository.save(new User("pr-legacy-" + System.nanoTime() + "@example.com",
+				passwordEncoder.encode("password123")));
+		String token = "Bearer " + jwtService.generateToken(user.getId(), user.getEmail());
+		UUID plank = exerciseBySlug("plank");
+
+		WorkoutSession legacy = sessionRepository.saveAndFlush(new WorkoutSession(user.getId(), null));
+		setRepository.saveAndFlush(new WorkoutSet(legacy, plank, 10, new java.math.BigDecimal("40")));
+		legacy.end();
+		sessionRepository.saveAndFlush(legacy);
+
+		String session = startSession(token);
+		assertFalse(logDurationFlag(token, session, plank, 30, null));
+		assertTrue(logDurationFlag(token, session, plank, 45, null));
+		assertFalse(logDurationFlag(token, session, plank, 40, null));
+		endSession(token, session);
+	}
+
+	/** The earlier baseline is the heaviest set of each rep count (or duration), not just any set of it. */
+	@Test
+	void earlierBaselineIsTheHeaviestSetOfEachRepCountAndDuration() throws Exception {
+		String token = bearerToken();
+		UUID bench = exerciseId();
+		UUID plank = exerciseBySlug("plank");
+
+		String first = startSession(token);
+		logSetFlag(token, first, bench, 10, "20");
+		logSetFlag(token, first, bench, 10, "40");
+		logDurationFlag(token, first, plank, 60, null);
+		logDurationFlag(token, first, plank, 60, "10");
+		endSession(token, first);
+
+		String second = startSession(token);
+		assertFalse(logSetFlag(token, second, bench, 10, "30"));
+		assertTrue(logSetFlag(token, second, bench, 10, "45"));
+		assertFalse(logDurationFlag(token, second, plank, 60, "5"));
+		assertTrue(logDurationFlag(token, second, plank, 60, "12"));
+		endSession(token, second);
 	}
 
 }

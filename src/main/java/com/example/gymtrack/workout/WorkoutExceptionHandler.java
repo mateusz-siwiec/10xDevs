@@ -21,12 +21,6 @@ public class WorkoutExceptionHandler {
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorBody.of(ex.getCode(), ex.getMessage()));
 	}
 
-	@ExceptionHandler(InvalidSetWeightException.class)
-	public ResponseEntity<Map<String, Object>> handleInvalidSetWeight(InvalidSetWeightException ex) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-			.body(ErrorBody.of(ErrorCode.VALIDATION_FAILED, ex.getMessage(), "weightKg", ex.getRule()));
-	}
-
 	@ExceptionHandler(InvalidDashboardWindowException.class)
 	public ResponseEntity<Map<String, Object>> handleInvalidWindow(InvalidDashboardWindowException ex) {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorBody.of(ex.getCode(), ex.getMessage()));

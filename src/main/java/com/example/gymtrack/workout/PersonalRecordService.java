@@ -46,16 +46,16 @@ public class PersonalRecordService {
 		if (exerciseIds.isEmpty()) {
 			return Set.of();
 		}
-		Map<UUID, Rank> best = new HashMap<>();
+		Map<Track, Rank> best = new HashMap<>();
 		for (DurationScore baseline : setRepository.findBestDurationScoresBefore(session.getUserId(), exerciseIds,
 				session.getStartedAt())) {
 			Rank rank = new Rank(BigDecimal.valueOf(baseline.durationSeconds()), baseline.weightKg());
-			best.merge(baseline.exerciseId(), rank, (a, b) -> b.beats(a) ? b : a);
+			best.merge(new Track(baseline.exerciseId(), true), rank, (a, b) -> b.beats(a) ? b : a);
 		}
 		for (ExerciseScore baseline : setRepository.findBestScoresBefore(session.getUserId(), exerciseIds,
 				MAX_ELIGIBLE_REPS, session.getStartedAt())) {
 			Rank rank = new Rank(baseline.score(), BigDecimal.valueOf(baseline.reps()));
-			best.merge(baseline.exerciseId(), rank, (a, b) -> b.beats(a) ? b : a);
+			best.merge(new Track(baseline.exerciseId(), false), rank, (a, b) -> b.beats(a) ? b : a);
 		}
 		Set<UUID> flagged = new HashSet<>();
 		for (WorkoutSet set : sets) {
@@ -63,13 +63,13 @@ public class PersonalRecordService {
 				continue;
 			}
 			Rank rank = rank(set);
-			Rank previousBest = best.get(set.getExerciseId());
+			Rank previousBest = best.get(Track.of(set));
 			if (previousBest == null) {
-				best.put(set.getExerciseId(), rank);
+				best.put(Track.of(set), rank);
 			}
 			else if (rank.beats(previousBest)) {
 				flagged.add(set.getId());
-				best.put(set.getExerciseId(), rank);
+				best.put(Track.of(set), rank);
 			}
 		}
 		return flagged;
@@ -84,21 +84,21 @@ public class PersonalRecordService {
 	 * {@code loggedAt} equals History's "everything logged before the session started" baseline.
 	 */
 	public List<PersonalRecordEntry> recentRecords(UUID userId, int limit) {
-		Map<UUID, Rank> best = new HashMap<>();
+		Map<Track, Rank> best = new HashMap<>();
 		List<PersonalRecordEntry> records = new ArrayList<>();
 		for (WorkoutSet set : setRepository.findEligibleSetsOfEndedSessions(userId, MAX_ELIGIBLE_REPS)) {
 			if (!isEligible(set)) {
 				continue;
 			}
 			Rank rank = rank(set);
-			Rank previousBest = best.get(set.getExerciseId());
+			Rank previousBest = best.get(Track.of(set));
 			if (previousBest == null) {
-				best.put(set.getExerciseId(), rank);
+				best.put(Track.of(set), rank);
 			}
 			else if (rank.beats(previousBest)) {
 				records.add(new PersonalRecordEntry(set.getSession().getId(), set.getExerciseId(), set.getReps(),
 						set.getDurationSeconds(), set.getWeightKg(), set.getLoggedAt()));
-				best.put(set.getExerciseId(), rank);
+				best.put(Track.of(set), rank);
 			}
 		}
 		Collections.reverse(records);
@@ -116,6 +116,18 @@ public class PersonalRecordService {
 		}
 		return new Rank(set.getWeightKg().multiply(EPLEY_BASE.add(BigDecimal.valueOf(set.getReps()))),
 				BigDecimal.valueOf(set.getReps()));
+	}
+
+	/**
+	 * Rank groups never compete: an exercise that turned timed after rep sets were logged (Plank) keeps its old rep
+	 * sets as one group and its duration sets as another, so a heavy legacy rep set cannot block duration records.
+	 */
+	private record Track(UUID exerciseId, boolean timed) {
+
+		static Track of(WorkoutSet set) {
+			return new Track(set.getExerciseId(), set.getReps() == null);
+		}
+
 	}
 
 	/**

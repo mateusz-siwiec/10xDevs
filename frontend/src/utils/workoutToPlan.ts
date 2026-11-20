@@ -1,4 +1,4 @@
-import type { PlanEntryInput } from '../api/client'
+import type { Measure, PlanEntryInput } from '../api/client'
 import { formatDate } from './format'
 
 // Mirrors the backend limits in PlanRequest / PlanEntryRequest.
@@ -7,6 +7,8 @@ const MIN_REPS = 1
 const MAX_REPS = 100
 const MIN_DURATION_SECONDS = 1
 const MAX_DURATION_SECONDS = 3600
+/** Target for an exercise that became timed after its rep sets were logged (e.g. Plank before it turned timed). */
+const LEGACY_DURATION_TARGET_SECONDS = 30
 const MAX_ENTRIES = 50
 export const PLAN_NAME_MAX_LENGTH = 60
 
@@ -16,6 +18,8 @@ export interface LoggedSet {
   reps: number | null
   /** Set for timed sets; null/absent for rep-based sets. */
   durationSeconds?: number | null
+  /** The exercise's measure. When known it decides the target kind, even if the set data is a legacy shape. */
+  measure?: Measure
 }
 
 /** Most frequent value; ties go to the higher one. */
@@ -33,12 +37,18 @@ function mostCommon(values: number[]): number {
   return best
 }
 
-/** Timed runs get a duration target (most common seconds), rep runs a reps target, each clamped to the plan limits. */
+/**
+ * Timed exercises get a duration target (most common seconds), rep exercises a reps target, each clamped to the plan
+ * limits. The exercise's measure decides, so legacy rep sets of an exercise that is now timed still yield a valid
+ * duration target; without a known measure the shape of the sets decides.
+ */
 function targetFor(run: readonly LoggedSet[]): Pick<PlanEntryInput, 'reps' | 'targetDurationSeconds'> {
   const durations = run.flatMap((s) => (s.durationSeconds != null ? [s.durationSeconds] : []))
-  if (durations.length > 0) {
+  const timed = run[0].measure === 'DURATION' || (run[0].measure === undefined && durations.length > 0)
+  if (timed) {
+    const seconds = durations.length > 0 ? mostCommon(durations) : LEGACY_DURATION_TARGET_SECONDS
     return {
-      targetDurationSeconds: Math.min(Math.max(mostCommon(durations), MIN_DURATION_SECONDS), MAX_DURATION_SECONDS),
+      targetDurationSeconds: Math.min(Math.max(seconds, MIN_DURATION_SECONDS), MAX_DURATION_SECONDS),
     }
   }
   const reps = run.map((s) => s.reps ?? 0)

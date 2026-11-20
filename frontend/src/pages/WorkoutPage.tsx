@@ -161,6 +161,7 @@ export default function WorkoutPage() {
                 exerciseId: s.exerciseId,
                 reps: s.reps,
                 durationSeconds: s.durationSeconds,
+                measure: exercisesById.get(s.exerciseId)?.measure,
               })),
               defaultName: defaultPlanName(
                 plan?.name ?? plans.find((p) => p.id === session.planId)?.name ?? null,

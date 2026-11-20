@@ -52,7 +52,6 @@ export default function SetLogger({ disabled, exercise, onLog }: SetLoggerProps)
               max="3600"
               value={count}
               onChange={(event) => setCount(event.target.value)}
-              disabled={disabled || submitting}
               required
             />
           </div>
@@ -64,6 +63,8 @@ export default function SetLogger({ disabled, exercise, onLog }: SetLoggerProps)
               type="number"
               inputMode="numeric"
               step="1"
+              min="1"
+              max="100"
               value={count}
               onChange={(event) => setCount(event.target.value)}
               required

@@ -49,6 +49,16 @@ describe('workoutToPlanEntries', () => {
 describe('workoutToPlanEntries with timed sets', () => {
   const timed = (exerciseId: string, durationSeconds: number) => ({ exerciseId, reps: null, durationSeconds })
 
+  it('gives an exercise that is now timed a duration target even when its sets are legacy rep sets', () => {
+    const legacy = { exerciseId: 'p', reps: 12, measure: 'DURATION' as const }
+    expect(workoutToPlanEntries([legacy, legacy])).toEqual([{ exerciseId: 'p', sets: 2, targetDurationSeconds: 30 }])
+  })
+
+  it('uses the logged seconds when the exercise is timed and has duration sets', () => {
+    const sets = [timed('p', 45), timed('p', 45)].map((s) => ({ ...s, measure: 'DURATION' as const }))
+    expect(workoutToPlanEntries(sets)).toEqual([{ exerciseId: 'p', sets: 2, targetDurationSeconds: 45 }])
+  })
+
   it('makes a duration target from the most common seconds', () => {
     expect(workoutToPlanEntries([timed('p', 45), timed('p', 45), timed('p', 30)])).toEqual([
       { exerciseId: 'p', sets: 3, targetDurationSeconds: 45 },

@@ -416,6 +416,12 @@ V16 and V17 only add columns with defaults and relax checks, so existing rows st
 - Logger UI: `frontend/src/components/SetLogger.tsx`
 - Token guard: `frontend/scripts/check-hardcoded-values.mjs:8-28`
 
+## Accepted deviations (implementation review, 2026-11-20)
+
+- The exercise form does not disable the weight-mode and measure selects up front: the exercise API does not expose whether sets exist, so the lock shows as a translated message after a 409 (`exercises.settingsInUse`). A later `inUse` flag could enable a proactive note.
+- The seconds formatter is `formatSeconds`, not `formatDuration`: `formatDuration` already formats session length in `utils/format.ts`.
+- Review fixes made after Phase 6 (see `reviews/impl-review.md`): V18 converts legacy plank plan entries to a seconds target; plan editor and save-as-plan take the measure from the exercise; personal-record rank groups are separate for rep and duration sets and their baseline queries are grouped; the measure lock also covers plan entries; `WeightRequired`, `WeightNotAllowed`, `RepsNotAllowed` and `DurationNotAllowed` have en/pl messages; `InvalidSetWeightException` was merged into `InvalidFieldException`.
+
 ## Progress
 
 > Convention: `- [ ]` pending, `- [x]` done. Append ` — <commit sha>` when a step lands. Do not rename step titles. See `references/progress-format.md`.

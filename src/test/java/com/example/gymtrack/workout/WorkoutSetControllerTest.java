@@ -376,6 +376,12 @@ class WorkoutSetControllerTest {
 
 		assertWeightRejected(token, sessionId, setBody(bench, 5, "0"));
 		assertWeightRejected(token, sessionId, bareBody(bench, 5));
+		// A translatable rule without a numeric limit, so the message never reads "limit: " with an empty value.
+		mockMvc.perform(post("/api/workout-sessions/" + sessionId + "/sets")
+				.header(HttpHeaders.AUTHORIZATION, token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(bareBody(bench, 5)))
+			.andExpect(jsonPath("$.rule", is("WeightRequired")));
 	}
 
 	@Test

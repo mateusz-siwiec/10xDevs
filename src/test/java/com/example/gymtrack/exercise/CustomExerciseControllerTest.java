@@ -320,6 +320,24 @@ class CustomExerciseControllerTest {
 	}
 
 	@Test
+	void updateChangingMeasureIsConflictWhileAPlanUsesTheExerciseButWeightModeIsNot() throws Exception {
+		User owner = newUser();
+		String token = bearer(owner);
+		String name = "Planned Measure " + System.nanoTime();
+		UUID id = createdId(token, name);
+		TrainingPlan plan = new TrainingPlan(owner.getId(), "Plan");
+		plan.replaceEntries(List.of(new PlanEntryInput(id, 3, 10)));
+		planRepository.save(plan);
+
+		update(token, id, bodyWithMeasure(name, "\"DURATION\"")).andExpect(status().isConflict())
+			.andExpect(jsonPath("$.code", is("EXERCISE_IN_USE")))
+			.andExpect(jsonPath("$.error", notNullValue()));
+		update(token, id, bodyWithMode(name, "\"OPTIONAL\"")).andExpect(status().isOk())
+			.andExpect(jsonPath("$.weightMode", is("OPTIONAL")))
+			.andExpect(jsonPath("$.measure", is("REPS")));
+	}
+
+	@Test
 	void updateAllowsKeepingOrRecasingOwnName() throws Exception {
 		String token = bearer(newUser());
 		String name = "Same Name " + System.nanoTime();

@@ -3,7 +3,7 @@ import type { FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useParams } from 'react-router'
 import { createPlan, getExercises, getPlan, updatePlan } from '../api/client'
-import type { Exercise } from '../api/client'
+import type { Exercise, Measure, PlanEntry } from '../api/client'
 import ExercisePicker from '../components/ExercisePicker'
 import PlanExerciseList from '../components/PlanExerciseList'
 import type { PlanEditorEntry, PlanTargetField } from '../components/PlanExerciseList'
@@ -12,6 +12,14 @@ import '../styles/workout.css'
 import '../styles/plans.css'
 import { translateError } from '../utils/errors'
 import type { ErrorInfo } from '../utils/errors'
+
+const DEFAULT_REPS = 10
+const DEFAULT_DURATION_SECONDS = 30
+
+/** The exercise's measure decides the target kind; the entry's own shape is only a fallback for an unknown exercise. */
+function entryMeasure(measure: Measure | undefined, entry: Pick<PlanEntry, 'targetDurationSeconds'>): Measure {
+  return measure ?? (entry.targetDurationSeconds != null ? 'DURATION' : 'REPS')
+}
 
 // Empty or non-integer text becomes null (rejected by the server) so fractions like 3.5 are never truncated.
 function toTarget(value: string): number | null {
@@ -39,6 +47,9 @@ function PlanEditor() {
       .then(([exerciseList, plan]) => {
         if (cancelled) return
         setExercises(exerciseList)
+        // The exercise's measure decides the target kind; an entry saved before the exercise became timed
+        // (e.g. Plank) is shown as a seconds target instead of being rejected on save.
+        const measureOf = new Map(exerciseList.map((x) => [x.id, x.measure]))
         if (plan) {
           setName(plan.name)
           setEntries(
@@ -49,9 +60,13 @@ function PlanEditor() {
                 exerciseId: e.exerciseId,
                 exerciseName: e.exerciseName,
                 exerciseSlug: e.exerciseSlug,
-                measure: e.targetDurationSeconds != null ? ('DURATION' as const) : ('REPS' as const),
+                measure: entryMeasure(measureOf.get(e.exerciseId), e),
                 sets: String(e.sets),
-                reps: String(e.targetDurationSeconds ?? e.reps ?? ''),
+                reps: String(
+                  entryMeasure(measureOf.get(e.exerciseId), e) === 'DURATION'
+                    ? (e.targetDurationSeconds ?? DEFAULT_DURATION_SECONDS)
+                    : (e.reps ?? ''),
+                ),
               })),
           )
         }
@@ -81,7 +96,7 @@ function PlanEditor() {
         exerciseSlug: exercise.slug,
         measure: exercise.measure,
         sets: '3',
-        reps: exercise.measure === 'DURATION' ? '30' : '10',
+        reps: String(exercise.measure === 'DURATION' ? DEFAULT_DURATION_SECONDS : DEFAULT_REPS),
       },
     ])
   }
