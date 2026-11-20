@@ -36,6 +36,28 @@ export async function exerciseId(request: APIRequestContext, user: ApiUser, name
   return match.id
 }
 
+export interface ExerciseSettings {
+  measure?: 'REPS' | 'DURATION'
+  weightMode?: 'REQUIRED' | 'OPTIONAL' | 'NONE'
+}
+
+/** Creates a custom exercise with the given measure and weight mode and returns its id. */
+export async function createExerciseViaApi(
+  request: APIRequestContext,
+  user: ApiUser,
+  name: string,
+  settings: ExerciseSettings = {},
+): Promise<string> {
+  const response = await request.post(`${API}/api/exercises`, {
+    ...auth(user),
+    data: { name, primaryMuscleGroup: 'ABS', secondaryMuscleGroups: [], ...settings },
+  })
+  if (response.status() !== 201) {
+    throw new Error(`create exercise failed: ${response.status()}`)
+  }
+  return (await response.json()).id
+}
+
 export async function exerciseIdByGroup(request: APIRequestContext, user: ApiUser, group: string): Promise<string> {
   const response = await request.get(`${API}/api/exercises`, auth(user))
   // Prefer a weight-required exercise: specs log weighted sets, which weight-free (NONE) exercises reject.

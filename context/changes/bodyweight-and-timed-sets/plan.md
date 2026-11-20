@@ -473,26 +473,26 @@ V16 and V17 only add columns with defaults and relax checks, so existing rows st
 
 #### Automated
 
-- [x] 5.1 Lint passes: `npm run lint`
-- [x] 5.2 Build passes: `npm run build`
-- [x] 5.3 Token guard passes: `npm run check:tokens`
-- [x] 5.4 Unit tests pass: `npx vitest run`
-- [x] 5.5 Existing Playwright specs pass: `npm run test:e2e`
+- [x] 5.1 Lint passes: `npm run lint` — 8ae48b0
+- [x] 5.2 Build passes: `npm run build` — 8ae48b0
+- [x] 5.3 Token guard passes: `npm run check:tokens` — 8ae48b0
+- [x] 5.4 Unit tests pass: `npx vitest run` — 8ae48b0
+- [x] 5.5 Existing Playwright specs pass: `npm run test:e2e` — 8ae48b0
 
 #### Manual
 
-- [x] 5.6 Plank sets log with and without added weight and appear in session list, history, previous-workout hint and chart (seconds)
-- [x] 5.7 A plan with a plank entry shows a seconds target in the editor and walkthrough, and saving a workout with a plank as a plan creates a seconds target
+- [x] 5.6 Plank sets log with and without added weight and appear in session list, history, previous-workout hint and chart (seconds) — 8ae48b0
+- [x] 5.7 A plan with a plank entry shows a seconds target in the editor and walkthrough, and saving a workout with a plank as a plan creates a seconds target — 8ae48b0
 
 ### Phase 6: End-to-end coverage and docs
 
 #### Automated
 
-- [ ] 6.1 New and existing e2e pass: `npm run test:e2e`
-- [ ] 6.2 Full backend suite passes: `./mvnw test`
-- [ ] 6.3 Token guard and lint pass: `npm run check:tokens` and `npm run lint`
+- [x] 6.1 New and existing e2e pass: `npm run test:e2e`
+- [x] 6.2 Full backend suite passes: `./mvnw test`
+- [x] 6.3 Token guard and lint pass: `npm run check:tokens` and `npm run lint`
 
 #### Manual
 
-- [ ] 6.4 Full pass through bench press, pull-up, ab wheel and plank: log, history, dashboard, plan
-- [ ] 6.5 README and test plan match the behaviour
+- [x] 6.4 Full pass through bench press, pull-up, ab wheel and plank: log, history, dashboard, plan
+- [x] 6.5 README and test plan match the behaviour
