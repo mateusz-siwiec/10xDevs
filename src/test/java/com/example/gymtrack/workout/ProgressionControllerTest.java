@@ -49,6 +49,12 @@ class ProgressionControllerTest {
 	private ExerciseRepository exerciseRepository;
 
 	@Autowired
+	private WorkoutSessionRepository sessionRepository;
+
+	@Autowired
+	private WorkoutSetRepository setRepository;
+
+	@Autowired
 	private PasswordEncoder passwordEncoder;
 
 	@Autowired
@@ -277,6 +283,35 @@ class ProgressionControllerTest {
 			.andExpect(jsonPath("$[0].metric").value("DURATION"))
 			.andExpect(jsonPath("$[0].value").value(75))
 			.andExpect(jsonPath("$[0].topWeightKg").value(0.0));
+	}
+
+
+	/** Rep sets logged while Plank was still a rep exercise stay in the database after V17 made it timed. */
+	@Test
+	void durationChartSkipsSessionsThatOnlyHoldLegacyRepSets() throws Exception {
+		User user = userRepository.save(new User("progression-legacy-" + System.nanoTime() + "@example.com",
+				passwordEncoder.encode("password123")));
+		String token = "Bearer " + jwtService.generateToken(user.getId(), user.getEmail());
+		UUID plank = exerciseBySlug("plank");
+
+		WorkoutSession legacy = sessionRepository.saveAndFlush(new WorkoutSession(user.getId(), null));
+		setRepository.saveAndFlush(new WorkoutSet(legacy, plank, 12, new java.math.BigDecimal("0")));
+		legacy.end();
+		sessionRepository.saveAndFlush(legacy);
+
+		String sessionId = startSession(token);
+		mockMvc.perform(post("/api/workout-sessions/" + sessionId + "/sets")
+				.header(HttpHeaders.AUTHORIZATION, token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"exerciseId\":\"" + plank + "\",\"durationSeconds\":45}"))
+			.andExpect(status().isCreated());
+		endSession(token, sessionId);
+
+		mockMvc.perform(get(progressionUrl(plank)).header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$", org.hamcrest.Matchers.hasSize(1)))
+			.andExpect(jsonPath("$[0].metric").value("DURATION"))
+			.andExpect(jsonPath("$[0].value").value(45));
 	}
 
 }

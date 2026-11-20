@@ -183,7 +183,9 @@ public class WorkoutService {
 			.orElseThrow(() -> new WorkoutNotFoundException(ErrorCode.EXERCISE_NOT_FOUND, "Exercise not found"));
 		List<ProgressionRow> rows = setRepository.findProgression(userId, exerciseId);
 		if (exercise.getMeasure() == Measure.DURATION) {
+			// Sessions that only hold rep sets logged before the exercise became timed have no duration to plot.
 			return rows.stream()
+				.filter(row -> row.topDurationSeconds() != null)
 				.map(row -> new ProgressionPointResponse(row.sessionId(), row.date(), row.topWeightKg(),
 						ProgressionPointResponse.Metric.DURATION, BigDecimal.valueOf(row.topDurationSeconds())))
 				.toList();
@@ -193,7 +195,9 @@ public class WorkoutService {
 			case NONE -> true;
 			case OPTIONAL -> rows.stream().noneMatch(row -> row.topWeightKg().signum() > 0);
 		};
-		return rows.stream().map(row -> byReps
+		return rows.stream()
+			.filter(row -> !byReps || row.topReps() != null)
+			.map(row -> byReps
 				? new ProgressionPointResponse(row.sessionId(), row.date(), row.topWeightKg(),
 						ProgressionPointResponse.Metric.REPS, BigDecimal.valueOf(row.topReps()))
 				: new ProgressionPointResponse(row.sessionId(), row.date(), row.topWeightKg(),
