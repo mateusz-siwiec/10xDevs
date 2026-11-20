@@ -143,7 +143,7 @@ public class DashboardService {
 		List<DashboardInsightsResponse.RecentPersonalRecord> recent = records.stream()
 			.map(record -> new DashboardInsightsResponse.RecentPersonalRecord(record.sessionId(),
 					record.exerciseId(), names.getOrDefault(record.exerciseId(), UNKNOWN_EXERCISE), record.reps(),
-					record.weightKg(), record.achievedAt()))
+					record.durationSeconds(), record.weightKg(), record.achievedAt()))
 			.toList();
 
 		return new DashboardInsightsResponse(weeklyVolume,

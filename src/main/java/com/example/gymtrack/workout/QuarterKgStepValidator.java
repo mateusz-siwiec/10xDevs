@@ -4,11 +4,11 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import java.math.BigDecimal;
 
-public class HalfKgStepValidator implements ConstraintValidator<HalfKgStep, BigDecimal> {
+public class QuarterKgStepValidator implements ConstraintValidator<QuarterKgStep, BigDecimal> {
 
 	@Override
 	public boolean isValid(BigDecimal value, ConstraintValidatorContext context) {
-		return value == null || value.multiply(BigDecimal.TWO).remainder(BigDecimal.ONE).signum() == 0;
+		return value == null || value.multiply(BigDecimal.valueOf(4)).remainder(BigDecimal.ONE).signum() == 0;
 	}
 
 }

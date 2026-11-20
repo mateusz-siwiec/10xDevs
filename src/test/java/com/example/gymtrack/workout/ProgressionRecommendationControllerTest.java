@@ -73,12 +73,21 @@ class ProgressionRecommendationControllerTest {
 		return "Bearer " + jwtService.generateToken(user.getId(), user.getEmail());
 	}
 
+	private UUID exerciseBySlug(String slug) {
+		return exerciseRepository.findAllByOrderByNameAsc()
+			.stream()
+			.filter(exercise -> exercise.getSlug().equals(slug))
+			.findFirst()
+			.orElseThrow()
+			.getId();
+	}
+
 	private UUID exerciseId() {
-		return exerciseRepository.findAllByOrderByNameAsc().get(0).getId();
+		return exerciseBySlug("barbell-bench-press");
 	}
 
 	private UUID otherExerciseId() {
-		return exerciseRepository.findAllByOrderByNameAsc().get(1).getId();
+		return exerciseBySlug("deadlift");
 	}
 
 	private TrainingPlan plan(User user, UUID exerciseId, int sets, int reps) {
@@ -193,19 +202,25 @@ class ProgressionRecommendationControllerTest {
 	void roundingBoundaries() throws Exception {
 		UUID exerciseId = exerciseId();
 
-		// 5 kg: 2.5% is below the minimum step, so the +0.5 kg floor applies.
+		// 5 kg: 2.5% is below the minimum step, so the +0.25 kg floor applies.
 		User light = newUser();
 		twoQualifying(light, exerciseId, "5");
-		assertRecommended(light, exerciseId, 5.0, 5.5);
+		assertRecommended(light, exerciseId, 5.0, 5.25);
 
-		// 10 kg: 10.25 rounds half up to 10.5.
+		// 10 kg: 10.25 is already on the 0.25 kg grid (and equals the floor).
 		User ten = newUser();
 		twoQualifying(ten, exerciseId, "10");
-		assertRecommended(ten, exerciseId, 10.0, 10.5);
+		assertRecommended(ten, exerciseId, 10.0, 10.25);
 
 		User hundred = newUser();
 		twoQualifying(hundred, exerciseId, "100");
+		// 100 kg: 102.5 sits on the grid.
 		assertRecommended(hundred, exerciseId, 100.0, 102.5);
+
+		// 2 kg: 2.05 rounds down to 2.0, so the +0.25 kg floor wins (2.25).
+		User two = newUser();
+		twoQualifying(two, exerciseId, "2");
+		assertRecommended(two, exerciseId, 2.0, 2.25);
 	}
 
 	@Test
@@ -352,6 +367,62 @@ class ProgressionRecommendationControllerTest {
 		endedSession(user, foreignPlan.getId(), exerciseId, threeByTen("60"));
 
 		assertNoRecommendation(user, exerciseId);
+	}
+
+	@Test
+	void noneExerciseNeverGetsARecommendation() throws Exception {
+		User user = newUser();
+		UUID rollout = exerciseBySlug("ab-wheel-rollout");
+		twoQualifying(user, rollout, "0");
+
+		assertNoRecommendation(user, rollout);
+	}
+
+	@Test
+	void topWeightOfZeroGivesNoRecommendation() throws Exception {
+		User user = newUser();
+		UUID pullUp = exerciseBySlug("pull-up");
+		twoQualifying(user, pullUp, "0");
+
+		assertNoRecommendation(user, pullUp);
+	}
+
+	@Test
+	void optionalExerciseWithAddedWeightStillGetsARecommendation() throws Exception {
+		User user = newUser();
+		UUID pullUp = exerciseBySlug("pull-up");
+		twoQualifying(user, pullUp, "10");
+
+		assertRecommended(user, pullUp, 10.0, 10.25);
+	}
+
+	@Test
+	void durationExerciseGetsNoRecommendationEvenWithQualifyingHistory() throws Exception {
+		User user = newUser();
+		UUID plank = exerciseBySlug("plank");
+		TrainingPlan plan = plan(user, plank, 1, 10);
+		for (int i = 0; i < 2; i++) {
+			WorkoutSession session = sessionRepository.saveAndFlush(new WorkoutSession(user.getId(), plan.getId()));
+			setRepository.saveAndFlush(new WorkoutSet(session, plank, null, 60, new BigDecimal("10"), false));
+			session.end();
+			sessionRepository.saveAndFlush(session);
+		}
+
+		assertNoRecommendation(user, plank);
+	}
+
+	@Test
+	void durationSetsInAnotherExercisesSessionAreIgnoredWhenScanning() throws Exception {
+		User user = newUser();
+		UUID plank = exerciseBySlug("plank");
+		twoQualifying(user, exerciseId(), "60");
+		TrainingPlan plan = plan(user, plank, 1, 10);
+		WorkoutSession session = sessionRepository.saveAndFlush(new WorkoutSession(user.getId(), plan.getId()));
+		setRepository.saveAndFlush(new WorkoutSet(session, plank, null, 60, BigDecimal.ZERO, false));
+		session.end();
+		sessionRepository.saveAndFlush(session);
+
+		assertRecommended(user, exerciseId(), 60, 61.5);
 	}
 
 }

@@ -185,6 +185,18 @@ class ExerciseSeedTest {
 		assertThat(stored).isNotEmpty().isSubsetOf(known);
 	}
 
+	@Test
+	void weightModeMigrationClassifiesBuiltInExercisesBySlug() {
+		for (String slug : List.of("ab-wheel-rollout", "banded-lateral-walk", "copenhagen-plank")) {
+			assertThat(bySlug(slug).getWeightMode()).as(slug).isEqualTo(WeightMode.NONE);
+		}
+		for (String slug : List.of("pull-up", "chest-dip", "push-up", "hanging-leg-raise", "plank")) {
+			assertThat(bySlug(slug).getWeightMode()).as(slug).isEqualTo(WeightMode.OPTIONAL);
+		}
+		assertThat(bySlug("barbell-row").getWeightMode()).isEqualTo(WeightMode.REQUIRED);
+		assertThat(bySlug("back-squat").getWeightMode()).isEqualTo(WeightMode.REQUIRED);
+	}
+
 	private void assertPrimary(String slug, MuscleGroup expected) {
 		assertThat(bySlug(slug).getPrimaryMuscleGroup()).as(slug).isEqualTo(expected);
 	}
@@ -196,6 +208,18 @@ class ExerciseSeedTest {
 	private Exercise bySlug(String slug) {
 		return exerciseRepository.findAll().stream().filter(e -> e.getSlug().equals(slug)).findFirst()
 				.orElseThrow();
+	}
+
+	@Test
+	void durationMeasureMigrationMarksPlanksAsDurationAndEverythingElseAsReps() {
+		for (String slug : List.of("plank", "copenhagen-plank")) {
+			assertThat(bySlug(slug).getMeasure()).as(slug).isEqualTo(Measure.DURATION);
+		}
+		assertThat(exerciseRepository.findAll().stream().filter(e -> e.getMeasure() == Measure.DURATION))
+				.extracting(Exercise::getSlug)
+				.containsExactlyInAnyOrder("plank", "copenhagen-plank");
+		assertThat(bySlug("barbell-bench-press").getMeasure()).isEqualTo(Measure.REPS);
+		assertThat(bySlug("deadlift").getMeasure()).isEqualTo(Measure.REPS);
 	}
 
 }

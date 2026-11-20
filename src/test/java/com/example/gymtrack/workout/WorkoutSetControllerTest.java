@@ -2,6 +2,7 @@ package com.example.gymtrack.workout;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -60,8 +61,17 @@ class WorkoutSetControllerTest {
 		return "Bearer " + jwtService.generateToken(user.getId(), user.getEmail());
 	}
 
+	private UUID exerciseBySlug(String slug) {
+		return exerciseRepository.findAllByOrderByNameAsc()
+			.stream()
+			.filter(exercise -> exercise.getSlug().equals(slug))
+			.findFirst()
+			.orElseThrow()
+			.getId();
+	}
+
 	private UUID exerciseId() {
-		return exerciseRepository.findAllByOrderByNameAsc().get(0).getId();
+		return exerciseBySlug("barbell-bench-press");
 	}
 
 	private String startSession(String token) throws Exception {
@@ -224,7 +234,7 @@ class WorkoutSetControllerTest {
 			setBody(exerciseId, 5, "0"),
 			setBody(exerciseId, 5, "-5"),
 			setBody(exerciseId, 5, "1000.5"),
-			setBody(exerciseId, 5, "60.3"),
+			setBody(exerciseId, 5, "60.1"),
 			"{\"reps\":5,\"weightKg\":60}",
 		};
 		for (String body : badBodies) {
@@ -239,18 +249,18 @@ class WorkoutSetControllerTest {
 	}
 
 	@Test
-	void logSetWithNonHalfKgWeightReportsHalfKgStepRule() throws Exception {
+	void logSetWithNonQuarterKgWeightReportsQuarterKgStepRule() throws Exception {
 		String token = bearerToken();
 		String sessionId = startSession(token);
 
 		mockMvc.perform(post("/api/workout-sessions/" + sessionId + "/sets")
 				.header(HttpHeaders.AUTHORIZATION, token)
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(setBody(exerciseId(), 5, "60.3")))
+				.content(setBody(exerciseId(), 5, "60.1")))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.code", is("VALIDATION_FAILED")))
 			.andExpect(jsonPath("$.field", is("weightKg")))
-			.andExpect(jsonPath("$.rule", is("HalfKgStep")));
+			.andExpect(jsonPath("$.rule", is("QuarterKgStep")));
 	}
 
 	@Test
@@ -329,6 +339,211 @@ class WorkoutSetControllerTest {
 		mockMvc.perform(delete("/api/workout-sessions/" + sessionId + "/sets/" + setId)
 				.header(HttpHeaders.AUTHORIZATION, token))
 			.andExpect(status().isConflict());
+	}
+
+	private String bareBody(UUID exerciseId, int reps) {
+		return "{\"exerciseId\":\"" + exerciseId + "\",\"reps\":" + reps + "}";
+	}
+
+	private void assertWeightRejected(String token, String sessionId, String body) throws Exception {
+		mockMvc.perform(post("/api/workout-sessions/" + sessionId + "/sets")
+				.header(HttpHeaders.AUTHORIZATION, token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(body))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("VALIDATION_FAILED")))
+			.andExpect(jsonPath("$.field", is("weightKg")));
+	}
+
+	private void assertStoredWeight(String token, String sessionId, String body, double expected) throws Exception {
+		String response = mockMvc.perform(post("/api/workout-sessions/" + sessionId + "/sets")
+				.header(HttpHeaders.AUTHORIZATION, token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(body))
+			.andExpect(status().isCreated())
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+		Number stored = JsonPath.read(response, "$.weightKg");
+		assertEquals(expected, stored.doubleValue(), 0.0001);
+	}
+
+	@Test
+	void requiredExerciseRejectsZeroAndMissingWeight() throws Exception {
+		String token = bearerToken();
+		String sessionId = startSession(token);
+		UUID bench = exerciseBySlug("barbell-bench-press");
+
+		assertWeightRejected(token, sessionId, setBody(bench, 5, "0"));
+		assertWeightRejected(token, sessionId, bareBody(bench, 5));
+		// A translatable rule without a numeric limit, so the message never reads "limit: " with an empty value.
+		mockMvc.perform(post("/api/workout-sessions/" + sessionId + "/sets")
+				.header(HttpHeaders.AUTHORIZATION, token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(bareBody(bench, 5)))
+			.andExpect(jsonPath("$.rule", is("WeightRequired")));
+	}
+
+	@Test
+	void optionalExerciseTreatsMissingWeightAsZeroAndAcceptsAddedWeight() throws Exception {
+		String token = bearerToken();
+		String sessionId = startSession(token);
+		UUID pullUp = exerciseBySlug("pull-up");
+
+		assertStoredWeight(token, sessionId, bareBody(pullUp, 8), 0.0);
+		assertStoredWeight(token, sessionId, setBody(pullUp, 8, "0"), 0.0);
+		assertStoredWeight(token, sessionId, setBody(pullUp, 5, "10.25"), 10.25);
+		assertWeightRejected(token, sessionId, setBody(pullUp, 5, "-1"));
+	}
+
+	@Test
+	void noneExerciseStoresZeroAndRejectsPositiveWeight() throws Exception {
+		String token = bearerToken();
+		String sessionId = startSession(token);
+		UUID rollout = exerciseBySlug("ab-wheel-rollout");
+
+		assertStoredWeight(token, sessionId, bareBody(rollout, 10), 0.0);
+		assertStoredWeight(token, sessionId, setBody(rollout, 10, "0"), 0.0);
+		assertWeightRejected(token, sessionId, setBody(rollout, 10, "5"));
+	}
+
+	@Test
+	void unknownExerciseStillReturnsNotFoundWithoutWeight() throws Exception {
+		String token = bearerToken();
+		String sessionId = startSession(token);
+
+		mockMvc.perform(post("/api/workout-sessions/" + sessionId + "/sets")
+				.header(HttpHeaders.AUTHORIZATION, token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(bareBody(UUID.randomUUID(), 5)))
+			.andExpect(status().isNotFound());
+	}
+
+	private String durationBody(Object exerciseId, int seconds, String weightKg) {
+		return "{\"exerciseId\":\"" + exerciseId + "\",\"durationSeconds\":" + seconds
+				+ (weightKg == null ? "" : ",\"weightKg\":" + weightKg) + "}";
+	}
+
+	private org.springframework.test.web.servlet.ResultActions postSet(String token, String sessionId, String body)
+			throws Exception {
+		return mockMvc.perform(post("/api/workout-sessions/" + sessionId + "/sets")
+			.header(HttpHeaders.AUTHORIZATION, token)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(body));
+	}
+
+	@Test
+	void durationSetIsLoggedWithDurationAndNoReps() throws Exception {
+		String token = bearerToken();
+		String sessionId = startSession(token);
+
+		postSet(token, sessionId, durationBody(exerciseBySlug("plank"), 45, null))
+			.andExpect(status().isCreated())
+			.andExpect(jsonPath("$.durationSeconds", is(45)))
+			.andExpect(jsonPath("$.reps").value(org.hamcrest.Matchers.nullValue()))
+			.andExpect(jsonPath("$.weightKg", is(0)));
+		postSet(token, sessionId, durationBody(exerciseBySlug("plank"), 30, "10"))
+			.andExpect(status().isCreated())
+			.andExpect(jsonPath("$.weightKg", is(10)));
+	}
+
+	@Test
+	void measureFieldsMustMatchTheExercise() throws Exception {
+		String token = bearerToken();
+		String sessionId = startSession(token);
+		UUID plank = exerciseBySlug("plank");
+
+		postSet(token, sessionId, setBody(plank, 10, "null")).andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("VALIDATION_FAILED")))
+			.andExpect(jsonPath("$.field", is("durationSeconds")));
+		postSet(token, sessionId, "{\"exerciseId\":\"" + plank + "\",\"reps\":10,\"durationSeconds\":30}")
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.field", is("reps")));
+		postSet(token, sessionId, "{\"exerciseId\":\"" + exerciseId() + "\",\"reps\":5,\"weightKg\":60,\"durationSeconds\":30}")
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code", is("VALIDATION_FAILED")))
+			.andExpect(jsonPath("$.field", is("durationSeconds")));
+		postSet(token, sessionId, "{\"exerciseId\":\"" + exerciseId() + "\",\"weightKg\":60}")
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.field", is("reps")));
+		postSet(token, sessionId, durationBody(plank, 0, null)).andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.field", is("durationSeconds")));
+		postSet(token, sessionId, durationBody(plank, 3601, null)).andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.field", is("durationSeconds")));
+	}
+
+	@Test
+	void weightRulesStillApplyToDurationSets() throws Exception {
+		String token = bearerToken();
+		String sessionId = startSession(token);
+
+		postSet(token, sessionId, durationBody(exerciseBySlug("copenhagen-plank"), 30, "10"))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.field", is("weightKg")));
+		postSet(token, sessionId, durationBody(exerciseBySlug("copenhagen-plank"), 30, null))
+			.andExpect(status().isCreated())
+			.andExpect(jsonPath("$.weightKg", is(0)));
+	}
+
+	@Test
+	void durationSetsFlowThroughEveryReadEndpoint() throws Exception {
+		String token = bearerToken();
+		UUID plank = exerciseBySlug("plank");
+		String plan = mockMvc.perform(post("/api/training-plans")
+				.header(HttpHeaders.AUTHORIZATION, token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"name\":\"Core\",\"entries\":[{\"exerciseId\":\"" + plank
+						+ "\",\"sets\":2,\"targetDurationSeconds\":60}]}"))
+			.andExpect(status().isCreated())
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+		String planId = JsonPath.read(plan, "$.id");
+		String sessionId = JsonPath.read(mockMvc.perform(post("/api/workout-sessions")
+				.header(HttpHeaders.AUTHORIZATION, token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"planId\":\"" + planId + "\"}"))
+			.andReturn()
+			.getResponse()
+			.getContentAsString(), "$.id");
+		logSet(token, sessionId, durationBody(plank, 60, null));
+		postSet(token, sessionId, durationBody(plank, 90, null)).andExpect(status().isCreated())
+			.andExpect(jsonPath("$.personalRecord", is(true)));
+		logSet(token, sessionId, setBody(exerciseId(), 5, "60"));
+
+		mockMvc.perform(get("/api/workout-sessions/current").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.sets[0].durationSeconds", is(60)));
+		endSession(token, sessionId);
+
+		mockMvc.perform(get("/api/workout-sessions").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.items[0].setCount", is(3)))
+			.andExpect(jsonPath("$.items[0].volumeKg", is(300.0)));
+		mockMvc.perform(get("/api/workout-sessions/" + sessionId).header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.volumeKg", is(300.0)))
+			.andExpect(jsonPath("$.exercises[0].sets[0].durationSeconds", is(60)))
+			.andExpect(jsonPath("$.exercises[0].sets[0].reps").value(org.hamcrest.Matchers.nullValue()))
+			.andExpect(jsonPath("$.exercises[0].sets[1].personalRecord", is(true)));
+		mockMvc.perform(get("/api/exercises/" + plank + "/previous-workout").param("planId", planId)
+				.header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.sets[1].durationSeconds", is(90)))
+			.andExpect(jsonPath("$.sets[1].reps").value(org.hamcrest.Matchers.nullValue()));
+		mockMvc.perform(get("/api/dashboard/insights").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.recentPersonalRecords[0].durationSeconds", is(90)))
+			.andExpect(jsonPath("$.recentPersonalRecords[0].reps").value(org.hamcrest.Matchers.nullValue()));
+		mockMvc.perform(get("/api/dashboard/stats").param("window", "all").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk());
+		mockMvc.perform(get("/api/exercises/" + plank + "/progression").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$[0].metric", is("DURATION")))
+			.andExpect(jsonPath("$[0].value", is(90)));
+		mockMvc.perform(get("/api/exercises/" + plank + "/progression-recommendation")
+				.header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isNoContent());
 	}
 
 }

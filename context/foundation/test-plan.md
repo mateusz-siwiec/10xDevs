@@ -50,7 +50,7 @@ push a user to an unsafe weight.
 | Test | Level | Covers |
 | --- | --- | --- |
 | `e2e/progression-recommendation.spec.ts` | E2E | Two full workouts at 60 kg produce "Try 61.5 kg" on the workout screen |
-| `ProgressionRecommendationControllerTest` (17 cases) | Backend | The rule's boundaries: needs 2 ended sessions; a short set count, a rep below target, or differing top weights break it; warm-up sets do not; sessions without a plan break the streak; rounding to 0.5 kg with a minimum +0.5 kg step; suppression above 1000 kg; the first plan entry is the target when an exercise appears twice |
+| `ProgressionRecommendationControllerTest` (25 cases) | Backend | The rule's boundaries: needs 2 ended sessions; a short set count, a rep below target, or differing top weights break it; warm-up sets do not; sessions without a plan break the streak; rounding to 0.25 kg with a minimum +0.25 kg step (including the 2 kg floor case); suppression above 1000 kg; the first plan entry is the target when an exercise appears twice; no suggestion for no-weight exercises (`noneExerciseNeverGetsARecommendation`), at a top weight of 0 (`topWeightOfZeroGivesNoRecommendation`) or for timed exercises (`durationExerciseGetsNoRecommendationEvenWithQualifyingHistory`); an optional-weight exercise with added weight still gets one |
 
 ### R3. A logged set is lost, duplicated or attached to the wrong session (guardrail)
 
@@ -61,7 +61,7 @@ push a user to an unsafe weight.
 | `e2e/log-set.spec.ts` | E2E | Register, start, log a set, end, and find it in History |
 | `WorkoutSetControllerTest` | Backend | A logged set appears in the active session; invalid values are rejected; ended sessions refuse new or deleted sets |
 | `WorkoutSessionControllerTest.concurrentStartsYieldOneCreatedAndSameSession` | Backend | Two simultaneous "start workout" requests create exactly one session (partial unique index) |
-| `WorkoutSchemaTest`, `TrainingPlanSchemaTest` | Backend | DB constraints behind those guarantees: one active session per user, no zero reps or weight, cascades on delete, no duplicate plan positions |
+| `WorkoutSchemaTest`, `TrainingPlanSchemaTest` | Backend | DB constraints behind those guarantees: one active session per user, no zero reps, no negative weight (weight 0 is allowed), exactly one of reps or duration on a set and on a plan entry, cascades on delete, no duplicate plan positions |
 
 ### R4. Unauthenticated access to protected data
 
@@ -80,8 +80,8 @@ push a user to an unsafe weight.
 
 | Test | Level | Covers |
 | --- | --- | --- |
-| `PersonalRecordControllerTest` | Backend | First set is not a record; a higher estimated 1RM is; ties are not; sets above 15 reps are ignored; exercises are independent; log response, History and Dashboard agree; deleting a set re-judges later ones |
-| `DashboardInsightsControllerTest` (records cases) | Backend | The dashboard's recent records match the flags in History |
+| `PersonalRecordControllerTest` | Backend | First set is not a record; a higher estimated 1RM is; ties are not; weighted sets above 15 reps are ignored; exercises are independent; log response, History and Dashboard agree; deleting a set re-judges later ones. Per-exercise rules: bodyweight sets rank by reps with no rep cap, a weighted set beats any bodyweight set but not the reverse, timed sets rank by longest time then weight (`bodyweightSetsRankByRepsAndAreExemptFromTheRepCap`, `weightedSetBeatsAnyBodyweightSetButNotTheReverse`, `durationSetsRankByLongestTimeThenWeight`) |
+| `DashboardInsightsControllerTest` (records cases, incl. `bodyweightRecordsAreRankedByRepsAndShowZeroWeight`) | Backend | The dashboard's recent records match the flags in History, bodyweight records show reps and zero weight |
 
 ### R6. Dashboard numbers and streak are wrong
 
@@ -98,7 +98,9 @@ push a user to an unsafe weight.
 
 | Test | Level | Covers |
 | --- | --- | --- |
-| `WorkoutSetControllerTest.logSetWithInvalidValues…`, `…NonHalfKgWeight…` | Backend | Reps 1 to 100, weight above 0 up to 1000 in 0.5 kg steps |
+| `WorkoutSetControllerTest.logSetWithInvalidValues…`, `…NonQuarterKgWeight…` | Backend | Reps 1 to 100, weight up to 1000 in 0.25 kg steps |
+| `WorkoutSetControllerTest.requiredExerciseRejectsZeroAndMissingWeight`, `optionalExerciseTreatsMissingWeightAsZeroAndAcceptsAddedWeight`, `noneExerciseStoresZeroAndRejectsPositiveWeight`, `measureFieldsMustMatchTheExercise`, `weightRulesStillApplyToDurationSets` | Backend | Each exercise's weight mode and measure decide which of reps, duration and weight are required, optional or rejected |
+| `TrainingPlanControllerTest.entryFieldsMustMatchTheExercisesMeasure` | Backend | A plan entry carries reps for rep exercises and a seconds target for timed ones |
 | `TrainingPlanControllerTest.invalidRequestsReturnBadRequest`, `CustomExerciseControllerTest` | Backend | Name length, entry counts and set/rep ranges, duplicate exercise names |
 | `ExerciseControllerTest.unknownMuscleGroupReturnsBadRequest` | Backend | Bad filter values give a clean 400 with an error body |
 
@@ -137,7 +139,7 @@ push a user to an unsafe weight.
 | Test | Level | Covers |
 | --- | --- | --- |
 | `e2e/muscle-group-stats.spec.ts` | E2E | From the dashboard link, 3 chest and 2 back sets show as "5 sets in total", Chest 3, Back 2, Core 0, most-trained first |
-| `MuscleGroupStatsControllerTest` (10 cases) | Backend | All groups listed with zeros; each set counted once under its exercise's primary group (also within one session across groups); active sessions excluded; 7/30/all window by end time; custom exercises counted; other users never leak; a deleted workout stops counting; invalid window gives 400; no token gives 401 |
+| `MuscleGroupStatsControllerTest` (18 cases) | Backend | All groups listed with zeros; each set counted once under its exercise's primary group (also within one session across groups); active sessions excluded; 7/30/all window by end time; custom exercises counted; other users never leak; a deleted workout stops counting; invalid window gives 400; no token gives 401 |
 
 ### R12. On a phone, part of the navigation is unreachable
 
@@ -148,7 +150,26 @@ push a user to an unsafe weight.
 | `e2e/mobile-menu.spec.ts` | E2E | At 375 px: only the menu button shows; opening it reveals every link, the logout button and the panel stays inside the screen; picking a link navigates and closes it; Escape closes it |
 | The desktop navigation steps in the other e2e specs | E2E | The desktop top bar is unchanged (links stay directly clickable at 1280 px) |
 
+### R13. Bodyweight and timed exercises are logged, ranked or charted wrongly
+
+**Impact:** medium. Exercises without weight (ab wheel), with optional added weight (pull-up) or counted in seconds (plank) must
+log cleanly, never crash a read endpoint, and rank and chart by their own metric.
+
+| Test | Level | Covers |
+| --- | --- | --- |
+| `e2e/bodyweight-sets.spec.ts` | E2E | Ab wheel shows no weight field and logs `10 reps`; a pull-up with an empty added weight logs `8 reps` and with 10 kg logs `8 × 10 kg`; changing the weight mode of a custom exercise that has sets shows the translated in-use message |
+| `e2e/timed-sets.spec.ts` | E2E | A plank set logs `45 s` and, with added weight, `45 s × 5 kg`; a plan with a plank entry (3 sets, 45 s target) shows `3 × 45 s` in the walkthrough; changing the measure after sets exist shows the in-use message |
+| `ExerciseSeedTest.weightModeMigrationClassifiesBuiltInExercisesBySlug`, `durationMeasureMigrationMarksPlanksAsDurationAndEverythingElseAsReps` | Backend | The built-ins are backfilled by slug (ab wheel, banded walk, copenhagen plank: no weight; pull-up, dip, push-up, leg raise, plank: optional; plank and copenhagen plank: seconds) |
+| `CustomExerciseControllerTest.createDefaultsWeightModeToRequiredAndAcceptsExplicitMode`, `createDefaultsMeasureToRepsAndAcceptsDuration`, `updateChangingWeightModeIsConflictOnceASetExists`, `updateChangingMeasureIsConflictOnceASetExists` (and the other weight-mode and measure update cases) | Backend | Defaults, round trip, and the 409 edit lock once a set references the exercise |
+| `WorkoutSetControllerTest.durationSetIsLoggedWithDurationAndNoReps`, `durationSetsFlowThroughEveryReadEndpoint` | Backend | A timed set (no reps) logs and flows through session, history, previous workout, records, chart and dashboard without a 500 |
+| `HistoryControllerTest.detailAndListHandleDurationSetsWithoutVolume`, `PreviousWorkoutControllerTest.previousWorkoutReturnsDurationSets` | Backend | History and previous-workout shapes for timed sets; timed sets add no volume |
+| `ProgressionControllerTest` (`requiredExerciseChartsWeightAsTheMetric`, `noneExerciseChartsTopRepsAsTheMetric`, `optionalExerciseChartsRepsUntilAnyPositiveWeightAppears`, `durationExerciseChartPlotsLongestSecondsPerSession`, `durationChartSkipsSessionsThatOnlyHoldLegacyRepSets`) | Backend | The chart plots weight, reps or seconds depending on the exercise |
+| `WorkoutSchemaTest.zeroWeightIsAccepted`, `negativeOrOverThousandWeightIsRejected`, `durationSetWithoutRepsIsAccepted`, `exactlyOneOfRepsAndDurationIsRequired`, `outOfRangeDurationIsRejected`, `exerciseMeasureIsRestrictedToRepsOrDuration`; `TrainingPlanSchemaTest.durationEntryWithoutRepsIsAccepted`, `exactlyOneOfRepsAndTargetDurationIsRequired`, `outOfRangeTargetDurationIsRejected` | Backend | The DB constraints behind weight 0, the reps-or-duration rule and the duration range |
+| `frontend/src/utils/workoutToPlan.test.ts` | Frontend unit | Saving a workout as a plan turns timed sets into seconds targets |
+
 ## Not covered by automated tests (known gaps)
+
+- **Logging timed sets through the browser beyond one plank flow.** The e2e specs cover a plank with and without weight; the exercise form's measure and weight-mode controls are exercised only through the edit-lock path, not on create.
 
 - **Substitution suggestions in the browser.** Covered at API level (`ExerciseControllerTest`, `CustomExerciseVisibilityTest`), not through the UI.
 - **Guided navigation and rest timer** (skip/return, countdown): frontend behaviour with no automated test.

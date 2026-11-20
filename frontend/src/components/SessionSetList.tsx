@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import type { WorkoutSet } from '../api/client'
 import FailureBadge from './FailureBadge'
 import { exerciseName } from '../utils/exercises'
+import { formatSet } from '../utils/format'
 import type { NamedExercise } from '../utils/exercises'
 
 interface SessionSetListProps {
@@ -39,7 +40,7 @@ export default function SessionSetList({ sets, exercisesById, onDelete }: Sessio
           <div className="set-item-info">
             <span className="set-item-name">{nameOf(set.exerciseId)}</span>
             <span>
-              {set.reps} × {set.weightKg} kg
+              {formatSet(set)}
               {set.personalRecord && (
                 <span className="pr-badge" role="img" aria-label={t('common.personalRecord')}>
                   {t('common.prBadge')}

@@ -413,4 +413,26 @@ class HistoryControllerTest {
 			.andExpect(content().string(""));
 	}
 
+	@Test
+	void detailAndListHandleDurationSetsWithoutVolume() throws Exception {
+		User user = newUser();
+		UUID plank = exerciseRepository.findAllByOrderByNameAsc().stream()
+			.filter(exercise -> exercise.getSlug().equals("plank")).findFirst().orElseThrow().getId();
+		WorkoutSession session = sessionRepository.saveAndFlush(new WorkoutSession(user.getId(), null));
+		setRepository.saveAndFlush(new WorkoutSet(session, plank, null, 75, new BigDecimal("10"), false));
+		setRepository.saveAndFlush(new WorkoutSet(session, exerciseId(), 5, new BigDecimal("20"), false));
+		session.end();
+		sessionRepository.saveAndFlush(session);
+
+		mockMvc.perform(get("/api/workout-sessions").header(HttpHeaders.AUTHORIZATION, bearer(user)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.items[0].setCount").value(2))
+			.andExpect(jsonPath("$.items[0].volumeKg").value(100.0));
+		mockMvc.perform(get("/api/workout-sessions/" + session.getId()).header(HttpHeaders.AUTHORIZATION, bearer(user)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.volumeKg").value(100.0))
+			.andExpect(jsonPath("$.exercises[0].sets[0].durationSeconds").value(75))
+			.andExpect(jsonPath("$.exercises[0].sets[0].reps").value(org.hamcrest.Matchers.nullValue()));
+	}
+
 }

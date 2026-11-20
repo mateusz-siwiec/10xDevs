@@ -76,7 +76,11 @@ class DashboardControllerTest {
 	}
 
 	private void logSet(String token, String sessionId, int reps, String weightKg) throws Exception {
-		UUID exerciseId = exerciseRepository.findAllByOrderByNameAsc().get(0).getId();
+		UUID exerciseId = exerciseRepository.findAllByOrderByNameAsc().stream()
+			.filter(exercise -> exercise.getSlug().equals("barbell-bench-press"))
+			.findFirst()
+			.orElseThrow()
+			.getId();
 		String body = "{\"exerciseId\":\"" + exerciseId + "\",\"reps\":" + reps + ",\"weightKg\":" + weightKg + "}";
 		mockMvc.perform(post("/api/workout-sessions/" + sessionId + "/sets")
 				.header(HttpHeaders.AUTHORIZATION, token)

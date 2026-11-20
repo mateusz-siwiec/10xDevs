@@ -65,7 +65,8 @@ public class TrainingPlan {
 		entries.clear();
 		for (int i = 0; i < inputs.size(); i++) {
 			PlanEntryInput input = inputs.get(i);
-			entries.add(new TrainingPlanEntry(this, input.exerciseId(), i, input.sets(), input.reps()));
+			entries.add(new TrainingPlanEntry(this, input.exerciseId(), i, input.sets(), input.reps(),
+					input.targetDurationSeconds()));
 		}
 		this.updatedAt = Instant.now();
 	}

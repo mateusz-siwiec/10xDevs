@@ -1,7 +1,10 @@
 package com.example.gymtrack.workout;
 
 import com.example.gymtrack.common.ErrorCode;
+import com.example.gymtrack.exercise.Exercise;
 import com.example.gymtrack.exercise.ExerciseRepository;
+import com.example.gymtrack.exercise.Measure;
+import com.example.gymtrack.exercise.WeightMode;
 import com.example.gymtrack.plan.TrainingPlanEntry;
 import com.example.gymtrack.plan.TrainingPlanRepository;
 import java.math.BigDecimal;
@@ -26,7 +29,7 @@ public class ProgressionRecommendationService {
 
 	static final BigDecimal INCREASE = new BigDecimal("1.025");
 
-	private static final BigDecimal MIN_STEP = new BigDecimal("0.5");
+	private static final BigDecimal MIN_STEP = new BigDecimal("0.25");
 
 	private static final BigDecimal MAX_WEIGHT = new BigDecimal("1000");
 
@@ -49,8 +52,10 @@ public class ProgressionRecommendationService {
 
 	@Transactional(readOnly = true)
 	public Optional<ProgressionRecommendationResponse> recommend(UUID userId, UUID exerciseId) {
-		if (!exerciseRepository.existsVisible(exerciseId, userId)) {
-			throw new WorkoutNotFoundException(ErrorCode.EXERCISE_NOT_FOUND, "Exercise not found");
+		Exercise exercise = exerciseRepository.findVisibleById(exerciseId, userId)
+			.orElseThrow(() -> new WorkoutNotFoundException(ErrorCode.EXERCISE_NOT_FOUND, "Exercise not found"));
+		if (exercise.getWeightMode() == WeightMode.NONE || exercise.getMeasure() == Measure.DURATION) {
+			return Optional.empty();
 		}
 		List<WorkoutSession> sessions = sessionRepository.findRecentEndedWithExercise(userId, exerciseId,
 				PageRequest.of(0, REQUIRED_WORKOUTS));
@@ -67,13 +72,13 @@ public class ProgressionRecommendationService {
 			}
 			List<WorkoutSet> sets = setRepository.findBySessionIdOrderByLoggedAtAscIdAsc(session.getId())
 				.stream()
-				.filter(set -> set.getExerciseId().equals(exerciseId))
+				.filter(set -> set.getExerciseId().equals(exerciseId) && set.getReps() != null)
 				.toList();
 			BigDecimal sessionTop = sets.stream()
 				.map(WorkoutSet::getWeightKg)
 				.max(Comparator.naturalOrder())
 				.orElse(null);
-			if (sessionTop == null || (topWeight != null && topWeight.compareTo(sessionTop) != 0)) {
+			if (sessionTop == null || sessionTop.signum() == 0 || (topWeight != null && topWeight.compareTo(sessionTop) != 0)) {
 				return Optional.empty();
 			}
 			topWeight = sessionTop;
@@ -81,6 +86,9 @@ public class ProgressionRecommendationService {
 				.filter(set -> set.getWeightKg().compareTo(sessionTop) == 0)
 				.toList();
 			TrainingPlanEntry entry = target.get();
+			if (entry.getReps() == null) {
+				return Optional.empty();
+			}
 			if (workingSets.size() < entry.getSets()
 					|| workingSets.stream().anyMatch(set -> set.getReps() < entry.getReps())) {
 				return Optional.empty();
@@ -110,14 +118,14 @@ public class ProgressionRecommendationService {
 				.min(Comparator.comparingInt(TrainingPlanEntry::getPosition)));
 	}
 
-	/** Top weight plus INCREASE, rounded half up to 0.5 kg, at least one 0.5 kg step above the top weight. */
+	/** Top weight plus INCREASE, rounded half up to 0.25 kg, at least one 0.25 kg step above the top weight. */
 	private BigDecimal recommendedWeight(BigDecimal topWeight) {
 		BigDecimal rounded = topWeight.multiply(INCREASE)
-			.multiply(BigDecimal.valueOf(2))
+			.multiply(BigDecimal.valueOf(4))
 			.setScale(0, RoundingMode.HALF_UP)
-			.divide(BigDecimal.valueOf(2))
-			.setScale(1, RoundingMode.UNNECESSARY);
-		return rounded.max(topWeight.add(MIN_STEP)).setScale(1, RoundingMode.UNNECESSARY);
+			.divide(BigDecimal.valueOf(4))
+			.setScale(2, RoundingMode.UNNECESSARY);
+		return rounded.max(topWeight.add(MIN_STEP)).setScale(2, RoundingMode.UNNECESSARY);
 	}
 
 }

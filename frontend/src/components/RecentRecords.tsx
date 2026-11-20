@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import type { Exercise, RecentPersonalRecord } from '../api/client'
 import { exerciseName } from '../utils/exercises'
-import { formatShortDate } from '../utils/format'
+import { formatSeconds, formatShortDate } from '../utils/format'
 
 interface RecentRecordsProps {
   records: RecentPersonalRecord[]
@@ -11,6 +11,14 @@ interface RecentRecordsProps {
 
 function displayName(exercise: Exercise | undefined, fallback: string): string {
   return exercise ? exerciseName(exercise) : fallback
+}
+
+function recordText(record: RecentPersonalRecord, repsText: string): string {
+  if (record.durationSeconds != null) {
+    const seconds = formatSeconds(record.durationSeconds)
+    return record.weightKg > 0 ? `${seconds} × ${record.weightKg} kg` : seconds
+  }
+  return record.weightKg > 0 ? `${record.weightKg} kg x ${record.reps}` : repsText
 }
 
 export default function RecentRecords({ records, exercises }: RecentRecordsProps) {
@@ -32,7 +40,7 @@ export default function RecentRecords({ records, exercises }: RecentRecordsProps
                 </span>
               </span>
               <span className="recent-record-detail">
-                {record.weightKg} kg x {record.reps} · {formatShortDate(record.achievedAt)}
+                {recordText(record, t('common.repsCount', { count: record.reps ?? 0 }))} · {formatShortDate(record.achievedAt)}
               </span>
             </li>
           ))}

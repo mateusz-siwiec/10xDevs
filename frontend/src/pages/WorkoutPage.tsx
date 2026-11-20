@@ -157,7 +157,12 @@ export default function WorkoutPage() {
         session.sets.length === 0
           ? null
           : {
-              sets: session.sets.map((s) => ({ exerciseId: s.exerciseId, reps: s.reps })),
+              sets: session.sets.map((s) => ({
+                exerciseId: s.exerciseId,
+                reps: s.reps,
+                durationSeconds: s.durationSeconds,
+                measure: exercisesById.get(s.exerciseId)?.measure,
+              })),
               defaultName: defaultPlanName(
                 plan?.name ?? plans.find((p) => p.id === session.planId)?.name ?? null,
                 session.startedAt,
@@ -178,12 +183,13 @@ export default function WorkoutPage() {
   }
 
   // Rethrows so SetLogger knows the log failed; the message is shown inline here.
-  async function handleLog(reps: number, weightKg: number, toFailure: boolean) {
+  async function handleLog(count: number, weightKg: number | undefined, toFailure: boolean) {
     if (!session) return
     setError(null)
     setBusy(true)
     try {
-      const set = await logSet(session.id, { exerciseId: selectedExercise, reps, weightKg, toFailure })
+      const amount = selectedItem?.measure === 'DURATION' ? { durationSeconds: count } : { reps: count }
+      const set = await logSet(session.id, { exerciseId: selectedExercise, ...amount, weightKg, toFailure })
       setSession((s) => (s && s.id === session.id ? { ...s, sets: [...s.sets, set] } : s))
       // Logging against a skipped entry counts as returning to it.
       if (progress) {
@@ -261,15 +267,6 @@ export default function WorkoutPage() {
         {error && <p className="error-text" role="alert">{translateError(error.err, error.key)}</p>}
         {session === null ? (
           <div className="workout-start">
-            {endedSummary && (
-              <div className="workout-ended">
-                <p role="status">{t('workout.endedSaved')}</p>
-                <SaveAsPlan sets={endedSummary.sets} defaultName={endedSummary.defaultName} />
-                <button type="button" className="btn-secondary" onClick={() => setEndedSummary(null)}>
-                  {t('workout.dismiss')}
-                </button>
-              </div>
-            )}
             <button type="button" className="btn-primary" disabled={busy} onClick={() => handleStart()}>
               {busy ? t('workout.starting') : t('workout.startWorkout')}
             </button>
@@ -315,6 +312,15 @@ export default function WorkoutPage() {
                 </>
               )}
             </section>
+            {endedSummary && (
+              <div className="card workout-ended">
+                <p role="status">{t('workout.endedSaved')}</p>
+                <SaveAsPlan sets={endedSummary.sets} defaultName={endedSummary.defaultName} />
+                <button type="button" className="btn-secondary" onClick={() => setEndedSummary(null)}>
+                  {t('workout.dismiss')}
+                </button>
+              </div>
+            )}
           </div>
         ) : (
           <>
@@ -361,7 +367,7 @@ export default function WorkoutPage() {
               />
             )}
             {selectedExercise && <ProgressionRecommendation exerciseId={selectedExercise} />}
-            <SetLogger disabled={!selectedExercise} onLog={handleLog} />
+            <SetLogger key={selectedExercise} disabled={!selectedExercise} exercise={selectedItem} onLog={handleLog} />
             <RestTimer
               endsAt={restEndsAt}
               onChange={setRestEndsAt}

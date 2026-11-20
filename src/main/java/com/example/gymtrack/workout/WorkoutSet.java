@@ -28,8 +28,11 @@ public class WorkoutSet {
 	@Column(nullable = false)
 	private UUID exerciseId;
 
-	@Column(nullable = false)
-	private int reps;
+	@Column
+	private Integer reps;
+
+	@Column
+	private Integer durationSeconds;
 
 	@Column(nullable = false, precision = 6, scale = 2)
 	private BigDecimal weightKg;
@@ -48,9 +51,16 @@ public class WorkoutSet {
 	}
 
 	public WorkoutSet(WorkoutSession session, UUID exerciseId, int reps, BigDecimal weightKg, boolean toFailure) {
+		this(session, exerciseId, Integer.valueOf(reps), null, weightKg, toFailure);
+	}
+
+	/** Exactly one of {@code reps} and {@code durationSeconds} is set. */
+	public WorkoutSet(WorkoutSession session, UUID exerciseId, Integer reps, Integer durationSeconds,
+			BigDecimal weightKg, boolean toFailure) {
 		this.session = session;
 		this.exerciseId = exerciseId;
 		this.reps = reps;
+		this.durationSeconds = durationSeconds;
 		this.weightKg = weightKg;
 		this.toFailure = toFailure;
 		this.loggedAt = Instant.now();
@@ -68,8 +78,14 @@ public class WorkoutSet {
 		return exerciseId;
 	}
 
-	public int getReps() {
+	/** Null for a duration set. */
+	public Integer getReps() {
 		return reps;
+	}
+
+	/** Null for a rep set. */
+	public Integer getDurationSeconds() {
+		return durationSeconds;
 	}
 
 	public BigDecimal getWeightKg() {

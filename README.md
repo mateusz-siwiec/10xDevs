@@ -29,7 +29,8 @@ automatically: the app only ever **suggests**, and the user decides.
 ### 1. Weight-increase recommendation
 
 *Code: `workout/ProgressionRecommendationService`.*
-Shown on the workout screen when you pick an exercise.
+Shown on the workout screen when you pick an exercise. It only applies to **weighted rep exercises**: nothing is
+suggested for timed exercises, for exercises logged without weight, or when your top weight is 0 (bodyweight sets).
 
 **Rule.** Take your last **2 ended workouts** that contain the exercise. The app recommends a heavier weight only if, in
 **both**:
@@ -38,8 +39,8 @@ Shown on the workout screen when you pick an exercise.
 2. your heaviest weight for the exercise is the **same** in both workouts,
 3. at that heaviest weight you did **at least the target number of sets**, and **every one of them hit the target reps**.
 
-Lighter sets (warm-ups) are ignored. The suggestion is the top weight plus **2.5 %**, rounded to the nearest **0.5 kg**,
-and always **at least 0.5 kg more** than the top weight. Nothing is suggested above 1000 kg.
+Lighter sets (warm-ups) are ignored. The suggestion is the top weight plus **2.5 %**, rounded half up to the nearest **0.25 kg**,
+and always **at least 0.25 kg more** than the top weight. Nothing is suggested above 1000 kg.
 
 **Example: it triggers.** Plan "Push day" has Barbell Bench Press **3 × 8**.
 
@@ -49,7 +50,7 @@ and always **at least 0.5 kg more** than the top weight. Nothing is suggested ab
 | Thursday | 3 × 8 at 60 kg | yes: same top weight, 3 sets of 8 |
 
 The workout screen then shows: *"Try 61.5 kg: you completed 3×8 at 60 kg in your last 2 workouts."*
-(60 × 1.025 = 61.5, already a multiple of 0.5.)
+(60 × 1.025 = 61.5, already a multiple of 0.25.)
 
 **Example: it does not trigger.** Any one of these keeps the suggestion hidden:
 
@@ -69,8 +70,9 @@ The workout screen then shows: *"Try 61.5 kg: you completed 3×8 at 60 kg in you
 | 100 kg | 102.5 | **102.5 kg** | |
 | 80 kg | 82.0 | **82.0 kg** | |
 | 60 kg | 61.5 | **61.5 kg** | |
-| 10 kg | 10.25 | **10.5 kg** | rounded to the nearest 0.5 |
-| 5 kg | 5.125 | **5.5 kg** | the minimum +0.5 kg step wins over rounding down to 5.0 |
+| 10 kg | 10.25 | **10.25 kg** | already a multiple of 0.25 |
+| 5 kg | 5.125 | **5.25 kg** | exactly halfway between 5.0 and 5.25, rounded half up |
+| 2 kg | 2.05 | **2.25 kg** | rounding would give 2.0, so the minimum +0.25 kg step wins |
 
 This is intentionally a simple heuristic, not a safety or recovery system: it knows nothing about injury or fatigue.
 
@@ -93,12 +95,17 @@ Limitation: only the muscle group is compared, not the equipment or movement pat
 *Code: `workout/PersonalRecordService`.* A set gets a **PR** badge when it beats everything you logged before for that exercise.
 
 **Rule.** Each set gets a score of `weight × (30 + reps)`, which is the Epley one-rep-max estimate `weight × (1 + reps/30)`
-multiplied by 30 so the comparison stays exact. A set is a record only if its score is **strictly higher** than every earlier set
-of the same exercise. Rules of the road:
+multiplied by 30 so the comparison stays exact; equal scores are broken by more reps. What counts as better depends on the exercise:
+
+- **rep sets with weight:** the higher score wins, then more reps;
+- **bodyweight sets** (weight 0, e.g. pull-ups or ab wheel rollouts): the score is 0, so more reps win; any weighted set beats any bodyweight set;
+- **timed sets:** the longest time wins, then the heavier added weight.
+
+A set is a record only if it is **strictly better** than every earlier set of the same exercise. Rules of the road:
 
 - the **first** set you ever log for an exercise is not a record (nothing to beat);
 - a **tie** is not a record;
-- sets above **15 reps** are ignored completely (1RM estimates are unreliable at high reps), so they are never a record and never raise the bar;
+- weighted sets above **15 reps** are ignored completely (1RM estimates are unreliable at high reps), so they are never a record and never raise the bar; bodyweight and timed sets have no such cap;
 - the flag is recomputed on every read, so deleting a set re-judges the later ones.
 
 **Example.** Bench press over time:
@@ -116,7 +123,7 @@ of the same exercise. Rules of the road:
 *Code: `workout/DashboardService`.* Only **ended** workouts count.
 
 - **Totals** for the last **7, 30 or 90 days** (or all time): number of workouts, total time, and total volume
-  (`Σ reps × kg`). For a time window the app also returns the **previous period of the same length**, so the UI can show
+  (`Σ reps × kg`; timed sets have no reps and add no volume). For a time window the app also returns the **previous period of the same length**, so the UI can show
   the change ("12 workouts, up from 9").
 - **Weekly volume:** 12 consecutive 7-day blocks counted back from *now* (not calendar weeks); empty weeks show as zero.
 - **Streak:** set a weekly goal of **1 to 14 workouts**. The streak is the number of consecutive full 7-day blocks that met the goal.
@@ -181,9 +188,11 @@ went to failure. This is informational only: it does **not** affect the weight-i
 
 | Field | Rule |
 | --- | --- |
-| Set reps | 1 to 100 |
-| Set weight | above 0 and up to 1000 kg, in steps of 0.5 kg |
-| Plan | name up to 60 characters; 1 to 50 entries; each entry 1 to 20 sets and 1 to 100 reps; the same exercise may repeat |
+| Set reps | 1 to 100, for exercises counted in reps (the default); a timed exercise takes no reps |
+| Set duration | 1 to 3600 seconds, for timed exercises only |
+| Set weight | required (above 0), optional (empty means 0) or absent (must be 0), depending on the exercise; always up to 1000 kg, in steps of 0.25 kg |
+| Exercise settings | each exercise has a measure (reps or seconds) and a weight mode (required, optional or none); built-ins have fixed settings (for example pull-up: optional, plank: seconds and optional, ab wheel: none); both default to reps and required for custom exercises, and cannot be changed once the exercise has logged sets |
+| Plan | name up to 60 characters; 1 to 50 entries; each entry 1 to 20 sets and 1 to 100 reps (or a 1 to 3600 second target for a timed exercise); the same exercise may repeat |
 | Custom exercise | name up to 60 characters, unique among catalog and your own; cannot be deleted while used in a plan or a logged set |
 | Password | 8 to 72 characters; emails are case-insensitive |
 | Workouts | one active workout per user; sets can be added or removed only while it is active; deleting a workout removes its sets, and personal records, charts and recommendations recompute from what remains |

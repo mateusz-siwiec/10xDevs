@@ -15,15 +15,20 @@ public record PlanEntryRequest(
 	@Max(20)
 	Integer sets,
 
-	@NotNull
+	/** Required for REPS exercises, rejected for DURATION ones. */
 	@Min(1)
 	@Max(100)
-	Integer reps
+	Integer reps,
+
+	/** Required for DURATION exercises, rejected for REPS ones. */
+	@Min(1)
+	@Max(3600)
+	Integer targetDurationSeconds
 
 ) {
 
 	PlanEntryInput toInput() {
-		return new PlanEntryInput(exerciseId, sets, reps);
+		return new PlanEntryInput(exerciseId, sets, reps, targetDurationSeconds);
 	}
 
 }

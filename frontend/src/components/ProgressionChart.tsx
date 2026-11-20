@@ -65,6 +65,14 @@ export default function ProgressionChart({ exerciseId, refreshKey }: Progression
   } else if (shown.points.length === 0) {
     body = <p className="page-subtext">{t('progression.empty')}</p>
   } else {
+    const metric = shown.points[0].metric
+    const isWhole = metric !== 'WEIGHT'
+    const unit = t(
+      metric === 'DURATION' ? 'progression.unitSeconds' : metric === 'REPS' ? 'progression.unitReps' : 'progression.unitKg',
+    )
+    const seriesLabel = t(
+      metric === 'DURATION' ? 'progression.topDuration' : metric === 'REPS' ? 'progression.topReps' : 'progression.topWeight',
+    )
     body = (
       <div className="progression-chart-body">
         <ResponsiveContainer width="100%" height={240}>
@@ -72,20 +80,20 @@ export default function ProgressionChart({ exerciseId, refreshKey }: Progression
             <CartesianGrid {...gridProps} />
             <XAxis dataKey="date" tickFormatter={formatDate} {...axisProps} />
             <YAxis
-              unit=" kg"
+              unit={unit}
               width={56}
               domain={['auto', 'auto']}
-              allowDecimals
+              allowDecimals={!isWhole}
               {...axisProps}
             />
             <Tooltip
               {...tooltipProps}
               labelFormatter={(label) => formatDate(String(label))}
-              formatter={(value) => [`${value} kg`, t('progression.topWeight')]}
+              formatter={(value) => [`${value}${unit}`, seriesLabel]}
             />
             <Line
               type="monotone"
-              dataKey="topWeightKg"
+              dataKey="value"
               stroke={seriesColor}
               strokeWidth={2}
               dot={{ r: 4 }}

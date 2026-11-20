@@ -5,6 +5,6 @@ import java.time.Instant;
 import java.util.UUID;
 
 /** A set that beat the user's earlier best for its exercise, with the time it was logged. */
-public record PersonalRecordEntry(UUID sessionId, UUID exerciseId, int reps, BigDecimal weightKg,
-		Instant achievedAt) {
+public record PersonalRecordEntry(UUID sessionId, UUID exerciseId, Integer reps, Integer durationSeconds,
+		BigDecimal weightKg, Instant achievedAt) {
 }

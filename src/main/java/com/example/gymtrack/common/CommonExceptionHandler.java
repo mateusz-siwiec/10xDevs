@@ -19,6 +19,12 @@ public class CommonExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorBody.of(ex.getCode(), ex.getMessage()));
 	}
 
+	@ExceptionHandler(InvalidFieldException.class)
+	public ResponseEntity<Map<String, Object>> handleInvalidField(InvalidFieldException ex) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+			.body(ErrorBody.of(ErrorCode.VALIDATION_FAILED, ex.getMessage(), ex.getField(), ex.getRule()));
+	}
+
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public ResponseEntity<Map<String, Object>> handleUnreadableBody(HttpMessageNotReadableException ex) {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)

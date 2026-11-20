@@ -3,7 +3,9 @@ package com.example.gymtrack.plan;
 import com.example.gymtrack.common.ErrorCode;
 import com.example.gymtrack.common.ResourceNotFoundException;
 import com.example.gymtrack.exercise.Exercise;
+import com.example.gymtrack.common.InvalidFieldException;
 import com.example.gymtrack.exercise.ExerciseRepository;
+import com.example.gymtrack.exercise.Measure;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +40,7 @@ public class TrainingPlanService {
 	@Transactional
 	public PlanResponse create(UUID userId, String name, List<PlanEntryInput> entries) {
 		Map<UUID, Exercise> names = loadExerciseNames(userId, exerciseIds(entries));
+		validateTargets(entries, names);
 		TrainingPlan plan = new TrainingPlan(userId, name.trim());
 		plan.replaceEntries(entries);
 		planRepository.saveAndFlush(plan);
@@ -50,6 +53,7 @@ public class TrainingPlanService {
 		TrainingPlan plan = planRepository.findByIdAndUserIdForUpdate(planId, userId)
 			.orElseThrow(() -> new PlanNotFoundException("Training plan not found"));
 		Map<UUID, Exercise> names = loadExerciseNames(userId, exerciseIds(entries));
+		validateTargets(entries, names);
 		plan.rename(name.trim());
 		// (plan_id, position) is unique and inserts flush before deletes: remove old entries first.
 		plan.replaceEntries(List.of());
@@ -67,6 +71,31 @@ public class TrainingPlanService {
 	private TrainingPlan findOwned(UUID userId, UUID planId) {
 		return planRepository.findByIdAndUserId(planId, userId)
 			.orElseThrow(() -> new PlanNotFoundException("Training plan not found"));
+	}
+
+	/** REPS exercises need a rep target and DURATION ones a duration target; the other field is rejected. */
+	private static void validateTargets(List<PlanEntryInput> entries, Map<UUID, Exercise> exercises) {
+		for (PlanEntryInput entry : entries) {
+			if (exercises.get(entry.exerciseId()).getMeasure() == Measure.DURATION) {
+				if (entry.targetDurationSeconds() == null) {
+					throw new InvalidFieldException("targetDurationSeconds is required for this exercise",
+							"targetDurationSeconds", "NotNull");
+				}
+				if (entry.reps() != null) {
+					throw new InvalidFieldException("reps is not allowed for this exercise", "reps",
+							"RepsNotAllowed");
+				}
+			}
+			else {
+				if (entry.reps() == null) {
+					throw new InvalidFieldException("reps is required for this exercise", "reps", "NotNull");
+				}
+				if (entry.targetDurationSeconds() != null) {
+					throw new InvalidFieldException("targetDurationSeconds is not allowed for this exercise",
+							"targetDurationSeconds", "DurationNotAllowed");
+				}
+			}
+		}
 	}
 
 	private static List<UUID> exerciseIds(List<PlanEntryInput> entries) {

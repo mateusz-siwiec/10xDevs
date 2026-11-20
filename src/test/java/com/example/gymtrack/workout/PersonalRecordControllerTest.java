@@ -50,6 +50,12 @@ class PersonalRecordControllerTest {
 	private ExerciseRepository exerciseRepository;
 
 	@Autowired
+	private WorkoutSessionRepository sessionRepository;
+
+	@Autowired
+	private WorkoutSetRepository setRepository;
+
+	@Autowired
 	private PasswordEncoder passwordEncoder;
 
 	@Autowired
@@ -61,12 +67,21 @@ class PersonalRecordControllerTest {
 		return "Bearer " + jwtService.generateToken(user.getId(), user.getEmail());
 	}
 
+	private UUID exerciseBySlug(String slug) {
+		return exerciseRepository.findAllByOrderByNameAsc()
+			.stream()
+			.filter(exercise -> exercise.getSlug().equals(slug))
+			.findFirst()
+			.orElseThrow()
+			.getId();
+	}
+
 	private UUID exerciseId() {
-		return exerciseRepository.findAllByOrderByNameAsc().get(0).getId();
+		return exerciseBySlug("barbell-bench-press");
 	}
 
 	private UUID otherExerciseId() {
-		return exerciseRepository.findAllByOrderByNameAsc().get(1).getId();
+		return exerciseBySlug("deadlift");
 	}
 
 	private String startSession(String token) throws Exception {
@@ -239,6 +254,145 @@ class PersonalRecordControllerTest {
 		mockMvc.perform(get("/api/workout-sessions/current").header(HttpHeaders.AUTHORIZATION, token))
 			.andExpect(jsonPath("$.sets[0].personalRecord", is(false)))
 			.andExpect(jsonPath("$.sets[1].personalRecord", is(true)));
+	}
+
+	private String logBodyweightSet(String token, String sessionId, UUID exerciseId, int reps) throws Exception {
+		return mockMvc.perform(post("/api/workout-sessions/" + sessionId + "/sets")
+				.header(HttpHeaders.AUTHORIZATION, token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"exerciseId\":\"" + exerciseId + "\",\"reps\":" + reps + "}"))
+			.andExpect(status().isCreated())
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+	}
+
+	private boolean bodyweightFlag(String token, String sessionId, UUID exerciseId, int reps) throws Exception {
+		return JsonPath.read(logBodyweightSet(token, sessionId, exerciseId, reps), "$.personalRecord");
+	}
+
+	@Test
+	void bodyweightSetsRankByRepsAndAreExemptFromTheRepCap() throws Exception {
+		String token = bearerToken();
+		String sessionId = startSession(token);
+		UUID pullUp = exerciseBySlug("pull-up");
+
+		assertFalse(bodyweightFlag(token, sessionId, pullUp, 8));
+		assertTrue(bodyweightFlag(token, sessionId, pullUp, 10));
+		assertFalse(bodyweightFlag(token, sessionId, pullUp, 10));
+		assertFalse(bodyweightFlag(token, sessionId, pullUp, 9));
+		// Above the 15-rep weighted cap, yet eligible at weight 0.
+		assertTrue(bodyweightFlag(token, sessionId, pullUp, 20));
+	}
+
+	@Test
+	void weightedSetBeatsAnyBodyweightSetButNotTheReverse() throws Exception {
+		String token = bearerToken();
+		String sessionId = startSession(token);
+		UUID pullUp = exerciseBySlug("pull-up");
+
+		assertFalse(bodyweightFlag(token, sessionId, pullUp, 12));
+		assertTrue(logSetFlag(token, sessionId, pullUp, 1, "5"));
+		assertFalse(bodyweightFlag(token, sessionId, pullUp, 30));
+	}
+
+	@Test
+	void currentSessionReportsBodyweightRecordFlags() throws Exception {
+		String token = bearerToken();
+		String sessionId = startSession(token);
+		UUID pullUp = exerciseBySlug("pull-up");
+
+		bodyweightFlag(token, sessionId, pullUp, 8);
+		bodyweightFlag(token, sessionId, pullUp, 12);
+
+		mockMvc.perform(get("/api/workout-sessions/current").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.sets[0].personalRecord", is(false)))
+			.andExpect(jsonPath("$.sets[1].personalRecord", is(true)));
+	}
+
+	private boolean logDurationFlag(String token, String sessionId, UUID exerciseId, int seconds, String weightKg)
+			throws Exception {
+		String body = "{\"exerciseId\":\"" + exerciseId + "\",\"durationSeconds\":" + seconds
+				+ (weightKg == null ? "" : ",\"weightKg\":" + weightKg) + "}";
+		String response = mockMvc.perform(post("/api/workout-sessions/" + sessionId + "/sets")
+				.header(HttpHeaders.AUTHORIZATION, token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(body))
+			.andExpect(status().isCreated())
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+		return JsonPath.read(response, "$.personalRecord");
+	}
+
+	@Test
+	void durationSetsRankByLongestTimeThenWeight() throws Exception {
+		String token = bearerToken();
+		UUID plank = exerciseBySlug("plank");
+		String first = startSession(token);
+
+		assertFalse(logDurationFlag(token, first, plank, 60, null));
+		assertTrue(logDurationFlag(token, first, plank, 90, null));
+		assertFalse(logDurationFlag(token, first, plank, 80, "20"));
+		assertFalse(logDurationFlag(token, first, plank, 90, null));
+		assertTrue(logDurationFlag(token, first, plank, 90, "5"));
+		endSession(token, first);
+
+		String second = startSession(token);
+		assertFalse(logDurationFlag(token, second, plank, 85, "30"));
+		assertTrue(logDurationFlag(token, second, plank, 91, null));
+		endSession(token, second);
+
+		mockMvc.perform(get("/api/dashboard/insights").header(HttpHeaders.AUTHORIZATION, token))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.recentPersonalRecords[0].durationSeconds").value(91))
+			.andExpect(jsonPath("$.recentPersonalRecords[0].reps").value(org.hamcrest.Matchers.nullValue()));
+	}
+
+	/**
+	 * Rep sets logged while Plank was a rep exercise must not block records for its new duration sets: the first
+	 * duration set starts its own group (no record), the next longer one is a record.
+	 */
+	@Test
+	void legacyWeightedRepSetsNeverBlockDurationRecords() throws Exception {
+		User user = userRepository.save(new User("pr-legacy-" + System.nanoTime() + "@example.com",
+				passwordEncoder.encode("password123")));
+		String token = "Bearer " + jwtService.generateToken(user.getId(), user.getEmail());
+		UUID plank = exerciseBySlug("plank");
+
+		WorkoutSession legacy = sessionRepository.saveAndFlush(new WorkoutSession(user.getId(), null));
+		setRepository.saveAndFlush(new WorkoutSet(legacy, plank, 10, new java.math.BigDecimal("40")));
+		legacy.end();
+		sessionRepository.saveAndFlush(legacy);
+
+		String session = startSession(token);
+		assertFalse(logDurationFlag(token, session, plank, 30, null));
+		assertTrue(logDurationFlag(token, session, plank, 45, null));
+		assertFalse(logDurationFlag(token, session, plank, 40, null));
+		endSession(token, session);
+	}
+
+	/** The earlier baseline is the heaviest set of each rep count (or duration), not just any set of it. */
+	@Test
+	void earlierBaselineIsTheHeaviestSetOfEachRepCountAndDuration() throws Exception {
+		String token = bearerToken();
+		UUID bench = exerciseId();
+		UUID plank = exerciseBySlug("plank");
+
+		String first = startSession(token);
+		logSetFlag(token, first, bench, 10, "20");
+		logSetFlag(token, first, bench, 10, "40");
+		logDurationFlag(token, first, plank, 60, null);
+		logDurationFlag(token, first, plank, 60, "10");
+		endSession(token, first);
+
+		String second = startSession(token);
+		assertFalse(logSetFlag(token, second, bench, 10, "30"));
+		assertTrue(logSetFlag(token, second, bench, 10, "45"));
+		assertFalse(logDurationFlag(token, second, plank, 60, "5"));
+		assertTrue(logDurationFlag(token, second, plank, 60, "12"));
+		endSession(token, second);
 	}
 
 }

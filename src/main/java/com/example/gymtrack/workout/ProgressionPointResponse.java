@@ -4,6 +4,15 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
-public record ProgressionPointResponse(UUID sessionId, Instant date, BigDecimal topWeightKg) {
+/**
+ * One chart point. {@code metric} says what {@code value} measures: the session's top weight (kg), its
+ * top reps or its longest duration (seconds). {@code topWeightKg} is always the session's top weight (0 for bodyweight sets).
+ */
+public record ProgressionPointResponse(UUID sessionId, Instant date, BigDecimal topWeightKg, Metric metric,
+		BigDecimal value) {
+
+	public enum Metric {
+		WEIGHT, REPS, DURATION
+	}
 
 }

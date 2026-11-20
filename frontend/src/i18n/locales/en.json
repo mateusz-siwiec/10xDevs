@@ -11,6 +11,9 @@
     "closeMenu": "Close menu"
   },
   "common": {
+    "repsCount_one": "{{count}} rep",
+    "repsCount_other": "{{count}} reps",
+    "secondsCount": "{{seconds}} s",
     "language": "Language",
     "duration": {
       "lessThanMinute": "<1m",
@@ -115,7 +118,7 @@
       "delete": "Delete workout",
       "deleteConfirm": "Delete this workout and all its sets? This cannot be undone.",
       "deleteFailed": "Failed to delete workout",
-      "setLine": "Set {{n}}: {{reps}} × {{weight}} kg"
+      "setLine": "Set {{n}}: {{set}}"
     }
   },
   "saveAsPlan": {
@@ -134,7 +137,12 @@
     "loading": "Loading progression…",
     "loadFailed": "Failed to load progression",
     "empty": "No history for this exercise yet. Log a set to start the chart.",
-    "topWeight": "Top weight"
+    "topWeight": "Top weight",
+    "topReps": "Top reps",
+    "topDuration": "Longest duration",
+    "unitKg": " kg",
+    "unitReps": " reps",
+    "unitSeconds": " s"
   },
   "plans": {
     "title": "Plans",
@@ -156,8 +164,10 @@
       "noExercises": "No exercises added yet.",
       "sets": "Sets",
       "reps": "Reps",
+      "durationSeconds": "Seconds",
       "setsFor": "Sets for {{name}}",
       "repsFor": "Reps for {{name}}",
+      "durationFor": "Seconds for {{name}}",
       "moveUpLabel": "Move {{name}} up",
       "moveDownLabel": "Move {{name}} down",
       "movedTo": "{{name}} moved to position {{position}} of {{total}}",
@@ -173,6 +183,14 @@
     "primaryGroup": "Primary muscle group",
     "choosePrimary": "Choose a muscle group…",
     "secondaryGroups": "Secondary muscle groups (optional)",
+    "weightMode": "Weight",
+    "weightModeRequired": "Weighted (weight required)",
+    "weightModeOptional": "Optional added weight (e.g. pull-ups)",
+    "weightModeNone": "No weight",
+    "measure": "Counted in",
+    "measureReps": "Reps",
+    "measureDuration": "Duration (seconds)",
+    "settingsInUse": "The weight and measure settings cannot be changed because this exercise already has logged sets or is used in a plan.",
     "adding": "Adding…",
     "add": "Add exercise",
     "scopeLabel": "Show exercises",
@@ -301,13 +319,15 @@
     "logFailed": "Failed to log set",
     "deleteFailed": "Failed to delete set",
     "reps": "Reps",
+    "durationSeconds": "Duration (seconds)",
     "weightKg": "Weight (kg)",
+    "weightKgOptional": "Added weight (kg), optional",
     "toFailure": "To failure",
     "logging": "Logging…",
     "logSet": "Log set",
     "skipped": "Skipped",
     "skip": "Skip",
-    "setLine": "Set {{n}}: {{reps}} × {{weight}} kg",
+    "setLine": "Set {{n}}: {{set}}",
     "lastTime": "Last time ({{date}}):",
     "recommendation_one": "Try {{weight}} kg — you completed {{sets}}×{{reps}} at {{previousWeight}} kg in your last workout.",
     "recommendation_other": "Try {{weight}} kg — you completed {{sets}}×{{reps}} at {{previousWeight}} kg in your last {{count}} workouts.",
@@ -412,7 +432,11 @@
     "DecimalMin": "{{field}} is too small (limit: {{min}}).",
     "DecimalMax": "{{field}} is too large (maximum: {{max}}).",
     "AssertTrue": "Secondary muscle groups must not include the primary muscle group.",
-    "HalfKgStep": "{{field}} must be a multiple of 0.5.",
+    "QuarterKgStep": "{{field}} must be a multiple of 0.25.",
+    "WeightRequired": "{{field}} is required for this exercise.",
+    "WeightNotAllowed": "{{field}} is not allowed for this exercise.",
+    "RepsNotAllowed": "{{field}} is not allowed for a timed exercise.",
+    "DurationNotAllowed": "{{field}} is not allowed for a rep-based exercise.",
     "fields": {
       "email": "Email",
       "password": "Password",
@@ -423,6 +447,8 @@
       "exerciseId": "Exercise",
       "sets": "Sets",
       "reps": "Reps",
+      "durationSeconds": "Duration",
+      "targetDurationSeconds": "Duration",
       "weightKg": "Weight"
     }
   },

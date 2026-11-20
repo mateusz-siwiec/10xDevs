@@ -129,7 +129,7 @@ describe('backend error codes', () => {
     ['pl', pl],
   ])('has a validation.<rule> entry in %s for every rule the backend emits', (_lang, resource) => {
     const validation = resource.validation as Record<string, unknown>
-    const rules = ['NotBlank', 'NotNull', 'Email', 'Size', 'Min', 'Max', 'DecimalMin', 'DecimalMax', 'AssertTrue', 'HalfKgStep']
+    const rules = ['NotBlank', 'NotNull', 'Email', 'Size', 'Min', 'Max', 'DecimalMin', 'DecimalMax', 'AssertTrue', 'QuarterKgStep', 'WeightRequired', 'WeightNotAllowed', 'RepsNotAllowed', 'DurationNotAllowed']
     expect(rules.filter((rule) => typeof validation[rule] !== 'string')).toEqual([])
   })
 })

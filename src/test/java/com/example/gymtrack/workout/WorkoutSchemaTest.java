@@ -87,10 +87,22 @@ class WorkoutSchemaTest {
 	}
 
 	@Test
-	void zeroWeightIsRejected() {
+	void zeroWeightIsAccepted() {
 		UUID sessionId = insertSession(false);
 
-		assertThatThrownBy(() -> insertSet(sessionId, 5, 0)).isInstanceOf(DataIntegrityViolationException.class);
+		insertSet(sessionId, 5, 0);
+
+		Integer sets = jdbc.queryForObject("select count(*) from workout_sets where session_id = ?", Integer.class,
+				sessionId);
+		assertThat(sets).isEqualTo(1);
+	}
+
+	@Test
+	void negativeOrOverThousandWeightIsRejected() {
+		UUID sessionId = insertSession(false);
+
+		assertThatThrownBy(() -> insertSet(sessionId, 5, -1)).isInstanceOf(DataIntegrityViolationException.class);
+		assertThatThrownBy(() -> insertSet(sessionId, 5, 1000.5)).isInstanceOf(DataIntegrityViolationException.class);
 	}
 
 	@Test
@@ -123,6 +135,48 @@ class WorkoutSchemaTest {
 				sessionId);
 		assertThat(sessions).isEqualTo(1);
 		assertThat(remaining).isNull();
+	}
+
+	private void insertRawSet(UUID sessionId, Integer reps, Integer durationSeconds) {
+		jdbc.update("insert into workout_sets (id, session_id, exercise_id, reps, duration_seconds, weight_kg, logged_at) "
+				+ "values (?, ?, ?, ?, ?, 0, now())", UUID.randomUUID(), sessionId, exerciseId, reps, durationSeconds);
+	}
+
+	@Test
+	void durationSetWithoutRepsIsAccepted() {
+		UUID sessionId = insertSession(false);
+
+		insertRawSet(sessionId, null, 45);
+
+		Integer sets = jdbc.queryForObject(
+				"select count(*) from workout_sets where session_id = ? and reps is null and duration_seconds = 45",
+				Integer.class, sessionId);
+		assertThat(sets).isEqualTo(1);
+	}
+
+	@Test
+	void exactlyOneOfRepsAndDurationIsRequired() {
+		UUID sessionId = insertSession(false);
+
+		assertThatThrownBy(() -> insertRawSet(sessionId, 5, 30)).isInstanceOf(DataIntegrityViolationException.class);
+		assertThatThrownBy(() -> insertRawSet(sessionId, null, null))
+				.isInstanceOf(DataIntegrityViolationException.class);
+	}
+
+	@Test
+	void outOfRangeDurationIsRejected() {
+		UUID sessionId = insertSession(false);
+
+		assertThatThrownBy(() -> insertRawSet(sessionId, null, 0)).isInstanceOf(DataIntegrityViolationException.class);
+		assertThatThrownBy(() -> insertRawSet(sessionId, null, 3601))
+				.isInstanceOf(DataIntegrityViolationException.class);
+		insertRawSet(sessionId, null, 3600);
+	}
+
+	@Test
+	void exerciseMeasureIsRestrictedToRepsOrDuration() {
+		assertThatThrownBy(() -> jdbc.update("update exercises set measure = 'BOGUS' where id = ?", exerciseId))
+				.isInstanceOf(DataIntegrityViolationException.class);
 	}
 
 }

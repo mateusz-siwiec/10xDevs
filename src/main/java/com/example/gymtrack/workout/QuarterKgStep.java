@@ -9,12 +9,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Documented
-@Constraint(validatedBy = HalfKgStepValidator.class)
+@Constraint(validatedBy = QuarterKgStepValidator.class)
 @Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.RECORD_COMPONENT })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface HalfKgStep {
+public @interface QuarterKgStep {
 
-	String message() default "must be a multiple of 0.5";
+	String message() default "must be a multiple of 0.25";
 
 	Class<?>[] groups() default {};
 

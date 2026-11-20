@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import type { Measure } from '../api/client'
 import { exerciseName } from '../utils/exercises'
 
 export interface PlanEditorEntry {
@@ -7,7 +8,10 @@ export interface PlanEditorEntry {
   exerciseId: string
   exerciseName: string
   exerciseSlug: string
+  /** Decides whether the target is reps or seconds. */
+  measure: Measure
   sets: string
+  /** Reps for REPS entries, seconds for DURATION entries. */
   reps: string
 }
 
@@ -106,11 +110,11 @@ export default function PlanExerciseList({
               />
             </label>
             <label className="plan-target-field">
-              <span>{t('plans.editor.reps')}</span>
+              <span>{t(entry.measure === 'DURATION' ? 'plans.editor.durationSeconds' : 'plans.editor.reps')}</span>
               <input
                 type="text"
                 inputMode="numeric"
-                aria-label={t('plans.editor.repsFor', { name: exerciseName({ slug: entry.exerciseSlug, name: entry.exerciseName }) })}
+                aria-label={t(entry.measure === 'DURATION' ? 'plans.editor.durationFor' : 'plans.editor.repsFor', { name: exerciseName({ slug: entry.exerciseSlug, name: entry.exerciseName }) })}
                 value={entry.reps}
                 disabled={disabled}
                 onChange={(event) => onTargetChange(entry.key, 'reps', event.target.value)}

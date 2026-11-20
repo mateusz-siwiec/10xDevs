@@ -133,6 +133,11 @@ export async function authFetch(path: string, options: RequestInit = {}): Promis
   return res
 }
 
+export type WeightMode = 'REQUIRED' | 'OPTIONAL' | 'NONE'
+
+/** What a set counts: repetitions or a duration in seconds. */
+export type Measure = 'REPS' | 'DURATION'
+
 export interface Exercise {
   id: string
   slug: string
@@ -141,12 +146,16 @@ export interface Exercise {
   secondaryMuscleGroups: string[]
   custom: boolean
   favorite: boolean
+  weightMode: WeightMode
+  measure: Measure
 }
 
 export interface WorkoutSet {
   id: string
   exerciseId: string
-  reps: number
+  /** Exactly one of reps / durationSeconds is set, by the exercise's measure. */
+  reps: number | null
+  durationSeconds: number | null
   weightKg: number
   loggedAt: string
   personalRecord: boolean
@@ -163,8 +172,11 @@ export interface WorkoutSession {
 
 export interface LogSetInput {
   exerciseId: string
-  reps: number
-  weightKg: number
+  /** Send reps for REPS exercises, durationSeconds for DURATION exercises. */
+  reps?: number
+  durationSeconds?: number
+  /** Omit for exercises without added weight. */
+  weightKg?: number
   toFailure?: boolean
 }
 
@@ -172,6 +184,8 @@ export interface ProgressionPoint {
   sessionId: string
   date: string
   topWeightKg: number
+  metric: 'WEIGHT' | 'REPS' | 'DURATION'
+  value: number
 }
 
 export async function getExercises(): Promise<Exercise[]> {
@@ -183,6 +197,8 @@ export interface CreateExerciseInput {
   name: string
   primaryMuscleGroup: string
   secondaryMuscleGroups: string[]
+  weightMode?: WeightMode
+  measure?: Measure
 }
 
 export async function createExercise(input: CreateExerciseInput): Promise<Exercise> {
@@ -284,7 +300,7 @@ export interface PreviousWorkout {
   exerciseId: string
   sessionId: string
   endedAt: string
-  sets: { reps: number; weightKg: number; toFailure: boolean }[]
+  sets: { reps: number | null; durationSeconds: number | null; weightKg: number; toFailure: boolean }[]
 }
 
 /** Returns null when the exercise has no earlier workout in this plan (204 No Content). */
@@ -354,7 +370,8 @@ export interface RecentPersonalRecord {
   sessionId: string
   exerciseId: string
   exerciseName: string
-  reps: number
+  reps: number | null
+  durationSeconds: number | null
   weightKg: number
   achievedAt: string
 }
@@ -395,7 +412,9 @@ export interface PlanEntry {
   exerciseSlug: string
   position: number
   sets: number
-  reps: number
+  /** Exactly one of reps / targetDurationSeconds is set, by the exercise's measure. */
+  reps: number | null
+  targetDurationSeconds: number | null
 }
 
 export interface Plan {
@@ -410,7 +429,8 @@ export interface Plan {
 export interface PlanEntryInput {
   exerciseId: string
   sets: number | null
-  reps: number | null
+  reps?: number | null
+  targetDurationSeconds?: number | null
 }
 
 export interface PlanInput {
@@ -498,7 +518,7 @@ export interface HistoryDetail {
   planName: string | null
   durationSeconds: number
   volumeKg: number
-  exercises: { exerciseId: string; sets: { reps: number; weightKg: number; personalRecord: boolean; toFailure: boolean }[] }[]
+  exercises: { exerciseId: string; sets: { reps: number | null; durationSeconds: number | null; weightKg: number; personalRecord: boolean; toFailure: boolean }[] }[]
 }
 
 export async function getHistorySession(id: string): Promise<HistoryDetail> {

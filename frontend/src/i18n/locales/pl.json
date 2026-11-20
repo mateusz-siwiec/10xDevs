@@ -11,6 +11,11 @@
     "closeMenu": "Zamknij menu"
   },
   "common": {
+    "repsCount_one": "{{count}} powtórzenie",
+    "repsCount_few": "{{count}} powtórzenia",
+    "repsCount_many": "{{count}} powtórzeń",
+    "repsCount_other": "{{count}} powtórzenia",
+    "secondsCount": "{{seconds}} s",
     "language": "Język",
     "duration": {
       "lessThanMinute": "<1 min",
@@ -121,7 +126,7 @@
       "delete": "Usuń trening",
       "deleteConfirm": "Usunąć ten trening i wszystkie jego serie? Tej operacji nie można cofnąć.",
       "deleteFailed": "Nie udało się usunąć treningu",
-      "setLine": "Seria {{n}}: {{reps}} × {{weight}} kg"
+      "setLine": "Seria {{n}}: {{set}}"
     }
   },
   "saveAsPlan": {
@@ -140,7 +145,12 @@
     "loading": "Wczytywanie progresji…",
     "loadFailed": "Nie udało się wczytać progresji",
     "empty": "Brak historii dla tego ćwiczenia. Zapisz serię, aby zacząć wykres.",
-    "topWeight": "Największy ciężar"
+    "topWeight": "Największy ciężar",
+    "topReps": "Najwięcej powtórzeń",
+    "topDuration": "Najdłuższy czas",
+    "unitKg": " kg",
+    "unitReps": " powt.",
+    "unitSeconds": " s"
   },
   "plans": {
     "title": "Plany",
@@ -164,8 +174,10 @@
       "noExercises": "Nie dodano jeszcze żadnych ćwiczeń.",
       "sets": "Serie",
       "reps": "Powtórzenia",
+      "durationSeconds": "Sekundy",
       "setsFor": "Serie: {{name}}",
       "repsFor": "Powtórzenia: {{name}}",
+      "durationFor": "Sekundy: {{name}}",
       "moveUpLabel": "Przesuń w górę: {{name}}",
       "moveDownLabel": "Przesuń w dół: {{name}}",
       "movedTo": "{{name}}: pozycja {{position}} z {{total}}",
@@ -181,6 +193,14 @@
     "primaryGroup": "Główna partia mięśniowa",
     "choosePrimary": "Wybierz partię mięśniową…",
     "secondaryGroups": "Dodatkowe partie mięśniowe (opcjonalnie)",
+    "weightMode": "Obciążenie",
+    "weightModeRequired": "Z obciążeniem (ciężar wymagany)",
+    "weightModeOptional": "Opcjonalne dodatkowe obciążenie (np. podciąganie)",
+    "weightModeNone": "Bez obciążenia",
+    "measure": "Liczone w",
+    "measureReps": "Powtórzeniach",
+    "measureDuration": "Czasie (sekundy)",
+    "settingsInUse": "Nie można zmienić ustawień obciążenia i sposobu liczenia, bo to ćwiczenie ma już zapisane serie lub jest użyte w planie.",
     "adding": "Dodawanie…",
     "add": "Dodaj ćwiczenie",
     "scopeLabel": "Pokaż ćwiczenia",
@@ -313,13 +333,15 @@
     "logFailed": "Nie udało się zapisać serii",
     "deleteFailed": "Nie udało się usunąć serii",
     "reps": "Powtórzenia",
+    "durationSeconds": "Czas (sekundy)",
     "weightKg": "Ciężar (kg)",
+    "weightKgOptional": "Dodatkowy ciężar (kg), opcjonalnie",
     "toFailure": "Do upadku",
     "logging": "Zapisywanie…",
     "logSet": "Zapisz serię",
     "skipped": "Pominięte",
     "skip": "Pomiń",
-    "setLine": "Seria {{n}}: {{reps}} × {{weight}} kg",
+    "setLine": "Seria {{n}}: {{set}}",
     "lastTime": "Poprzednio ({{date}}):",
     "recommendation_one": "Spróbuj {{weight}} kg — w ostatnim treningu wykonano {{sets}}×{{reps}} z {{previousWeight}} kg.",
     "recommendation_few": "Spróbuj {{weight}} kg — w ostatnich {{count}} treningach wykonano {{sets}}×{{reps}} z {{previousWeight}} kg.",
@@ -434,7 +456,11 @@
     "DecimalMin": "Wartość pola „{{field}}” jest za mała (granica: {{min}}).",
     "DecimalMax": "Wartość pola „{{field}}” jest za duża (maksimum: {{max}}).",
     "AssertTrue": "Dodatkowe partie mięśniowe nie mogą zawierać partii głównej.",
-    "HalfKgStep": "Pole „{{field}}” musi być wielokrotnością 0,5.",
+    "QuarterKgStep": "Pole „{{field}}” musi być wielokrotnością 0,25.",
+    "WeightRequired": "Pole „{{field}}” jest wymagane dla tego ćwiczenia.",
+    "WeightNotAllowed": "Pole „{{field}}” nie jest dozwolone dla tego ćwiczenia.",
+    "RepsNotAllowed": "Pole „{{field}}” nie jest dozwolone dla ćwiczenia na czas.",
+    "DurationNotAllowed": "Pole „{{field}}” nie jest dozwolone dla ćwiczenia na powtórzenia.",
     "fields": {
       "email": "E-mail",
       "password": "Hasło",
@@ -445,6 +471,8 @@
       "exerciseId": "Ćwiczenie",
       "sets": "Serie",
       "reps": "Powtórzenia",
+      "durationSeconds": "Czas",
+      "targetDurationSeconds": "Czas",
       "weightKg": "Ciężar"
     }
   },

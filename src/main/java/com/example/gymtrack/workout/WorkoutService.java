@@ -1,7 +1,11 @@
 package com.example.gymtrack.workout;
 
 import com.example.gymtrack.common.ErrorCode;
+import com.example.gymtrack.exercise.Exercise;
+import com.example.gymtrack.common.InvalidFieldException;
 import com.example.gymtrack.exercise.ExerciseRepository;
+import com.example.gymtrack.exercise.Measure;
+import com.example.gymtrack.exercise.WeightMode;
 import com.example.gymtrack.plan.PlanNotFoundException;
 import com.example.gymtrack.plan.TrainingPlanRepository;
 import java.math.BigDecimal;
@@ -103,19 +107,63 @@ public class WorkoutService {
 	}
 
 	@Transactional
-	public SetResponse logSet(UUID userId, UUID sessionId, UUID exerciseId, int reps, BigDecimal weightKg,
-			boolean toFailure) {
+	public SetResponse logSet(UUID userId, UUID sessionId, UUID exerciseId, Integer reps,
+			Integer durationSeconds, BigDecimal weightKg, boolean toFailure) {
 		WorkoutSession session = findOwned(userId, sessionId);
-		if (!exerciseRepository.existsVisible(exerciseId, userId)) {
-			throw new WorkoutNotFoundException(ErrorCode.EXERCISE_NOT_FOUND, "Exercise not found");
-		}
+		Exercise exercise = exerciseRepository.findVisibleById(exerciseId, userId)
+			.orElseThrow(() -> new WorkoutNotFoundException(ErrorCode.EXERCISE_NOT_FOUND, "Exercise not found"));
 		if (!session.isActive()) {
 			throw new WorkoutConflictException(ErrorCode.WORKOUT_ENDED, "Workout session already ended");
 		}
-		WorkoutSet set = setRepository.saveAndFlush(new WorkoutSet(session, exerciseId, reps, weightKg, toFailure));
+		validateMeasure(exercise.getMeasure(), reps, durationSeconds);
+		BigDecimal storedWeight = resolveWeight(exercise.getWeightMode(), weightKg);
+		WorkoutSet set = setRepository.saveAndFlush(
+				new WorkoutSet(session, exerciseId, reps, durationSeconds, storedWeight, toFailure));
 		Set<UUID> personalRecordSetIds = personalRecordService.personalRecordSetIds(session,
 				setRepository.findBySessionIdOrderByLoggedAtAscIdAsc(session.getId()));
 		return SetResponse.from(set, personalRecordSetIds.contains(set.getId()));
+	}
+
+	/** REPS exercises need reps and reject a duration; DURATION exercises need a duration and reject reps. */
+	private static void validateMeasure(Measure measure, Integer reps, Integer durationSeconds) {
+		if (measure == Measure.DURATION) {
+			if (durationSeconds == null) {
+				throw new InvalidFieldException("durationSeconds is required for this exercise", "durationSeconds",
+						"NotNull");
+			}
+			if (reps != null) {
+				throw new InvalidFieldException("reps is not allowed for this exercise", "reps", "RepsNotAllowed");
+			}
+		}
+		else {
+			if (reps == null) {
+				throw new InvalidFieldException("reps is required for this exercise", "reps", "NotNull");
+			}
+			if (durationSeconds != null) {
+				throw new InvalidFieldException("durationSeconds is not allowed for this exercise",
+						"durationSeconds", "DurationNotAllowed");
+			}
+		}
+	}
+
+	/** REQUIRED needs a positive weight, OPTIONAL treats a missing one as 0, NONE rejects a positive one and stores 0. */
+	private static BigDecimal resolveWeight(WeightMode mode, BigDecimal weightKg) {
+		boolean positive = weightKg != null && weightKg.signum() > 0;
+		return switch (mode) {
+			case REQUIRED -> {
+				if (!positive) {
+					throw new InvalidFieldException("weightKg is required for this exercise", "weightKg", "WeightRequired");
+				}
+				yield weightKg;
+			}
+			case OPTIONAL -> weightKg == null ? BigDecimal.ZERO : weightKg;
+			case NONE -> {
+				if (positive) {
+					throw new InvalidFieldException("weightKg is not allowed for this exercise", "weightKg", "WeightNotAllowed");
+				}
+				yield BigDecimal.ZERO;
+			}
+		};
 	}
 
 	@Transactional
@@ -131,10 +179,30 @@ public class WorkoutService {
 
 	@Transactional(readOnly = true)
 	public List<ProgressionPointResponse> progression(UUID userId, UUID exerciseId) {
-		if (!exerciseRepository.existsVisible(exerciseId, userId)) {
-			throw new WorkoutNotFoundException(ErrorCode.EXERCISE_NOT_FOUND, "Exercise not found");
+		Exercise exercise = exerciseRepository.findVisibleById(exerciseId, userId)
+			.orElseThrow(() -> new WorkoutNotFoundException(ErrorCode.EXERCISE_NOT_FOUND, "Exercise not found"));
+		List<ProgressionRow> rows = setRepository.findProgression(userId, exerciseId);
+		if (exercise.getMeasure() == Measure.DURATION) {
+			// Sessions that only hold rep sets logged before the exercise became timed have no duration to plot.
+			return rows.stream()
+				.filter(row -> row.topDurationSeconds() != null)
+				.map(row -> new ProgressionPointResponse(row.sessionId(), row.date(), row.topWeightKg(),
+						ProgressionPointResponse.Metric.DURATION, BigDecimal.valueOf(row.topDurationSeconds())))
+				.toList();
 		}
-		return setRepository.findProgression(userId, exerciseId);
+		boolean byReps = switch (exercise.getWeightMode()) {
+			case REQUIRED -> false;
+			case NONE -> true;
+			case OPTIONAL -> rows.stream().noneMatch(row -> row.topWeightKg().signum() > 0);
+		};
+		return rows.stream()
+			.filter(row -> !byReps || row.topReps() != null)
+			.map(row -> byReps
+				? new ProgressionPointResponse(row.sessionId(), row.date(), row.topWeightKg(),
+						ProgressionPointResponse.Metric.REPS, BigDecimal.valueOf(row.topReps()))
+				: new ProgressionPointResponse(row.sessionId(), row.date(), row.topWeightKg(),
+						ProgressionPointResponse.Metric.WEIGHT, row.topWeightKg()))
+			.toList();
 	}
 
 	private WorkoutSession findOwned(UUID userId, UUID sessionId) {
