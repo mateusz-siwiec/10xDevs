@@ -17,6 +17,14 @@
   margin-bottom: 0;
 }
 
+/* Inputs sit on the bottom edge of their cell, so a label that wraps to two lines (e.g. the optional-weight
+   label in Polish) does not push its input out of line with the neighbouring one. */
+.set-logger-fields .field {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
 .set-logger-fields .field input {
   min-height: 48px;
   font-size: 1.25rem;
@@ -241,11 +249,20 @@
   gap: 0.75rem;
 }
 
+/* "Workout saved" card, shown under the plan list so Start workout stays the first thing on the screen. */
 .workout-ended {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem 1rem;
+  margin-top: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+
+/* The message gets its own row; the actions (save as plan, close) then sit side by side beneath it. */
+.workout-ended p {
+  flex-basis: 100%;
+  margin: 0;
 }
 
 /* Start screen: one primary action on top, then the saved plans as rows with their own Start button. */

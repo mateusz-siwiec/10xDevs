@@ -266,15 +266,6 @@ export default function WorkoutPage() {
         {error && <p className="error-text" role="alert">{translateError(error.err, error.key)}</p>}
         {session === null ? (
           <div className="workout-start">
-            {endedSummary && (
-              <div className="workout-ended">
-                <p role="status">{t('workout.endedSaved')}</p>
-                <SaveAsPlan sets={endedSummary.sets} defaultName={endedSummary.defaultName} />
-                <button type="button" className="btn-secondary" onClick={() => setEndedSummary(null)}>
-                  {t('workout.dismiss')}
-                </button>
-              </div>
-            )}
             <button type="button" className="btn-primary" disabled={busy} onClick={() => handleStart()}>
               {busy ? t('workout.starting') : t('workout.startWorkout')}
             </button>
@@ -320,6 +311,15 @@ export default function WorkoutPage() {
                 </>
               )}
             </section>
+            {endedSummary && (
+              <div className="card workout-ended">
+                <p role="status">{t('workout.endedSaved')}</p>
+                <SaveAsPlan sets={endedSummary.sets} defaultName={endedSummary.defaultName} />
+                <button type="button" className="btn-secondary" onClick={() => setEndedSummary(null)}>
+                  {t('workout.dismiss')}
+                </button>
+              </div>
+            )}
           </div>
         ) : (
           <>
