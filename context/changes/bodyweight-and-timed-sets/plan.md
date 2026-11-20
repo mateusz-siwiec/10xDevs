@@ -488,11 +488,11 @@ V16 and V17 only add columns with defaults and relax checks, so existing rows st
 
 #### Automated
 
-- [x] 6.1 New and existing e2e pass: `npm run test:e2e`
-- [x] 6.2 Full backend suite passes: `./mvnw test`
-- [x] 6.3 Token guard and lint pass: `npm run check:tokens` and `npm run lint`
+- [x] 6.1 New and existing e2e pass: `npm run test:e2e` — af2e8b5
+- [x] 6.2 Full backend suite passes: `./mvnw test` — af2e8b5
+- [x] 6.3 Token guard and lint pass: `npm run check:tokens` and `npm run lint` — af2e8b5
 
 #### Manual
 
-- [x] 6.4 Full pass through bench press, pull-up, ab wheel and plank: log, history, dashboard, plan
-- [x] 6.5 README and test plan match the behaviour
+- [x] 6.4 Full pass through bench press, pull-up, ab wheel and plank: log, history, dashboard, plan — af2e8b5
+- [x] 6.5 README and test plan match the behaviour — af2e8b5
