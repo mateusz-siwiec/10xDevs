@@ -18,7 +18,9 @@ primary_region = "lhr"
   force_https = true
   auto_stop_machines = true
   auto_start_machines = true
-  min_machines_running = 0
+  # Spring Boot takes ~16s to start on this VM, longer than the Fly proxy waits for a
+  # stopped machine to wake up (~8s, then 502), so keep one machine always running.
+  min_machines_running = 1
 
 [[vm]]
   cpu_kind = "shared"
